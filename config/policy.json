@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-05-20",
+  "universe": {
+    "market": "KOSPI",
+    "size": "대형주 (시총 상위 30위 우선, 상위 100위 이내 허용)",
+    "sector_preference": "없음 (매크로/뉴스 기반 자유 선정)",
+    "exclude": ["관리종목", "거래정지", "신규상장 1년 미만"]
+  },
+  "horizon": {
+    "style": "중장기 스윙",
+    "min_hold_days": 5,
+    "review_cadence": "일 4회 (09/12/15/18)"
+  },
+  "risk": {
+    "target_return_pct": 10.0,
+    "stop_loss_pct": -10.0,
+    "tolerance_band_pct": 5.0,
+    "trailing_stop": "목표가 70% 도달 후 -3% 트레일링 허용"
+  },
+  "position_sizing": {
+    "initial_capital_krw": 5000000,
+    "max_positions": 3,
+    "max_position_weight_pct": 30.0,
+    "min_cash_weight_pct": 10.0,
+    "default_entry_weight_pct": 25.0
+  },
+  "trading_cost": {
+    "slippage_pct": 0.2,
+    "tax_pct": 0.18,
+    "commission_pct": 0.015
+  },
+  "rebalance_rules": {
+    "swap_when": [
+      "종목이 손절선(-10%) 도달",
+      "목표가 도달 후 모멘텀 둔화 (5일 평균 거래량 하락 + 종가 하락)",
+      "lessons.md에서 동일 패턴 반복 손실 3회 이상 누적된 섹터/종목"
+    ],
+    "no_swap_when": [
+      "단순 1일 변동성 -3% 이내",
+      "지수 하락에 동행하는 일시 조정"
+    ]
+  },
+  "disclaimers": [
+    "본 시뮬레이션은 교육·학습 목적이며 실제 투자 권유가 아님",
+    "시세는 웹검색 기반으로 지연/근사값일 수 있음",
+    "초보자 학습 보조를 위해 용어를 풀어 설명할 것"
+  ]
+}

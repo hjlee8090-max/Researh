@@ -52,19 +52,35 @@ prompts/
 4. **모든 추천·점검 프롬프트는 동작 직전 lessons.md를 먼저 읽고 동일 실수를 피한다**
 
 ## 실행 방법
-### A. 원격 스케줄 (자동)
-- 평일 09:00 / 12:00 / 15:00 / 18:00 KST에 자동 발화
-- 등록·해제·일시정지는 Claude Code에서 `/schedule` 또는 상위 대화로 요청
+GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상태를 이어받아 동작.
 
-### B. 수동 트리거
-원하는 시각에 Claude Code에서 아래 한 줄을 입력하면 동일하게 동작:
+### A. 원격 routine (PC 꺼져있어도 자동 실행) — 기본 모드
+- 평일 09:00 / 12:00 / 15:00 / 18:00 KST에 Anthropic 클라우드에서 자동 발화
+- 각 routine은 이 레포를 git clone → 해당 시각 prompt 파일 읽기 → 실행 → git commit/push
+- 등록·관리: https://claude.ai/code/routines
+
+| 시각 | Routine ID |
+|---|---|
+| 09:00 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
+| 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
+| 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
+| 18:00 | `trig_01TD41NpsamHcveUeokYcyyM` |
+
+### B. 로컬 Claude Code (선택)
+PC에서 직접 돌리고 싶을 때:
 ```
-prompts/0900_pre_market.md 실행
-prompts/1200_midday.md 실행
-prompts/1500_close.md 실행
-prompts/1800_report.md 실행
+git pull --rebase
+prompts/0900_pre_market.md 실행 (또는 1200/1500/1800)
 ```
+프롬프트 내부에 git pull/push 절차가 포함되어 있어 원격과 동일한 상태 일관성을 보장한다.
+
+### C. 로컬 Windows 작업스케줄러 (옵션)
+PC가 항상 켜져있고 빠른 응답을 원할 때 추가 등록 가능:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1
+```
+원격 routine이 이미 PC 오프에도 동작하므로 **필수 아님**. 중복 실행되어도 git rebase로 충돌 없이 흡수된다.
 
 ## 첫 가동
-- 오늘은 구조만 세팅 완료. **다음 09:00 KST 첫 발화 시점에 종목 3개를 처음으로 추천**한다.
-- 추천 직후 가상 매수 체결을 기록하고 그날 18시부터 정상 루프가 돈다.
+- 구조 세팅 + GitHub 푸시 완료. **다음 09:00 KST 원격 routine 발화 시 종목 3개 첫 추천**.
+- 추천 직후 가상 매수 체결 기록 → 18시부터 정상 자기보완 루프.

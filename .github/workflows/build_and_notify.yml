@@ -1,0 +1,71 @@
+name: Build HTML & Kakao Notify
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "reports/**"
+      - "config/portfolio.json"
+      - "templates/**"
+      - "scripts/build_html.py"
+      - "scripts/send_kakao.py"
+      - ".github/workflows/build_and_notify.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install --quiet markdown
+      - name: Build HTML
+        run: python scripts/build_html.py
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    # 18:00 리포트 커밋 ("report:" 프리픽스) 일 때만 카톡 노티 발송.
+    # 09/12/15 시 커밋은 'chore(...)' 프리픽스라 발화 안 됨.
+    if: |
+      startsWith(github.event.head_commit.message, 'report:') ||
+      github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Send Kakao notification
+        env:
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+          PAGES_URL: ${{ needs.deploy.outputs.page_url }}
+        run: python scripts/send_kakao.py

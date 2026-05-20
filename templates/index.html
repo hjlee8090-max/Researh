@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOSPI 오토플로우 리포트</title>
+<meta name="description" content="평가금액 {{ equity }}원 · 누적 수익률 {{ cumulative_return }}%">
+<meta property="og:title" content="KOSPI 자기보완형 오토플로우">
+<meta property="og:description" content="평가금액 {{ equity }}원 · 누적 수익률 {{ cumulative_return }}%">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="index">
+  <h1>KOSPI 오토플로우</h1>
+  <p class="subtitle">500만원 가상 포트폴리오 · 자기보완형 시뮬레이션</p>
+
+  <section class="stat">
+    <div>
+      <span class="label">평가금액</span>
+      <strong>{{ equity }}원</strong>
+    </div>
+    <div>
+      <span class="label">누적 수익률</span>
+      <strong class="{{ return_class }}">{{ cumulative_return }}%</strong>
+    </div>
+    <div>
+      <span class="label">현금</span>
+      <strong>{{ cash }}원</strong>
+    </div>
+  </section>
+
+  <section>
+    <h2>보유 종목</h2>
+    {{ positions_html }}
+  </section>
+
+  <section>
+    <h2>일일 리포트</h2>
+    {{ report_list }}
+  </section>
+</main>
+<footer>
+  <p>업데이트: {{ updated_at }} · 학습/시뮬레이션 용도</p>
+</footer>
+</body>
+</html>

@@ -84,3 +84,41 @@ powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1
 ## 첫 가동
 - 구조 세팅 + GitHub 푸시 완료. **다음 09:00 KST 원격 routine 발화 시 종목 3개 첫 추천**.
 - 추천 직후 가상 매수 체결 기록 → 18시부터 정상 자기보완 루프.
+
+## 모바일 노티 셋업 (HTML 리포트 + 카카오톡)
+
+18:00 리포트가 푸시되면:
+1. GitHub Actions가 `reports/*.md` → HTML 변환 → GitHub Pages 배포
+2. 카카오 '나에게 보내기' API로 요약 + Pages 링크 전송 (OG 카드 미리보기)
+3. 폰 카톡에서 링크 탭 → 모바일 풀화면으로 리포트 열림
+
+### 1회 셋업
+
+**A. GitHub Pages 활성화** (1회)
+- Settings → Pages → Source: **GitHub Actions** 선택
+
+**B. Kakao Developers 앱 등록** (1회)
+- https://developers.kakao.com 에서 앱 생성
+- [앱 설정 > 플랫폼 > Web] 에 `https://example.com` 추가
+- [제품 설정 > 카카오 로그인] 활성화, Redirect URI `https://example.com`
+- [동의항목] '카카오톡 메시지 전송 (talk_message)' 사용 설정
+- REST API 키 복사
+
+**C. Refresh Token 발급** (1회, 로컬에서)
+```bash
+export KAKAO_REST_API_KEY=발급받은_키
+python scripts/kakao_oauth_helper.py
+# 출력된 URL 브라우저로 열고 동의 → ?code=XXX 복사 → 입력
+# 출력된 refresh_token 복사
+```
+
+**D. GitHub Secrets 등록** (1회)
+- Settings → Secrets and variables → Actions → New repository secret
+- `KAKAO_REST_API_KEY` = REST API 키
+- `KAKAO_REFRESH_TOKEN` = 발급받은 refresh_token
+
+### 동작
+- 09/12/15시 commit (`chore(...)`)은 노티 안 감 (Pages 빌드만)
+- 18시 commit (`report:`)에서만 카톡 발송
+- `refresh_token`은 60일 유효. 만료 임박 시 send_kakao.py 로그에 신규 토큰이 출력됨 → Secret 업데이트
+- 60일 지나 완전 만료되면 1회 셋업 C/D 단계 재실행

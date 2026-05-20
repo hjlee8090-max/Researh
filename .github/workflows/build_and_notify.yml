@@ -6,6 +6,7 @@ on:
     paths:
       - "reports/**"
       - "config/portfolio.json"
+      - "config/watchlist.json"
       - "templates/**"
       - "scripts/build_html.py"
       - "scripts/send_kakao.py"
@@ -53,10 +54,10 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
-    # 18:00 리포트 커밋 ("report:" 프리픽스) 일 때만 카톡 노티 발송.
-    # 09/12/15 시 커밋은 'chore(...)' 프리픽스라 발화 안 됨.
+    # 09/12/15 (chore:) 및 18시 (report:) 커밋, 그리고 수동 트리거에서 카톡 발송.
     if: |
       startsWith(github.event.head_commit.message, 'report:') ||
+      startsWith(github.event.head_commit.message, 'chore(') ||
       github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
@@ -69,4 +70,5 @@ jobs:
           KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
           PAGES_URL: ${{ needs.deploy.outputs.page_url }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: python scripts/send_kakao.py

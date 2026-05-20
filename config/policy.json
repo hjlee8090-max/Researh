@@ -1,6 +1,9 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "last_updated": "2026-05-20",
+  "changelog": [
+    "1.1: 기아(000270) 손실 사후 강화 — 단계적 손절(yellow/orange/red), 진입 추세 필터, 구조적 악재 가중치 도입"
+  ],
   "universe": {
     "market": "KOSPI",
     "size": "대형주 (시총 상위 30위 우선, 상위 100위 이내 허용)",
@@ -16,14 +19,39 @@
     "target_return_pct": 10.0,
     "stop_loss_pct": -10.0,
     "tolerance_band_pct": 5.0,
-    "trailing_stop": "목표가 70% 도달 후 -3% 트레일링 허용"
+    "trailing_stop": "목표가 70% 도달 후 -3% 트레일링 허용",
+    "tiered_alerts": {
+      "yellow_pct": -5.0,
+      "orange_pct": -7.0,
+      "red_pct": -10.0,
+      "yellow_action": "원인 3가지 검색·기록 의무, 함정패턴 cross-check, 비중 유지",
+      "orange_action": "보유 비중 50% 즉시 축소 (가상 부분매도)",
+      "red_action": "전량 가상 청산"
+    }
+  },
+  "entry_filters": {
+    "trend_lookback_days": 5,
+    "block_if_cumulative_return_below_pct": -7.0,
+    "block_reason_template": "최근 {lookback}일 누적 수익률 {ret}% — 추세 필터 위배로 진입 보류",
+    "require_pre_mortem_one_liner": true,
+    "structural_bear_keywords": [
+      "관세", "보조금 폐지", "규제", "제재", "감독원", "소송", "리콜",
+      "공급망 단절", "임원 리스크", "회계 이슈", "공정위", "특별검사",
+      "tariff", "sanction", "lawsuit", "recall", "investigation"
+    ],
+    "on_structural_bear_match": {
+      "conviction_adjustment": -1,
+      "max_position_weight_pct_override": 15.0,
+      "require_bear_case_explicit_mention": true
+    }
   },
   "position_sizing": {
     "initial_capital_krw": 5000000,
     "max_positions": 3,
     "max_position_weight_pct": 30.0,
     "min_cash_weight_pct": 10.0,
-    "default_entry_weight_pct": 25.0
+    "default_entry_weight_pct": 25.0,
+    "reduced_entry_weight_pct": 15.0
   },
   "trading_cost": {
     "slippage_pct": 0.2,
@@ -40,6 +68,11 @@
       "단순 1일 변동성 -3% 이내",
       "지수 하락에 동행하는 일시 조정"
     ]
+  },
+  "lessons_logging": {
+    "log_immediately_on_stop_loss": true,
+    "log_immediately_on_tier_change_to_orange_or_red": true,
+    "cross_check_other_holdings_on_macro_or_sector_cause": true
   },
   "disclaimers": [
     "본 시뮬레이션은 교육·학습 목적이며 실제 투자 권유가 아님",

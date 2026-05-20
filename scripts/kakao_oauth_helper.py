@@ -9,8 +9,12 @@
   4. [제품 설정 > 카카오 로그인 > 동의항목] 에서
      '카카오톡 메시지 전송 (talk_message)' 사용 설정
   5. [앱 키] 에서 REST API 키 복사
-  6. 이 스크립트 실행:
+  6. (선택) [제품 설정 > 카카오 로그인 > 고급] 에서 Client Secret 을 사용중이라면
+     해당 코드 값도 복사
+  7. 이 스크립트 실행:
         export KAKAO_REST_API_KEY=발급받은_REST_API_키
+        # Client Secret 활성 상태라면 함께 export
+        export KAKAO_CLIENT_SECRET=발급받은_시크릿_코드
         python scripts/kakao_oauth_helper.py
   7. 출력된 URL을 브라우저로 열고 카카오 동의
   8. 동의 후 example.com 으로 리디렉트됨 (Not Found 페이지여도 OK).
@@ -37,6 +41,7 @@ def main():
                  "예) export KAKAO_REST_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 
     redirect_uri = os.environ.get("KAKAO_REDIRECT_URI", "https://example.com")
+    client_secret = os.environ.get("KAKAO_CLIENT_SECRET")
 
     auth_url = (
         "https://kauth.kakao.com/oauth/authorize?"
@@ -60,12 +65,16 @@ def main():
     if not code:
         sys.exit("code 가 비어있습니다.")
 
-    body = urllib.parse.urlencode({
+    token_params = {
         "grant_type": "authorization_code",
         "client_id": rest_key,
         "redirect_uri": redirect_uri,
         "code": code,
-    }).encode("utf-8")
+    }
+    if client_secret:
+        token_params["client_secret"] = client_secret
+
+    body = urllib.parse.urlencode(token_params).encode("utf-8")
 
     req = urllib.request.Request(
         "https://kauth.kakao.com/oauth/token",

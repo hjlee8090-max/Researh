@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 REST_KEY = os.environ["KAKAO_REST_API_KEY"]
 REFRESH_TOKEN = os.environ["KAKAO_REFRESH_TOKEN"]
+CLIENT_SECRET = os.environ.get("KAKAO_CLIENT_SECRET")
 PAGES_URL = os.environ.get("PAGES_URL", "").rstrip("/")
 
 
@@ -37,13 +38,16 @@ def http_post(url: str, data, headers=None) -> dict:
 
 
 def refresh_access_token() -> dict:
+    params = {
+        "grant_type": "refresh_token",
+        "client_id": REST_KEY,
+        "refresh_token": REFRESH_TOKEN,
+    }
+    if CLIENT_SECRET:
+        params["client_secret"] = CLIENT_SECRET
     return http_post(
         "https://kauth.kakao.com/oauth/token",
-        {
-            "grant_type": "refresh_token",
-            "client_id": REST_KEY,
-            "refresh_token": REFRESH_TOKEN,
-        },
+        params,
         {"Content-Type": "application/x-www-form-urlencoded"},
     )
 

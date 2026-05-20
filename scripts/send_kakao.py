@@ -67,36 +67,64 @@ def find_latest_report() -> Path | None:
     return files[-1] if files else None
 
 
-def extract_report_summary(md_text: str) -> str:
-    m = re.search(r"##\s*한눈에 보기\s*\n(.+?)(?=\n##|\Z)", md_text, re.DOTALL)
-    if not m:
-        return ""
-    lines = []
-    for raw in m.group(1).strip().splitlines():
-        line = raw.strip()
-        if not line.startswith("-"):
-            continue
-        lines.append(line.lstrip("-").strip())
-    return " · ".join(lines[:3])[:180]
-
-
 SLOT_META = {
-    "09:00": ("🌅", "09:00 개장 점검"),
-    "12:00": ("🕛", "12:00 장중 점검"),
-    "15:00": ("🔔", "15:00 마감 점검"),
+    "09:00": ("🌅", "09:00 개장 점검", "## 🌅 09:00 개장 점검"),
+    "12:00": ("🕛", "12:00 장중 점검", "## 🕛 12:00 장중 점검"),
+    "15:00": ("🔔", "15:00 마감 임박 점검", "## 🔔 15:00 마감 임박 점검"),
 }
 
+REPORT_HEADER_18 = "## 📊 18:00 종합·확정 리포트"
 
-def detect_slot(commit_msg: str) -> tuple[str, str] | None:
-    """커밋 메시지에서 routine 슬롯 식별. (emoji, title) 반환."""
+
+def detect_slot(commit_msg: str) -> tuple[str, str, str] | None:
+    """커밋 메시지에서 routine 슬롯 식별. (emoji, title, section_header) 반환."""
     for slot, meta in SLOT_META.items():
         if slot in commit_msg:
             return meta
     return None
 
 
-def build_watchlist_message(slot_meta: tuple[str, str]) -> tuple[str, str] | None:
-    """watchlist.json 기반 종목별 한 줄 요약. (title, body) 반환."""
+def extract_section(md_text: str, header: str) -> str:
+    """리포트에서 특정 ## 헤더 섹션의 본문만 추출 (다음 ## 또는 EOF까지)."""
+    pattern = re.escape(header) + r"\s*\n(.+?)(?=\n##\s|\Z)"
+    m = re.search(pattern, md_text, re.DOTALL)
+    return m.group(1).strip() if m else ""
+
+
+def extract_one_glance(section_text: str) -> list[str]:
+    """섹션 내부의 '한눈에 보기' 서브섹션에서 불릿 라인을 추출."""
+    m = re.search(r"###\s*한눈에 보기.*?\n(.+?)(?=\n###|\Z)", section_text, re.DOTALL)
+    if not m:
+        # fallback: 섹션 첫 불릿 몇 줄
+        body = section_text
+    else:
+        body = m.group(1)
+    lines = []
+    for raw in body.strip().splitlines():
+        s = raw.strip()
+        if s.startswith("-"):
+            lines.append(s.lstrip("-").strip())
+        elif s.startswith("•"):
+            lines.append(s.lstrip("•").strip())
+    return lines
+
+
+def build_slot_message(slot_meta: tuple[str, str, str]) -> tuple[str, str] | None:
+    """리포트 파일에서 해당 시간대 섹션의 '한눈에 보기' 를 뽑아 카톡 본문 생성.
+    리포트 섹션이 아직 없으면 watchlist.json 폴백."""
+    emoji, slot_title, section_header = slot_meta
+    report = find_latest_report()
+    if report is not None:
+        text = report.read_text(encoding="utf-8")
+        section = extract_section(text, section_header)
+        if section:
+            glance = extract_one_glance(section)
+            if glance:
+                title = f"{emoji} {slot_title}"
+                body = "\n".join(f"- {line}" for line in glance[:4])
+                return title, body
+
+    # 폴백: watchlist.json 종목별 의견
     wl_path = ROOT / "config" / "watchlist.json"
     if not wl_path.exists():
         return None
@@ -104,8 +132,6 @@ def build_watchlist_message(slot_meta: tuple[str, str]) -> tuple[str, str] | Non
     stocks = data.get("stocks", [])
     if not stocks:
         return None
-
-    emoji, slot_title = slot_meta
     lines = []
     for s in stocks:
         name = s.get("name", s.get("ticker", "?"))
@@ -114,25 +140,33 @@ def build_watchlist_message(slot_meta: tuple[str, str]) -> tuple[str, str] | Non
             lines.append(f"- {name}: 코멘트 없음")
             continue
         last = comments[-1]
-        action = last.get("action", "")
-        opinion = last.get("opinion", "")
-        verdict = opinion or action
+        verdict = last.get("opinion") or last.get("action") or ""
         lines.append(f"- {name}: {verdict}")
-
     title = f"{emoji} {slot_title}"
-    body = "\n".join(lines)
-    return title, body
+    return title, "\n".join(lines)
 
 
 def build_report_message() -> tuple[str, str, str] | None:
-    """리포트 .md 기반 요약. (title, body, date) 반환."""
+    """18시 종합 섹션 기반 요약. (title, body, date) 반환."""
     report = find_latest_report()
     if report is None:
         return None
     date = report.stem
     text = report.read_text(encoding="utf-8")
-    summary = extract_report_summary(text) or "오늘 리포트가 갱신되었습니다."
-    title = f"📊 {date} KOSPI 일일 리포트"
+    section = extract_section(text, REPORT_HEADER_18)
+    if section:
+        glance = extract_one_glance(section)
+    else:
+        # 18시 섹션이 없는 구버전 호환: 옛 '## 한눈에 보기' 탐색
+        m = re.search(r"##\s*한눈에 보기\s*\n(.+?)(?=\n##|\Z)", text, re.DOTALL)
+        glance = []
+        if m:
+            for raw in m.group(1).strip().splitlines():
+                s = raw.strip()
+                if s.startswith("-"):
+                    glance.append(s.lstrip("-").strip())
+    summary = "\n".join(f"- {l}" for l in glance[:4]) if glance else "오늘 리포트가 갱신되었습니다."
+    title = f"📊 {date} KOSPI 일일 종합 리포트"
     return title, summary, date
 
 

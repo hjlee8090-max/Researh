@@ -87,10 +87,20 @@ powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1
 
 ## 모바일 노티 셋업 (HTML 리포트 + 카카오톡)
 
-18:00 리포트가 푸시되면:
-1. GitHub Actions가 `reports/*.md` → HTML 변환 → GitHub Pages 배포
-2. 카카오 '나에게 보내기' API로 요약 + Pages 링크 전송 (OG 카드 미리보기)
-3. 폰 카톡에서 링크 탭 → 모바일 풀화면으로 리포트 열림
+09/12/15/18시 routine 마다 단계적으로:
+1. 각 routine 이 `reports/YYYY-MM-DD.md` 의 **자기 시간대 섹션** 을 누적 작성 (09시 신규 생성, 12/15/18은 append)
+2. GitHub Actions가 `reports/*.md` → HTML 변환 → GitHub Pages 배포
+3. 카카오 '나에게 보내기' API 로 **해당 시간대 섹션의 '한눈에 보기'** 요약 + Pages 링크 전송
+4. 폰 카톡에서 링크 탭 → 같은 페이지에 09→12→15→18 흐름이 누적되어 있어 "왜 이 결정을 했는지" 추적 가능
+
+### 리포트 누적 구조 (파이프라인)
+```
+🌅 09:00 개장 점검          ← 09시 routine 작성 (신규 생성)
+🕛 12:00 장중 점검          ← 12시 routine 추가 (09시 검증·반박·강화)
+🔔 15:00 마감 임박 점검      ← 15시 routine 추가 (익일 액션 후보)
+📊 18:00 종합·확정 리포트    ← 18시 routine 추가 (종가·오차·자기보완 학습)
+```
+각 routine 은 **이전 시간대 섹션을 절대 수정하지 않고** 자기 섹션만 append → 의사결정 히스토리 보존 → 18시 종합에서 흐름 검증.
 
 ### 1회 셋업
 
@@ -118,7 +128,7 @@ python scripts/kakao_oauth_helper.py
 - `KAKAO_REFRESH_TOKEN` = 발급받은 refresh_token
 
 ### 동작
-- 09/12/15시 commit (`chore(...)`)은 노티 안 감 (Pages 빌드만)
-- 18시 commit (`report:`)에서만 카톡 발송
+- 09/12/15시 commit (`chore(09:00 ...)` / `chore(12:00 ...)` / `chore(15:00 ...)`) — 해당 시간대 섹션 요약을 카톡 발송
+- 18시 commit (`report:`) — 18시 종합 섹션의 '한눈에 보기' 요약을 카톡 발송
 - `refresh_token`은 60일 유효. 만료 임박 시 send_kakao.py 로그에 신규 토큰이 출력됨 → Secret 업데이트
 - 60일 지나 완전 만료되면 1회 셋업 C/D 단계 재실행

@@ -231,7 +231,7 @@ def main():
             url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
             button = "리포트 열기"
         else:
-            wl_msg = build_watchlist_message(slot_meta)
+            wl_msg = build_slot_message(slot_meta)
             if wl_msg is None:
                 print("no watchlist data, skip notify", flush=True)
                 return

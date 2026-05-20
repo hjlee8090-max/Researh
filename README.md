@@ -36,10 +36,11 @@ prompts/
 ## 스케줄 (Asia/Seoul, 평일)
 | 시각 | 내용 | 산출물 갱신 |
 |------|------|------------|
-| 09:00 | 개장 후 뉴스 스캔 → 종목별 매수/매도/홀드 + 단기 액션 | watchlist.json, trade_log.jsonl |
-| 12:00 | 장중 점검 (모멘텀/이슈) | watchlist.json 코멘트 |
-| 15:00 | 마감 점검 (15:30 정마감 직전), 종가 임박치로 1차 검증 | watchlist.json 코멘트 |
-| 18:00 | 종가 확정 → 목표가 오차 판정 → lessons.md 갱신<br>포트폴리오 평가·체결, 일일 리포트 작성, 익일 종목 교체 결정 | reports/, portfolio.json, lessons.md, watchlist.json |
+| 00:00 | 글로벌 야간 점검 (미국장 개장 직후·유럽장 후반·환율·원자재)<br>→ 보유 종목별 야간 영향 매핑·한국 개장 갭 예측 | reports/(자정 섹션 생성), watchlist.json 코멘트 |
+| 09:00 | 자정 예측 검증 + 미국장 마감(05:00)까지 추가 흐름 + 한국 개장 인사이트 | reports/(09시 섹션 append), watchlist.json, trade_log.jsonl |
+| 12:00 | 장중 점검 (모멘텀/이슈/단계 경보) | reports/(12시 섹션 append), watchlist.json |
+| 15:00 | 마감 점검 (15:30 정마감 직전), 종가 임박치로 1차 검증 | reports/(15시 섹션 append), watchlist.json |
+| 18:00 | 종가 확정 → 목표가 오차 판정 → lessons.md 갱신<br>포트폴리오 평가·체결, 종합 리포트 작성, 익일 종목 교체 결정 | reports/(18시 종합 섹션 append), portfolio.json, lessons.md, watchlist.json |
 
 ## 자기보완 루프
 1. 18시 프롬프트가 watchlist의 **각 종목 실제 종가 vs 목표가** 비교
@@ -61,6 +62,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 
 | 시각 | Routine ID |
 |---|---|
+| 00:00 | _(미등록 — https://claude.ai/code/routines 에서 `prompts/0000_global.md` 를 실행하도록 매일 00:00 KST trigger 추가 필요)_ |
 | 09:00 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
@@ -95,12 +97,13 @@ powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1
 
 ### 리포트 누적 구조 (파이프라인)
 ```
-🌅 09:00 개장 점검          ← 09시 routine 작성 (신규 생성)
-🕛 12:00 장중 점검          ← 12시 routine 추가 (09시 검증·반박·강화)
+🌙 00:00 글로벌 야간 점검    ← 00시 routine 작성 (그날 파일 신규 생성, 미국장·유럽장·환율·매크로 → 한국 영향 매핑)
+🌅 09:00 개장 점검          ← 09시 routine 추가 (자정 예측 검증 + 미국장 마감까지 흐름 + 한국 개장 인사이트)
+🕛 12:00 장중 점검          ← 12시 routine 추가 (09시 검증·반박·강화, 단계 경보)
 🔔 15:00 마감 임박 점검      ← 15시 routine 추가 (익일 액션 후보)
-📊 18:00 종합·확정 리포트    ← 18시 routine 추가 (종가·오차·자기보완 학습)
+📊 18:00 종합·확정 리포트    ← 18시 routine 추가 (종가·오차·자기보완 학습 + 다음날 자정 routine 이 흡수할 메모)
 ```
-각 routine 은 **이전 시간대 섹션을 절대 수정하지 않고** 자기 섹션만 append → 의사결정 히스토리 보존 → 18시 종합에서 흐름 검증.
+각 routine 은 **이전 시간대 섹션을 절대 수정하지 않고** 자기 섹션만 append → 의사결정 히스토리 보존 → 18시 종합에서 흐름 검증 → 다음날 00시 routine 이 다시 이어받음 (순환 파이프라인).
 
 ### 1회 셋업
 
@@ -128,7 +131,8 @@ python scripts/kakao_oauth_helper.py
 - `KAKAO_REFRESH_TOKEN` = 발급받은 refresh_token
 
 ### 동작
+- 00시 commit (`chore(00:00 ...)`) — 🌙 글로벌 야간 섹션 요약을 카톡 발송 (자정에 자고 있어도 아침에 확인 가능)
 - 09/12/15시 commit (`chore(09:00 ...)` / `chore(12:00 ...)` / `chore(15:00 ...)`) — 해당 시간대 섹션 요약을 카톡 발송
-- 18시 commit (`report:`) — 18시 종합 섹션의 '한눈에 보기' 요약을 카톡 발송
+- 18시 commit (`report:`) — 📊 18시 종합 섹션의 '한눈에 보기' 요약을 카톡 발송
 - `refresh_token`은 60일 유효. 만료 임박 시 send_kakao.py 로그에 신규 토큰이 출력됨 → Secret 업데이트
 - 60일 지나 완전 만료되면 1회 셋업 C/D 단계 재실행

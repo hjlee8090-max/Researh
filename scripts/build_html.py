@@ -6,10 +6,14 @@ GitHub Actions에서 호출되며, GitHub Pages 배포 artifact로 업로드된�
 import json
 import re
 import shutil
+import html
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-import markdown
+try:
+    import markdown
+except ModuleNotFoundError:
+    markdown = None
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = ROOT / "reports"
@@ -41,6 +45,50 @@ def extract_oneline(md_text: str) -> str:
 
 
 def md_to_html(md_text: str) -> str:
+    if markdown is None:
+        blocks = []
+        in_list = False
+        for raw in md_text.splitlines():
+            line = raw.rstrip()
+            if not line:
+                if in_list:
+                    blocks.append("</ul>")
+                    in_list = False
+                continue
+            if line.startswith("# "):
+                if in_list:
+                    blocks.append("</ul>")
+                    in_list = False
+                blocks.append(f"<h1>{html.escape(line[2:].strip())}</h1>")
+            elif line.startswith("## "):
+                if in_list:
+                    blocks.append("</ul>")
+                    in_list = False
+                blocks.append(f"<h2>{html.escape(line[3:].strip())}</h2>")
+            elif line.startswith("### "):
+                if in_list:
+                    blocks.append("</ul>")
+                    in_list = False
+                blocks.append(f"<h3>{html.escape(line[4:].strip())}</h3>")
+            elif line.startswith("- "):
+                if not in_list:
+                    blocks.append("<ul>")
+                    in_list = True
+                blocks.append(f"<li>{html.escape(line[2:].strip())}</li>")
+            elif line.startswith("> "):
+                if in_list:
+                    blocks.append("</ul>")
+                    in_list = False
+                blocks.append(f"<blockquote>{html.escape(line[2:].strip())}</blockquote>")
+            else:
+                if in_list:
+                    blocks.append("</ul>")
+                    in_list = False
+                blocks.append(f"<p>{html.escape(line)}</p>")
+        if in_list:
+            blocks.append("</ul>")
+        return "\n".join(blocks)
+
     md = markdown.Markdown(
         extensions=["tables", "fenced_code", "sane_lists"],
         output_format="html5",

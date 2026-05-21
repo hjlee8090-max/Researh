@@ -1,7 +1,8 @@
 {
-  "version": "1.1",
-  "last_updated": "2026-05-20",
+  "version": "1.2",
+  "last_updated": "2026-05-21",
   "changelog": [
+    "1.2: 주간 계좌 목표 기반 동적 목표가·손절가, 가격 데이터 신뢰도, 주말 인사이트 루프 추가",
     "1.1: 기아(000270) 손실 사후 강화 — 단계적 손절(yellow/orange/red), 진입 추세 필터, 구조적 악재 가중치 도입"
   ],
   "universe": {
@@ -20,6 +21,22 @@
     "stop_loss_pct": -10.0,
     "tolerance_band_pct": 5.0,
     "trailing_stop": "목표가 70% 도달 후 -3% 트레일링 허용",
+    "weekly_account_target_return_pct": 10.0,
+    "max_weekly_drawdown_pct": -5.0,
+    "max_single_trade_risk_pct_of_equity": 1.5,
+    "min_reward_risk_ratio_for_new_entry": 1.2,
+    "time_stop": {
+      "enabled": true,
+      "review_day": "Thursday",
+      "action": "목요일 15시까지 주간 목표 기여도가 30% 미만이고 진입 논리가 강화되지 않으면 비중 축소 또는 교체 후보로 표시"
+    },
+    "dynamic_exit_model": {
+      "enabled": true,
+      "target_price_rule": "고정 +10%가 아니라 weekly_plan.remaining_required_return_pct, 종목 변동성, 저항선/뉴스 촉매를 함께 반영한다. 단, 기대 보상/위험 비율이 1.2 미만이면 신규 진입 금지.",
+      "stop_price_rule": "고정 -10%가 아니라 이번 주 남은 손실 예산과 종목별 무효화 가격을 함께 반영한다. 단일 거래 손실은 현재 equity의 1.5%를 넘기지 않는다.",
+      "scale_out_rule": "목표 기여도의 70% 이상 달성 후 신규 악재가 나오면 50% 부분익절을 우선 검토하고, 나머지는 -3% 트레일링으로 관리한다.",
+      "scale_in_rule": "기존 보유 종목 추가매수는 주간 thesis가 강화되고 가격 신뢰도 high이며 현금 비중이 목표보다 높을 때만 허용한다."
+    },
     "tiered_alerts": {
       "yellow_pct": -5.0,
       "orange_pct": -7.0,
@@ -27,6 +44,32 @@
       "yellow_action": "원인 3가지 검색·기록 의무, 함정패턴 cross-check, 비중 유지",
       "orange_action": "보유 비중 50% 즉시 축소 (가상 부분매도)",
       "red_action": "전량 가상 청산"
+    }
+  },
+  "weekly_cycle": {
+    "plan_file": "config/weekly_plan.json",
+    "week_starts_on": "Monday",
+    "weekend_review_day": "Saturday or Sunday",
+    "daily_linkage_rule": "모든 00/09/12/15/18 routine은 weekly_plan.json의 thesis, watch_items, invalidation_triggers를 먼저 읽고 오늘 판단이 주간 인사이트를 강화/약화/무효화하는지 기록한다.",
+    "weekend_report_output": "reports/YYYY-MM-DD-weekend.md",
+    "required_weekend_sections": [
+      "지난주 성과와 실수",
+      "주말 뉴스와 다음주 핵심 인사이트",
+      "다음주 주간 목표와 리스크 예산",
+      "데일리 리포트 연결 규칙",
+      "월요일 09시 우선 액션"
+    ]
+  },
+  "price_data_quality": {
+    "min_sources_for_trade": 2,
+    "max_source_price_gap_pct": 1.0,
+    "stale_after_minutes": 20,
+    "block_trade_if_confidence_below": "medium",
+    "require_timestamp": true,
+    "confidence_levels": {
+      "high": "동일 시각대 2개 이상 출처 가격 괴리 1% 이하",
+      "medium": "1개 신뢰 출처 또는 2개 출처 괴리 1~2%",
+      "low": "출처 1개 미만, 시각 불명, 또는 출처 간 괴리 2% 초과"
     }
   },
   "entry_filters": {
@@ -73,6 +116,31 @@
     "log_immediately_on_stop_loss": true,
     "log_immediately_on_tier_change_to_orange_or_red": true,
     "cross_check_other_holdings_on_macro_or_sector_cause": true
+  },
+  "codex_automation": {
+    "daily_audit": {
+      "suggested_time_kst": "19:30",
+      "execution_preference": "GitHub Actions 또는 Codex worktree",
+      "commit_prefix": "audit:",
+      "purpose": "JSON 유효성, 리포트 자리표시자, trade_log 누락, GitHub Pages/Kakao 알림 실패 가능성을 점검하고 모바일 알림용 감사 리포트를 만든다."
+    },
+    "saturday_review": {
+      "suggested_time_kst": "Saturday 18:00",
+      "execution_preference": "Claude cloud routine 또는 Codex worktree",
+      "commit_prefix": "sat-review:",
+      "purpose": "지난주 리포트·체결·성과를 전문 애널리스트 관점에서 사후분석하고 lessons/policy 반영 후보를 만든다."
+    },
+    "sunday_strategy": {
+      "suggested_time_kst": "Sunday 18:00",
+      "execution_preference": "Claude cloud routine 또는 Codex worktree",
+      "commit_prefix": "sun-strategy:",
+      "purpose": "주말 뉴스·다음주 이벤트·섹터 인사이트를 종합해 weekly_plan.json과 일요일 전략 리포트를 갱신한다."
+    },
+    "policy_patch_review": {
+      "suggested_time_kst": "Sunday 20:00",
+      "execution_preference": "Codex worktree",
+      "purpose": "lessons.md의 반복 교훈이 policy.json/prompt 규칙으로 실제 반영됐는지 검사하고 패치 후보를 제안한다."
+    }
   },
   "disclaimers": [
     "본 시뮬레이션은 교육·학습 목적이며 실제 투자 권유가 아님",

@@ -7,10 +7,16 @@ on:
       - "reports/**"
       - "config/portfolio.json"
       - "config/watchlist.json"
+      - "config/weekly_plan.json"
+      - "state/audit_log.jsonl"
       - "templates/**"
+      - "docs/**"
       - "scripts/build_html.py"
       - "scripts/send_kakao.py"
+      - "scripts/audit_pipeline.py"
+      - "scripts/write_audit_report.py"
       - ".github/workflows/build_and_notify.yml"
+      - ".github/workflows/pipeline_audit.yml"
   workflow_dispatch:
 
 permissions:
@@ -32,6 +38,8 @@ jobs:
           python-version: "3.11"
       - name: Install deps
         run: pip install --quiet markdown
+      - name: Audit pipeline
+        run: python scripts/audit_pipeline.py
       - name: Build HTML
         run: python scripts/build_html.py
       - name: Upload artifact
@@ -57,6 +65,10 @@ jobs:
     # 09/12/15 (chore:) 및 18시 (report:) 커밋, 그리고 수동 트리거에서 카톡 발송.
     if: |
       startsWith(github.event.head_commit.message, 'report:') ||
+      startsWith(github.event.head_commit.message, 'weekly:') ||
+      startsWith(github.event.head_commit.message, 'audit:') ||
+      startsWith(github.event.head_commit.message, 'sat-review:') ||
+      startsWith(github.event.head_commit.message, 'sun-strategy:') ||
       startsWith(github.event.head_commit.message, 'chore(') ||
       github.event_name == 'workflow_dispatch'
     steps:

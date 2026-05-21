@@ -11,15 +11,18 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ProjectRoot = "C:\Users\zzxx7\OneDrive\문서\클로드\주식"
+$ProjectRoot = Split-Path -Parent $PSScriptRoot
 $RunnerPath  = Join-Path $ProjectRoot "scripts\run_prompt.ps1"
 $TaskFolder  = "\주식오토플로우"
 
 $Slots = @(
-    @{ Name = "주식_0900_개장점검";  Time = "09:00"; Prompt = "0900_pre_market" }
-    @{ Name = "주식_1200_장중점검";  Time = "12:00"; Prompt = "1200_midday" }
-    @{ Name = "주식_1500_마감점검";  Time = "15:00"; Prompt = "1500_close" }
-    @{ Name = "주식_1800_일일리포트"; Time = "18:00"; Prompt = "1800_report" }
+    @{ Name = "주식_0030_글로벌점검"; Time = "00:30"; Prompt = "0000_global"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
+    @{ Name = "주식_0900_개장점검";  Time = "09:00"; Prompt = "0900_pre_market"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
+    @{ Name = "주식_1200_장중점검";  Time = "12:00"; Prompt = "1200_midday"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
+    @{ Name = "주식_1500_마감점검";  Time = "15:00"; Prompt = "1500_close"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
+    @{ Name = "주식_1800_일일리포트"; Time = "18:00"; Prompt = "1800_report"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
+    @{ Name = "주식_토요일_사후분석"; Time = "18:00"; Prompt = "saturday_review"; Days = @("Saturday") }
+    @{ Name = "주식_일요일_다음주전략"; Time = "18:00"; Prompt = "sunday_strategy"; Days = @("Sunday") }
 )
 
 if ($Unregister) {
@@ -48,7 +51,7 @@ foreach ($s in $Slots) {
 
     # 평일(월~금) 매일 지정 시각
     $trigger = New-ScheduledTaskTrigger -Weekly `
-        -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday `
+        -DaysOfWeek $s.Days `
         -At $s.Time
 
     # PC가 꺼져있어 누락된 경우 다음 부팅 시 즉시 보강 실행

@@ -4,12 +4,12 @@
 
 param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("0900_pre_market", "1200_midday", "1500_close", "1800_report")]
+    [ValidateSet("0000_global", "0900_pre_market", "1200_midday", "1500_close", "1800_report", "saturday_review", "sunday_strategy", "weekend_report")]
     [string]$PromptName
 )
 
 $ErrorActionPreference = "Stop"
-$ProjectRoot = "C:\Users\zzxx7\OneDrive\문서\클로드\주식"
+$ProjectRoot = Split-Path -Parent $PSScriptRoot
 $PromptPath = Join-Path $ProjectRoot "prompts\$PromptName.md"
 $LogDir = Join-Path $ProjectRoot "state\run_logs"
 if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir | Out-Null }

@@ -16,7 +16,7 @@
 
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`
-2. `config/policy.json`, `config/watchlist.json`, `config/portfolio.json`
+2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 3. `state/trade_log.jsonl` (최근 30라인)
 
 ## 1. 종가 확보 및 목표가 검증
@@ -37,6 +37,16 @@
 - `config/portfolio.json` 저장
 - `portfolio.json`의 `history` 배열에 오늘자 스냅샷 추가:
   `{"date":"YYYY-MM-DD","equity":...,"cash":...,"daily_return_pct":...,"cumulative_return_pct":...}`
+
+## 2-1. 주간 목표 평가 및 weekly_plan 갱신
+종가 기준으로 `config/weekly_plan.json`을 갱신한다.
+- `objective.current_equity`, `gap_to_target`, `required_return_from_now_pct`
+- `capital_plan.cash`, `cash_weight_pct`, `invested_weight_pct`
+- 각 `weekly_thesis`의 오늘 판정: 강화 / 유지 / 약화 / 무효화 후보
+- `watch_items`: 내일 00시/09시가 이어받아야 할 뉴스·가격·수급 트리거
+- `daily_bridge.18:00`에 오늘 요약 1줄 추가 또는 갱신
+
+보유 종목이 기존 목표가에 모두 도달해도 주간 목표에 부족하면, 18시 리포트의 "내일 액션 플랜"에 **현금 활용 후보 / 목표 현실화 / 리스크 축소** 중 하나를 반드시 선택해 적는다.
 
 ## 3. 자기보완 학습 (lessons.md 갱신)
 오차 범위(±5%)를 벗어난 종목 각각에 대해 `state/lessons.md`에 다음 형식으로 항목 추가:
@@ -110,6 +120,17 @@
 | 미실현 손익 | ±XXX,XXX원 |
 | 승률 | X/X (XX%) |
 
+### 주간 목표 대시보드
+| 항목 | 값 |
+|---|---|
+| 이번 주 시작 자산 | X,XXX,XXX원 |
+| 이번 주 목표 자산 | X,XXX,XXX원 |
+| 현재 자산 | X,XXX,XXX원 |
+| 목표까지 부족 금액 | X,XXX,XXX원 |
+| 현재 현금 비중 | XX.X% |
+| 보유 종목 목표가 도달 시 예상 자산 | X,XXX,XXX원 |
+| 주간 목표 판정 | 달성 가능 / 공격적 재조정 필요 / 리스크 축소 우선 |
+
 오늘의 가상 체결 내역 (있다면 표로):
 | 시각 | 종목 | 매수/매도 | 가격 | 수량 | 사유 |
 
@@ -124,11 +145,13 @@
 - 오차 발생 종목: ... (사유 분류)
 - lessons.md 추가 교훈 1~3줄
 - 누적 패턴 경고 (있다면)
+- weekly_plan에 반영한 watch_items / thesis 변화 1~3줄
 
 ### 내일 액션 플랜
 - 09시 점검 종목: ...
 - 신규 후보 자리: (청산 발생 시) — 어떤 섹터·테마
 - 다가오는 매크로 이벤트
+- 주간 목표 관점 액션: 현금 활용 / 보유 유지 / 비중 축소 / 목표 재조정 중 1개
 
 ### 면책
 본 산출물은 학습·시뮬레이션 목적이며 실제 투자 권유가 아닙니다.

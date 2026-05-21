@@ -1,0 +1,65 @@
+name: Pipeline Audit Report
+
+on:
+  schedule:
+    # 19:30 KST, Monday-Friday
+    - cron: "30 10 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install --quiet markdown
+      - name: Write audit report
+        run: python scripts/write_audit_report.py || true
+      - name: Commit audit report
+        id: commit
+        run: |
+          git config user.name "kospi-autoflow-bot"
+          git config user.email "hjlee8090@gmail.com"
+          git add reports/ state/audit_log.jsonl
+          if git diff --cached --quiet; then
+            echo "No audit changes"
+            echo "message=audit: $(date -u +%Y-%m-%d) pipeline health report" >> "$GITHUB_OUTPUT"
+          else
+            MSG="audit: $(date -u +%Y-%m-%d) pipeline health report"
+            git commit -m "$MSG"
+            git push
+            echo "message=$MSG" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build HTML
+        run: python scripts/build_html.py
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./_site
+      - id: deployment
+        uses: actions/deploy-pages@v5
+      - name: Send Kakao notification
+        env:
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          COMMIT_MESSAGE: ${{ steps.commit.outputs.message }}
+        run: python scripts/send_kakao.py

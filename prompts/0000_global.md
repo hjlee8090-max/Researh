@@ -13,16 +13,18 @@
 ## 0. 컨텍스트 적재 (이 순서)
 1. `state/lessons.md` — 글로벌 매크로 패턴 누적 학습
 2. `config/policy.json`
-3. **`reports/` 의 가장 최근 파일** (= 어제 18시 종합 리포트)
+3. `config/weekly_plan.json` — **이번 주 thesis, watch_items, invalidation_triggers**
+4. **`reports/` 의 가장 최근 파일** (= 어제 18시 종합 리포트 또는 직전 주말 전략 리포트)
    - 특히 `## 📊 18:00 종합·확정 리포트` 의 다음 항목을 흡수:
      - "내일 액션 플랜" — 어제 18시가 글로벌 이벤트를 어떻게 예상했는지
      - "오늘 배운 것" — 자기보완 다음 진입 룰
      - 종목별 종가·목표가 괴리
    - 어제 리포트가 없거나(첫 가동) 18시 섹션이 비어있으면 그 사실을 명시
-4. `config/watchlist.json` — 보유 종목
-5. `config/portfolio.json`
+5. `config/watchlist.json` — 보유 종목
+6. `config/portfolio.json`
 
 > **연결 규칙**: 자정 routine 은 어제 18시 결론의 **검증·갱신** 단계다. 글로벌 흐름이 어제 결론을 강화하는지/뒤집는지 명시적으로 답한다.
+> **주간 연결 규칙**: 모든 글로벌 뉴스는 `weekly_plan.json`의 `weekly_thesis` 중 어느 항목을 강화/약화/무효화하는지 분류한다. 해당되지 않는 뉴스는 "주간 thesis 외 신규 변수" 로 표시한다.
 
 ## 1. 웹 검색 (글로벌 매크로 집중)
 다음 키워드로 WebSearch 를 수행한다 (영문 우선):
@@ -48,6 +50,7 @@
 - "China economy news today" (한국 수출 영향)
 - 지정학 이슈: "geopolitics news today"
 - 정책 이슈: "US tariff news today" (자동차·반도체 노출 시 즉시 보유 종목 영향)
+- 주말 이후 첫 거래일이면: "weekend market news", "Korea stock market next week", "Fed calendar this week", "earnings calendar Korea this week"
 
 ## 2. 한국 시장 연계 분석 (핵심 단계)
 검색 결과를 단순 나열하지 않는다. **"이 글로벌 이슈가 우리 보유 종목에 어떻게 작용하는가"** 를 매핑:
@@ -63,6 +66,13 @@
 - 위험선호 / 위험회피 판정 (VIX·DXY·금·BTC 조합으로)
 - 외국인 수급 예상 방향: 매수 우위 / 매도 우위 / 중립
 - 환율 영향: 수출주 호재·악재 / 내수주 영향
+
+### 2-3. 주간 thesis 영향도 분류 (의무)
+`config/weekly_plan.json`의 각 `weekly_thesis`에 대해:
+- 상태: 강화 / 유지 / 약화 / 무효화 후보
+- 근거 뉴스 1~2개
+- 09시 routine이 확인해야 할 가격·뉴스·수급 트리거
+- `invalidation_triggers`에 매칭되는 뉴스가 있으면 09시 우선순위 🔴 로 승격
 
 ## 3. 리포트에 자정 섹션 작성 (파이프라인 1단계 — 새 날의 시작)
 **오늘 날짜의 `reports/YYYY-MM-DD.md` 파일을 새로 생성** 한다 (이미 존재하면 덮어쓰기 — 자정이 그날의 첫 routine).
@@ -121,6 +131,11 @@
 - 위험선호 종합: ★☆☆☆☆ ~ ★★★★★ (5단계)
 - 외국인 수급 예상: 매수 / 매도 / 중립
 - 09시 routine 이 특히 주목할 종목/이슈: ...
+
+### 주간 thesis 야간 판정
+| thesis | 상태 | 근거 | 09시 확인 트리거 |
+|---|---|---|---|
+| ... | 강화/유지/약화/무효화 후보 | ... | ... |
 
 ---
 

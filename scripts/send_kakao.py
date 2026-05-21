@@ -67,6 +67,14 @@ def find_latest_report() -> Path | None:
     return files[-1] if files else None
 
 
+def find_latest_matching_report(pattern: str) -> Path | None:
+    reports_dir = ROOT / "reports"
+    if not reports_dir.exists():
+        return None
+    files = sorted(reports_dir.glob(pattern))
+    return files[-1] if files else None
+
+
 SLOT_META = {
     "00:00": ("🌙", "00:00 글로벌 야간 점검", "## 🌙 00:00 글로벌 야간 점검"),
     "09:00": ("🌅", "09:00 개장 점검", "## 🌅 09:00 개장 점검"),
@@ -75,6 +83,7 @@ SLOT_META = {
 }
 
 REPORT_HEADER_18 = "## 📊 18:00 종합·확정 리포트"
+WEEKEND_HEADER = "## 한눈에 보기"
 
 
 def detect_slot(commit_msg: str) -> tuple[str, str, str] | None:
@@ -171,6 +180,51 @@ def build_report_message() -> tuple[str, str, str] | None:
     return title, summary, date
 
 
+def build_weekend_message() -> tuple[str, str, str] | None:
+    """주말 전략 리포트의 한눈에 보기 요약. (title, body, date) 반환."""
+    reports_dir = ROOT / "reports"
+    if not reports_dir.exists():
+        return None
+    files = sorted(reports_dir.glob("*-weekend.md"))
+    report = files[-1] if files else find_latest_report()
+    if report is None:
+        return None
+    date = report.stem
+    text = report.read_text(encoding="utf-8")
+    section = extract_section(text, WEEKEND_HEADER)
+    glance = extract_one_glance(section) if section else []
+    if not glance:
+        # fallback: 파일 앞부분의 불릿만 추출
+        glance = []
+        for raw in text.splitlines()[:40]:
+            s = raw.strip()
+            if s.startswith("-"):
+                glance.append(s.lstrip("-").strip())
+    summary = "\n".join(f"- {l}" for l in glance[:4]) if glance else "주말 전략 리포트가 갱신되었습니다."
+    title = f"🧭 {date} 주말 전략 리포트"
+    return title, summary, date
+
+
+def build_pattern_report_message(pattern: str, title_prefix: str, fallback: str) -> tuple[str, str, str] | None:
+    """패턴에 맞는 최신 리포트의 '요약' 섹션을 모바일 알림으로 변환."""
+    report = find_latest_matching_report(pattern)
+    if report is None:
+        return None
+    date = report.stem
+    text = report.read_text(encoding="utf-8")
+    section = extract_section(text, "## 요약")
+    glance = extract_one_glance(section) if section else []
+    if not glance:
+        glance = []
+        for raw in text.splitlines()[:50]:
+            s = raw.strip()
+            if s.startswith("-"):
+                glance.append(s.lstrip("-").strip())
+    summary = "\n".join(f"- {l}" for l in glance[:4]) if glance else fallback
+    title = f"{title_prefix} {date}"
+    return title, summary, date
+
+
 def send_kakao(access_token: str, title: str, body: str, url: str, button_title: str) -> dict:
     text = f"{title}\n\n{body}"
     if len(text) > 200:
@@ -209,9 +263,45 @@ def main():
         print("=" * 60, flush=True)
 
     is_report = COMMIT_MESSAGE.startswith("report:")
+    is_weekly = COMMIT_MESSAGE.startswith("weekly:")
+    is_audit = COMMIT_MESSAGE.startswith("audit:")
+    is_sat_review = COMMIT_MESSAGE.startswith("sat-review:")
+    is_sun_strategy = COMMIT_MESSAGE.startswith("sun-strategy:")
     base_url = PAGES_URL or "https://github.com/hjlee8090-max/Researh"
 
-    if is_report:
+    if is_audit:
+        msg = build_pattern_report_message("*-audit.md", "🧪 파이프라인 감사", "파이프라인 감사 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no audit reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "감사 리포트 열기"
+    elif is_sat_review:
+        msg = build_pattern_report_message("*-saturday-review.md", "📈 토요일 사후분석", "토요일 사후분석 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no saturday review reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "사후분석 열기"
+    elif is_sun_strategy:
+        msg = build_pattern_report_message("*-sunday-strategy.md", "🧭 일요일 전략", "일요일 다음주 전략 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no sunday strategy reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "전략 리포트 열기"
+    elif is_weekly:
+        msg = build_weekend_message()
+        if msg is None:
+            print("no weekend reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "전략 리포트 열기"
+    elif is_report:
         msg = build_report_message()
         if msg is None:
             print("no reports found, skip notify", flush=True)

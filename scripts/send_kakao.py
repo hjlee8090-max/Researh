@@ -59,12 +59,26 @@ def refresh_access_token() -> dict:
     )
 
 
+DAILY_REPORT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:-(00|09|12|15|18))?\.md$")
+
+
 def find_latest_report() -> Path | None:
+    """가장 최근 일일 리포트 (시간대별 분리 파일 또는 구버전 단일 파일)."""
     reports_dir = ROOT / "reports"
     if not reports_dir.exists():
         return None
-    files = sorted(reports_dir.glob("*.md"))
-    return files[-1] if files else None
+    candidates: list[tuple[str, int, Path]] = []
+    for p in reports_dir.glob("*.md"):
+        m = DAILY_REPORT_RE.match(p.name)
+        if not m:
+            continue
+        date = m.group(1)
+        slot = int(m.group(2)) if m.group(2) else 99  # legacy single-file = end of day
+        candidates.append((date, slot, p))
+    if not candidates:
+        return None
+    candidates.sort()
+    return candidates[-1][2]
 
 
 def find_latest_matching_report(pattern: str) -> Path | None:
@@ -75,19 +89,33 @@ def find_latest_matching_report(pattern: str) -> Path | None:
     return files[-1] if files else None
 
 
+def find_slot_report(slot_hh: str) -> Path | None:
+    """오늘 또는 가장 최근 날짜의 특정 슬롯(`00`,`09`,`12`,`15`,`18`) 리포트.
+
+    시간대별 분리 파일을 우선 찾고, 없으면 구버전 단일 파일(`YYYY-MM-DD.md`)로 폴백.
+    """
+    reports_dir = ROOT / "reports"
+    if not reports_dir.exists():
+        return None
+    slot_files = sorted(reports_dir.glob(f"*-{slot_hh}.md"))
+    if slot_files:
+        return slot_files[-1]
+    return find_latest_report()
+
+
 SLOT_META = {
-    "00:00": ("🌙", "00:00 글로벌 야간 점검", "## 🌙 00:00 글로벌 야간 점검"),
-    "09:00": ("🌅", "09:00 개장 점검", "## 🌅 09:00 개장 점검"),
-    "12:00": ("🕛", "12:00 장중 점검", "## 🕛 12:00 장중 점검"),
-    "15:00": ("🔔", "15:00 마감 임박 점검", "## 🔔 15:00 마감 임박 점검"),
+    "00:00": ("🌙", "00:00 글로벌 야간 점검", "## 🌙 00:00 글로벌 야간 점검", "00"),
+    "09:00": ("🌅", "09:00 개장 점검", "## 🌅 09:00 개장 점검", "09"),
+    "12:00": ("🕛", "12:00 장중 점검", "## 🕛 12:00 장중 점검", "12"),
+    "15:00": ("🔔", "15:00 마감 임박 점검", "## 🔔 15:00 마감 임박 점검", "15"),
 }
 
 REPORT_HEADER_18 = "## 📊 18:00 종합·확정 리포트"
 WEEKEND_HEADER = "## 한눈에 보기"
 
 
-def detect_slot(commit_msg: str) -> tuple[str, str, str] | None:
-    """커밋 메시지에서 routine 슬롯 식별. (emoji, title, section_header) 반환."""
+def detect_slot(commit_msg: str) -> tuple[str, str, str, str] | None:
+    """커밋 메시지에서 routine 슬롯 식별. (emoji, title, section_header, slot_hh) 반환."""
     for slot, meta in SLOT_META.items():
         if slot in commit_msg:
             return meta
@@ -119,11 +147,15 @@ def extract_one_glance(section_text: str) -> list[str]:
     return lines
 
 
-def build_slot_message(slot_meta: tuple[str, str, str]) -> tuple[str, str] | None:
+def build_slot_message(slot_meta: tuple[str, str, str, str]) -> tuple[str, str, Path | None] | None:
     """리포트 파일에서 해당 시간대 섹션의 '한눈에 보기' 를 뽑아 카톡 본문 생성.
-    리포트 섹션이 아직 없으면 watchlist.json 폴백."""
-    emoji, slot_title, section_header = slot_meta
-    report = find_latest_report()
+
+    시간대별 분리 파일(`YYYY-MM-DD-{HH}.md`)을 우선 찾고, 없으면 구버전 단일 파일에서 섹션 추출.
+    리포트 섹션이 아직 없으면 watchlist.json 폴백.
+    반환: (title, body, source_path) — source_path는 URL 매핑에 사용.
+    """
+    emoji, slot_title, section_header, slot_hh = slot_meta
+    report = find_slot_report(slot_hh)
     if report is not None:
         text = report.read_text(encoding="utf-8")
         section = extract_section(text, section_header)
@@ -132,7 +164,7 @@ def build_slot_message(slot_meta: tuple[str, str, str]) -> tuple[str, str] | Non
             if glance:
                 title = f"{emoji} {slot_title}"
                 body = "\n".join(f"- {line}" for line in glance[:4])
-                return title, body
+                return title, body, report
 
     # 폴백: watchlist.json 종목별 의견
     wl_path = ROOT / "config" / "watchlist.json"
@@ -153,15 +185,19 @@ def build_slot_message(slot_meta: tuple[str, str, str]) -> tuple[str, str] | Non
         verdict = last.get("opinion") or last.get("action") or ""
         lines.append(f"- {name}: {verdict}")
     title = f"{emoji} {slot_title}"
-    return title, "\n".join(lines)
+    return title, "\n".join(lines), None
 
 
 def build_report_message() -> tuple[str, str, str] | None:
-    """18시 종합 섹션 기반 요약. (title, body, date) 반환."""
-    report = find_latest_report()
+    """18시 종합 섹션 기반 요약. (title, body, page_stem) 반환.
+
+    시간대별 분리 파일이 있으면 `YYYY-MM-DD-18.md` 를 우선 찾는다.
+    """
+    report = find_slot_report("18")
     if report is None:
         return None
-    date = report.stem
+    page_stem = report.stem  # e.g. "2026-05-22-18" or legacy "2026-05-22"
+    date = page_stem.split("-18")[0] if page_stem.endswith("-18") else page_stem
     text = report.read_text(encoding="utf-8")
     section = extract_section(text, REPORT_HEADER_18)
     if section:
@@ -177,7 +213,7 @@ def build_report_message() -> tuple[str, str, str] | None:
                     glance.append(s.lstrip("-").strip())
     summary = "\n".join(f"- {l}" for l in glance[:4]) if glance else "오늘 리포트가 갱신되었습니다."
     title = f"📊 {date} KOSPI 일일 종합 리포트"
-    return title, summary, date
+    return title, summary, page_stem
 
 
 def build_weekend_message() -> tuple[str, str, str] | None:
@@ -264,12 +300,21 @@ def main():
 
     is_report = COMMIT_MESSAGE.startswith("report:")
     is_weekly = COMMIT_MESSAGE.startswith("weekly:")
+    is_weekly_archive = COMMIT_MESSAGE.startswith("weekly-archive:")
     is_audit = COMMIT_MESSAGE.startswith("audit:")
     is_sat_review = COMMIT_MESSAGE.startswith("sat-review:")
     is_sun_strategy = COMMIT_MESSAGE.startswith("sun-strategy:")
     base_url = PAGES_URL or "https://github.com/hjlee8090-max/Researh"
 
-    if is_audit:
+    if is_weekly_archive:
+        msg = build_pattern_report_message("*-archive.md", "🗂️ 주간 archive", "지난주 archive 파일이 갱신되었습니다.")
+        if msg is None:
+            print("no weekly archive reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "주간 archive 열기"
+    elif is_audit:
         msg = build_pattern_report_message("*-audit.md", "🧪 파이프라인 감사", "파이프라인 감사 리포트가 갱신되었습니다.")
         if msg is None:
             print("no audit reports found, skip notify", flush=True)
@@ -317,17 +362,20 @@ def main():
             if msg is None:
                 print(f"unrecognized commit, skip notify: {COMMIT_MESSAGE[:80]}", flush=True)
                 return
-            title, body, date = msg
-            url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+            title, body, page_stem = msg
+            url = f"{PAGES_URL}/{page_stem}.html" if PAGES_URL else base_url
             button = "리포트 열기"
         else:
-            wl_msg = build_slot_message(slot_meta)
-            if wl_msg is None:
-                print("no watchlist data, skip notify", flush=True)
+            slot_msg = build_slot_message(slot_meta)
+            if slot_msg is None:
+                print("no slot data, skip notify", flush=True)
                 return
-            title, body = wl_msg
-            url = base_url
-            button = "현황 보기"
+            title, body, source_path = slot_msg
+            if source_path is not None and PAGES_URL:
+                url = f"{PAGES_URL}/{source_path.stem}.html"
+            else:
+                url = base_url
+            button = "리포트 열기"
 
     res = send_kakao(access_token, title, body, url, button)
     print(f"sent: {res}", flush=True)

@@ -175,9 +175,65 @@ footer {
   margin-top: 2rem;
 }
 
+/* 시간대별 분리 — 일일 카드 (00/09/12/15/18 슬롯 5개) */
+.daily-card {
+  display: block;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.daily-card .daily-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+.daily-card .daily-head strong { font-size: 1.05rem; }
+.daily-card .daily-head .preview {
+  color: var(--muted);
+  font-size: 0.85rem;
+  flex: 1 1 60%;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.daily-card .slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.daily-card .slot {
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+.daily-card .slot.present {
+  background: var(--card);
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+.daily-card .slot.present:hover { background: var(--accent); color: var(--bg); }
+.daily-card .slot.missing {
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  opacity: 0.55;
+}
+.daily-card .slot.legacy {
+  background: transparent;
+  color: var(--muted);
+  border: 1px dotted var(--border);
+}
+
 @media (max-width: 480px) {
   body { font-size: 15px; }
   h1 { font-size: 1.55rem; }
   h2 { font-size: 1.2rem; }
   .stat { grid-template-columns: 1fr 1fr; }
+  .daily-card .daily-head { flex-direction: column; }
+  .daily-card .daily-head .preview { text-align: left; white-space: normal; }
 }

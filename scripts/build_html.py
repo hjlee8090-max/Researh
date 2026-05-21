@@ -125,16 +125,72 @@ def build_positions_html(portfolio: dict) -> str:
     return "\n".join(items)
 
 
+SLOT_LABEL = {
+    "00": ("🌙", "자정"),
+    "09": ("🌅", "09시"),
+    "12": ("🕛", "12시"),
+    "15": ("🔔", "15시"),
+    "18": ("📊", "18시"),
+}
+
+DAILY_REPORT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:-(00|09|12|15|18))?$")
+
+
 def build_report_list(reports: list[Path]) -> str:
+    """리포트 목록 — 시간대별 분리 파일은 날짜별로 묶어 한 카드에 5칸 슬롯으로 표시."""
     if not reports:
-        return "<p><em>아직 작성된 리포트가 없습니다. 18:00 routine 후 생성됩니다.</em></p>"
+        return "<p><em>아직 작성된 리포트가 없습니다. routine 실행 후 생성됩니다.</em></p>"
+
+    # 분류: 일일 리포트(시간대 포함 또는 미포함) vs 기타(주말·archive·audit 등)
+    daily_by_date: dict[str, dict[str, Path]] = {}
+    others: list[Path] = []
+    for r in reports:
+        m = DAILY_REPORT_RE.match(r.stem)
+        if not m:
+            others.append(r)
+            continue
+        date, slot = m.group(1), m.group(2) or "legacy"
+        daily_by_date.setdefault(date, {})[slot] = r
+
     items = ['<ul class="report-list">']
-    for r in sorted(reports, reverse=True):
-        date = r.stem
+    # 일일 리포트 (최신 날짜부터)
+    for date in sorted(daily_by_date.keys(), reverse=True):
+        slots = daily_by_date[date]
+        # 카드 헤더: 가장 최근 슬롯의 oneline preview
+        preview_path = (
+            slots.get("18") or slots.get("15") or slots.get("12")
+            or slots.get("09") or slots.get("00") or slots.get("legacy")
+        )
+        preview = extract_oneline(preview_path.read_text(encoding="utf-8")) if preview_path else ""
+        slot_links = []
+        for hh in ("00", "09", "12", "15", "18"):
+            if hh in slots:
+                emoji, _ = SLOT_LABEL[hh]
+                slot_links.append(
+                    f'<a class="slot present" href="./{slots[hh].stem}.html">{emoji} {hh}</a>'
+                )
+            else:
+                emoji, _ = SLOT_LABEL[hh]
+                slot_links.append(f'<span class="slot missing">{emoji} {hh}</span>')
+        legacy_link = ""
+        if "legacy" in slots:
+            legacy_link = (
+                f'<a class="slot legacy" href="./{slots["legacy"].stem}.html">'
+                f'📄 단일 파일 (구버전)</a>'
+            )
+        items.append(
+            f'<li class="daily-card">'
+            f'<div class="daily-head"><strong>{date}</strong>'
+            f'<span class="preview">{preview}</span></div>'
+            f'<div class="slots">{"".join(slot_links)}{legacy_link}</div>'
+            f'</li>'
+        )
+    # 기타 리포트
+    for r in sorted(others, reverse=True):
         oneline = extract_oneline(r.read_text(encoding="utf-8"))
         items.append(
-            f'<li><a href="./{date}.html">'
-            f'{date} 리포트'
+            f'<li><a href="./{r.stem}.html">'
+            f'{r.stem}'
             f'<span class="preview">{oneline}</span>'
             f'</a></li>'
         )

@@ -97,7 +97,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
 | 18:00 | `trig_01TD41NpsamHcveUeokYcyyM` |
-| 일 21:00 | _(미등록 — `prompts/sunday_archive.md` 를 매주 일요일 21:00 KST trigger 로 추가 필요)_ |
+| 일 21:00 | 등록됨 (매주 일요일 21:00 KST — `prompts/sunday_archive.md`) |
 
 ### B. 로컬 Claude Code (선택)
 PC에서 직접 돌리고 싶을 때:

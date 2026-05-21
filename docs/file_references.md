@@ -1,0 +1,170 @@
+# 파일 참조 구조 점검 (2026-05-21 갱신)
+
+이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
+시간대별 리포트 분리 작업 이후 갱신.
+
+## 1. 리포트 파일 명명 규칙
+
+| 형식 | 작성 시간대 | 작성 주체 |
+|---|---|---|
+| `reports/YYYY-MM-DD-00.md` | 자정 00:00 KST | `prompts/0000_global.md` |
+| `reports/YYYY-MM-DD-09.md` | 개장 09:00 KST | `prompts/0900_pre_market.md` |
+| `reports/YYYY-MM-DD-12.md` | 장중 12:00 KST | `prompts/1200_midday.md` |
+| `reports/YYYY-MM-DD-15.md` | 마감 임박 15:00 KST | `prompts/1500_close.md` |
+| `reports/YYYY-MM-DD-18.md` | 종합·확정 18:00 KST | `prompts/1800_report.md` |
+| `reports/YYYY-MM-DD-audit.md` | 19:30 KST | `scripts/write_audit_report.py` |
+| `reports/YYYY-MM-DD-saturday-review.md` | 토요일 18:00 KST | `prompts/saturday_review.md` |
+| `reports/YYYY-MM-DD-sunday-strategy.md` | 일요일 18:00 KST | `prompts/sunday_strategy.md` |
+| `reports/YYYY-MM-DD-weekend.md` | 주말 | `prompts/weekend_report.md` |
+| `reports/YYYY-Www-archive.md` | 일요일 21:00 KST | `prompts/sunday_archive.md` |
+| `reports/YYYY-MM-DD.md` (구버전) | 단일 누적 파일 | 폐기 — 새 파일은 시간대별로 분리 |
+
+## 2. 평일 시간대별 routine 의 입력·출력
+
+각 시간대 routine 은 **이전 시간대 파일을 읽고, 새 파일을 생성** 한다.
+"수정"이 아니라 "신규 생성"이라는 점이 중요 — 이전 슬롯 파일은 절대 변경하지 않는다.
+
+### 🌙 00:00 글로벌 야간 (`prompts/0000_global.md`)
+**읽기**:
+- `state/lessons.md`
+- `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
+- 직전 영업일 18시 리포트: `reports/YYYY-MM-DD-18.md` (없으면 구버전 `reports/YYYY-MM-DD.md`)
+- 직전 주말 archive: `reports/YYYY-Www-archive.md`
+
+**쓰기**:
+- `reports/YYYY-MM-DD-00.md` (신규 생성)
+- `config/watchlist.json` (야간 경보 코멘트 추가만)
+- `state/lessons.md` (orange/red 사전 경보 시)
+
+### 🌅 09:00 개장 (`prompts/0900_pre_market.md`)
+**읽기**:
+- `state/lessons.md` (먼저)
+- `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
+- 오늘 자정 파일: `reports/YYYY-MM-DD-00.md`
+- 직전 영업일 18시: `reports/YYYY-MM-DD-18.md`
+- 직전 주말 archive: `reports/YYYY-Www-archive.md`
+
+**쓰기**:
+- `reports/YYYY-MM-DD-09.md` (신규 생성)
+- `config/watchlist.json`, `config/portfolio.json`
+- `state/trade_log.jsonl` (체결 시 1라인 append)
+- `state/lessons.md` (필요 시)
+
+### 🕛 12:00 장중 (`prompts/1200_midday.md`)
+**읽기**:
+- `state/lessons.md`
+- `config/*` 4개
+- 오늘 09시 파일: `reports/YYYY-MM-DD-09.md`
+- 오늘 자정 파일: `reports/YYYY-MM-DD-00.md` (참고)
+
+**쓰기**:
+- `reports/YYYY-MM-DD-12.md` (신규 생성)
+- `config/watchlist.json`, `config/portfolio.json`
+- `state/trade_log.jsonl`, `state/lessons.md` (orange/red 발생 시)
+
+### 🔔 15:00 마감 임박 (`prompts/1500_close.md`)
+**읽기**:
+- `state/lessons.md`
+- `config/*` 4개
+- 오늘 12시 파일: `reports/YYYY-MM-DD-12.md`
+- 오늘 09시 파일: `reports/YYYY-MM-DD-09.md` (참고)
+
+**쓰기**:
+- `reports/YYYY-MM-DD-15.md` (신규 생성)
+- `config/watchlist.json`, `config/weekly_plan.json` (watch_items 갱신)
+- ※ 매매 체결은 권유하지 않음. 익일 09시 후보만 표시.
+
+### 📊 18:00 종합·확정 (`prompts/1800_report.md`)
+**읽기**:
+- `state/lessons.md`
+- `config/*` 4개
+- `state/trade_log.jsonl` (최근 30라인)
+- 오늘 시간대별 리포트 4개: `reports/YYYY-MM-DD-{00,09,12,15}.md`
+
+**쓰기**:
+- `reports/YYYY-MM-DD-18.md` (신규 생성)
+- `config/portfolio.json` (종가 평가·history append)
+- `config/watchlist.json` (next_day_plan)
+- `config/weekly_plan.json` (objective·capital_plan·daily_bridge 갱신)
+- `state/lessons.md` (오차 종목 항목 추가)
+- `state/trade_log.jsonl` (체결 시)
+
+## 3. 주말 routine 의 입력·출력
+
+### 토요일 18:00 사후분석 (`prompts/saturday_review.md`)
+**읽기**: 지난주 평일 리포트 5일 + lessons.md + config/* + state/*
+**쓰기**: `reports/YYYY-MM-DD-saturday-review.md`
+
+### 일요일 18:00 전략 (`prompts/sunday_strategy.md`)
+**읽기**: 토요일 사후분석 + 매크로 캘린더 검색 + config/* + state/*
+**쓰기**: `reports/YYYY-MM-DD-sunday-strategy.md`, `config/weekly_plan.json`
+
+### 일요일 21:00 archive (`prompts/sunday_archive.md`) — 새로 추가
+**읽기**:
+- 지난주 평일 5일 × 5슬롯 = 최대 25개 시간대별 리포트
+- 토요일 사후분석 + 일요일 전략 (선택)
+- config/* 4개, state/lessons.md
+
+**쓰기**:
+- `reports/YYYY-Www-archive.md` (주차별 응축 1개 파일)
+- 원본 25개 파일은 그대로 둔다 (감사 추적성)
+- 다음주 평일 routine 은 이 archive 1개만 읽으면 됨 → 콘텍스트 절약
+
+### 주말 노트 (`prompts/weekend_report.md`)
+**읽기·쓰기**: `reports/YYYY-MM-DD-weekend.md` 기반의 자유 노트.
+
+## 4. 보조 스크립트의 참조 구조
+
+### `scripts/audit_pipeline.py`
+- 읽기: `config/*` 4개, `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`)
+- 쓰기: 없음 (stdout만)
+
+### `scripts/write_audit_report.py`
+- 읽기: `config/policy.json`, `config/portfolio.json`, `config/weekly_plan.json`, `audit_pipeline.py` stdout
+- 쓰기: `reports/YYYY-MM-DD-audit.md`, `state/audit_log.jsonl`, `config/weekly_plan.json` (자동 수정 항목)
+
+### `scripts/build_html.py`
+- 읽기: `reports/*.md` (모두), `config/portfolio.json`, `templates/*`
+- 쓰기: `_site/*.html`, `_site/style.css`
+- 인덱스 페이지는 일일 리포트를 **날짜별로 그룹핑** 해서 5칸 슬롯 카드로 표시 (시간대별 분리 인지)
+
+### `scripts/send_kakao.py`
+- 읽기: `reports/` 안에서 커밋 메시지 기반 슬롯 매핑
+  - `chore(00:00 ...)` → `reports/*-00.md` 우선
+  - `chore(09:00 ...)` → `reports/*-09.md` 우선
+  - `chore(12:00 ...)` → `reports/*-12.md` 우선
+  - `chore(15:00 ...)` → `reports/*-15.md` 우선
+  - `report:` (18시) → `reports/*-18.md` 우선
+  - `weekly-archive:` → `reports/*-archive.md`
+  - `audit:` → `reports/*-audit.md`
+  - `sat-review:` → `reports/*-saturday-review.md`
+  - `sun-strategy:` → `reports/*-sunday-strategy.md`
+- 시간대별 분리 파일이 없으면 구버전 `reports/YYYY-MM-DD.md` 로 폴백
+- 쓰기: 카카오 API 호출만 (디스크 쓰기 없음)
+
+## 5. GitHub Actions 워크플로우
+
+### `.github/workflows/build_and_notify.yml`
+- 트리거: `reports/`·`config/`·`scripts/`·`templates/`·`docs/` 변경, `workflow_dispatch`
+- 단계: audit → build_html → upload pages → deploy → notify (Kakao)
+- notify if-clause 허용 커밋 prefix: `report:`, `weekly:`, `weekly-archive:`, `audit:`, `sat-review:`, `sun-strategy:`, `chore(`
+
+### `.github/workflows/pipeline_audit.yml`
+- 트리거: 평일 19:30 KST cron, `workflow_dispatch`
+- write_audit_report.py 실행 → audit 리포트 생성·커밋·푸시 → 카톡 알림
+
+## 6. config 파일 간 일관성 규칙
+
+- `config/portfolio.json.equity` ↔ `config/weekly_plan.json.objective.current_equity`
+  - 18시 routine 과 audit script 가 이 값을 동기화한다
+- `config/policy.json.risk.weekly_account_target_return_pct` → `config/weekly_plan.json.objective.target_return_pct`
+- `config/watchlist.json` 의 `weekly_thesis_id` → `config/weekly_plan.json.weekly_thesis[].id`
+
+## 7. 점검 체크리스트 (수동 점검 시)
+
+- [ ] 오늘 날짜로 `reports/YYYY-MM-DD-{00,09,12,15,18}.md` 5개 파일이 모두 있는가?
+- [ ] 각 파일의 첫 줄(`# 일일 리포트 — ... · 슬롯명`) 이 자기 슬롯과 일치하는가?
+- [ ] "시리즈 진행" 줄의 ✓ 표시가 자기 시간대만 ✓ / 나머지는 "대기" 또는 "✓"(이전 시간대) 인가?
+- [ ] 이전 시간대 파일 링크가 깨지지 않았는가?
+- [ ] `## ⚠️ 위험·매매 시그널 시각화` / `## 🎓 학습 포인트 3개` / `## 📖 오늘 등장한 용어` 세 섹션이 들어 있는가?
+- [ ] 일요일 21:00 archive 가 매주 생성되어 평일 routine 콘텍스트가 한 주치 응축으로 유지되는가?

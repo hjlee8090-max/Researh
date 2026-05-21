@@ -111,6 +111,7 @@ def audit_prompts_and_scripts(messages: list[str]) -> None:
         "1800_report.md",
         "saturday_review.md",
         "sunday_strategy.md",
+        "sunday_archive.md",
         "weekend_report.md",
     ]
     for name in required_prompts:
@@ -143,17 +144,20 @@ def audit_prompts_and_scripts(messages: list[str]) -> None:
 
 def audit_reports(messages: list[str]) -> None:
     all_reports = sorted((ROOT / "reports").glob("*.md"))
+    # 시간대별 분리 파일(YYYY-MM-DD-{00,09,12,15,18}.md) 및 구버전 단일 파일(YYYY-MM-DD.md) 모두 인식
     reports = [
         path for path in all_reports
-        if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.md", path.name)
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:-(?:00|09|12|15|18))?\.md", path.name)
     ]
     if not reports:
         messages.append(result("WARN", "no daily reports found"))
         return
+    # 시간대별 분리 파일이 있으면 그것 우선 검사
     latest = reports[-1]
     text = latest.read_text(encoding="utf-8")
     messages.append(result("INFO", f"latest daily report: {latest.name}"))
-    if "-weekend" not in latest.stem and "(아래는" in text:
+    # 구버전 단일 파일에만 자리표시자가 존재
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.md", latest.name) and "(아래는" in text:
         messages.append(result("WARN", f"{latest.name} still has routine placeholders"))
     if not re.search(r"본 산출물은 학습|실제 투자", text):
         messages.append(result("WARN", f"{latest.name} may be missing disclaimer language"))
@@ -167,7 +171,7 @@ def audit_github_notify(messages: list[str]) -> None:
         return
     w_text = workflow.read_text(encoding="utf-8")
     s_text = sender.read_text(encoding="utf-8") if sender.exists() else ""
-    required = ["weekly:", "audit:", "sat-review:", "sun-strategy:"]
+    required = ["weekly:", "weekly-archive:", "audit:", "sat-review:", "sun-strategy:"]
     missing = [prefix for prefix in required if prefix not in w_text or prefix not in s_text]
     if not missing:
         messages.append(result("OK", "audit and weekend report commits trigger Kakao notification"))

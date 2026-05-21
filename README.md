@@ -18,29 +18,59 @@
 ## 디렉토리
 ```
 config/
-  policy.json         정책 파라미터 (목표/손절/비중)
-  portfolio.json      현금·보유종목·평가금액
-  watchlist.json      현재 추천 3종목 + 진입가·목표가·손절가·코멘트
+  policy.json              정책 파라미터 (목표/손절/비중)
+  portfolio.json           현금·보유종목·평가금액
+  watchlist.json           현재 추천 3종목 + 진입가·목표가·손절가·코멘트
+  weekly_plan.json         이번 주 thesis·watch_items·invalidation_triggers
 state/
-  lessons.md          자기보완 학습 노트 (오차 사유 누적)
-  trade_log.jsonl     모든 의사결정 이력 (라인당 1 JSON)
+  lessons.md               자기보완 학습 노트 (오차 사유 누적)
+  trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
+  audit_log.jsonl          파이프라인 자동 점검 이력
 reports/
-  YYYY-MM-DD.md       초보자 친화 일일 리포트
+  YYYY-MM-DD-00.md         🌙 자정 글로벌 야간 리포트
+  YYYY-MM-DD-09.md         🌅 개장 점검 리포트
+  YYYY-MM-DD-12.md         🕛 장중 점검 리포트
+  YYYY-MM-DD-15.md         🔔 마감 임박 점검 리포트
+  YYYY-MM-DD-18.md         📊 18시 종합·확정 리포트
+  YYYY-MM-DD-audit.md      파이프라인 자동 감사 리포트 (평일 19:30)
+  YYYY-MM-DD-saturday-review.md  토요일 사후분석
+  YYYY-MM-DD-sunday-strategy.md  일요일 전략
+  YYYY-Www-archive.md      일요일 21시 — 지난주 평일 25개 파일을 1개로 응축
 prompts/
-  0900_pre_market.md  개장 점검 프롬프트
-  1200_midday.md      장중 점검
-  1500_close.md       마감 점검
-  1800_report.md      목표가 검증 + 학습 + 일일 리포트
+  0000_global.md           자정 글로벌 야간 점검
+  0900_pre_market.md       09시 개장 점검
+  1200_midday.md           12시 장중 점검
+  1500_close.md            15시 마감 임박
+  1800_report.md           18시 종합·확정 + 자기보완 루프
+  saturday_review.md       토요일 사후분석
+  sunday_strategy.md       일요일 다음주 전략
+  sunday_archive.md        일요일 21시 주간 archive (콘텍스트 정리)
+  weekend_report.md        주말 노트
+docs/
+  file_references.md       파일 참조 구조 점검표 (어느 prompt/script가 어느 파일을 읽는지)
+  github_mobile_pipeline.md
 ```
 
-## 스케줄 (Asia/Seoul, 평일)
-| 시각 | 내용 | 산출물 갱신 |
+## 스케줄 (Asia/Seoul)
+**평일** — 시간대별 분리 파일 5개 생성 (한 파일 = 한 슬롯)
+
+| 시각 | 내용 | 생성 파일 |
 |------|------|------------|
-| 00:00 | 글로벌 야간 점검 (미국장 개장 직후·유럽장 후반·환율·원자재)<br>→ 보유 종목별 야간 영향 매핑·한국 개장 갭 예측 | reports/(자정 섹션 생성), watchlist.json 코멘트 |
-| 09:00 | 자정 예측 검증 + 미국장 마감(05:00)까지 추가 흐름 + 한국 개장 인사이트 | reports/(09시 섹션 append), watchlist.json, trade_log.jsonl |
-| 12:00 | 장중 점검 (모멘텀/이슈/단계 경보) | reports/(12시 섹션 append), watchlist.json |
-| 15:00 | 마감 점검 (15:30 정마감 직전), 종가 임박치로 1차 검증 | reports/(15시 섹션 append), watchlist.json |
-| 18:00 | 종가 확정 → 목표가 오차 판정 → lessons.md 갱신<br>포트폴리오 평가·체결, 종합 리포트 작성, 익일 종목 교체 결정 | reports/(18시 종합 섹션 append), portfolio.json, lessons.md, watchlist.json |
+| 00:00 | 글로벌 야간 점검 (미국장·유럽장·환율·원자재) → 보유 종목 야간 영향 매핑·한국 개장 갭 예측 | `reports/YYYY-MM-DD-00.md` |
+| 09:00 | 자정 예측 검증 + 미국장 마감(05:00)까지 흐름 + 한국 개장 인사이트 | `reports/YYYY-MM-DD-09.md` |
+| 12:00 | 장중 점검 (단계 경보·함정 패턴 cross-check) | `reports/YYYY-MM-DD-12.md` |
+| 15:00 | 마감 임박 점검, 종가 임박치로 1차 검증, 익일 09시 액션 후보 정리 | `reports/YYYY-MM-DD-15.md` |
+| 18:00 | 종가 확정 → 목표가 오차 판정 → lessons.md 갱신, 포트폴리오 평가·체결, 종합 리포트 | `reports/YYYY-MM-DD-18.md` |
+
+**주말**
+
+| 시각 | 내용 | 생성 파일 |
+|------|------|------------|
+| 토 18:00 | 지난주 사후분석 | `reports/YYYY-MM-DD-saturday-review.md` |
+| 일 18:00 | 다음주 전략·weekly_plan 갱신 | `reports/YYYY-MM-DD-sunday-strategy.md` |
+| **일 21:00** | **지난주 평일 25개 시간대별 파일 → 1개 archive 응축** (콘텍스트 절약) | `reports/YYYY-Www-archive.md` |
+
+> 각 시간대 파일은 **자기 슬롯만 담는다**. 이전 시간대 결론은 "이전 시간대로부터 이어받기" 박스에 1~3줄로만 요약. 이전 파일은 **절대 수정하지 않음** (히스토리·자기보완 학습 재료 보존).
 
 ## 자기보완 루프
 1. 18시 프롬프트가 watchlist의 **각 종목 실제 종가 vs 목표가** 비교
@@ -67,6 +97,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
 | 18:00 | `trig_01TD41NpsamHcveUeokYcyyM` |
+| 일 21:00 | _(미등록 — `prompts/sunday_archive.md` 를 매주 일요일 21:00 KST trigger 로 추가 필요)_ |
 
 ### B. 로컬 Claude Code (선택)
 PC에서 직접 돌리고 싶을 때:
@@ -89,21 +120,30 @@ powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1
 
 ## 모바일 노티 셋업 (HTML 리포트 + 카카오톡)
 
-09/12/15/18시 routine 마다 단계적으로:
-1. 각 routine 이 `reports/YYYY-MM-DD.md` 의 **자기 시간대 섹션** 을 누적 작성 (09시 신규 생성, 12/15/18은 append)
+각 routine 은 **자기 시간대 전용 리포트 파일을 새로 생성** 한다 (이전 파일 수정 금지):
+1. 00/09/12/15/18 routine → `reports/YYYY-MM-DD-{00,09,12,15,18}.md` 각각 1개
 2. GitHub Actions가 `reports/*.md` → HTML 변환 → GitHub Pages 배포
-3. 카카오 '나에게 보내기' API 로 **해당 시간대 섹션의 '한눈에 보기'** 요약 + Pages 링크 전송
-4. 폰 카톡에서 링크 탭 → 같은 페이지에 09→12→15→18 흐름이 누적되어 있어 "왜 이 결정을 했는지" 추적 가능
+3. 카카오 '나에게 보내기' API 로 **해당 시간대 파일의 '한눈에 보기'** 요약 + Pages 링크 전송 (그 슬롯 HTML 페이지로 바로 이동)
+4. 인덱스 페이지(`/index.html`)에서 날짜별로 5개 슬롯이 한 카드로 묶여 있어 "왜 이 결정을 했는지" 추적 가능
+5. 일요일 21시 archive routine 이 지난주 평일 25개 파일을 1개 `reports/YYYY-Www-archive.md` 로 응축 → 다음주 routine 콘텍스트 절약
 
-### 리포트 누적 구조 (파이프라인)
+### 시간대별 리포트 파이프라인 (분리 파일)
 ```
-🌙 00:00 글로벌 야간 점검    ← 00시 routine 작성 (그날 파일 신규 생성, 미국장·유럽장·환율·매크로 → 한국 영향 매핑)
-🌅 09:00 개장 점검          ← 09시 routine 추가 (자정 예측 검증 + 미국장 마감까지 흐름 + 한국 개장 인사이트)
-🕛 12:00 장중 점검          ← 12시 routine 추가 (09시 검증·반박·강화, 단계 경보)
-🔔 15:00 마감 임박 점검      ← 15시 routine 추가 (익일 액션 후보)
-📊 18:00 종합·확정 리포트    ← 18시 routine 추가 (종가·오차·자기보완 학습 + 다음날 자정 routine 이 흡수할 메모)
+🌙 00:00 글로벌 야간 점검    → reports/YYYY-MM-DD-00.md
+🌅 09:00 개장 점검          → reports/YYYY-MM-DD-09.md  (이전: -00.md를 "이어받기" 박스에서 요약)
+🕛 12:00 장중 점검          → reports/YYYY-MM-DD-12.md  (이전: -09.md 요약)
+🔔 15:00 마감 임박 점검      → reports/YYYY-MM-DD-15.md  (이전: -12.md 요약)
+📊 18:00 종합·확정 리포트    → reports/YYYY-MM-DD-18.md  (이전 4개를 모두 종합·검증)
+🗂️ 일 21:00 주간 archive    → reports/YYYY-Www-archive.md  (지난주 평일 25개 → 1개로 응축)
 ```
-각 routine 은 **이전 시간대 섹션을 절대 수정하지 않고** 자기 섹션만 append → 의사결정 히스토리 보존 → 18시 종합에서 흐름 검증 → 다음날 00시 routine 이 다시 이어받음 (순환 파이프라인).
+
+각 시간대 파일은 다음 공통 섹션을 포함한다 (초보자 친화):
+- **이전 시간대로부터 이어받기**: 1~3줄로 이전 슬롯 결론 요약 → 단일 파일만 봐도 흐름 추적 가능
+- **⚠️ 위험·매매 시그널 시각화**: 진입가·현재가·목표가·손절가를 1줄 게이지로 표시
+- **🎓 이 시간대 학습 포인트 3개**: 초보자가 챙길 핵심 학습
+- **📖 오늘 등장한 용어 사이드박스**: HBM·NIM·DXY·VIX 등 본문에 나온 용어 풀이
+
+이전 시간대 파일은 **절대 수정하지 않는다** (히스토리·자기보완 학습 재료 보존).
 
 ### 1회 셋업
 

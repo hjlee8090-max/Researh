@@ -92,7 +92,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 
 | 시각 | Routine ID |
 |---|---|
-| 00:00 | _(미등록 — https://claude.ai/code/routines 에서 `prompts/0000_global.md` 를 실행하도록 매일 00:00 KST trigger 추가 필요)_ |
+| 00:00 | 등록됨 (매일 00:00 KST — `prompts/0000_global.md`) |
 | 09:00 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |

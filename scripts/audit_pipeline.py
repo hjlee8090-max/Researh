@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -152,13 +154,11 @@ def audit_weekly_alignment(data: dict[str, object], messages: list[str]) -> None
 
 def audit_reconciliation(messages: list[str]) -> None:
     """reconcile_portfolio.py 를 subprocess 로 실행하여 정합성 점검 결과를 audit 로 흡수."""
-    import subprocess
-    import sys as _sys
     script = ROOT / "scripts" / "reconcile_portfolio.py"
     if not script.exists():
         return
     proc = subprocess.run(
-        [_sys.executable, str(script)],
+        [sys.executable, str(script)],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -215,7 +215,16 @@ def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
 
 
 def audit_recovery_stage(data: dict[str, object], messages: list[str]) -> None:
-    """누적 수익률 기준 회복 전략 단계 판정 (policy.weekly_recovery_plan)."""
+    """누적 수익률 기준 회복 전략 단계 판정 (policy.weekly_recovery_plan).
+
+    policy.weekly_recovery_plan.stages 의 각 stage 는
+    `weekly_cumulative_return_pct_floor` (해당 stage 가 적용되는 누적 수익률의 하한선) 을 가진다.
+    예: normal floor=-2.0 → 누적 ≥ -2.0% 이면 normal
+        caution floor=-3.5 → -3.5% ≤ 누적 < -2.0% 이면 caution
+        defensive floor=-5.0 → 누적 < -3.5% 이면 defensive (defensive 의 floor 는 더 하향 강등 시 사용)
+
+    floor 가 가장 높은 stage 부터 내려가며 누적이 그 floor 이상이면 매칭.
+    """
     policy = data.get("config/policy.json") or {}
     weekly = data.get("config/weekly_plan.json") or {}
     if not isinstance(policy, dict) or not isinstance(weekly, dict):
@@ -231,14 +240,21 @@ def audit_recovery_stage(data: dict[str, object], messages: list[str]) -> None:
         messages.append(result("WARN", "recovery_stage 판정 불가 — starting/current equity 누락"))
         return
     cumulative_pct = (current_equity - starting_equity) / starting_equity * 100
-    # stages 는 floor 기준 내림차순으로 정렬돼 있다고 가정 (normal -2 / caution -3.5 / defensive -5)
-    chosen = "normal"
-    for stage in stages:
-        if not isinstance(stage, dict):
-            continue
-        floor = stage.get("weekly_cumulative_return_pct_floor")
-        if isinstance(floor, (int, float)) and cumulative_pct <= floor:
+
+    # floor 내림차순 정렬 (입력 순서 의존성 제거)
+    valid_stages = [
+        s for s in stages
+        if isinstance(s, dict) and isinstance(s.get("weekly_cumulative_return_pct_floor"), (int, float))
+    ]
+    valid_stages.sort(key=lambda s: s["weekly_cumulative_return_pct_floor"], reverse=True)
+
+    chosen = valid_stages[-1].get("stage", "defensive") if valid_stages else "normal"
+    for stage in valid_stages:
+        floor = stage["weekly_cumulative_return_pct_floor"]
+        if cumulative_pct >= floor:
             chosen = stage.get("stage", chosen)
+            break
+
     if chosen == "normal":
         messages.append(result("INFO", f"recovery_stage=normal (누적 {cumulative_pct:+.2f}%)"))
     else:

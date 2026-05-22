@@ -9,9 +9,17 @@
 
 ## 0-A. 영업일 가드 (가장 먼저)
 - `python scripts/check_market_open.py` 를 실행해 오늘이 KRX 영업일인지 확인한다 (출력 JSON 의 `is_open`).
-- `is_open=false` (주말 또는 공휴일):
-  - 휴장 모드로 전환 — 신규 매매·신규 검색을 멈추고, 휴장 사유를 리포트 1줄로 기록한 뒤 종료. 보유 종목 평가는 건너뛴다 (가격이 갱신되지 않음).
-- `is_open=true`: 정상 진행.
+- `is_open=false` (주말 또는 공휴일) → **휴장 모드** 분기:
+  - `reports/YYYY-MM-DD-09.md` 를 다음 5줄짜리 축약 형태로 **반드시 생성** 한다 (이후 routine 흐름·archive 추적성을 위해):
+    1. 타이틀 + "휴장 모드" 표기
+    2. 휴장 사유 (예: "부처님오신날 대체휴일")
+    3. 직전 영업일 18시 결론 1줄 그대로 carry-over
+    4. 다음 영업일 09시 우선 액션 1줄
+    5. 면책 1줄
+  - 매매·신규 검색·watchlist 수정·trade_log append 모두 금지.
+  - 0-B 단계(시장 데이터 수집) 는 건너뛴다.
+  - 끝에 `chore(09:00 ...): 휴장` 메시지로 commit/push 후 종료.
+- `is_open=true`: 정상 진행 (0-B 단계로).
 
 ## 0-B. 시장 데이터 스냅샷 수집 (영업일에만)
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
@@ -94,8 +102,20 @@
 ### 1-1. 진입 후보 추세 필터 (신규 매수 전 의무)
 신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 확인·기록:
 - **1순위 — `state/market_snapshot.json`의 `tickers.<ticker>.five_day_cumulative_return_pct` 와 `entry_filter.passes` 값을 그대로 사용**한다. (0-B 단계에서 `fetch_market_data.py` 가 자동 계산)
-- 후보 종목이 `config/candidates.json` 에 등록되어 있지 않다면 추가하고, 다음 routine 부터 자동 추적되도록 한다.
-- snapshot 의 `entry_filter.passes = false` 또는 `confidence = "low"` → **진입 보류** (사유를 watchlist 의 `entry_filter_blocks` 배열에 1줄 기록).
+- 후보 종목이 `config/candidates.json` 에 등록되어 있지 않다면 다음 schema 로 추가하고, 다음 routine 부터 자동 추적되도록 한다:
+  ```json
+  {
+    "ticker": "XXXXXX",
+    "name": "종목명",
+    "sector": "섹터",
+    "thesis_id": "weekly_plan.weekly_thesis 의 id 또는 null",
+    "rationale": "1줄 진입 근거",
+    "structural_bear_flags": [],
+    "first_added": "YYYY-MM-DD"
+  }
+  ```
+- `state/candidate_scores.json.ranked` 에서 `tradable=true` 인 1순위 종목을 신규 매수 후보로 우선 검토. `block_reasons` 가 있는 종목은 사유 그대로 watchlist `entry_filter_blocks` 에 복사.
+- snapshot 의 `entry_filter.passes = false` 또는 `confidence = "low"` → **진입 보류**.
 - snapshot 양쪽 출처가 모두 실패한 경우에 한해 백업으로 웹검색 ("[종목명] 최근 5거래일 주가")으로 보강하되, 사용한 출처를 명시한다.
 
 ### 1-2. 구조적 악재 키워드 스캔 (신규 매수 전 의무)
@@ -121,7 +141,7 @@
    - **진입가** (현재가 ±1% 이내)
    - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이지만, `weekly_plan.objective.gap_to_target`, 종목별 촉매, 저항선, 기대 보상/위험 비율을 함께 반영한다.
    - **손절가** = 동적 산정. 기본 참고값은 진입가 × 0.90 이지만, 단일 거래 예상 손실이 `portfolio.equity × max_single_trade_risk_pct_of_equity` 를 넘지 않게 조정한다.
-   - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). `policy.risk.min_reward_risk_ratio_for_new_entry` 미만이면 신규 매수 금지.
+   - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). `policy.reward_risk_management.min_reward_risk_ratio_for_new_entry` (=1.2) 미만이면 신규 매수 금지. (단일 출처)
    - **단계 경보 가격**: yellow(-5%), orange(-7%), red(-10%) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)
    - **리스크 2개** (Bear case) — §1-2에서 구조적 키워드 매칭됐다면 첫 항목으로 우선 기재

@@ -150,6 +150,36 @@ def audit_weekly_alignment(data: dict[str, object], messages: list[str]) -> None
             messages.append(result("OK", f"weekly_plan has {len(theses)} linked theses"))
 
 
+def audit_reconciliation(messages: list[str]) -> None:
+    """reconcile_portfolio.py 를 subprocess 로 실행하여 정합성 점검 결과를 audit 로 흡수."""
+    import subprocess
+    import sys as _sys
+    script = ROOT / "scripts" / "reconcile_portfolio.py"
+    if not script.exists():
+        return
+    proc = subprocess.run(
+        [_sys.executable, str(script)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    try:
+        payload = json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError:
+        messages.append(result("WARN", "reconcile_portfolio output 파싱 실패"))
+        return
+    issues = payload.get("issues", [])
+    if proc.returncode == 0 and not issues:
+        messages.append(result("OK", "trade_log ↔ portfolio.json 정합성 확인"))
+    else:
+        for issue in issues[:5]:
+            messages.append(result("FAIL", f"reconcile: {issue}"))
+        if not issues and proc.returncode != 0:
+            messages.append(result("WARN", "reconcile 비정상 종료 (issue 미보고)"))
+
+
 def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
     """보유 종목의 R/R 1.2 미달 여부를 점검 (policy.reward_risk_management 기준)."""
     policy = data.get("config/policy.json") or {}
@@ -227,11 +257,17 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     """fetch_market_data.py·check_market_open.py 및 그 입력 설정의 무결성 확인."""
     fetch = ROOT / "scripts" / "fetch_market_data.py"
     check = ROOT / "scripts" / "check_market_open.py"
+    score = ROOT / "scripts" / "score_candidates.py"
+    reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
+    lessons_idx = ROOT / "scripts" / "build_lessons_index.py"
     candidates = ROOT / "config" / "candidates.json"
     calendar = ROOT / "config" / "market_calendar.json"
     for path, label in [
         (fetch, "scripts/fetch_market_data.py"),
         (check, "scripts/check_market_open.py"),
+        (score, "scripts/score_candidates.py"),
+        (reconcile, "scripts/reconcile_portfolio.py"),
+        (lessons_idx, "scripts/build_lessons_index.py"),
     ]:
         if path.exists():
             messages.append(result("OK", f"{label} present"))
@@ -340,6 +376,7 @@ def main() -> int:
     messages.append(f"Pipeline audit @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     data = audit_json_files(messages)
     audit_trade_log(messages)
+    audit_reconciliation(messages)
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)
     audit_recovery_stage(data, messages)

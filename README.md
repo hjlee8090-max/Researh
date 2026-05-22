@@ -57,6 +57,9 @@ docs/
 scripts/
   fetch_market_data.py     stooq + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
+  score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
+  reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
+  build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
   audit_pipeline.py        파이프라인 무결성 점검 (의존성 0)
   write_audit_report.py    audit 결과 + 자동 수정 → 사람 친화 리포트
   build_html.py            reports/*.md → _site/*.html (GitHub Pages)

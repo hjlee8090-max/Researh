@@ -210,6 +210,8 @@ def humanize_audit_line(line: str) -> str:
         ("출처 모두 실패", "오늘 시장 데이터 수집이 양쪽 출처 모두 실패했습니다."),
         ("config/candidates.json tracks", "신규 진입 후보 종목 목록을 자동 추적 중입니다."),
         ("config/market_calendar.json lists", "한국거래소 휴장일 캘린더가 등록되어 있습니다."),
+        ("trade_log ↔ portfolio.json 정합성", "거래 기록과 포트폴리오 잔액·보유수량·실현손익이 모두 일치합니다."),
+        ("reconcile:", "거래 기록과 포트폴리오 사이에 불일치가 발견됐습니다 — 다음 routine 전에 수동 확인이 필요합니다: "),
     ]
     if clean.startswith("latest daily report:"):
         return f"최신 데일리 리포트를 확인했습니다: {clean.split(':', 1)[1].strip()}"

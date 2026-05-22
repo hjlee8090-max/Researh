@@ -8,7 +8,11 @@
 > - `config/market_calendar.json` — KRX 휴장일 캘린더
 > - `scripts/fetch_market_data.py` — 다중 출처 가격·5거래일 추세 자동 수집 → `state/market_snapshot.json`
 > - `scripts/check_market_open.py` — 영업일/휴장일 판정 (모든 평일 routine 의 0-A 단계에서 호출)
-> - `state/market_snapshot.json` — 매 routine 마다 신규 생성 (gitignored)
+> - `scripts/score_candidates.py` — 후보 자동 점수화 → `state/candidate_scores.json`
+> - `scripts/reconcile_portfolio.py` — trade_log ↔ portfolio 정합성 검증 (audit + 09시 사전 점검)
+> - `scripts/build_lessons_index.py` — lessons.md 분류·룰 인덱스 → `state/lessons_index.json`
+> - `prompts/sunday_policy_review.md` — 일요일 20시 정책 패치 리뷰
+> - `state/{market_snapshot,candidate_scores,lessons_index}.json` — 모두 매 routine 마다 신규 생성 (gitignored)
 
 ## 1. 리포트 파일 명명 규칙
 
@@ -147,6 +151,21 @@
 - 인자: `--date YYYY-MM-DD` (옵션, 생략 시 오늘 KST)
 - 출력: stdout JSON 1줄 + exit code (0=영업일, 10=주말, 11=공휴일)
 - 모든 평일 routine 의 0-A 단계 가드. 휴장 시 routine 은 축약 모드 진행 또는 종료.
+
+### `scripts/score_candidates.py` (신규)
+- 읽기: `config/candidates.json`, `config/weekly_plan.json`, `state/market_snapshot.json`, `config/policy.json`
+- 쓰기: `state/candidate_scores.json` (gitignored)
+- 09시 routine 0-B 단계에서 `fetch_market_data.py` 직후 호출. 후보 점수·진입 가능 여부 랭킹.
+
+### `scripts/reconcile_portfolio.py` (신규)
+- 읽기: `config/portfolio.json`, `state/trade_log.jsonl`
+- 출력: stdout JSON + exit code (0=일치, 1=불일치)
+- 09시 routine 0-B 단계의 사전 점검. `audit_pipeline.py` 가 subprocess 로 호출해 audit 결과에 흡수.
+
+### `scripts/build_lessons_index.py` (신규)
+- 읽기: `state/lessons.md`
+- 쓰기: `state/lessons_index.json` (gitignored)
+- 일요일 20시 `sunday_policy_review` routine 의 0-A 단계에서 호출. 분류별 항목·룰·반복 카운트 추출.
 
 ### `scripts/write_audit_report.py`
 - 읽기: `config/policy.json`, `config/portfolio.json`, `config/weekly_plan.json`, `audit_pipeline.py` stdout

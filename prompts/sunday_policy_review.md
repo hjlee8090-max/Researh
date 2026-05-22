@@ -8,13 +8,21 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
+## 0-A. lessons 인덱스 자동 생성
+- `python scripts/build_lessons_index.py` 를 실행하여 `state/lessons_index.json` 을 만든다.
+  - 분류(매크로/섹터/개별/가정오류/루틴)별 항목 수
+  - 모든 "다음 적용 룰" 추출 목록
+  - 누적 카운트 ≥ 3 인 분류 (반복 패턴)
+- 이 JSON 을 1차 입력으로 사용한다. lessons.md 본문은 검증 시에만 참조.
+
 ## 0. 컨텍스트 적재 (이 순서)
-1. `state/lessons.md` — **이번 routine 의 1차 입력**. 모든 항목의 "다음 적용 룰" / "다음 진입/점검 시 반영할 룰" 을 추출한다.
-2. `config/policy.json` — 현재 정책. 특히 `entry_filters`, `risk`, `weekly_recovery_plan`, `reward_risk_management`, `price_data_quality`, `lessons_logging`, `codex_automation`.
-3. `prompts/*.md` — 모든 routine prompt (00/09/12/15/18/saturday/sunday/archive)
-4. `reports/YYYY-Www-archive.md` — 가장 최근 주차 archive (지난 주 25개 리포트 응축)
-5. `config/weekly_plan.json` — 다음 주 thesis (일요일 18시 routine 이 생성한 결과)
-6. `reports/YYYY-MM-DD-saturday-review.md`·`YYYY-MM-DD-sunday-strategy.md` — 이번 주말 routine 산출물
+1. `state/lessons_index.json` (0-A 단계 생성) — 1차 입력
+2. `state/lessons.md` — 원문 (인덱스 항목의 컨텍스트 확인 시 사용)
+3. `config/policy.json` — 현재 정책. 특히 `entry_filters`, `risk`, `weekly_recovery_plan`, `reward_risk_management`, `price_data_quality`, `lessons_logging`, `codex_automation`.
+4. `prompts/*.md` — 모든 routine prompt (00/09/12/15/18/saturday/sunday/archive)
+5. `reports/YYYY-Www-archive.md` — 가장 최근 주차 archive (지난 주 25개 리포트 응축)
+6. `config/weekly_plan.json` — 다음 주 thesis (일요일 18시 routine 이 생성한 결과)
+7. `reports/YYYY-MM-DD-saturday-review.md`·`YYYY-MM-DD-sunday-strategy.md` — 이번 주말 routine 산출물
 
 ## 1. 점검 항목 (체크리스트)
 

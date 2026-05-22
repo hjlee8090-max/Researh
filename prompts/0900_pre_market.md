@@ -17,7 +17,11 @@
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
   - 보유종목(`config/portfolio.json.positions`) + 후보종목(`config/candidates.json.candidates`) 의 stooq·Yahoo 양쪽 가격을 수집한다.
   - 출력 요약(stdout)에서 `pass=`(추세필터 통과 후보 수)·`block=`(차단 후보 수)·`low_conf=`(신뢰도 낮음 보유 수) 를 리포트 "한눈에 보기"에 표기한다.
-- 이후 가격·추세 판단은 **이 스냅샷을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
+- `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
+  - 후보 종목을 추세(45%) + 신뢰도(25%) + thesis 연결(30%) - 구조적 악재 가중치 로 점수화.
+  - `tradable_count >= 1` 이면 진입 가능 후보가 있다는 뜻 — "한눈에 보기"에 1순위 ticker 표기.
+- `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
+- 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
 - 스냅샷의 신뢰도(`confidence`)가 모두 `low` 이면 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
 
 ## 0. 컨텍스트 적재 (반드시 이 순서)
@@ -35,6 +39,7 @@
 6. `config/portfolio.json` — 보유 현황
 7. `config/candidates.json` — 신규 진입 후보 (`shipbuilding_candidate` 등) — 자동 추적 대상
 8. `state/market_snapshot.json` — 0-B 단계에서 방금 만든 가격·5거래일 추세 스냅샷
+9. `state/candidate_scores.json` — 0-B 단계의 후보 점수·진입 가능 여부 랭킹
 
 > **파이프라인 연결 규칙** (핵심):
 > - 09시는 "어제 18시 (한국 마감) → 오늘 00시 (글로벌 야간) → 야간~새벽 추가 흐름 → 09시 (한국 개장)" 의 **종합 마디**다.

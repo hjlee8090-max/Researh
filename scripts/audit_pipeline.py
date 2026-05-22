@@ -31,6 +31,8 @@ def audit_json_files(messages: list[str]) -> dict[str, object]:
         "config/weekly_plan.json",
         "config/watchlist.json",
         "config/portfolio.json",
+        "config/candidates.json",
+        "config/market_calendar.json",
     ]:
         path = ROOT / rel
         try:
@@ -100,6 +102,40 @@ def audit_weekly_alignment(data: dict[str, object], messages: list[str]) -> None
             messages.append(result("WARN", "weekly theses missing daily_linkage: " + ", ".join(missing_linkage)))
         else:
             messages.append(result("OK", f"weekly_plan has {len(theses)} linked theses"))
+
+
+def audit_market_data_tooling(messages: list[str]) -> None:
+    """fetch_market_data.py·check_market_open.py 및 그 입력 설정의 무결성 확인."""
+    fetch = ROOT / "scripts" / "fetch_market_data.py"
+    check = ROOT / "scripts" / "check_market_open.py"
+    candidates = ROOT / "config" / "candidates.json"
+    calendar = ROOT / "config" / "market_calendar.json"
+    for path, label in [
+        (fetch, "scripts/fetch_market_data.py"),
+        (check, "scripts/check_market_open.py"),
+    ]:
+        if path.exists():
+            messages.append(result("OK", f"{label} present"))
+        else:
+            messages.append(result("FAIL", f"missing {label}"))
+    if candidates.exists():
+        try:
+            payload = json.loads(candidates.read_text(encoding="utf-8"))
+            count = len(payload.get("candidates", []))
+            messages.append(result("OK", f"config/candidates.json tracks {count} candidates"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"config/candidates.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "config/candidates.json missing — 신규 후보 자동 발굴 비활성"))
+    if calendar.exists():
+        try:
+            payload = json.loads(calendar.read_text(encoding="utf-8"))
+            count = len(payload.get("holidays_2026", []))
+            messages.append(result("OK", f"config/market_calendar.json lists {count} holidays"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"config/market_calendar.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "config/market_calendar.json missing — 휴장일 가드 비활성"))
 
 
 def audit_prompts_and_scripts(messages: list[str]) -> None:
@@ -185,6 +221,7 @@ def main() -> int:
     data = audit_json_files(messages)
     audit_trade_log(messages)
     audit_weekly_alignment(data, messages)
+    audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)
     audit_reports(messages)
     audit_github_notify(messages)

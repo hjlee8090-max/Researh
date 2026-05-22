@@ -8,6 +8,9 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
+## 0-A. 영업일 가드
+- `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 12시 점검 생략" 1줄만 리포트하고 종료한다.
+
 ## 0. 컨텍스트 적재
 1. `state/lessons.md` (먼저)
 2. `config/policy.json` (`risk.tiered_alerts`, `lessons_logging` 필드 확인)

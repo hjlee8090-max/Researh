@@ -6,6 +6,11 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
+## 0-A. 영업일 가드 + 종가 데이터 수집
+- `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 종가 평가 생략" 으로 18시 routine 을 축약 모드로 진행 (다음 영업일 액션 플랜만 작성, 포트폴리오 history append 보류).
+- 영업일이면 `python scripts/fetch_market_data.py` 를 실행해 보유·후보 종목의 **확정 종가**를 `state/market_snapshot.json` 에 기록한다.
+- 종가 평가·트레일링스톱 갱신·lessons 오차 분류는 가능한 한 이 스냅샷의 종가를 1순위 출처로 사용한다.
+
 이 프롬프트는 하루 중 **가장 중요한 단계**다. 다음 4가지를 순서대로 수행한다:
 1. 종가 확정 및 목표가 오차 검증
 2. 가상 포트폴리오 시뮬레이션 체결·평가

@@ -7,6 +7,9 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
+## 0-A. 영업일 가드
+- `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 15시 점검 생략" 1줄만 리포트하고 종료한다.
+
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`
 2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`

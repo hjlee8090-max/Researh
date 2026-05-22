@@ -1,7 +1,14 @@
-# 파일 참조 구조 점검 (2026-05-21 갱신)
+# 파일 참조 구조 점검 (2026-05-22 갱신)
 
 이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
-시간대별 리포트 분리 작업 이후 갱신.
+시간대별 리포트 분리 + 시장 데이터 자동 수집 + 휴장일 가드 작업 이후 갱신.
+
+> **신규 추가 (2026-05-22)**
+> - `config/candidates.json` — 신규 진입 후보 종목 목록
+> - `config/market_calendar.json` — KRX 휴장일 캘린더
+> - `scripts/fetch_market_data.py` — 다중 출처 가격·5거래일 추세 자동 수집 → `state/market_snapshot.json`
+> - `scripts/check_market_open.py` — 영업일/휴장일 판정 (모든 평일 routine 의 0-A 단계에서 호출)
+> - `state/market_snapshot.json` — 매 routine 마다 신규 생성 (gitignored)
 
 ## 1. 리포트 파일 명명 규칙
 
@@ -116,8 +123,19 @@
 ## 4. 보조 스크립트의 참조 구조
 
 ### `scripts/audit_pipeline.py`
-- 읽기: `config/*` 4개, `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`)
+- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py` 존재 확인
 - 쓰기: 없음 (stdout만)
+
+### `scripts/fetch_market_data.py` (신규)
+- 읽기: `config/portfolio.json` (보유), `config/candidates.json` (후보), `config/policy.json` (`entry_filters.block_if_cumulative_return_below_pct`)
+- 네트워크: stooq.com 일별 CSV + Yahoo Finance v8 chart JSON (양쪽 시도, 둘 다 실패 시 신뢰도 low)
+- 쓰기: `state/market_snapshot.json` (덮어쓰기 — gitignored)
+
+### `scripts/check_market_open.py` (신규)
+- 읽기: `config/market_calendar.json`
+- 인자: `--date YYYY-MM-DD` (옵션, 생략 시 오늘 KST)
+- 출력: stdout JSON 1줄 + exit code (0=영업일, 10=주말, 11=공휴일)
+- 모든 평일 routine 의 0-A 단계 가드. 휴장 시 routine 은 축약 모드 진행 또는 종료.
 
 ### `scripts/write_audit_report.py`
 - 읽기: `config/policy.json`, `config/portfolio.json`, `config/weekly_plan.json`, `audit_pipeline.py` stdout
@@ -168,3 +186,5 @@
 - [ ] 이전 시간대 파일 링크가 깨지지 않았는가?
 - [ ] `## ⚠️ 위험·매매 시그널 시각화` / `## 🎓 학습 포인트 3개` / `## 📖 오늘 등장한 용어` 세 섹션이 들어 있는가?
 - [ ] 일요일 21:00 archive 가 매주 생성되어 평일 routine 콘텍스트가 한 주치 응축으로 유지되는가?
+- [ ] (신규) `state/market_snapshot.json` 의 `as_of` 가 최신 routine 시각과 일치하는가? 보유종목 `confidence` 가 모두 `low` 면 출처 차단 신호.
+- [ ] (신규) 오늘이 휴장일이면 `check_market_open.py` 결과대로 routine 이 축약 모드로 진행됐는가?

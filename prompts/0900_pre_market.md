@@ -7,6 +7,19 @@
 - `git pull --rebase origin main || git pull --rebase origin master` 를 먼저 실행해 이전 회차에서 갱신된 상태를 받는다.
 - 충돌 시 사용자에게 보고하고 멈춘다.
 
+## 0-A. 영업일 가드 (가장 먼저)
+- `python scripts/check_market_open.py` 를 실행해 오늘이 KRX 영업일인지 확인한다 (출력 JSON 의 `is_open`).
+- `is_open=false` (주말 또는 공휴일):
+  - 휴장 모드로 전환 — 신규 매매·신규 검색을 멈추고, 휴장 사유를 리포트 1줄로 기록한 뒤 종료. 보유 종목 평가는 건너뛴다 (가격이 갱신되지 않음).
+- `is_open=true`: 정상 진행.
+
+## 0-B. 시장 데이터 스냅샷 수집 (영업일에만)
+- `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
+  - 보유종목(`config/portfolio.json.positions`) + 후보종목(`config/candidates.json.candidates`) 의 stooq·Yahoo 양쪽 가격을 수집한다.
+  - 출력 요약(stdout)에서 `pass=`(추세필터 통과 후보 수)·`block=`(차단 후보 수)·`low_conf=`(신뢰도 낮음 보유 수) 를 리포트 "한눈에 보기"에 표기한다.
+- 이후 가격·추세 판단은 **이 스냅샷을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
+- 스냅샷의 신뢰도(`confidence`)가 모두 `low` 이면 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
+
 ## 0. 컨텍스트 적재 (반드시 이 순서)
 1. `config/policy.json` — 정책 파라미터
 2. `state/lessons.md` — **과거 오차 사유. 추천·점검 전에 동일 실수를 피하기 위해 반드시 먼저 읽는다.**
@@ -20,6 +33,8 @@
    - 자정/어제 18시 어느 쪽이라도 없다면 그 사실을 명시하고 가능한 범위에서 진행
 5. `config/watchlist.json` — 현재 추천 종목 + `next_day_plan`
 6. `config/portfolio.json` — 보유 현황
+7. `config/candidates.json` — 신규 진입 후보 (`shipbuilding_candidate` 등) — 자동 추적 대상
+8. `state/market_snapshot.json` — 0-B 단계에서 방금 만든 가격·5거래일 추세 스냅샷
 
 > **파이프라인 연결 규칙** (핵심):
 > - 09시는 "어제 18시 (한국 마감) → 오늘 00시 (글로벌 야간) → 야간~새벽 추가 흐름 → 09시 (한국 개장)" 의 **종합 마디**다.
@@ -63,11 +78,12 @@
 - 한국 시장이 야간 흐름을 **그대로 반영** vs **차별화** 중 어느 쪽인가?
 - 보유 종목 각각이 야간 시그널을 **그대로 추종 / 약화 추종 / 역행** 중 어느 패턴인가?
 
-### 1-1. 진입 후보 추세 필터 검색 (신규 매수 전 의무)
-신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 검색·기록:
-- "[종목명] 최근 5거래일 주가" 또는 "[종목명] 주간 등락률"
-- `policy.entry_filters.trend_lookback_days`(=5)일 누적 수익률 추정
-- 누적 -7% 이하면 **진입 보류** (필터 위배 사유를 watchlist의 `entry_filter_blocks` 배열에 1줄 기록)
+### 1-1. 진입 후보 추세 필터 (신규 매수 전 의무)
+신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 확인·기록:
+- **1순위 — `state/market_snapshot.json`의 `tickers.<ticker>.five_day_cumulative_return_pct` 와 `entry_filter.passes` 값을 그대로 사용**한다. (0-B 단계에서 `fetch_market_data.py` 가 자동 계산)
+- 후보 종목이 `config/candidates.json` 에 등록되어 있지 않다면 추가하고, 다음 routine 부터 자동 추적되도록 한다.
+- snapshot 의 `entry_filter.passes = false` 또는 `confidence = "low"` → **진입 보류** (사유를 watchlist 의 `entry_filter_blocks` 배열에 1줄 기록).
+- snapshot 양쪽 출처가 모두 실패한 경우에 한해 백업으로 웹검색 ("[종목명] 최근 5거래일 주가")으로 보강하되, 사용한 출처를 명시한다.
 
 ### 1-2. 구조적 악재 키워드 스캔 (신규 매수 전 의무)
 각 후보 종목의 **최근 30일 뉴스**에서 `policy.entry_filters.structural_bear_keywords` 매칭 여부 확인:

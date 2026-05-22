@@ -4,7 +4,7 @@
 
 param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("0000_global", "0900_pre_market", "1200_midday", "1500_close", "1800_report", "saturday_review", "sunday_strategy", "weekend_report")]
+    [ValidateSet("0000_global", "0900_pre_market", "1200_midday", "1500_close", "1800_report", "saturday_review", "sunday_strategy", "sunday_policy_review", "sunday_archive", "weekend_report")]
     [string]$PromptName
 )
 

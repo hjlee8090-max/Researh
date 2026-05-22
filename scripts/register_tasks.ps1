@@ -23,6 +23,8 @@ $Slots = @(
     @{ Name = "주식_1800_일일리포트"; Time = "18:00"; Prompt = "1800_report"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
     @{ Name = "주식_토요일_사후분석"; Time = "18:00"; Prompt = "saturday_review"; Days = @("Saturday") }
     @{ Name = "주식_일요일_다음주전략"; Time = "18:00"; Prompt = "sunday_strategy"; Days = @("Sunday") }
+    @{ Name = "주식_일요일_정책패치리뷰"; Time = "20:00"; Prompt = "sunday_policy_review"; Days = @("Sunday") }
+    @{ Name = "주식_일요일_주간archive"; Time = "21:00"; Prompt = "sunday_archive"; Days = @("Sunday") }
 )
 
 if ($Unregister) {

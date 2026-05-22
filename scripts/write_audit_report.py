@@ -199,6 +199,19 @@ def humanize_audit_line(line: str) -> str:
         ("notification triggers incomplete", "카카오 알림으로 이어지는 연결고리 중 일부가 빠져 있을 수 있습니다."),
         ("weekly theses missing daily_linkage", "주간 투자 가설과 데일리 리포트의 연결 설명이 부족합니다."),
         ("no daily reports found", "아직 데일리 리포트가 없습니다."),
+        ("trade_log 액션·정렬·cash 흐름 무결성", "거래 기록의 액션·시간순서·현금 잔액 흐름이 모두 정상입니다."),
+        ("trade_log: ", "거래 기록에서 이상한 항목을 발견했습니다: "),
+        ("R/R 1.2 미만 보유 종목", "보유 종목 중 기대 수익/손실 비율(R/R) 이 1.2 미만인 항목이 있습니다. 오늘 18시 점검에서 목표가나 손절가를 다시 정해야 합니다."),
+        ("보유 종목 모두 R/R 임계", "보유 종목의 기대 수익/손실 비율은 모두 안전 구간에 있습니다."),
+        ("recovery_stage=defensive", "회복 전략 단계: 수비 — 신규 진입 금지, 비중 15% 상한, 후보 검색 일시 정지가 필요합니다."),
+        ("recovery_stage=caution", "회복 전략 단계: 주의 — 신규 진입 1건/일·비중 20% 상한·구조적 악재 매칭 금지가 필요합니다."),
+        ("recovery_stage=normal", "회복 전략 단계: 정상 — 정책 default 그대로 운영 가능합니다."),
+        ("recovery_stage 판정 불가", "회복 전략 단계를 판정할 자산 정보가 부족합니다."),
+        ("출처 모두 실패", "오늘 시장 데이터 수집이 양쪽 출처 모두 실패했습니다."),
+        ("config/candidates.json tracks", "신규 진입 후보 종목 목록을 자동 추적 중입니다."),
+        ("config/market_calendar.json lists", "한국거래소 휴장일 캘린더가 등록되어 있습니다."),
+        ("trade_log ↔ portfolio.json 정합성", "거래 기록과 포트폴리오 잔액·보유수량·실현손익이 모두 일치합니다."),
+        ("reconcile:", "거래 기록과 포트폴리오 사이에 불일치가 발견됐습니다 — 다음 routine 전에 수동 확인이 필요합니다: "),
     ]
     if clean.startswith("latest daily report:"):
         return f"최신 데일리 리포트를 확인했습니다: {clean.split(':', 1)[1].strip()}"

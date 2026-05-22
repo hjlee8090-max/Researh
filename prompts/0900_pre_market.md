@@ -7,6 +7,31 @@
 - `git pull --rebase origin main || git pull --rebase origin master` 를 먼저 실행해 이전 회차에서 갱신된 상태를 받는다.
 - 충돌 시 사용자에게 보고하고 멈춘다.
 
+## 0-A. 영업일 가드 (가장 먼저)
+- `python scripts/check_market_open.py` 를 실행해 오늘이 KRX 영업일인지 확인한다 (출력 JSON 의 `is_open`).
+- `is_open=false` (주말 또는 공휴일) → **휴장 모드** 분기:
+  - `reports/YYYY-MM-DD-09.md` 를 다음 5줄짜리 축약 형태로 **반드시 생성** 한다 (이후 routine 흐름·archive 추적성을 위해):
+    1. 타이틀 + "휴장 모드" 표기
+    2. 휴장 사유 (예: "부처님오신날 대체휴일")
+    3. 직전 영업일 18시 결론 1줄 그대로 carry-over
+    4. 다음 영업일 09시 우선 액션 1줄
+    5. 면책 1줄
+  - 매매·신규 검색·watchlist 수정·trade_log append 모두 금지.
+  - 0-B 단계(시장 데이터 수집) 는 건너뛴다.
+  - 끝에 `chore(09:00 ...): 휴장` 메시지로 commit/push 후 종료.
+- `is_open=true`: 정상 진행 (0-B 단계로).
+
+## 0-B. 시장 데이터 스냅샷 수집 (영업일에만)
+- `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
+  - 보유종목(`config/portfolio.json.positions`) + 후보종목(`config/candidates.json.candidates`) 의 stooq·Yahoo 양쪽 가격을 수집한다.
+  - 출력 요약(stdout)에서 `pass=`(추세필터 통과 후보 수)·`block=`(차단 후보 수)·`low_conf=`(신뢰도 낮음 보유 수) 를 리포트 "한눈에 보기"에 표기한다.
+- `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
+  - 후보 종목을 추세(45%) + 신뢰도(25%) + thesis 연결(30%) - 구조적 악재 가중치 로 점수화.
+  - `tradable_count >= 1` 이면 진입 가능 후보가 있다는 뜻 — "한눈에 보기"에 1순위 ticker 표기.
+- `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
+- 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
+- 스냅샷의 신뢰도(`confidence`)가 모두 `low` 이면 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
+
 ## 0. 컨텍스트 적재 (반드시 이 순서)
 1. `config/policy.json` — 정책 파라미터
 2. `state/lessons.md` — **과거 오차 사유. 추천·점검 전에 동일 실수를 피하기 위해 반드시 먼저 읽는다.**
@@ -20,6 +45,9 @@
    - 자정/어제 18시 어느 쪽이라도 없다면 그 사실을 명시하고 가능한 범위에서 진행
 5. `config/watchlist.json` — 현재 추천 종목 + `next_day_plan`
 6. `config/portfolio.json` — 보유 현황
+7. `config/candidates.json` — 신규 진입 후보 (`shipbuilding_candidate` 등) — 자동 추적 대상
+8. `state/market_snapshot.json` — 0-B 단계에서 방금 만든 가격·5거래일 추세 스냅샷
+9. `state/candidate_scores.json` — 0-B 단계의 후보 점수·진입 가능 여부 랭킹
 
 > **파이프라인 연결 규칙** (핵심):
 > - 09시는 "어제 18시 (한국 마감) → 오늘 00시 (글로벌 야간) → 야간~새벽 추가 흐름 → 09시 (한국 개장)" 의 **종합 마디**다.
@@ -36,6 +64,14 @@
 - 오늘 신규 매수 1건당 허용 손실액 = `portfolio.equity × policy.risk.max_single_trade_risk_pct_of_equity / 100`
 
 이 계산 결과가 "보유 종목이 목표가에 가도 주간 목표에 부족"이면, 단순 HOLD만 쓰지 말고 **현금 활용 후보 / 목표 하향 / 리스크 축소** 중 하나를 명시한다.
+
+## 0-3. 회복 전략 단계 판정 (의무)
+`policy.weekly_recovery_plan` 에 정의된 stages 를 기준으로 현재 주간 누적 수익률에 해당하는 단계를 판정한다.
+- 누적 수익률 floor: normal -2.0% / caution -3.5% / defensive -5.0%
+- 판정 결과(`normal`/`caution`/`defensive`)를 09시 리포트 "한눈에 보기" 에 1줄 표기.
+- `caution` 이면 신규 진입 1건/일·비중 20% 상한·구조적 악재 매칭 진입 금지 적용.
+- `defensive` 이면 신규 진입 금지·비중 15% 상한·후보 검색 일시 정지 적용.
+- 단계가 직전 routine 대비 변경됐다면 `state/lessons.md` 에 "회복 전략 단계 변경" 1줄 추가.
 
 ## 1. 웹 검색 (필수)
 
@@ -63,11 +99,24 @@
 - 한국 시장이 야간 흐름을 **그대로 반영** vs **차별화** 중 어느 쪽인가?
 - 보유 종목 각각이 야간 시그널을 **그대로 추종 / 약화 추종 / 역행** 중 어느 패턴인가?
 
-### 1-1. 진입 후보 추세 필터 검색 (신규 매수 전 의무)
-신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 검색·기록:
-- "[종목명] 최근 5거래일 주가" 또는 "[종목명] 주간 등락률"
-- `policy.entry_filters.trend_lookback_days`(=5)일 누적 수익률 추정
-- 누적 -7% 이하면 **진입 보류** (필터 위배 사유를 watchlist의 `entry_filter_blocks` 배열에 1줄 기록)
+### 1-1. 진입 후보 추세 필터 (신규 매수 전 의무)
+신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 확인·기록:
+- **1순위 — `state/market_snapshot.json`의 `tickers.<ticker>.five_day_cumulative_return_pct` 와 `entry_filter.passes` 값을 그대로 사용**한다. (0-B 단계에서 `fetch_market_data.py` 가 자동 계산)
+- 후보 종목이 `config/candidates.json` 에 등록되어 있지 않다면 다음 schema 로 추가하고, 다음 routine 부터 자동 추적되도록 한다:
+  ```json
+  {
+    "ticker": "XXXXXX",
+    "name": "종목명",
+    "sector": "섹터",
+    "thesis_id": "weekly_plan.weekly_thesis 의 id 또는 null",
+    "rationale": "1줄 진입 근거",
+    "structural_bear_flags": [],
+    "first_added": "YYYY-MM-DD"
+  }
+  ```
+- `state/candidate_scores.json.ranked` 에서 `tradable=true` 인 1순위 종목을 신규 매수 후보로 우선 검토. `block_reasons` 가 있는 종목은 사유 그대로 watchlist `entry_filter_blocks` 에 복사.
+- snapshot 의 `entry_filter.passes = false` 또는 `confidence = "low"` → **진입 보류**.
+- snapshot 양쪽 출처가 모두 실패한 경우에 한해 백업으로 웹검색 ("[종목명] 최근 5거래일 주가")으로 보강하되, 사용한 출처를 명시한다.
 
 ### 1-2. 구조적 악재 키워드 스캔 (신규 매수 전 의무)
 각 후보 종목의 **최근 30일 뉴스**에서 `policy.entry_filters.structural_bear_keywords` 매칭 여부 확인:
@@ -92,7 +141,7 @@
    - **진입가** (현재가 ±1% 이내)
    - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이지만, `weekly_plan.objective.gap_to_target`, 종목별 촉매, 저항선, 기대 보상/위험 비율을 함께 반영한다.
    - **손절가** = 동적 산정. 기본 참고값은 진입가 × 0.90 이지만, 단일 거래 예상 손실이 `portfolio.equity × max_single_trade_risk_pct_of_equity` 를 넘지 않게 조정한다.
-   - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). `policy.risk.min_reward_risk_ratio_for_new_entry` 미만이면 신규 매수 금지.
+   - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). `policy.reward_risk_management.min_reward_risk_ratio_for_new_entry` (=1.2) 미만이면 신규 매수 금지. (단일 출처)
    - **단계 경보 가격**: yellow(-5%), orange(-7%), red(-10%) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)
    - **리스크 2개** (Bear case) — §1-2에서 구조적 키워드 매칭됐다면 첫 항목으로 우선 기재

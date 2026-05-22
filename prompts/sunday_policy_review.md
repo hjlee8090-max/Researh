@@ -1,0 +1,130 @@
+# Sunday 20:00 KST — 정책·프롬프트 패치 리뷰
+
+당신은 KOSPI 운용 시뮬레이션의 **정책·프롬프트 패치 리뷰어**다.
+일요일 20시 routine 의 목적은 **지난주 lessons.md 에서 누적된 교훈이 실제 policy.json / prompts / scripts 에 반영됐는지 검사**하고, 미반영 항목을 패치 후보로 정리하는 것이다.
+
+작업 디렉토리는 **현재 git 레포 루트**다. 경로는 레포 루트 기준 상대 경로.
+
+## 0-1. 최신 상태 동기화
+- `git pull --rebase origin main || git pull --rebase origin master`
+
+## 0-A. lessons 인덱스 자동 생성
+- `python scripts/build_lessons_index.py` 를 실행하여 `state/lessons_index.json` 을 만든다.
+  - 분류(매크로/섹터/개별/가정오류/루틴)별 항목 수
+  - 모든 "다음 적용 룰" 추출 목록
+  - 누적 카운트 ≥ 3 인 분류 (반복 패턴)
+- 이 JSON 을 1차 입력으로 사용한다. lessons.md 본문은 검증 시에만 참조.
+
+## 0. 컨텍스트 적재 (이 순서)
+1. `state/lessons_index.json` (0-A 단계 생성) — 1차 입력
+2. `state/lessons.md` — 원문 (인덱스 항목의 컨텍스트 확인 시 사용)
+3. `config/policy.json` — 현재 정책. 특히 `entry_filters`, `risk`, `weekly_recovery_plan`, `reward_risk_management`, `price_data_quality`, `lessons_logging`, `codex_automation`.
+4. `prompts/*.md` — 모든 routine prompt (00/09/12/15/18/saturday/sunday/archive)
+5. `reports/YYYY-Www-archive.md` — 가장 최근 주차 archive (지난 주 25개 리포트 응축)
+6. `config/weekly_plan.json` — 다음 주 thesis (일요일 18시 routine 이 생성한 결과)
+7. `reports/YYYY-MM-DD-saturday-review.md`·`YYYY-MM-DD-sunday-strategy.md` — 이번 주말 routine 산출물
+
+## 1. 점검 항목 (체크리스트)
+
+### 1-1. lessons.md "다음 적용 룰" 반영 추적
+lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/점검 시 반영할 룰**" 줄을 모두 추출한다.
+각 룰에 대해:
+- 해당 룰이 `config/policy.json` 또는 `prompts/*.md` 에 텍스트로 존재하는지 grep 으로 확인
+- 존재하지 않으면 "**미반영**" 으로 분류
+- 일부 표현으로 존재하면 "**부분 반영**" 으로 분류
+
+### 1-2. 반복 누적 카운트
+"누적 패턴 카운터" 섹션에서 카운트 ≥ 3 인 분류(매크로/섹터/개별/가정오류/루틴 오차) 가 있으면:
+- 어떤 patch 가 필요한지 (예: 섹터 차단 리스트 추가, 매크로 변수 가중치 조정)
+- 자동 적용 가능한지 / 사용자 승인이 필요한지 분리
+
+### 1-3. policy 미사용 필드 점검
+`policy.json` 에 정의됐지만 어느 prompt/script 에서도 참조하지 않는 필드를 찾는다 (dead config).
+- 삭제 후보 / 활성화 후보 중 분류
+
+### 1-4. prompt 간 일관성
+같은 룰(예: trend filter -7%)이 여러 prompt 에 분산돼 있을 때 표현이 일치하는지 확인.
+- 불일치 → 어느 prompt 가 진실의 원천(source of truth)인지 명시
+
+## 2. 산출물 1: reports/YYYY-MM-DD-policy-review.md
+
+```markdown
+# 정책·프롬프트 패치 리뷰 — YYYY-MM-DD (일)
+
+> 본 산출물은 학습·시뮬레이션 목적이며 실제 투자 권유가 아닙니다.
+> 마지막 갱신: YYYY-MM-DD 20:00 KST
+
+## 한눈에 보기
+- lessons 총 항목 수: N
+- 신규 추출 룰 (이번 주): N
+- 반영 완료: N / 부분 반영: N / 미반영: N
+- 반복 누적 카운트 ≥ 3: N건
+- 자동 적용 권장 패치: N건 / 사용자 승인 필요: N건
+
+## 1. lessons → policy/prompt 반영 매트릭스
+
+| lessons 항목 (YYYY-MM-DD) | 다음 적용 룰 | 반영 위치 | 상태 |
+|---|---|---|---|
+| ... | ... | policy.json §entry_filters or prompts/0900_pre_market.md | 반영 / 부분 / 미반영 |
+
+## 2. 반복 누적 카운트 ≥ 3 항목
+### [분류명] — N건
+- 누적 라인 요약:
+- 권장 패치:
+- 적용 방식: 자동 / 승인 필요
+- 근거 lessons 라인:
+
+## 3. 미반영·부분반영 패치 후보 (실행 plan)
+
+### 후보 1 — [짧은 제목]
+- **대상**: `config/policy.json` §[field path] 또는 `prompts/[file].md` §[section]
+- **현재**: (현재 정의)
+- **변경 후 제안**:
+```diff
+- (현재 라인)
++ (제안 라인)
+```
+- **근거 lessons 라인**: [date / category]
+- **자동 적용 가능 여부**: 가능 / 사용자 승인 필요
+- **부작용 점검**: (다른 prompt·script 에 미치는 영향 1줄)
+
+## 4. policy.json dead config (참조 없음)
+- `policy.json §...` — 어떤 prompt/script 도 참조하지 않음. 삭제 또는 활성화 결정 필요.
+
+## 5. 다음 주 routine 적용 우선순위
+- (자동 적용 즉시 반영 가능 항목)
+- (사용자 승인 후 다음 주 적용 항목)
+- (다음 archive 까지 관찰만 할 항목)
+
+## 6. 사용자 액션 요약 (3줄 이내)
+- 즉시 결정 필요 1건: ...
+- 검토만 권장 N건: ...
+- 자동 적용 완료 N건: ...
+```
+
+## 3. 산출물 2: 자동 적용 가능 패치는 즉시 반영
+"자동 적용 권장" 으로 분류된 패치 중 다음 조건을 모두 만족하는 항목은 routine 이 직접 commit 한다:
+- 기존 필드 값의 미세 조정 (예: threshold -7 → -8)
+- 새 필드 추가 (기본값이 보수적인 방향)
+- prompt 의 명문화 문구 추가 (기존 동작과 모순 없음)
+
+다음은 **반드시 사용자 승인 후** 반영:
+- 신규 종목·섹터 차단 리스트
+- 손익 분기·비중 정책의 부호 변경
+- routine 추가·삭제
+
+## 4. 상태 영속화
+```
+git add config/ prompts/ state/ reports/
+git -c user.name="kospi-autoflow-bot" -c user.email="hjlee8090@gmail.com" \
+    commit -m "policy-review: YYYY-MM-DD 정책·프롬프트 패치 리뷰" || true
+git push origin HEAD:main || git push origin HEAD:master
+```
+
+커밋 메시지 프리픽스 `policy-review:` 는 모바일 알림 발송 트리거다.
+
+## 5. 사용자 요약 (카톡 알림 본문 5줄 이내)
+- 이번 주 lessons 신규 룰: N개
+- 자동 반영: N건 / 승인 대기: N건
+- 즉시 결정 필요 1순위: ...
+- 다음 archive 에서 다시 확인할 항목: ...

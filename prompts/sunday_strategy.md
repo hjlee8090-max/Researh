@@ -8,6 +8,15 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
+## 0-A. 시장 데이터 스냅샷
+- `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
+- 다음 주 thesis 설계에 사용할 **후보 종목의 추세 필터 통과 여부**(`entry_filter.passes`)와 가격 신뢰도를 가장 먼저 확인한다.
+- 추세 필터를 통과하지 못한 후보는 `config/candidates.json` 에 그대로 두되, 다음 주 thesis 의 `confirming_signals` 에 "5거래일 누적 ≥ -7%로 회복" 같은 트리거를 명시한다.
+
+## 0-B. 휴장일 캘린더 확인
+- `python scripts/check_market_open.py --date <다음주 월요일>` 부터 5영업일을 순회하며 **다음 주 휴장일이 있는지** 확인한다.
+- 휴장일이 있으면 일요일 전략 리포트와 `weekly_plan.json.watch_items` 에 "X요일 X월 X일 휴장 — 데일리 routine 휴장 모드" 를 명시한다.
+
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`
 2. `config/policy.json`

@@ -1,7 +1,18 @@
-# 파일 참조 구조 점검 (2026-05-21 갱신)
+# 파일 참조 구조 점검 (2026-05-22 갱신)
 
 이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
-시간대별 리포트 분리 작업 이후 갱신.
+시간대별 리포트 분리 + 시장 데이터 자동 수집 + 휴장일 가드 작업 이후 갱신.
+
+> **신규 추가 (2026-05-22)**
+> - `config/candidates.json` — 신규 진입 후보 종목 목록
+> - `config/market_calendar.json` — KRX 휴장일 캘린더
+> - `scripts/fetch_market_data.py` — 다중 출처 가격·5거래일 추세 자동 수집 → `state/market_snapshot.json`
+> - `scripts/check_market_open.py` — 영업일/휴장일 판정 (모든 평일 routine 의 0-A 단계에서 호출)
+> - `scripts/score_candidates.py` — 후보 자동 점수화 → `state/candidate_scores.json`
+> - `scripts/reconcile_portfolio.py` — trade_log ↔ portfolio 정합성 검증 (audit + 09시 사전 점검)
+> - `scripts/build_lessons_index.py` — lessons.md 분류·룰 인덱스 → `state/lessons_index.json`
+> - `prompts/sunday_policy_review.md` — 일요일 20시 정책 패치 리뷰
+> - `state/{market_snapshot,candidate_scores,lessons_index}.json` — 모두 매 routine 마다 신규 생성 (gitignored)
 
 ## 1. 리포트 파일 명명 규칙
 
@@ -99,6 +110,17 @@
 **읽기**: 토요일 사후분석 + 매크로 캘린더 검색 + config/* + state/*
 **쓰기**: `reports/YYYY-MM-DD-sunday-strategy.md`, `config/weekly_plan.json`
 
+### 일요일 20:00 정책 패치 리뷰 (`prompts/sunday_policy_review.md`) — 신규 (2026-05-22)
+**읽기**:
+- `state/lessons.md` (1차 입력)
+- `config/policy.json`, `prompts/*.md`, 직전 `reports/YYYY-Www-archive.md`
+- 이번 주말 saturday_review·sunday_strategy 산출물
+
+**쓰기**:
+- `reports/YYYY-MM-DD-policy-review.md` (신규 생성)
+- (자동 적용 가능 항목 한정) `config/policy.json` 또는 `prompts/*.md` 패치
+- 커밋 prefix `policy-review:` → 카톡 알림 트리거
+
 ### 일요일 21:00 archive (`prompts/sunday_archive.md`) — 새로 추가
 **읽기**:
 - 지난주 평일 5일 × 5슬롯 = 최대 25개 시간대별 리포트
@@ -116,8 +138,34 @@
 ## 4. 보조 스크립트의 참조 구조
 
 ### `scripts/audit_pipeline.py`
-- 읽기: `config/*` 4개, `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`)
+- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py` 존재 확인
 - 쓰기: 없음 (stdout만)
+
+### `scripts/fetch_market_data.py` (신규)
+- 읽기: `config/portfolio.json` (보유), `config/candidates.json` (후보), `config/policy.json` (`entry_filters.block_if_cumulative_return_below_pct`)
+- 네트워크: stooq.com 일별 CSV + Yahoo Finance v8 chart JSON (양쪽 시도, 둘 다 실패 시 신뢰도 low)
+- 쓰기: `state/market_snapshot.json` (덮어쓰기 — gitignored)
+
+### `scripts/check_market_open.py` (신규)
+- 읽기: `config/market_calendar.json`
+- 인자: `--date YYYY-MM-DD` (옵션, 생략 시 오늘 KST)
+- 출력: stdout JSON 1줄 + exit code (0=영업일, 10=주말, 11=공휴일)
+- 모든 평일 routine 의 0-A 단계 가드. 휴장 시 routine 은 축약 모드 진행 또는 종료.
+
+### `scripts/score_candidates.py` (신규)
+- 읽기: `config/candidates.json`, `config/weekly_plan.json`, `state/market_snapshot.json`, `config/policy.json`
+- 쓰기: `state/candidate_scores.json` (gitignored)
+- 09시 routine 0-B 단계에서 `fetch_market_data.py` 직후 호출. 후보 점수·진입 가능 여부 랭킹.
+
+### `scripts/reconcile_portfolio.py` (신규)
+- 읽기: `config/portfolio.json`, `state/trade_log.jsonl`
+- 출력: stdout JSON + exit code (0=일치, 1=불일치)
+- 09시 routine 0-B 단계의 사전 점검. `audit_pipeline.py` 가 subprocess 로 호출해 audit 결과에 흡수.
+
+### `scripts/build_lessons_index.py` (신규)
+- 읽기: `state/lessons.md`
+- 쓰기: `state/lessons_index.json` (gitignored)
+- 일요일 20시 `sunday_policy_review` routine 의 0-A 단계에서 호출. 분류별 항목·룰·반복 카운트 추출.
 
 ### `scripts/write_audit_report.py`
 - 읽기: `config/policy.json`, `config/portfolio.json`, `config/weekly_plan.json`, `audit_pipeline.py` stdout
@@ -139,6 +187,7 @@
   - `audit:` → `reports/*-audit.md`
   - `sat-review:` → `reports/*-saturday-review.md`
   - `sun-strategy:` → `reports/*-sunday-strategy.md`
+  - `policy-review:` → `reports/*-policy-review.md` (신규)
 - 시간대별 분리 파일이 없으면 구버전 `reports/YYYY-MM-DD.md` 로 폴백
 - 쓰기: 카카오 API 호출만 (디스크 쓰기 없음)
 
@@ -147,7 +196,7 @@
 ### `.github/workflows/build_and_notify.yml`
 - 트리거: `reports/`·`config/`·`scripts/`·`templates/`·`docs/` 변경, `workflow_dispatch`
 - 단계: audit → build_html → upload pages → deploy → notify (Kakao)
-- notify if-clause 허용 커밋 prefix: `report:`, `weekly:`, `weekly-archive:`, `audit:`, `sat-review:`, `sun-strategy:`, `chore(`
+- notify if-clause 허용 커밋 prefix: `report:`, `weekly:`, `weekly-archive:`, `audit:`, `sat-review:`, `sun-strategy:`, `policy-review:`, `chore(`
 
 ### `.github/workflows/pipeline_audit.yml`
 - 트리거: 평일 19:30 KST cron, `workflow_dispatch`
@@ -168,3 +217,5 @@
 - [ ] 이전 시간대 파일 링크가 깨지지 않았는가?
 - [ ] `## ⚠️ 위험·매매 시그널 시각화` / `## 🎓 학습 포인트 3개` / `## 📖 오늘 등장한 용어` 세 섹션이 들어 있는가?
 - [ ] 일요일 21:00 archive 가 매주 생성되어 평일 routine 콘텍스트가 한 주치 응축으로 유지되는가?
+- [ ] (신규) `state/market_snapshot.json` 의 `as_of` 가 최신 routine 시각과 일치하는가? 보유종목 `confidence` 가 모두 `low` 면 출처 차단 신호.
+- [ ] (신규) 오늘이 휴장일이면 `check_market_open.py` 결과대로 routine 이 축약 모드로 진행됐는가?

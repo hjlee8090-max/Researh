@@ -6,6 +6,14 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
+## 0-A. 영업일 가드 + 종가 데이터 수집
+- `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 종가 평가 생략" 으로 18시 routine 을 축약 모드로 진행 (다음 영업일 액션 플랜만 작성, 포트폴리오 history append 보류).
+- 영업일이면 `python scripts/fetch_market_data.py` 를 실행해 보유·후보 종목의 **확정 종가**를 `state/market_snapshot.json` 에 기록한다.
+- **종가 반영 지연 주의**: stooq/Yahoo Finance 일별 캔들은 한국장 마감(15:30) 후 1~3시간 지연 후 갱신될 수 있다. 18시 실행 시 `market_snapshot.json` 의 보유 종목 `sources[*].last_date` 가 **오늘 날짜인지** 반드시 확인.
+  - 오늘 날짜 ✓ → 스냅샷 종가를 1순위 출처로 사용.
+  - 오늘 날짜 ✗ (전일 종가만 반영) → 웹검색 ("[종목명] 종가 오늘") 으로 보강하고 `data_confidence` 를 1단계 강등 (high→medium, medium→low).
+- 종가 평가·트레일링스톱 갱신·lessons 오차 분류는 위 절차로 확정된 종가를 사용.
+
 이 프롬프트는 하루 중 **가장 중요한 단계**다. 다음 4가지를 순서대로 수행한다:
 1. 종가 확정 및 목표가 오차 검증
 2. 가상 포트폴리오 시뮬레이션 체결·평가
@@ -53,6 +61,20 @@
 - `daily_bridge.18:00`에 오늘 요약 1줄 추가 또는 갱신
 
 보유 종목이 기존 목표가에 모두 도달해도 주간 목표에 부족하면, 18시 리포트의 "내일 액션 플랜"에 **현금 활용 후보 / 목표 현실화 / 리스크 축소** 중 하나를 반드시 선택해 적는다.
+
+## 2-2. R/R 1.2 미만 보유 종목 재조정 (의무)
+종가 평가 후 보유 종목 각각의 R/R = (target_price - close) / (close - stop_price) 를 계산한다.
+- R/R < `policy.reward_risk_management.min_reward_risk_ratio_for_new_entry` (=1.2) 인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
+  - (a) 목표가 재조정 — 현재 가격·촉매·저항선 기반 재산정
+  - (b) 손절가 상향 — 트레일링스톱 활성화 또는 가격 진입
+  - (c) 부분 익절 — 50% 가상 체결
+- 결정을 보류했다면 다음 영업일까지만 허용. 사유를 한 줄 명시.
+- 가격 신뢰도 low 인 종목은 "R/R 계산 보류 — price_confidence=low" 로 표기하고 다음 routine 으로 미룬다.
+
+## 2-3. 회복 전략 단계 종가 재평가
+종가 기준 누적 수익률로 `policy.weekly_recovery_plan` 의 stage 를 다시 판정한다.
+- 판정 stage 를 `weekly_plan.json.daily_bridge["18:00"]` 에 1줄 명시.
+- defensive → caution 으로 회복 가능 조건은 누적 수익률이 -3.5% 위로 회복했을 때만 1단계 완화 (점프 금지).
 
 ## 3. 자기보완 학습 (lessons.md 갱신)
 오차 범위(±5%)를 벗어난 종목 각각에 대해 `state/lessons.md`에 다음 형식으로 항목 추가:

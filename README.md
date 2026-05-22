@@ -22,10 +22,13 @@ config/
   portfolio.json           현금·보유종목·평가금액
   watchlist.json           현재 추천 3종목 + 진입가·목표가·손절가·코멘트
   weekly_plan.json         이번 주 thesis·watch_items·invalidation_triggers
+  candidates.json          신규 진입 후보 목록 (fetch_market_data가 5거래일 추세 자동 수집 대상)
+  market_calendar.json     KRX 휴장일 — 모든 평일 routine의 0-A 단계에서 영업일 가드로 사용
 state/
   lessons.md               자기보완 학습 노트 (오차 사유 누적)
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
   audit_log.jsonl          파이프라인 자동 점검 이력
+  market_snapshot.json     (gitignored) 매 routine마다 fetch_market_data.py가 생성하는 다중출처 가격·5일추세 스냅샷
 reports/
   YYYY-MM-DD-00.md         🌙 자정 글로벌 야간 리포트
   YYYY-MM-DD-09.md         🌅 개장 점검 리포트
@@ -44,11 +47,24 @@ prompts/
   1800_report.md           18시 종합·확정 + 자기보완 루프
   saturday_review.md       토요일 사후분석
   sunday_strategy.md       일요일 다음주 전략
+  sunday_policy_review.md  일요일 20시 정책·프롬프트 패치 리뷰 (lessons → policy 반영 점검)
   sunday_archive.md        일요일 21시 주간 archive (콘텍스트 정리)
   weekend_report.md        주말 노트
 docs/
   file_references.md       파일 참조 구조 점검표 (어느 prompt/script가 어느 파일을 읽는지)
   github_mobile_pipeline.md
+  weekend_dryrun_checklist.md  주말 routine 첫 실행 점검표
+scripts/
+  fetch_market_data.py     stooq + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
+  check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
+  score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
+  reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
+  build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
+  audit_pipeline.py        파이프라인 무결성 점검 (의존성 0)
+  write_audit_report.py    audit 결과 + 자동 수정 → 사람 친화 리포트
+  build_html.py            reports/*.md → _site/*.html (GitHub Pages)
+  send_kakao.py            카카오 '나에게 보내기' 알림
+  kakao_oauth_helper.py    1회 refresh_token 발급
 ```
 
 ## 스케줄 (Asia/Seoul)
@@ -97,6 +113,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
 | 18:00 | `trig_01TD41NpsamHcveUeokYcyyM` |
+| 일 20:00 | **등록 필요** — `prompts/sunday_policy_review.md` (lessons → policy 패치 리뷰) |
 | 일 21:00 | 등록됨 (매주 일요일 21:00 KST — `prompts/sunday_archive.md`) |
 
 ### B. 로컬 Claude Code (선택)

@@ -47,6 +47,7 @@ prompts/
   1800_report.md           18시 종합·확정 + 자기보완 루프
   saturday_review.md       토요일 사후분석
   sunday_strategy.md       일요일 다음주 전략
+  sunday_policy_review.md  일요일 20시 정책·프롬프트 패치 리뷰 (lessons → policy 반영 점검)
   sunday_archive.md        일요일 21시 주간 archive (콘텍스트 정리)
   weekend_report.md        주말 노트
 docs/
@@ -109,6 +110,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
 | 18:00 | `trig_01TD41NpsamHcveUeokYcyyM` |
+| 일 20:00 | **등록 필요** — `prompts/sunday_policy_review.md` (lessons → policy 패치 리뷰) |
 | 일 21:00 | 등록됨 (매주 일요일 21:00 KST — `prompts/sunday_archive.md`) |
 
 ### B. 로컬 Claude Code (선택)

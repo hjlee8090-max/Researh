@@ -304,6 +304,7 @@ def main():
     is_audit = COMMIT_MESSAGE.startswith("audit:")
     is_sat_review = COMMIT_MESSAGE.startswith("sat-review:")
     is_sun_strategy = COMMIT_MESSAGE.startswith("sun-strategy:")
+    is_policy_review = COMMIT_MESSAGE.startswith("policy-review:")
     base_url = PAGES_URL or "https://github.com/hjlee8090-max/Researh"
 
     if is_weekly_archive:
@@ -338,6 +339,14 @@ def main():
         title, body, date = msg
         url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
         button = "전략 리포트 열기"
+    elif is_policy_review:
+        msg = build_pattern_report_message("*-policy-review.md", "⚙️ 정책 패치 리뷰", "lessons 반영 점검·패치 후보 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no policy-review reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "패치 리뷰 열기"
     elif is_weekly:
         msg = build_weekend_message()
         if msg is None:

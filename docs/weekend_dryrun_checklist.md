@@ -56,6 +56,17 @@
 ### 커밋·알림
 - [ ] commit prefix `sun-strategy:` → 카톡 발송 트리거 동작 확인
 
+## 3-B. sunday_policy_review.md routine (2026-05-24 20:00) — 신규
+
+> 신규 routine. Anthropic cloud routine 등록 필요 (README 의 "일 20:00" 행 참조).
+
+### 산출물 검증 포인트
+- [ ] `reports/2026-05-24-policy-review.md` 생성
+- [ ] lessons.md 의 "다음 적용 룰" 항목이 policy.json·prompts 에 반영됐는지 매트릭스로 정리
+- [ ] 이번 주 신규 룰 4건(자동차 손절 / 갭 예측 오차 / 속보 미포착 / 갭다운 폭 과소 추정) 모두 추적되는지 확인
+- [ ] R/R 1.2 미만(KB금융 0.78) 항목이 policy.reward_risk_management 룰로 다음 주에 자동 재조정 대상으로 분류됐는지 확인
+- [ ] commit prefix `policy-review:` → 카톡 발송 트리거 동작 확인
+
 ## 4. sunday_archive.md routine (2026-05-24 21:00)
 
 ### 산출물 검증 포인트

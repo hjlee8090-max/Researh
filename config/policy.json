@@ -1,7 +1,8 @@
 {
-  "version": "1.2",
-  "last_updated": "2026-05-21",
+  "version": "1.3",
+  "last_updated": "2026-05-22",
   "changelog": [
+    "1.3: 신뢰도별 허용 액션 명시(매매·평가 분리), 주간 회복 전략(드로다운 단계별 행동), R/R 1.2 미달 자동 재조정 룰, policy_patch_review 일요일 슬롯 등록",
     "1.2: 주간 계좌 목표 기반 동적 목표가·손절가, 가격 데이터 신뢰도, 주말 인사이트 루프 추가",
     "1.1: 기아(000270) 손실 사후 강화 — 단계적 손절(yellow/orange/red), 진입 추세 필터, 구조적 악재 가중치 도입"
   ],
@@ -70,7 +71,57 @@
       "high": "동일 시각대 2개 이상 출처 가격 괴리 1% 이하",
       "medium": "1개 신뢰 출처 또는 2개 출처 괴리 1~2%",
       "low": "출처 1개 미만, 시각 불명, 또는 출처 간 괴리 2% 초과"
-    }
+    },
+    "allowed_actions_by_confidence": {
+      "high": ["NEW_ENTRY", "SCALE_IN", "EXIT", "TRAILING_STOP", "EVAL", "HOLD"],
+      "medium": ["EXIT", "TRAILING_STOP", "EVAL", "HOLD"],
+      "low": ["EVAL", "HOLD"]
+    },
+    "low_confidence_eval_rule": "신뢰도 low 인 보유 종목은 trade_log 에 EXIT/SCALE_IN 을 기록하지 않는다. EVAL/HOLD 만 허용하며 portfolio.history 의 평가금액은 직전 신뢰 가능 종가를 그대로 사용하고 note 에 'price_confidence=low, valuation carried over from <YYYY-MM-DD>' 를 명시한다.",
+    "fallback_on_all_sources_failed": "출처 모두 실패한 routine 은 신규 매매·청산 모두 차단. 보유 종목은 EVAL/HOLD 만 유지. 24시간 연속 실패 시 lessons.md 에 '루틴 오차(데이터 차단)' 항목 강제 추가."
+  },
+
+  "weekly_recovery_plan": {
+    "purpose": "주간 누적 손실 단계에 따라 신규 진입·비중·검색 범위를 자동 축소해 단발 손실이 누적 손실로 번지지 않도록 한다.",
+    "stages": [
+      {
+        "stage": "normal",
+        "weekly_cumulative_return_pct_floor": -2.0,
+        "max_new_entries_per_day": 2,
+        "max_position_weight_pct": 30.0,
+        "structural_bear_match_action": "reduced_weight",
+        "candidate_search": "full",
+        "narrative": "정상 운영 — 정책 default 그대로 진행."
+      },
+      {
+        "stage": "caution",
+        "weekly_cumulative_return_pct_floor": -3.5,
+        "max_new_entries_per_day": 1,
+        "max_position_weight_pct": 20.0,
+        "structural_bear_match_action": "block",
+        "candidate_search": "shortlist_only",
+        "narrative": "주의 — 신규 진입 1건/일, 비중 20% 상한, 구조적 악재 매칭 종목 진입 금지. 후보는 candidates.json 의 통과 종목만."
+      },
+      {
+        "stage": "defensive",
+        "weekly_cumulative_return_pct_floor": -5.0,
+        "max_new_entries_per_day": 0,
+        "max_position_weight_pct": 15.0,
+        "structural_bear_match_action": "block",
+        "candidate_search": "halt",
+        "narrative": "수비 — 신규 진입 금지, 보유는 트레일링스톱·축소 위주. 후보 검색 일시 정지. 다음 영업일 18시에 다시 평가."
+      }
+    ],
+    "evaluation_cadence": "매 09시 routine 0-2 단계(주간 목표 정렬) 직후 stage 를 판정해 리포트 '한눈에 보기'에 명시.",
+    "stage_change_logging": "stage 가 직전 routine 대비 변경되면 lessons.md 에 '회복 전략 단계 변경' 항목으로 1줄 기록.",
+    "re_entry_after_defensive": "defensive 단계는 누적 수익률이 -3.5% 위로 회복한 18시 종가 평가 후 caution 으로 1단계만 완화한다 (점프 금지)."
+  },
+
+  "reward_risk_management": {
+    "min_reward_risk_ratio_for_new_entry": 1.2,
+    "review_holding_if_rr_below": 1.2,
+    "rr_review_action": "기존 보유 종목이 시세 변동으로 R/R<1.2 가 되면 18시 routine 에서 (a) 목표가 재조정 또는 (b) 손절가 상향(트레일링스톱 활성화) 중 한 가지를 선택해 watchlist 코멘트에 명시. 결정 보류는 1영업일까지만 허용.",
+    "rr_formula": "R/R = (target_price - current_price) / (current_price - stop_price). current_price 가 신뢰도 high·medium 일 때만 계산. low 면 'R/R 계산 보류' 로 표기."
   },
   "entry_filters": {
     "trend_lookback_days": 5,
@@ -138,8 +189,17 @@
     },
     "policy_patch_review": {
       "suggested_time_kst": "Sunday 20:00",
-      "execution_preference": "Codex worktree",
-      "purpose": "lessons.md의 반복 교훈이 policy.json/prompt 규칙으로 실제 반영됐는지 검사하고 패치 후보를 제안한다."
+      "execution_preference": "Claude cloud routine 또는 Codex worktree",
+      "commit_prefix": "policy-review:",
+      "purpose": "lessons.md의 반복 교훈이 policy.json/prompt 규칙으로 실제 반영됐는지 검사하고 패치 후보를 제안한다.",
+      "inputs": ["state/lessons.md", "config/policy.json", "prompts/*.md", "reports/YYYY-Www-archive.md"],
+      "outputs": ["reports/YYYY-MM-DD-policy-review.md", "(선택) prompts/*.md or config/policy.json 패치 PR"],
+      "checklist": [
+        "lessons.md 의 '다음 적용 룰' 항목이 policy.json 또는 prompts 에 실제 반영됐는지 grep 으로 확인",
+        "최근 2주 내 동일 분류(매크로/섹터/개별/가정오류/루틴)의 반복 누적 카운트 ≥ 3 인 항목 식별",
+        "반복 항목에 대한 policy patch 후보 제안 (필드명·기본값·근거 lessons 라인 명시)",
+        "patch 결정은 사용자 승인이 필요한 항목과 자동 적용 가능 항목을 분리해 표기"
+      ]
     }
   },
   "disclaimers": [

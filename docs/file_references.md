@@ -106,6 +106,17 @@
 **읽기**: 토요일 사후분석 + 매크로 캘린더 검색 + config/* + state/*
 **쓰기**: `reports/YYYY-MM-DD-sunday-strategy.md`, `config/weekly_plan.json`
 
+### 일요일 20:00 정책 패치 리뷰 (`prompts/sunday_policy_review.md`) — 신규 (2026-05-22)
+**읽기**:
+- `state/lessons.md` (1차 입력)
+- `config/policy.json`, `prompts/*.md`, 직전 `reports/YYYY-Www-archive.md`
+- 이번 주말 saturday_review·sunday_strategy 산출물
+
+**쓰기**:
+- `reports/YYYY-MM-DD-policy-review.md` (신규 생성)
+- (자동 적용 가능 항목 한정) `config/policy.json` 또는 `prompts/*.md` 패치
+- 커밋 prefix `policy-review:` → 카톡 알림 트리거
+
 ### 일요일 21:00 archive (`prompts/sunday_archive.md`) — 새로 추가
 **읽기**:
 - 지난주 평일 5일 × 5슬롯 = 최대 25개 시간대별 리포트
@@ -157,6 +168,7 @@
   - `audit:` → `reports/*-audit.md`
   - `sat-review:` → `reports/*-saturday-review.md`
   - `sun-strategy:` → `reports/*-sunday-strategy.md`
+  - `policy-review:` → `reports/*-policy-review.md` (신규)
 - 시간대별 분리 파일이 없으면 구버전 `reports/YYYY-MM-DD.md` 로 폴백
 - 쓰기: 카카오 API 호출만 (디스크 쓰기 없음)
 
@@ -165,7 +177,7 @@
 ### `.github/workflows/build_and_notify.yml`
 - 트리거: `reports/`·`config/`·`scripts/`·`templates/`·`docs/` 변경, `workflow_dispatch`
 - 단계: audit → build_html → upload pages → deploy → notify (Kakao)
-- notify if-clause 허용 커밋 prefix: `report:`, `weekly:`, `weekly-archive:`, `audit:`, `sat-review:`, `sun-strategy:`, `chore(`
+- notify if-clause 허용 커밋 prefix: `report:`, `weekly:`, `weekly-archive:`, `audit:`, `sat-review:`, `sun-strategy:`, `policy-review:`, `chore(`
 
 ### `.github/workflows/pipeline_audit.yml`
 - 트리거: 평일 19:30 KST cron, `workflow_dispatch`

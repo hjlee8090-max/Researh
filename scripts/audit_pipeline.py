@@ -43,24 +43,70 @@ def audit_json_files(messages: list[str]) -> dict[str, object]:
     return data
 
 
+ALLOWED_TRADE_ACTIONS = {
+    "BUY", "SELL", "HOLD", "EVAL", "EOD_EVAL", "OPEN_CHECK",
+    "TRAILING_STOP", "SCALE_IN", "SCALE_OUT", "DEFERRED", "WATCH",
+}
+
+
 def audit_trade_log(messages: list[str]) -> None:
     path = ROOT / "state" / "trade_log.jsonl"
     if not path.exists():
         messages.append(result("WARN", "state/trade_log.jsonl is missing"))
         return
-    bad = []
+    bad: list[str] = []
+    issues: list[str] = []
     lines = path.read_text(encoding="utf-8").splitlines()
+    entries: list[dict] = []
     for idx, line in enumerate(lines, start=1):
         if not line.strip():
             continue
         try:
-            json.loads(line)
+            entry = json.loads(line)
         except json.JSONDecodeError as exc:
             bad.append(f"line {idx}: {exc}")
+            continue
+        if not isinstance(entry, dict):
+            issues.append(f"line {idx}: 객체가 아님")
+            continue
+        for field in ("ts", "action", "ticker"):
+            if field not in entry:
+                issues.append(f"line {idx}: '{field}' 누락")
+        action = entry.get("action")
+        if action and action not in ALLOWED_TRADE_ACTIONS:
+            issues.append(f"line {idx}: 알 수 없는 action='{action}'")
+        entries.append(entry)
     if bad:
         messages.append(result("FAIL", "trade_log has invalid JSONL entries: " + "; ".join(bad[:3])))
+        return
+    messages.append(result("OK", f"trade_log JSONL is valid ({len(lines)} lines)"))
+
+    # 시간순 정렬 점검
+    timestamps = [e.get("ts", "") for e in entries if e.get("ts")]
+    sorted_ts = sorted(timestamps)
+    if timestamps != sorted_ts:
+        issues.append("ts 가 시간순으로 정렬되지 않음")
+
+    # cash_after 단조 흐름 점검 (BUY → 감소, SELL/TRAILING_STOP → 증가)
+    prev_cash: float | None = None
+    for e in entries:
+        cash = e.get("cash_after")
+        action = e.get("action")
+        if cash is None or not isinstance(cash, (int, float)):
+            continue
+        if prev_cash is not None:
+            delta = cash - prev_cash
+            if action == "BUY" and delta > 0:
+                issues.append(f"BUY 인데 cash_after 가 증가 ({prev_cash}→{cash})")
+            if action in {"SELL", "TRAILING_STOP", "SCALE_OUT"} and delta < 0:
+                issues.append(f"{action} 인데 cash_after 가 감소 ({prev_cash}→{cash})")
+        prev_cash = float(cash)
+
+    if issues:
+        for line in issues[:5]:
+            messages.append(result("WARN", f"trade_log: {line}"))
     else:
-        messages.append(result("OK", f"trade_log JSONL is valid ({len(lines)} lines)"))
+        messages.append(result("OK", "trade_log 액션·정렬·cash 흐름 무결성 확인"))
 
 
 def audit_weekly_alignment(data: dict[str, object], messages: list[str]) -> None:
@@ -102,6 +148,79 @@ def audit_weekly_alignment(data: dict[str, object], messages: list[str]) -> None
             messages.append(result("WARN", "weekly theses missing daily_linkage: " + ", ".join(missing_linkage)))
         else:
             messages.append(result("OK", f"weekly_plan has {len(theses)} linked theses"))
+
+
+def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
+    """보유 종목의 R/R 1.2 미달 여부를 점검 (policy.reward_risk_management 기준)."""
+    policy = data.get("config/policy.json") or {}
+    portfolio = data.get("config/portfolio.json") or {}
+    watchlist = data.get("config/watchlist.json") or {}
+    if not isinstance(policy, dict) or not isinstance(portfolio, dict) or not isinstance(watchlist, dict):
+        return
+    rrm = policy.get("reward_risk_management", {})
+    threshold = rrm.get("min_reward_risk_ratio_for_new_entry", 1.2) if isinstance(rrm, dict) else 1.2
+
+    stocks_by_ticker = {
+        s.get("ticker"): s for s in watchlist.get("stocks", []) if isinstance(s, dict)
+    }
+    flagged: list[str] = []
+    for pos in portfolio.get("positions", []):
+        if not isinstance(pos, dict):
+            continue
+        ticker = pos.get("ticker")
+        current = pos.get("current_price_approx")
+        target = pos.get("target_price")
+        stop = pos.get("stop_price")
+        if not all(isinstance(v, (int, float)) for v in (current, target, stop)):
+            continue
+        if current <= stop or current >= target:
+            continue
+        rr = (target - current) / (current - stop)
+        if rr < threshold:
+            flagged.append(f"{ticker} R/R={rr:.2f}<{threshold}")
+    if flagged:
+        messages.append(result("WARN", "R/R 1.2 미만 보유 종목 — 18시에 목표가/손절가 재조정 필요: " + ", ".join(flagged)))
+    else:
+        messages.append(result("OK", "보유 종목 모두 R/R 임계(1.2) 이상"))
+
+
+def audit_recovery_stage(data: dict[str, object], messages: list[str]) -> None:
+    """누적 수익률 기준 회복 전략 단계 판정 (policy.weekly_recovery_plan)."""
+    policy = data.get("config/policy.json") or {}
+    weekly = data.get("config/weekly_plan.json") or {}
+    if not isinstance(policy, dict) or not isinstance(weekly, dict):
+        return
+    plan = policy.get("weekly_recovery_plan", {})
+    if not isinstance(plan, dict):
+        return
+    stages = plan.get("stages", [])
+    objective = weekly.get("objective", {}) if isinstance(weekly.get("objective"), dict) else {}
+    starting_equity = as_number_simple(objective.get("starting_equity"))
+    current_equity = as_number_simple(objective.get("current_equity"))
+    if not starting_equity or not current_equity:
+        messages.append(result("WARN", "recovery_stage 판정 불가 — starting/current equity 누락"))
+        return
+    cumulative_pct = (current_equity - starting_equity) / starting_equity * 100
+    # stages 는 floor 기준 내림차순으로 정렬돼 있다고 가정 (normal -2 / caution -3.5 / defensive -5)
+    chosen = "normal"
+    for stage in stages:
+        if not isinstance(stage, dict):
+            continue
+        floor = stage.get("weekly_cumulative_return_pct_floor")
+        if isinstance(floor, (int, float)) and cumulative_pct <= floor:
+            chosen = stage.get("stage", chosen)
+    if chosen == "normal":
+        messages.append(result("INFO", f"recovery_stage=normal (누적 {cumulative_pct:+.2f}%)"))
+    else:
+        messages.append(result("WARN", f"recovery_stage={chosen} (누적 {cumulative_pct:+.2f}%) — 신규 진입·비중·후보 검색 자동 축소 적용 필요"))
+
+
+def as_number_simple(value: object) -> float | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    return None
 
 
 def audit_market_data_tooling(messages: list[str]) -> None:
@@ -148,6 +267,7 @@ def audit_prompts_and_scripts(messages: list[str]) -> None:
         "saturday_review.md",
         "sunday_strategy.md",
         "sunday_archive.md",
+        "sunday_policy_review.md",
         "weekend_report.md",
     ]
     for name in required_prompts:
@@ -207,7 +327,7 @@ def audit_github_notify(messages: list[str]) -> None:
         return
     w_text = workflow.read_text(encoding="utf-8")
     s_text = sender.read_text(encoding="utf-8") if sender.exists() else ""
-    required = ["weekly:", "weekly-archive:", "audit:", "sat-review:", "sun-strategy:"]
+    required = ["weekly:", "weekly-archive:", "audit:", "sat-review:", "sun-strategy:", "policy-review:"]
     missing = [prefix for prefix in required if prefix not in w_text or prefix not in s_text]
     if not missing:
         messages.append(result("OK", "audit and weekend report commits trigger Kakao notification"))
@@ -221,6 +341,8 @@ def main() -> int:
     data = audit_json_files(messages)
     audit_trade_log(messages)
     audit_weekly_alignment(data, messages)
+    audit_reward_risk(data, messages)
+    audit_recovery_stage(data, messages)
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)
     audit_reports(messages)

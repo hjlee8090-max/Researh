@@ -11,13 +11,21 @@
 ## 0-A. 영업일 가드
 - `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 12시 점검 생략" 1줄만 리포트하고 종료한다.
 
+## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
+- `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 이 웹 세션 네트워크가 차단돼 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
+- **가격·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조일 뿐이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
+- `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다. 스냅샷이 `high`/`medium` 이면 그대로 high/medium 으로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 에 남아 있는 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류의 레거시 서술을 **이월·복제하지 않는다** (해당 이슈는 2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨).
+- `stale` 키가 있으면 "직전 정기 수집본"임을 1줄 명시하되 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.**
+- 스냅샷 confidence 가 실제로 `low` (또는 전 종목 low)일 때만 매매 차단(`policy.price_data_quality.block_trade_if_confidence_below`)을 적용한다.
+
 ## 0. 컨텍스트 적재
 1. `state/lessons.md` (먼저)
 2. `config/policy.json` (`risk.tiered_alerts`, `lessons_logging` 필드 확인)
 3. `config/weekly_plan.json` (이번 주 목표·thesis·invalidation_triggers)
 4. `config/watchlist.json`
 5. `config/portfolio.json`
-6. **시간대별 리포트**:
+6. `state/market_snapshot.json` (0-B 에서 갱신한 가격·신뢰도·5거래일 추세 — 가격 판단 1순위)
+7. **시간대별 리포트**:
    - `reports/YYYY-MM-DD-09.md` (오늘 09:00 — 반드시 흡수). 없으면 그 사실 명시
    - `reports/YYYY-MM-DD-00.md` (오늘 자정 — 있으면 참고)
    - 지난주 archive `reports/YYYY-Www-archive.md` 가 있으면 "지난주 함정 패턴" 부분만 참고

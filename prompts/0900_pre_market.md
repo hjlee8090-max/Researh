@@ -33,7 +33,8 @@
 > **스냅샷 출처 주의**: 이 웹 세션은 네트워크가 차단돼 `fetch_market_data.py` 가 직접 시세를 못 가져올 수 있다(네이버/yahoo 403). 그 경우 스크립트는 GitHub Actions(`fetch_prices.yml`)가 정기 수집·커밋해 둔 직전 스냅샷을 보존하고 `stale` 표시만 남긴다. `market_snapshot.json` 에 `stale` 키가 있으면 "데이터가 직전 정기 수집본"임을 리포트에 명시한다.
 - `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
 - 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
-- 스냅샷의 신뢰도(`confidence`)가 모두 `low` 이면 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
+- `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다 — 사람이 웹검색으로 임의 재판정하지 않는다. 스냅샷이 `high`/`medium` 이면 그대로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류 **레거시 서술을 이월·복제하지 않는다** (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). `stale` 키가 있어도 confidence 값은 스냅샷 그대로 — **stale ≠ low.**
+- 스냅샷의 신뢰도(`confidence`)가 **실제로** 모두 `low` 일 때만 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
 
 ## 0. 컨텍스트 적재 (반드시 이 순서)
 1. `config/policy.json` — 정책 파라미터

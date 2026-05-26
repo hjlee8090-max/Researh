@@ -261,6 +261,32 @@ def build_pattern_report_message(pattern: str, title_prefix: str, fallback: str)
     return title, summary, date
 
 
+def adopted_candidates_line() -> str | None:
+    """state/candidate_scores.json 에서 신규 채택 후보의 '채택 사유' 한 줄을 만든다.
+
+    파일이 GitHub Actions(fetch_prices.yml)에 의해 커밋돼 있을 때만 동작한다.
+    """
+    path = ROOT / "state" / "candidate_scores.json"
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    adopted = data.get("adopted") or []
+    if not adopted:
+        return None
+    if len(adopted) == 1:
+        a = adopted[0]
+        summary = a.get("summary") or ""
+        line = f"✅ 신규 채택: {a.get('name')}({a.get('ticker')})"
+        if summary:
+            line += f" — {summary}"
+        return line
+    names = ", ".join(f"{a.get('name')}({a.get('ticker')})" for a in adopted[:3])
+    return f"✅ 신규 채택 {len(adopted)}건: {names}"
+
+
 def send_kakao(access_token: str, title: str, body: str, url: str, button_title: str) -> dict:
     text = f"{title}\n\n{body}"
     if len(text) > 200:
@@ -306,6 +332,7 @@ def main():
     is_sun_strategy = COMMIT_MESSAGE.startswith("sun-strategy:")
     is_policy_review = COMMIT_MESSAGE.startswith("policy-review:")
     base_url = PAGES_URL or "https://github.com/hjlee8090-max/Researh"
+    daily_routine = False
 
     if is_weekly_archive:
         msg = build_pattern_report_message("*-archive.md", "🗂️ 주간 archive", "지난주 archive 파일이 갱신되었습니다.")
@@ -363,7 +390,9 @@ def main():
         title, body, date = msg
         url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
         button = "리포트 열기"
+        daily_routine = True
     else:
+        daily_routine = True
         slot_meta = detect_slot(COMMIT_MESSAGE)
         if slot_meta is None:
             # 시간대 미식별 시 최신 리포트로 폴백
@@ -385,6 +414,11 @@ def main():
             else:
                 url = base_url
             button = "리포트 열기"
+
+    if daily_routine:
+        adopt_line = adopted_candidates_line()
+        if adopt_line:
+            body = f"{adopt_line}\n{body}"
 
     res = send_kakao(access_token, title, body, url, button)
     print(f"sent: {res}", flush=True)

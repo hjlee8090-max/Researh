@@ -23,7 +23,9 @@ _site/
 _push_tmp_*/
 _gitdir_writable_*/
 
-# 시장 스냅샷·후보 점수·lessons 인덱스 — routine 마다 fresh 로 재생성·덮어쓰므로 트래킹 불필요
-state/market_snapshot.json
-state/candidate_scores.json
+# lessons 인덱스 — routine 마다 fresh 로 재생성하므로 트래킹 불필요
 state/lessons_index.json
+
+# market_snapshot.json / candidate_scores.json 은 더 이상 무시하지 않는다.
+# GitHub Actions(fetch_prices.yml)가 인터넷이 되는 러너에서 수집·커밋하고,
+# 네트워크가 차단된 웹 세션 routine 은 커밋된 스냅샷을 1순위 출처로 읽는다.

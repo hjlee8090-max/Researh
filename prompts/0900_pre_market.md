@@ -28,6 +28,9 @@
 - `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
   - 후보 종목을 추세(45%) + 신뢰도(25%) + thesis 연결(30%) - 구조적 악재 가중치 로 점수화.
   - `tradable_count >= 1` 이면 진입 가능 후보가 있다는 뜻 — "한눈에 보기"에 1순위 ticker 표기.
+  - **채택 사유 노티**: `candidate_scores.json.report_section_md` (이미 완성된 "### 신규 후보 채택 사유" 마크다운)를 리포트 본문에 **그대로 붙여 넣는다**. 채택 후보가 있으면 각 종목의 점수와 채택 사유(추세·신뢰도·thesis·근거)가, 없으면 "채택 후보 없음"이 들어 있다. 이 섹션이 있어야 send_kakao 가 카톡에 채택 후보를 함께 발송한다.
+
+> **스냅샷 출처 주의**: 이 웹 세션은 네트워크가 차단돼 `fetch_market_data.py` 가 직접 시세를 못 가져올 수 있다(stooq/yahoo 403). 그 경우 스크립트는 GitHub Actions(`fetch_prices.yml`)가 정기 수집·커밋해 둔 직전 스냅샷을 보존하고 `stale` 표시만 남긴다. `market_snapshot.json` 에 `stale` 키가 있으면 "데이터가 직전 정기 수집본"임을 리포트에 명시한다.
 - `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
 - 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
 - 스냅샷의 신뢰도(`confidence`)가 모두 `low` 이면 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).

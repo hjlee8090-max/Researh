@@ -22,16 +22,38 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
-USER_AGENT = "Mozilla/5.0 (KOSPI-autoflow fetch_market_data)"
+# 일부 데이터 출처(특히 Yahoo)는 기본/봇 User-Agent 를 403 으로 거부하므로 브라우저 UA 를 사용한다.
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+)
 HTTP_TIMEOUT = 12
+HTTP_RETRIES = 2
 
 logger = logging.getLogger(__name__)
 
 
 def http_get(url: str) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
-        return resp.read()
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "text/html,application/json,*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    last_exc: Exception | None = None
+    for attempt in range(HTTP_RETRIES + 1):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as exc:
+            # 403/404 같은 클라이언트 거부는 재시도해도 동일하므로 즉시 포기한다.
+            if exc.code in (401, 403, 404):
+                raise
+            last_exc = exc
+        except Exception as exc:  # noqa: BLE001 - 일시적 네트워크 오류는 재시도 대상
+            last_exc = exc
+    assert last_exc is not None
+    raise last_exc
 
 
 def fetch_stooq(ticker: str) -> list[dict[str, Any]]:
@@ -193,10 +215,12 @@ def main() -> int:
     holdings_low = []
     candidates_passing = []
     candidates_failing = []
+    sources_ok = 0
 
     for ticker, meta in tickers.items():
         ts = build_ticker_snapshot(ticker, meta, threshold)
         snapshot["tickers"][ticker] = ts
+        sources_ok += sum(1 for s in ts["sources"] if s["ok"])
         if meta.get("role") == "holding" and ts["confidence"] == "low":
             holdings_low.append(ticker)
         if meta.get("role") == "candidate":
@@ -213,11 +237,33 @@ def main() -> int:
 
     out_path = ROOT / "state" / "market_snapshot.json"
     out_path.parent.mkdir(exist_ok=True)
+
+    # 모든 출처가 실패(예: 차단된 네트워크에서 실행)했고 기존 스냅샷이 살아 있으면
+    # 빈 데이터로 덮어쓰지 않는다. 이전(예: GitHub Actions 정기 수집) 결과를 보존하되
+    # stale 표시를 남겨 다운스트림이 신선도를 판단할 수 있게 한다.
+    if sources_ok == 0 and out_path.exists():
+        prior = load_json("state/market_snapshot.json")
+        if prior.get("tickers"):
+            prior["stale"] = {
+                "last_fetch_attempt": now.isoformat(timespec="seconds"),
+                "reason": "모든 출처 수집 실패 — 직전 스냅샷 보존(덮어쓰기 생략)",
+            }
+            out_path.write_text(
+                json.dumps(prior, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            print(
+                f"all sources failed — preserved prior snapshot (as_of={prior.get('as_of')}), "
+                "marked stale"
+            )
+            return 0
+
+    snapshot.pop("stale", None)
     out_path.write_text(
         json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(
-        f"wrote {out_path.relative_to(ROOT)} tickers={len(tickers)} "
+        f"wrote {out_path.relative_to(ROOT)} tickers={len(tickers)} sources_ok={sources_ok} "
         f"pass={len(candidates_passing)} block={len(candidates_failing)} low_conf={len(holdings_low)}"
     )
     return 0

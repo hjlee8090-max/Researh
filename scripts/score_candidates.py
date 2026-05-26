@@ -64,6 +64,54 @@ def thesis_score(thesis_id: str | None, active_thesis_ids: set[str], candidate_t
     return 0.3
 
 
+def build_adopt_reasons(
+    c: dict,
+    ret5: float | None,
+    conf: str | None,
+    th_score: float,
+    active_ids: set[str],
+    candidate_ids: set[str],
+) -> list[str]:
+    """진입 가능(tradable) 후보가 '왜 채택됐는지' 를 사람이 읽을 수 있는 사유 목록으로 만든다."""
+    reasons: list[str] = []
+    if ret5 is not None:
+        trend_word = "상승" if ret5 >= 0 else "방어"
+        reasons.append(f"5거래일 누적 {ret5:+.1f}% — 추세필터 통과({trend_word})")
+    conf_word = {"high": "high(2출처 일치)", "medium": "medium(단일출처)"}.get(conf or "", str(conf))
+    reasons.append(f"가격 신뢰도 {conf_word}")
+    tid = c.get("thesis_id")
+    if tid and tid in active_ids:
+        reasons.append(f"활성 thesis '{tid}' 연결")
+    elif tid and tid in candidate_ids:
+        reasons.append(f"후보 thesis '{tid}' 연결")
+    rationale = c.get("rationale")
+    if rationale:
+        reasons.append(f"근거: {rationale}")
+    return reasons
+
+
+def build_report_section(adopted: list[dict], blocked: list[dict]) -> str:
+    """리포트 MD 에 그대로 붙여 넣을 '신규 후보 채택 사유' 섹션을 생성한다."""
+    lines = ["### 신규 후보 채택 사유", ""]
+    if adopted:
+        for r in adopted:
+            name = r.get("name") or r.get("ticker")
+            score = r.get("final_score")
+            lines.append(f"- **{name}({r['ticker']})** — 점수 {score}")
+            for reason in r.get("adopt_reasons", []):
+                lines.append(f"  - {reason}")
+    else:
+        lines.append("- 채택 후보 없음 (진입 가능 조건을 만족한 후보 0건)")
+    if blocked:
+        lines.append("")
+        lines.append("> 차단된 후보:")
+        for r in blocked:
+            name = r.get("name") or r.get("ticker")
+            why = "; ".join(r.get("block_reasons", [])) or "사유 미상"
+            lines.append(f"> - {name}({r['ticker']}): {why}")
+    return "\n".join(lines)
+
+
 def main() -> int:
     candidates_cfg = load_json("config/candidates.json", {"candidates": []})
     weekly_plan = load_json("config/weekly_plan.json", {})
@@ -117,11 +165,16 @@ def main() -> int:
         if bear_flags:
             block_reasons.append(f"구조적 악재 매칭: {', '.join(bear_flags)}")
 
+        tradable = entry_passes and conf in ("high", "medium") and not bear_flags
+        adopt_reasons = build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids) if tradable else []
+        adopt_summary = " · ".join(adopt_reasons) if adopt_reasons else None
+
         ranked.append({
             "ticker": ticker,
             "name": c.get("name", ""),
             "sector": c.get("sector"),
             "thesis_id": c.get("thesis_id"),
+            "rationale": c.get("rationale"),
             "components": {
                 "trend": t_score,
                 "confidence": c_score,
@@ -135,7 +188,9 @@ def main() -> int:
                 "entry_filter_passes": entry_passes,
                 "structural_bear_flags": bear_flags,
             },
-            "tradable": entry_passes and conf in ("high", "medium") and not bear_flags,
+            "tradable": tradable,
+            "adopt_reasons": adopt_reasons,
+            "adopt_summary": adopt_summary,
             "block_reasons": [r for r in block_reasons if r],
         })
 
@@ -149,6 +204,17 @@ def main() -> int:
         "active_thesis_ids": sorted(active_ids),
         "candidate_thesis_ids": sorted(candidate_ids),
         "ranked": ranked,
+        "adopted": [
+            {
+                "ticker": r["ticker"],
+                "name": r["name"],
+                "final_score": r["final_score"],
+                "summary": r["adopt_summary"],
+                "reasons": r["adopt_reasons"],
+            }
+            for r in tradable
+        ],
+        "report_section_md": build_report_section(tradable, blocked),
         "summary": {
             "total": len(ranked),
             "tradable_count": len(tradable),

@@ -1,0 +1,45 @@
+name: Fetch Prices & Score Candidates
+
+# 차단된 웹 세션 대신, 인터넷이 되는 GitHub Actions 러너에서 시세를 수집한다.
+# fetch_market_data.py + score_candidates.py 를 실행해 state/*.json 을 커밋하고,
+# 웹 세션 routine 은 커밋된 스냅샷을 1순위 출처로 읽는다.
+
+on:
+  schedule:
+    # KST 09/12/15/18 = UTC 00/03/06/09 (월~금). schedule 은 기본 브랜치에서만 실행됨.
+    - cron: "0 0,3,6,9 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-prices
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Fetch market data
+        run: python scripts/fetch_market_data.py
+      - name: Score candidates
+        run: python scripts/score_candidates.py
+      - name: Commit snapshot if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/market_snapshot.json state/candidate_scores.json
+          if git diff --cached --quiet; then
+            echo "no snapshot changes — skip commit"
+          else
+            git commit -m "data(prices): scheduled market snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

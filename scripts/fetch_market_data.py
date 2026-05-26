@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
-"""보유·후보 종목의 일별 가격을 두 출처(stooq, Yahoo Finance)에서 수집해 신뢰도와 5거래일 추세를 산출한다.
+"""보유·후보 종목의 일별 가격을 두 출처(네이버 금융, Yahoo Finance)에서 수집해 신뢰도와 5거래일 추세를 산출한다.
 
 routine prompt 가 매 시작 시 이 스크립트를 호출하여 `state/market_snapshot.json` 을 갱신하고,
 이후 가격 판단·신규 진입 추세필터·entry 차단 사유를 결정한다.
 
-- 의존성: Python 표준 라이브러리만 사용 (urllib, json, csv). 추가 패키지 설치 불필요.
-- 네트워크: stooq.com 일별 CSV + Yahoo Finance v8 chart JSON. 둘 중 하나만 살아 있어도 medium 신뢰도까지 산출.
+- 의존성: Python 표준 라이브러리만 사용 (urllib, json). 추가 패키지 설치 불필요.
+- 네트워크: 네이버 siseJson 일별 + Yahoo Finance v8 chart JSON. 둘 중 하나만 살아 있어도 medium 신뢰도까지 산출.
 - 출력: state/market_snapshot.json (신규 생성·덮어쓰기). state/audit_log 와 무관.
 """
 from __future__ import annotations
 
-import csv
-import io
 import json
 import logging
 import urllib.error
@@ -33,12 +31,14 @@ HTTP_RETRIES = 2
 logger = logging.getLogger(__name__)
 
 
-def http_get(url: str) -> bytes:
+def http_get(url: str, extra_headers: dict[str, str] | None = None) -> bytes:
     headers = {
         "User-Agent": USER_AGENT,
         "Accept": "text/html,application/json,*/*",
         "Accept-Language": "en-US,en;q=0.9",
     }
+    if extra_headers:
+        headers.update(extra_headers)
     last_exc: Exception | None = None
     for attempt in range(HTTP_RETRIES + 1):
         try:
@@ -56,23 +56,40 @@ def http_get(url: str) -> bytes:
     raise last_exc
 
 
-def fetch_stooq(ticker: str) -> list[dict[str, Any]]:
-    url = f"https://stooq.com/q/d/l/?s={ticker.lower()}.kr&i=d"
+def fetch_naver(ticker: str) -> list[dict[str, Any]]:
+    """네이버 금융 siseJson 에서 일별 종가를 수집한다.
+
+    응답은 엄격한 JSON 이 아니라 단일따옴표 의사-JSON 이다 (날짜만 문자열, 숫자는 무인용).
+    헤더 문자열에 작은따옴표가 없으므로 ' → " 치환 후 json.loads 로 안전하게 파싱한다.
+    행 형식: ['날짜','시가','고가','저가','종가','거래량','외국인소진율'].
+    """
+    end = datetime.now(KST)
+    start = end - timedelta(days=40)
+    url = (
+        f"https://api.finance.naver.com/siseJson.naver?symbol={ticker}"
+        f"&requestType=1&startTime={start:%Y%m%d}&endTime={end:%Y%m%d}&timeframe=day"
+    )
     try:
-        raw = http_get(url).decode("utf-8", errors="replace")
+        raw = http_get(url, {"Referer": "https://finance.naver.com/"}).decode(
+            "utf-8", errors="replace"
+        )
     except Exception as exc:  # noqa: BLE001 - we want to record any failure mode
-        logger.warning("stooq fetch failed for %s: %s", ticker, exc)
+        logger.warning("naver fetch failed for %s: %s", ticker, exc)
         return []
-    if not raw.strip() or "No data" in raw:
+    try:
+        rows = json.loads(raw.strip().replace("'", '"'))
+    except (json.JSONDecodeError, ValueError) as exc:
+        logger.warning("naver parse failed for %s: %s", ticker, exc)
         return []
-    rows = list(csv.DictReader(io.StringIO(raw)))
     out: list[dict[str, Any]] = []
-    for r in rows[-20:]:
+    for r in rows[1:]:  # 첫 행은 헤더
         try:
-            out.append({"date": r["Date"], "close": float(r["Close"])})
-        except (KeyError, ValueError, TypeError):
+            d = str(r[0])
+            date = f"{d[:4]}-{d[4:6]}-{d[6:8]}"
+            out.append({"date": date, "close": float(r[4])})
+        except (IndexError, ValueError, TypeError):
             continue
-    return out
+    return out[-20:]
 
 
 def fetch_yahoo(ticker: str) -> list[dict[str, Any]]:
@@ -102,15 +119,15 @@ def fetch_yahoo(ticker: str) -> list[dict[str, Any]]:
     return out[-20:]
 
 
-def compute_confidence(stooq_last: float | None, yahoo_last: float | None) -> tuple[str, float | None]:
-    if stooq_last and yahoo_last:
-        gap = abs(stooq_last - yahoo_last) / max(stooq_last, yahoo_last) * 100
+def compute_confidence(naver_last: float | None, yahoo_last: float | None) -> tuple[str, float | None]:
+    if naver_last and yahoo_last:
+        gap = abs(naver_last - yahoo_last) / max(naver_last, yahoo_last) * 100
         if gap <= 1.0:
             return "high", round(gap, 3)
         if gap <= 2.0:
             return "medium", round(gap, 3)
         return "low", round(gap, 3)
-    if stooq_last or yahoo_last:
+    if naver_last or yahoo_last:
         return "medium", None
     return "low", None
 
@@ -154,12 +171,12 @@ def build_ticker_snapshot(
     meta: dict[str, str],
     threshold_pct: float,
 ) -> dict[str, Any]:
-    stooq_hist = fetch_stooq(ticker)
+    naver_hist = fetch_naver(ticker)
     yahoo_hist = fetch_yahoo(ticker)
-    stooq_last = stooq_hist[-1]["close"] if stooq_hist else None
+    naver_last = naver_hist[-1]["close"] if naver_hist else None
     yahoo_last = yahoo_hist[-1]["close"] if yahoo_hist else None
-    confidence, gap_pct = compute_confidence(stooq_last, yahoo_last)
-    primary_hist = stooq_hist or yahoo_hist
+    confidence, gap_pct = compute_confidence(naver_last, yahoo_last)
+    primary_hist = naver_hist or yahoo_hist
     ret5 = five_day_return(primary_hist) if primary_hist else None
     filter_passes = ret5 is not None and ret5 >= threshold_pct
     if ret5 is None:
@@ -173,10 +190,10 @@ def build_ticker_snapshot(
         "role": meta.get("role", "candidate"),
         "sources": [
             {
-                "name": "stooq",
-                "last_close": stooq_last,
-                "last_date": stooq_hist[-1]["date"] if stooq_hist else None,
-                "ok": bool(stooq_hist),
+                "name": "naver",
+                "last_close": naver_last,
+                "last_date": naver_hist[-1]["date"] if naver_hist else None,
+                "ok": bool(naver_hist),
             },
             {
                 "name": "yahoo",

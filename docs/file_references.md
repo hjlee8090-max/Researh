@@ -143,8 +143,8 @@
 
 ### `scripts/fetch_market_data.py` (신규)
 - 읽기: `config/portfolio.json` (보유), `config/candidates.json` (후보), `config/policy.json` (`entry_filters.block_if_cumulative_return_below_pct`)
-- 네트워크: stooq.com 일별 CSV + Yahoo Finance v8 chart JSON (양쪽 시도, 둘 다 실패 시 신뢰도 low)
-- 쓰기: `state/market_snapshot.json` (덮어쓰기 — gitignored)
+- 네트워크: 네이버 siseJson 일별 + Yahoo Finance v8 chart JSON (양쪽 시도, 둘 다 실패 시 직전 스냅샷 보존+stale)
+- 쓰기: `state/market_snapshot.json` (GitHub Actions `fetch_prices.yml` 가 수집·커밋, 추적됨)
 
 ### `scripts/check_market_open.py` (신규)
 - 읽기: `config/market_calendar.json`

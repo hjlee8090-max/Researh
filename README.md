@@ -55,7 +55,7 @@ docs/
   github_mobile_pipeline.md
   weekend_dryrun_checklist.md  주말 routine 첫 실행 점검표
 scripts/
-  fetch_market_data.py     stooq + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
+  fetch_market_data.py     네이버 + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증

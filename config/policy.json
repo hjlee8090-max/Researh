@@ -1,7 +1,8 @@
 {
-  "version": "1.3",
-  "last_updated": "2026-05-22",
+  "version": "1.4",
+  "last_updated": "2026-05-26",
   "changelog": [
+    "1.4: 시장 레짐 필터(KOSPI 200일선 risk-on/off), 모멘텀 점수 고도화(52주 고점·60일 모멘텀), ATR 변동성 기반 동적 손절·리스크 사이징 도입",
     "1.3: 신뢰도별 허용 액션 명시(매매·평가 분리), 주간 회복 전략(드로다운 단계별 행동), R/R 1.2 미달 자동 재조정 룰, policy_patch_review 일요일 슬롯 등록",
     "1.2: 주간 계좌 목표 기반 동적 목표가·손절가, 가격 데이터 신뢰도, 주말 인사이트 루프 추가",
     "1.1: 기아(000270) 손실 사후 강화 — 단계적 손절(yellow/orange/red), 진입 추세 필터, 구조적 악재 가중치 도입"
@@ -45,7 +46,32 @@
       "yellow_action": "원인 3가지 검색·기록 의무, 함정패턴 cross-check, 비중 유지",
       "orange_action": "보유 비중 50% 즉시 축소 (가상 부분매도)",
       "red_action": "전량 가상 청산"
+    },
+    "volatility_sizing": {
+      "enabled": true,
+      "atr_period": 14,
+      "atr_source": "market_snapshot.json.tickers.<ticker>.volatility.atr14 (ATR%는 atr_pct)",
+      "atr_stop_multiple": 2.0,
+      "stop_rule": "동적 손절가 = 진입가 - (atr_stop_multiple × ATR14). 단, 단계경보 red(-10%)보다 깊을 수 없고, 단일 거래 손실은 equity의 1.5%를 넘기지 않는다(둘 중 더 타이트한 값 채택).",
+      "position_sizing_rule": "리스크 기반 사이징 우선 — 수량 = floor((equity × max_single_trade_risk_pct_of_equity/100) / (진입가 - 동적손절가)). 산출 비중이 max_position_weight_pct 를 넘으면 비중 상한으로 캡.",
+      "vol_compression_size_reduction": "ATR%가 종목 60일 중앙값의 70% 미만(변동성 압축)이면 사이즈 30% 축소, 1.5배 초과(변동성 확대)면 손절폭 확대·사이즈 추가 축소 검토.",
+      "fallback_when_atr_missing": "ATR 데이터가 없으면(데이터 부족) 기존 고정 -10% 손절·default_entry_weight_pct 로 폴백한다."
     }
+  },
+  "market_regime": {
+    "enabled": true,
+    "index": "KOSPI",
+    "index_symbol": "^KS11",
+    "ma_window": 200,
+    "source": "market_snapshot.json.regime (fetch_market_data.py 가 Yahoo ^KS11 로 산출)",
+    "states": {
+      "risk_on": "지수 ≥ 200일 이동평균 — 추세추종·신규 진입 정상 허용",
+      "risk_off": "지수 < 200일 이동평균 — 추세전략 위험조정수익 악화 구간. 신규 진입 신중",
+      "unknown": "지수 데이터 수집 실패 — 게이트 보류(어드바이저리만), 리포트에 명시"
+    },
+    "risk_off_blocks_new_entry": false,
+    "risk_off_action": "risk_off 에서는 신규 진입을 1건/일·축소비중(reduced_entry_weight_pct)으로 제한하고, R/R·모멘텀 점수 상위 1종목만 허용. 기존 보유는 트레일링 스톱·축소 위주. risk_off_blocks_new_entry=true 로 두면 신규 진입을 전면 차단한다.",
+    "note": "계좌 기반 weekly_recovery_plan(누적손실 단계)과 상보적 — 시장 기반 게이트. 둘 중 더 보수적인 쪽을 적용한다."
   },
   "weekly_cycle": {
     "plan_file": "config/weekly_plan.json",
@@ -128,6 +154,14 @@
     "block_if_cumulative_return_below_pct": -7.0,
     "block_reason_template": "최근 {lookback}일 누적 수익률 {ret}% — 추세 필터 위배로 진입 보류",
     "require_pre_mortem_one_liner": true,
+    "momentum_factors": {
+      "purpose": "5일 누적(급락 회피 게이트)만으로는 약하므로, 후보 점수에 중기 모멘텀과 52주 고점 근접도를 결합한다. score_candidates.py 가 산출.",
+      "blend_weights": {"ret5": 0.34, "ret60": 0.33, "pct_of_52w_high": 0.33},
+      "ret60_lookback_days": 60,
+      "high_52w_lookback_days": 252,
+      "reference": "George & Hwang(2004) 52주 고점 효과, time-series momentum 12-1",
+      "advisory_min_pct_of_52w_high": 70.0
+    },
     "structural_bear_keywords": [
       "관세", "보조금 폐지", "규제", "제재", "감독원", "소송", "리콜",
       "공급망 단절", "임원 리스크", "회계 이슈", "공정위", "특별검사",

@@ -11,12 +11,18 @@
 - ranked candidates: 점수 내림차순 + 진입 가능 여부 + 제외 사유
 
 점수 모델 (각 0~1 정규화):
-- trend_score: 5거래일 누적 수익률 → 0% 이상 = 1.0, -2% = 0.7, -5% = 0.4, -7% = 0.0, 그 미만 = 0
+- momentum_score: 3요소 가중 블렌드 (52주 고점 근접·60일 모멘텀·5일 추세)
+  - ret5_score(34%): 단기 급락 회피 게이트 (0%↑=1.0, -2%=0.7, -5%=0.4, -7%=0.1)
+  - ret60_score(33%): 중기 추세 지속 (20%↑=1.0 … -10%↓=0.1)
+  - high52_score(33%): 52주 고점 근접도 (95%↑=1.0 … 50%↓=0.2) — George&Hwang 52주 고점 효과
 - confidence_score: high=1.0 / medium=0.5 / low=0.0
 - thesis_score: 활성 thesis 와 linked = 1.0 / candidate-only thesis = 0.6 / 무관 = 0.3
 - bear_flag_penalty: structural_bear_flags 1개당 -0.15
 
-final = (trend × 0.45 + confidence × 0.25 + thesis × 0.30) - bear_flag_penalty
+final = (momentum × 0.45 + confidence × 0.25 + thesis × 0.30) - bear_flag_penalty
+
+시장 레짐(KOSPI 200일선 risk_on/risk_off)은 snapshot.regime 에서 읽어 출력에 표기하고,
+policy.market_regime.risk_off_blocks_new_entry=true 면 risk_off 일 때 tradable 을 차단한다.
 """
 from __future__ import annotations
 
@@ -37,6 +43,7 @@ def load_json(rel: str, default: Any = None) -> Any:
 
 
 def trend_score(pct: float | None) -> float:
+    """5거래일 단기 추세 점수 (급락 회피 게이트)."""
     if pct is None:
         return 0.0
     if pct >= 0:
@@ -48,6 +55,45 @@ def trend_score(pct: float | None) -> float:
     if pct >= -7.0:
         return 0.1
     return 0.0
+
+
+def ret60_score(pct: float | None) -> float:
+    """60거래일 중기 모멘텀 점수. 데이터 없으면 0.5(중립)."""
+    if pct is None:
+        return 0.5
+    if pct >= 20.0:
+        return 1.0
+    if pct >= 10.0:
+        return 0.85
+    if pct >= 0.0:
+        return 0.6
+    if pct >= -10.0:
+        return 0.35
+    return 0.1
+
+
+def high52_score(pct_of_high: float | None) -> float:
+    """52주 고점 대비 현재가 비율 점수. 데이터 없으면 0.5(중립)."""
+    if pct_of_high is None:
+        return 0.5
+    if pct_of_high >= 95.0:
+        return 1.0
+    if pct_of_high >= 85.0:
+        return 0.8
+    if pct_of_high >= 70.0:
+        return 0.6
+    if pct_of_high >= 50.0:
+        return 0.4
+    return 0.2
+
+
+def momentum_score(ret5: float | None, ret60: float | None, pct_of_high: float | None) -> tuple[float, dict]:
+    """5일·60일·52주고점 3요소 블렌드. (블렌드 점수, 구성요소 dict) 반환."""
+    s5 = trend_score(ret5)
+    s60 = ret60_score(ret60)
+    s52 = high52_score(pct_of_high)
+    blended = round(s5 * 0.34 + s60 * 0.33 + s52 * 0.33, 3)
+    return blended, {"ret5": s5, "ret60": s60, "high52": s52}
 
 
 def confidence_score(level: str | None) -> float:
@@ -71,12 +117,18 @@ def build_adopt_reasons(
     th_score: float,
     active_ids: set[str],
     candidate_ids: set[str],
+    ret60: float | None = None,
+    pct_high: float | None = None,
 ) -> list[str]:
     """진입 가능(tradable) 후보가 '왜 채택됐는지' 를 사람이 읽을 수 있는 사유 목록으로 만든다."""
     reasons: list[str] = []
     if ret5 is not None:
         trend_word = "상승" if ret5 >= 0 else "방어"
         reasons.append(f"5거래일 누적 {ret5:+.1f}% — 추세필터 통과({trend_word})")
+    if ret60 is not None:
+        reasons.append(f"60일 모멘텀 {ret60:+.1f}%")
+    if pct_high is not None:
+        reasons.append(f"52주 고점의 {pct_high:.0f}% 수준")
     conf_word = {"high": "high(2출처 일치)", "medium": "medium(단일출처)"}.get(conf or "", str(conf))
     reasons.append(f"가격 신뢰도 {conf_word}")
     tid = c.get("thesis_id")
@@ -90,9 +142,19 @@ def build_adopt_reasons(
     return reasons
 
 
-def build_report_section(adopted: list[dict], blocked: list[dict]) -> str:
+def build_report_section(adopted: list[dict], blocked: list[dict], regime: dict | None = None) -> str:
     """리포트 MD 에 그대로 붙여 넣을 '신규 후보 채택 사유' 섹션을 생성한다."""
     lines = ["### 신규 후보 채택 사유", ""]
+    if regime and regime.get("state") and regime.get("state") != "unknown":
+        st = regime["state"]
+        emoji = "🟢" if st == "risk_on" else "🔴"
+        pct = regime.get("pct_vs_ma")
+        lines.append(
+            f"- 시장 레짐: {emoji} **{st}** (KOSPI {regime.get('last_close')} / 200일선 대비 {pct:+.1f}%)"
+            if isinstance(pct, (int, float))
+            else f"- 시장 레짐: {emoji} **{st}**"
+        )
+        lines.append("")
     if adopted:
         for r in adopted:
             name = r.get("name") or r.get("ticker")
@@ -116,6 +178,12 @@ def main() -> int:
     candidates_cfg = load_json("config/candidates.json", {"candidates": []})
     weekly_plan = load_json("config/weekly_plan.json", {})
     snapshot = load_json("state/market_snapshot.json", {"tickers": {}})
+    policy = load_json("config/policy.json", {})
+
+    regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
+    regime_state = regime.get("state", "unknown") if isinstance(regime, dict) else "unknown"
+    regime_cfg = policy.get("market_regime", {}) if isinstance(policy, dict) else {}
+    risk_off_blocks = bool(regime_cfg.get("risk_off_blocks_new_entry", False))
 
     theses = weekly_plan.get("weekly_thesis", []) if isinstance(weekly_plan, dict) else []
     active_ids: set[str] = set()
@@ -142,6 +210,9 @@ def main() -> int:
         ts = ts_map.get(ticker, {}) if isinstance(ts_map, dict) else {}
         ret5 = ts.get("five_day_cumulative_return_pct") if isinstance(ts, dict) else None
         conf = ts.get("confidence") if isinstance(ts, dict) else None
+        mom = ts.get("momentum", {}) if isinstance(ts, dict) else {}
+        ret60 = mom.get("ret_60d_pct") if isinstance(mom, dict) else None
+        pct_high = mom.get("pct_of_52w_high") if isinstance(mom, dict) else None
         entry_passes = (
             ts.get("entry_filter", {}).get("passes")
             if isinstance(ts, dict) and isinstance(ts.get("entry_filter"), dict)
@@ -149,11 +220,11 @@ def main() -> int:
         )
         bear_flags = c.get("structural_bear_flags", []) or []
 
-        t_score = trend_score(ret5)
+        m_score, m_parts = momentum_score(ret5, ret60, pct_high)
         c_score = confidence_score(conf)
         th_score = thesis_score(c.get("thesis_id"), active_ids, candidate_ids)
         penalty = 0.15 * len(bear_flags)
-        final = max(0.0, t_score * 0.45 + c_score * 0.25 + th_score * 0.30 - penalty)
+        final = max(0.0, m_score * 0.45 + c_score * 0.25 + th_score * 0.30 - penalty)
 
         block_reasons: list[str] = []
         if not entry_passes:
@@ -164,9 +235,20 @@ def main() -> int:
             block_reasons.append("가격 신뢰도 low — 신규 매매 차단")
         if bear_flags:
             block_reasons.append(f"구조적 악재 매칭: {', '.join(bear_flags)}")
+        if regime_state == "risk_off":
+            note = f"시장 레짐 risk_off (KOSPI<200일선 {regime.get('pct_vs_ma')}%)"
+            block_reasons.append(note + (" — 신규 진입 차단" if risk_off_blocks else " — 신규 진입 신중(어드바이저리)"))
 
-        tradable = entry_passes and conf in ("high", "medium") and not bear_flags
-        adopt_reasons = build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids) if tradable else []
+        tradable = (
+            entry_passes
+            and conf in ("high", "medium")
+            and not bear_flags
+            and not (risk_off_blocks and regime_state == "risk_off")
+        )
+        adopt_reasons = (
+            build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high)
+            if tradable else []
+        )
         adopt_summary = " · ".join(adopt_reasons) if adopt_reasons else None
 
         ranked.append({
@@ -176,7 +258,8 @@ def main() -> int:
             "thesis_id": c.get("thesis_id"),
             "rationale": c.get("rationale"),
             "components": {
-                "trend": t_score,
+                "momentum": m_score,
+                "momentum_parts": m_parts,
                 "confidence": c_score,
                 "thesis": th_score,
                 "bear_penalty": penalty,
@@ -184,6 +267,8 @@ def main() -> int:
             "final_score": round(final, 3),
             "data": {
                 "five_day_cumulative_return_pct": ret5,
+                "ret_60d_pct": ret60,
+                "pct_of_52w_high": pct_high,
                 "confidence": conf,
                 "entry_filter_passes": entry_passes,
                 "structural_bear_flags": bear_flags,
@@ -201,6 +286,7 @@ def main() -> int:
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "snapshot_as_of": snapshot.get("as_of") if isinstance(snapshot, dict) else None,
+        "regime": {"state": regime_state, "detail": regime, "blocks_new_entry": risk_off_blocks},
         "active_thesis_ids": sorted(active_ids),
         "candidate_thesis_ids": sorted(candidate_ids),
         "ranked": ranked,
@@ -214,12 +300,13 @@ def main() -> int:
             }
             for r in tradable
         ],
-        "report_section_md": build_report_section(tradable, blocked),
+        "report_section_md": build_report_section(tradable, blocked, regime if isinstance(regime, dict) else None),
         "summary": {
             "total": len(ranked),
             "tradable_count": len(tradable),
             "blocked_count": len(blocked),
             "top_tradable_ticker": tradable[0]["ticker"] if tradable else None,
+            "regime_state": regime_state,
         },
     }
     out_path = ROOT / "state" / "candidate_scores.json"
@@ -227,7 +314,7 @@ def main() -> int:
     out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
         f"wrote {out_path.relative_to(ROOT)} candidates={len(ranked)} "
-        f"tradable={len(tradable)} blocked={len(blocked)}"
+        f"tradable={len(tradable)} blocked={len(blocked)} regime={regime_state}"
     )
     return 0
 

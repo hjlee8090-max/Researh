@@ -64,7 +64,7 @@ def fetch_naver(ticker: str) -> list[dict[str, Any]]:
     행 형식: ['날짜','시가','고가','저가','종가','거래량','외국인소진율'].
     """
     end = datetime.now(KST)
-    start = end - timedelta(days=40)
+    start = end - timedelta(days=400)  # ATR·60일 모멘텀·52주 고점 산출을 위해 약 1년 확보
     url = (
         f"https://api.finance.naver.com/siseJson.naver?symbol={ticker}"
         f"&requestType=1&startTime={start:%Y%m%d}&endTime={end:%Y%m%d}&timeframe=day"
@@ -82,41 +82,57 @@ def fetch_naver(ticker: str) -> list[dict[str, Any]]:
         logger.warning("naver parse failed for %s: %s", ticker, exc)
         return []
     out: list[dict[str, Any]] = []
-    for r in rows[1:]:  # 첫 행은 헤더
+    for r in rows[1:]:  # 첫 행은 헤더. 행: ['날짜','시가','고가','저가','종가','거래량',...]
         try:
             d = str(r[0])
             date = f"{d[:4]}-{d[4:6]}-{d[6:8]}"
-            out.append({"date": date, "close": float(r[4])})
+            out.append({
+                "date": date,
+                "open": float(r[1]),
+                "high": float(r[2]),
+                "low": float(r[3]),
+                "close": float(r[4]),
+            })
         except (IndexError, ValueError, TypeError):
             continue
-    return out[-20:]
+    return out[-260:]
 
 
-def fetch_yahoo(ticker: str) -> list[dict[str, Any]]:
+def fetch_yahoo(symbol: str) -> list[dict[str, Any]]:
+    """Yahoo v8 chart 일봉을 수집한다. `symbol` 은 `005930.KS` 또는 지수 `^KS11` 처럼 완전한 심볼."""
     url = (
-        f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}.KS"
-        "?range=1mo&interval=1d"
+        f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+        "?range=1y&interval=1d"
     )
     try:
         raw = http_get(url)
     except Exception as exc:  # noqa: BLE001
-        logger.warning("yahoo fetch failed for %s: %s", ticker, exc)
+        logger.warning("yahoo fetch failed for %s: %s", symbol, exc)
         return []
     try:
         payload = json.loads(raw)
         result = payload["chart"]["result"][0]
         timestamps = result["timestamp"]
-        closes = result["indicators"]["quote"][0]["close"]
+        quote = result["indicators"]["quote"][0]
+        opens, highs, lows, closes = (
+            quote["open"], quote["high"], quote["low"], quote["close"],
+        )
     except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
-        logger.warning("yahoo parse failed for %s: %s", ticker, exc)
+        logger.warning("yahoo parse failed for %s: %s", symbol, exc)
         return []
     out: list[dict[str, Any]] = []
-    for t, c in zip(timestamps, closes):
+    for t, o, h, lo, c in zip(timestamps, opens, highs, lows, closes):
         if c is None:
             continue
         d = datetime.fromtimestamp(t, tz=timezone.utc).strftime("%Y-%m-%d")
-        out.append({"date": d, "close": float(c)})
-    return out[-20:]
+        out.append({
+            "date": d,
+            "open": float(o) if o is not None else float(c),
+            "high": float(h) if h is not None else float(c),
+            "low": float(lo) if lo is not None else float(c),
+            "close": float(c),
+        })
+    return out[-260:]
 
 
 def compute_confidence(naver_last: float | None, yahoo_last: float | None) -> tuple[str, float | None]:
@@ -140,6 +156,77 @@ def five_day_return(history: list[dict[str, Any]]) -> float | None:
     if base_close <= 0:
         return None
     return round((last_close - base_close) / base_close * 100, 2)
+
+
+def cumulative_return(history: list[dict[str, Any]], lookback: int) -> float | None:
+    """lookback 거래일 전 종가 대비 최신 종가 누적 수익률(%). 데이터 부족 시 None."""
+    if len(history) < lookback + 1:
+        return None
+    last_close = history[-1]["close"]
+    base_close = history[-(lookback + 1)]["close"]
+    if base_close <= 0:
+        return None
+    return round((last_close - base_close) / base_close * 100, 2)
+
+
+def pct_of_52w_high(history: list[dict[str, Any]]) -> tuple[float | None, float | None]:
+    """(현재가가 52주 고점의 몇 %인지, 52주 고점가). 윈도우는 가용 데이터(최대 ~252거래일)."""
+    if len(history) < 2:
+        return None, None
+    window = history[-252:]
+    high_52w = max(h.get("high", h["close"]) for h in window)
+    if high_52w <= 0:
+        return None, None
+    last_close = history[-1]["close"]
+    return round(last_close / high_52w * 100, 2), round(high_52w, 2)
+
+
+def compute_atr(history: list[dict[str, Any]], period: int = 14) -> float | None:
+    """ATR(period). True Range = max(고-저, |고-전일종가|, |저-전일종가|)의 단순평균."""
+    if len(history) < period + 1:
+        return None
+    trs: list[float] = []
+    for i in range(1, len(history)):
+        cur, prev_close = history[i], history[i - 1]["close"]
+        hi = cur.get("high", cur["close"])
+        lo = cur.get("low", cur["close"])
+        tr = max(hi - lo, abs(hi - prev_close), abs(lo - prev_close))
+        trs.append(tr)
+    if len(trs) < period:
+        return None
+    return round(sum(trs[-period:]) / period, 2)
+
+
+def build_regime(ma_window: int = 200) -> dict[str, Any]:
+    """KOSPI 지수의 장기 이동평균 대비 위치로 시장 레짐(risk_on/risk_off)을 판정한다.
+
+    지수는 2출처 교차검증이 불필요하므로 Yahoo `^KS11` 단일 출처를 사용한다.
+    데이터 수집 실패 시 state="unknown" — 게이트는 보수적으로 풀어주되 리포트에 명시한다.
+    """
+    hist = fetch_yahoo("^KS11")
+    if not hist or len(hist) < 2:
+        return {
+            "index": "KOSPI",
+            "state": "unknown",
+            "reason": "지수 데이터 수집 실패(레짐 게이트 보류)",
+            "source": "yahoo:^KS11",
+        }
+    closes = [h["close"] for h in hist]
+    last = closes[-1]
+    window = min(ma_window, len(closes))
+    ma = sum(closes[-window:]) / window
+    above = last >= ma
+    return {
+        "index": "KOSPI",
+        "last_close": round(last, 2),
+        "ma_window": window,
+        "ma_long": round(ma, 2),
+        "above_ma": above,
+        "pct_vs_ma": round((last / ma - 1) * 100, 2),
+        "state": "risk_on" if above else "risk_off",
+        "source": "yahoo:^KS11",
+        "as_of": hist[-1]["date"],
+    }
 
 
 def load_json(rel: str) -> dict[str, Any]:
@@ -172,7 +259,7 @@ def build_ticker_snapshot(
     threshold_pct: float,
 ) -> dict[str, Any]:
     naver_hist = fetch_naver(ticker)
-    yahoo_hist = fetch_yahoo(ticker)
+    yahoo_hist = fetch_yahoo(f"{ticker}.KS")
     naver_last = naver_hist[-1]["close"] if naver_hist else None
     yahoo_last = yahoo_hist[-1]["close"] if yahoo_hist else None
     confidence, gap_pct = compute_confidence(naver_last, yahoo_last)
@@ -185,9 +272,20 @@ def build_ticker_snapshot(
         reason = f"5거래일 누적 {ret5}% < 기준 {threshold_pct}%"
     else:
         reason = None
+
+    ret60 = cumulative_return(primary_hist, 60) if primary_hist else None
+    high_ratio, high_52w = pct_of_52w_high(primary_hist) if primary_hist else (None, None)
+    last_close = primary_hist[-1]["close"] if primary_hist else None
+    atr14 = compute_atr(primary_hist, 14) if primary_hist else None
+    atr_pct = (
+        round(atr14 / last_close * 100, 2)
+        if atr14 is not None and last_close
+        else None
+    )
     return {
         "name": meta.get("name", ""),
         "role": meta.get("role", "candidate"),
+        "last_close": last_close,
         "sources": [
             {
                 "name": "naver",
@@ -206,6 +304,15 @@ def build_ticker_snapshot(
         "price_gap_pct": gap_pct,
         "five_day_history": (primary_hist or [])[-6:],
         "five_day_cumulative_return_pct": ret5,
+        "momentum": {
+            "ret_60d_pct": ret60,
+            "pct_of_52w_high": high_ratio,
+            "high_52w": high_52w,
+        },
+        "volatility": {
+            "atr14": atr14,
+            "atr_pct": atr_pct,
+        },
         "entry_filter": {
             "passes": filter_passes,
             "threshold_pct": threshold_pct,
@@ -219,13 +326,20 @@ def main() -> int:
     threshold = (
         policy.get("entry_filters", {}).get("block_if_cumulative_return_below_pct", -7.0)
     )
+    ma_window = (
+        policy.get("market_regime", {}).get("ma_window", 200)
+        if isinstance(policy.get("market_regime"), dict)
+        else 200
+    )
 
     tickers = collect_tickers()
     now = datetime.now(KST)
+    regime = build_regime(ma_window)
     snapshot: dict[str, Any] = {
         "as_of": now.isoformat(timespec="seconds"),
         "policy_threshold_pct": threshold,
         "ticker_count": len(tickers),
+        "regime": regime,
         "tickers": {},
     }
 
@@ -265,13 +379,16 @@ def main() -> int:
                 "last_fetch_attempt": now.isoformat(timespec="seconds"),
                 "reason": "모든 출처 수집 실패 — 직전 스냅샷 보존(덮어쓰기 생략)",
             }
+            # 지수(^KS11)는 별도 출처라 살아 있을 수 있다 — 레짐만은 최신화한다.
+            if regime.get("state") != "unknown":
+                prior["regime"] = regime
             out_path.write_text(
                 json.dumps(prior, ensure_ascii=False, indent=2) + "\n",
                 encoding="utf-8",
             )
             print(
                 f"all sources failed — preserved prior snapshot (as_of={prior.get('as_of')}), "
-                "marked stale"
+                f"marked stale; regime={regime.get('state')}"
             )
             return 0
 
@@ -281,7 +398,8 @@ def main() -> int:
     )
     print(
         f"wrote {out_path.relative_to(ROOT)} tickers={len(tickers)} sources_ok={sources_ok} "
-        f"pass={len(candidates_passing)} block={len(candidates_failing)} low_conf={len(holdings_low)}"
+        f"pass={len(candidates_passing)} block={len(candidates_failing)} low_conf={len(holdings_low)} "
+        f"regime={regime.get('state')}"
     )
     return 0
 

@@ -40,6 +40,7 @@ _(최종 갱신: 2026-05-26 18시)_
 - 영향: KB금융(105560)·후보 종목(009540·010140·373220) 신뢰도 low 유지 → 신규 진입 전면 차단, 트레일링 스톱 미집행. 15:44 스냅샷에서 당일 데이터 수집 성공 확인 — 최종 복구.
 - 원인: stooq·Yahoo Finance HTTP 403(크롤러 차단 정책 변경 추정). scripts/fetch_market_data.py의 HTTP User-Agent·요청 헤더 조정 미비.
 - 다음 적용 룰: HTTP 403 2회 연속 실패 시 대체 출처(KRX Open API, 네이버 금융 JSON API)로 즉시 전환 로직 추가. scripts/fetch_market_data.py User-Agent를 실제 브라우저 문자열로 교체 검토. 24시간 연속 실패 시 알림.
+- ✅ **해결(2026-05-26)**: `fetch_market_data.py` 를 네이버 siseJson + Yahoo v8 **2출처 교차검증**으로 재작성(브라우저 UA 적용, stooq 제거), 직접 수집 실패 시 GitHub Actions 정기 수집본을 `stale` 표시로 보존하도록 변경. 스냅샷 confidence=high 확인. **이후 모든 routine 은 `market_snapshot.json` 의 confidence 를 권위 출처로 사용하며, 'stooq/Yahoo 403 → low → 신규 진입/트레일링 스톱 보류' 레거시 서술을 이월·복제하지 않는다. stale ≠ low.** (12·15시 프롬프트에 0-B 스냅샷 적재 단계 추가)
 - 분류 신뢰도: 높음
 
 ### 2026-05-22 / KB금융(105560)

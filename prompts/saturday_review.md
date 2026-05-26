@@ -10,7 +10,7 @@
 
 ## 0-A. 시장 데이터 스냅샷
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
-- 토요일은 주말이라 가격 변화는 없지만, 지난주 마지막 영업일 종가·5거래일 누적이 모두 stooq/Yahoo 양쪽에서 확인되는지 점검한다 (신뢰도 평가의 baseline).
+- 토요일은 주말이라 가격 변화는 없지만, 지난주 마지막 영업일 종가·5거래일 누적이 모두 네이버/Yahoo 양쪽에서 확인되는지 점검한다 (신뢰도 평가의 baseline).
 - 후보 종목 중 `entry_filter.passes = true` 인 종목이 있으면 사후분석의 "신규 진입 후보 sanity check" 섹션에 기록한다.
 
 ## 0. 컨텍스트 적재

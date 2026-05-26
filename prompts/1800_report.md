@@ -9,7 +9,7 @@
 ## 0-A. 영업일 가드 + 종가 데이터 수집
 - `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 종가 평가 생략" 으로 18시 routine 을 축약 모드로 진행 (다음 영업일 액션 플랜만 작성, 포트폴리오 history append 보류).
 - 영업일이면 `python scripts/fetch_market_data.py` 를 실행해 보유·후보 종목의 **확정 종가**를 `state/market_snapshot.json` 에 기록한다.
-- **종가 반영 지연 주의**: stooq/Yahoo Finance 일별 캔들은 한국장 마감(15:30) 후 1~3시간 지연 후 갱신될 수 있다. 18시 실행 시 `market_snapshot.json` 의 보유 종목 `sources[*].last_date` 가 **오늘 날짜인지** 반드시 확인.
+- **종가 반영 지연 주의**: 네이버/Yahoo Finance 일별 캔들은 한국장 마감(15:30) 후 1~3시간 지연 후 갱신될 수 있다. 18시 실행 시 `market_snapshot.json` 의 보유 종목 `sources[*].last_date` 가 **오늘 날짜인지** 반드시 확인.
   - 오늘 날짜 ✓ → 스냅샷 종가를 1순위 출처로 사용.
   - 오늘 날짜 ✗ (전일 종가만 반영) → 웹검색 ("[종목명] 종가 오늘") 으로 보강하고 `data_confidence` 를 1단계 강등 (high→medium, medium→low).
 - 종가 평가·트레일링스톱 갱신·lessons 오차 분류는 위 절차로 확정된 종가를 사용.

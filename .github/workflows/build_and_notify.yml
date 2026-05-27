@@ -16,6 +16,11 @@ on:
       - ".github/workflows/build_and_notify.yml"
       - ".github/workflows/pipeline_audit.yml"
   workflow_dispatch:
+    inputs:
+      commit_message:
+        description: "routine 커밋 메시지(슬롯 식별용). auto_merge 가 GITHUB_TOKEN push 후 전달한다."
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -82,5 +87,6 @@ jobs:
           KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
           PAGES_URL: ${{ needs.deploy.outputs.page_url }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          # push 트리거면 head_commit.message, auto_merge 가 dispatch 한 경우 inputs.commit_message 사용.
+          COMMIT_MESSAGE: ${{ github.event.inputs.commit_message || github.event.head_commit.message }}
         run: python scripts/send_kakao.py

@@ -3,8 +3,13 @@ name: Auto-merge routine branches
 # 스케줄 routine(00/09/12/15/18시·주말·audit 등)이 격리 환경에서 작업을
 # 세션 브랜치에 push 만 하고 main 에 머지되지 않는 경우를 자동으로 닫아준다.
 # routine 커밋을 origin/main 위에 rebase 한 뒤 fast-forward 로 push 하므로,
-# 헤드 커밋 메시지(chore(00:00)/report: 등)가 그대로 보존되어 기존
-# build_and_notify.yml 의 카톡 알림 분기가 정상 발화한다.
+# 헤드 커밋 메시지(chore(00:00)/report: 등)가 그대로 보존된다.
+#
+# 단, 이 push 는 기본 GITHUB_TOKEN 으로 이뤄지는데, GitHub 은 GITHUB_TOKEN 이
+# 만든 push 이벤트로는 다른 워크플로(build_and_notify.yml)를 트리거하지 않는다
+# (무한루프 방지). 따라서 머지 성공 후 build_and_notify 를 workflow_dispatch 로
+# 명시 호출한다(dispatch 는 GITHUB_TOKEN recursion 규칙의 예외라 정상 발화).
+# 이게 없으면 브랜치 경유 routine(12:00 등)의 카톡 알림·Pages 갱신이 누락된다.
 
 on:
   push:
@@ -14,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: auto-merge-main
@@ -58,6 +64,7 @@ jobs:
           SOURCE_SHA: ${{ github.sha }}
           SOURCE_REF: ${{ github.ref_name }}
           HEAD_MSG: ${{ github.event.head_commit.message }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "kospi-autoflow-bot"
           git config user.email "hjlee8090@gmail.com"
@@ -70,8 +77,18 @@ jobs:
               git rebase --abort || true
               exit 1
             fi
+            # 이미 main 에 포함된 커밋이면(중복 발화·재실행) push 는 no-op → dispatch 도 생략해 중복 알림 방지.
+            if [ "$(git rev-parse routine_work)" = "$(git rev-parse origin/main)" ]; then
+              echo "already merged into main — skip merge & dispatch"
+              exit 0
+            fi
             if git push origin routine_work:main; then
-              echo "auto-merged $SOURCE_REF -> main (head: ${HEAD_MSG%%$'\n'*})"
+              MSG_FIRST="${HEAD_MSG%%$'\n'*}"
+              echo "auto-merged $SOURCE_REF -> main (head: $MSG_FIRST)"
+              # GITHUB_TOKEN push 는 build_and_notify 를 트리거하지 않으므로 명시 dispatch.
+              gh workflow run build_and_notify.yml --ref main -f commit_message="$MSG_FIRST" \
+                && echo "dispatched build_and_notify (commit_message=$MSG_FIRST)" \
+                || echo "::warning::failed to dispatch build_and_notify — 알림 누락 가능"
               exit 0
             fi
             echo "push race on main, retry $i"

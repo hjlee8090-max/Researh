@@ -40,6 +40,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
    - orange 이상이면 익일 09시 손절·축소 후보로 watchlist 표시 + 원인 1줄 기록
 4. 정마감(15:30) 직전 액션 필요 여부
    - 목표가 +8% 이상 근접 → 익일 09시 익절 후보 표시
+   - `state/fundamentals.json` 의 보유종목 `earnings_signal` 이 `sharp_decline`/적자전환이면(`policy.fundamentals.holdings_use`) 가격이 green 이어도 익일 09시 **익절·축소 후보 우선순위 상향**·트레일링스톱 강화로 표시
 5. 장중 신규 뉴스 요약 (1~2줄)
 6. `weekly_plan.weekly_thesis`별 상태: 강화 / 유지 / 약화 / 무효화 후보
 7. 주간 목표 기여도:

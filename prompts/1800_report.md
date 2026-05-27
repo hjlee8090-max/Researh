@@ -72,6 +72,7 @@
   - (c) 부분 익절 — 50% 가상 체결
 - 결정을 보류했다면 다음 영업일까지만 허용. 사유를 한 줄 명시.
 - 가격 신뢰도 low 인 종목은 "R/R 계산 보류 — price_confidence=low" 로 표기하고 다음 routine 으로 미룬다.
+- **실적 신호 반영**(`policy.fundamentals.holdings_use`): `state/fundamentals.json` 의 보유종목 `earnings_signal` 이 `sharp_decline`/적자전환/가이던스 컷이면 위 (b)손절가 상향·(c)부분 익절을 우선 적용하고, 관련 thesis 의 `invalidation_triggers` 점검 결과를 코멘트에 1줄 남긴다. `strong_growth` 면 목표가 상향((a))의 근거로 쓴다.
 
 ## 2-3. 회복 전략 단계 종가 재평가
 종가 기준 누적 수익률로 `policy.weekly_recovery_plan` 의 stage 를 다시 판정한다.

@@ -66,7 +66,7 @@
    - 종목 고유 뉴스 (실적·공시·소송)
    - 매크로 (지수·환율·미국장 영향)
    - 최소 3개 원인 후보를 출처와 함께 기록
-5. 신규 뉴스·공시가 진입 논리(bull_case)를 강화/훼손하는지
+5. 신규 뉴스·공시가 진입 논리(bull_case)를 강화/훼손하는지 (`state/fundamentals.json` 의 `earnings_signal` 이 `sharp_decline`/적자전환이면 green 이어도 비중 축소 후보로 — `policy.fundamentals.holdings_use`)
 6. **장중 의견**: 매수 추가 / 홀드 / 비중 축소 / 즉시 매도 중 1개
 7. 손절·목표 도달 시 → 가상 체결 처리 (slippage 0.2% + 거래세 0.18% + 수수료 0.015%)
 8. `weekly_plan.weekly_thesis` 영향: 강화 / 유지 / 약화 / 무효화 후보 중 1개

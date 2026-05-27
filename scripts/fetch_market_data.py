@@ -197,36 +197,102 @@ def compute_atr(history: list[dict[str, Any]], period: int = 14) -> float | None
     return round(sum(trs[-period:]) / period, 2)
 
 
-def build_regime(ma_window: int = 200) -> dict[str, Any]:
-    """KOSPI 지수의 장기 이동평균 대비 위치로 시장 레짐(risk_on/risk_off)을 판정한다.
+def _mean(values: list[float]) -> float | None:
+    return sum(values) / len(values) if values else None
+
+
+def classify_tier(
+    pct_vs_ma200: float | None,
+    pct_vs_ma60: float | None,
+    slope_pct: float | None,
+    tiers: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    """policy.market_regime.dynamic_sizing.tiers 를 순서대로 평가해 첫 매칭 tier 를 반환한다.
+
+    각 tier 의 gates 중 명시된 것만 검사한다(미명시 게이트는 제약 없음).
+    슬로프/60일선 게이트가 있는데 해당 신호가 None 이면 그 tier 는 매칭 실패로 처리하고
+    더 보수적인 다음 tier 로 폴스루한다. 마지막 tier(gates 비어 있음)는 catch-all.
+    """
+    for tier in tiers:
+        gates = tier.get("gates", {}) or {}
+        ok = True
+        gmin = gates.get("price_vs_ma200_min")
+        if gmin is not None and not (pct_vs_ma200 is not None and pct_vs_ma200 >= gmin):
+            ok = False
+        gmin = gates.get("price_vs_ma60_min")
+        if ok and gmin is not None and not (pct_vs_ma60 is not None and pct_vs_ma60 >= gmin):
+            ok = False
+        gmin = gates.get("ma200_slope_min")
+        if ok and gmin is not None and not (slope_pct is not None and slope_pct >= gmin):
+            ok = False
+        if ok:
+            return tier
+    return tiers[-1] if tiers else None
+
+
+def build_regime(
+    ma_window: int = 200,
+    tiers: list[dict[str, Any]] | None = None,
+    slope_lookback: int = 20,
+) -> dict[str, Any]:
+    """KOSPI 지수의 이동평균 위치·기울기로 시장 레짐과 5단계 tier 를 판정한다.
 
     지수는 2출처 교차검증이 불필요하므로 Yahoo `^KS11` 단일 출처를 사용한다.
     데이터 수집 실패 시 state="unknown" — 게이트는 보수적으로 풀어주되 리포트에 명시한다.
+
+    레거시 `state`(risk_on/risk_off, score_candidates 가 사용) 와
+    신규 `tier`/`target_equity_pct`(compute_allocation.py 가 사용) 를 함께 싣는다.
     """
     hist = fetch_yahoo("^KS11")
     if not hist or len(hist) < 2:
         return {
             "index": "KOSPI",
             "state": "unknown",
+            "tier": "unknown",
             "reason": "지수 데이터 수집 실패(레짐 게이트 보류)",
             "source": "yahoo:^KS11",
         }
     closes = [h["close"] for h in hist]
     last = closes[-1]
     window = min(ma_window, len(closes))
-    ma = sum(closes[-window:]) / window
-    above = last >= ma
-    return {
+    ma200 = sum(closes[-window:]) / window
+    pct_vs_ma200 = round((last / ma200 - 1) * 100, 2)
+
+    ma60 = _mean(closes[-60:]) if len(closes) >= 60 else None
+    pct_vs_ma60 = round((last / ma60 - 1) * 100, 2) if ma60 else None
+
+    slope_pct: float | None = None
+    if len(closes) >= window + slope_lookback:
+        ma200_prev = _mean(closes[-(window + slope_lookback):-slope_lookback])
+        if ma200_prev:
+            slope_pct = round((ma200 / ma200_prev - 1) * 100, 2)
+
+    above = last >= ma200
+    regime: dict[str, Any] = {
         "index": "KOSPI",
         "last_close": round(last, 2),
         "ma_window": window,
-        "ma_long": round(ma, 2),
+        "ma_long": round(ma200, 2),
+        "ma60": round(ma60, 2) if ma60 else None,
         "above_ma": above,
-        "pct_vs_ma": round((last / ma - 1) * 100, 2),
+        "pct_vs_ma": pct_vs_ma200,
+        "pct_vs_ma60": pct_vs_ma60,
+        "ma200_slope_pct": slope_pct,
+        "slope_lookback_days": slope_lookback,
         "state": "risk_on" if above else "risk_off",
         "source": "yahoo:^KS11",
         "as_of": hist[-1]["date"],
     }
+
+    tier = classify_tier(pct_vs_ma200, pct_vs_ma60, slope_pct, tiers or [])
+    if tier:
+        regime["tier"] = tier.get("tier")
+        regime["target_equity_pct"] = tier.get("target_equity_pct")
+        regime["entry_mode"] = tier.get("entry_mode")
+        regime["tier_narrative"] = tier.get("narrative")
+    else:
+        regime["tier"] = "unknown"
+    return regime
 
 
 def load_json(rel: str) -> dict[str, Any]:
@@ -326,15 +392,15 @@ def main() -> int:
     threshold = (
         policy.get("entry_filters", {}).get("block_if_cumulative_return_below_pct", -7.0)
     )
-    ma_window = (
-        policy.get("market_regime", {}).get("ma_window", 200)
-        if isinstance(policy.get("market_regime"), dict)
-        else 200
-    )
+    regime_cfg = policy.get("market_regime", {}) if isinstance(policy.get("market_regime"), dict) else {}
+    ma_window = regime_cfg.get("ma_window", 200)
+    dyn = regime_cfg.get("dynamic_sizing", {}) if isinstance(regime_cfg.get("dynamic_sizing"), dict) else {}
+    tiers = dyn.get("tiers", []) if dyn.get("enabled", False) else []
+    slope_lookback = dyn.get("slope_lookback_days", 20)
 
     tickers = collect_tickers()
     now = datetime.now(KST)
-    regime = build_regime(ma_window)
+    regime = build_regime(ma_window, tiers, slope_lookback)
     snapshot: dict[str, Any] = {
         "as_of": now.isoformat(timespec="seconds"),
         "policy_threshold_pct": threshold,

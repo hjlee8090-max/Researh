@@ -12,6 +12,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 네트워크 차단으로 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
+- `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. 마감 전 비중 조정(축소/유지)·익절 우선순위 판단에 목표 주식 비중 밴드와 `recommendation` 을 반영한다(tier=unknown 이면 정책 default).
 - **마감 임박치·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다. 스냅샷이 `high`/`medium` 이면 그대로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류 / 트레일링 스톱 미집행" 류의 레거시 서술을 **이월·복제하지 않는다** (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨).
 - `stale` 키가 있어도 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.** 따라서 confidence 가 medium 이상이면 트레일링 스톱·익절 후보 등의 익일 액션을 "data confidence=low" 사유로 보류하지 않는다.

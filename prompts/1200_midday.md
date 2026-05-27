@@ -13,6 +13,7 @@
 
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 이 웹 세션 네트워크가 차단돼 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
+- `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. `recommendation.action`(deploy/trim/hold)·목표 주식 비중 밴드를 장중 신규 진입·축소 판단의 1차 기준으로 쓴다(tier=unknown 이면 정책 default 사이징).
 - **가격·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조일 뿐이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다. 스냅샷이 `high`/`medium` 이면 그대로 high/medium 으로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 에 남아 있는 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류의 레거시 서술을 **이월·복제하지 않는다** (해당 이슈는 2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨).
 - `stale` 키가 있으면 "직전 정기 수집본"임을 1줄 명시하되 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.**

@@ -29,6 +29,7 @@
   - 후보 종목을 추세(45%) + 신뢰도(25%) + thesis 연결(30%) - 구조적 악재 가중치 로 점수화.
   - `tradable_count >= 1` 이면 진입 가능 후보가 있다는 뜻 — "한눈에 보기"에 1순위 ticker 표기.
   - **채택 사유 노티**: `candidate_scores.json.report_section_md` (이미 완성된 "### 신규 후보 채택 사유" 마크다운)를 리포트 본문에 **그대로 붙여 넣는다**. 채택 후보가 있으면 각 종목의 점수와 채택 사유(추세·신뢰도·thesis·근거)가, 없으면 "채택 후보 없음"이 들어 있다. 이 섹션이 있어야 send_kakao 가 카톡에 채택 후보를 함께 발송한다.
+- `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
 
 > **스냅샷 출처 주의**: 이 웹 세션은 네트워크가 차단돼 `fetch_market_data.py` 가 직접 시세를 못 가져올 수 있다(네이버/yahoo 403). 그 경우 스크립트는 GitHub Actions(`fetch_prices.yml`)가 정기 수집·커밋해 둔 직전 스냅샷을 보존하고 `stale` 표시만 남긴다. `market_snapshot.json` 에 `stale` 키가 있으면 "데이터가 직전 정기 수집본"임을 리포트에 명시한다.
 - `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
@@ -84,6 +85,17 @@
 - `risk_off` (지수 < 200일선): `policy.market_regime.risk_off_action` 적용 — 축소비중(reduced_entry_weight_pct)으로 진입, R/R·모멘텀 상위 종목 우선(건수 할당 없음). `risk_off_blocks_new_entry=true` 면 신규 진입 전면 차단.
 - `unknown` (지수 수집 실패): 게이트 보류(어드바이저리만), 리포트에 "레짐 미확정" 1줄 명시.
 - **계좌 기반 회복 단계(0-3)와 시장 기반 레짐 중 더 보수적인 쪽**을 신규 진입 한도에 적용한다.
+
+## 0-5. 목표 주식 비중 (regime tier 기반 동적 사이징 — 의무)
+`state/allocation.json` (= `compute_allocation.py` 산출) 을 읽어 **지수 성장세 tier → 목표 주식 비중 밴드**와 현재 비중·권고를 "한눈에 보기" 에 1줄 표기한다.
+- `regime.tier`: `strong_bull`(주식 80~95%) / `bull`(65~80%) / `neutral`(45~60%) / `bear`(25~40%) / `deep_bear`(0~25%). 200일선 위치+기울기·60일선으로 산출.
+- `recommendation.action` 을 신규 진입·축소의 1차 기준으로 삼는다:
+  - `deploy`: `recommendation.krw` 한도 안에서 신규 진입·비중 확대(현금 하한 준수). R/R≥1.2·entry_filter 통과 후보 우선.
+  - `trim`: 주식 비중이 목표 상한 초과 — 익절·트레일링스톱 우선 종목부터 약 `krw` 만큼 축소.
+  - `hold`: 목표 밴드 안 — 신규 진입은 교체(가장 약한 보유 대비 우월할 때)만.
+  - `advisory_only`(tier=unknown·stale): 동적 비중 보류, 정책 default 사이징 사용.
+- `entry_mode` 가 `block`(deep_bear) 이면 비중 배치보다 **신규 진입 중단**이 우선.
+- **0-3 회복 단계·0-4 레짐·0-5 목표비중 중 가장 보수적인 쪽**을 최종 신규 진입 한도로 적용한다.
 
 ## 1. 웹 검색 (필수)
 

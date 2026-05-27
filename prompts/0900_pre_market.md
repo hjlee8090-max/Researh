@@ -73,14 +73,15 @@
 `policy.weekly_recovery_plan` 에 정의된 stages 를 기준으로 현재 주간 누적 수익률에 해당하는 단계를 판정한다.
 - 누적 수익률 floor: normal -2.0% / caution -3.5% / defensive -5.0%
 - 판정 결과(`normal`/`caution`/`defensive`)를 09시 리포트 "한눈에 보기" 에 1줄 표기.
-- `caution` 이면 신규 진입 1건/일·비중 20% 상한·구조적 악재 매칭 진입 금지 적용.
-- `defensive` 이면 신규 진입 금지·비중 15% 상한·후보 검색 일시 정지 적용.
+- `caution` 이면 종목당 비중 25% 상한·구조적 악재 매칭 진입 금지 적용 (진입 건수 할당 없음).
+- `defensive` 이면 신규 진입 중단(주간 -5% 드로다운 방어)·비중 15% 상한·후보 검색 일시 정지 적용.
+- ※ 일일 진입 건수 할당(1건/일 등)은 정책에서 폐지됨 — 진입 가능 종목은 R/R≥1.2·신뢰도·max_positions·종목당 비중 상한으로만 통제한다.
 - 단계가 직전 routine 대비 변경됐다면 `state/lessons.md` 에 "회복 전략 단계 변경" 1줄 추가.
 
 ## 0-4. 시장 레짐 판정 (의무 — 신규 진입 전)
 `state/market_snapshot.json.regime` (= `fetch_market_data.py` 가 KOSPI `^KS11` 의 200일선 대비 위치로 산출) 을 읽어 risk-on/off 를 "한눈에 보기" 에 1줄 표기한다.
 - `risk_on` (지수 ≥ 200일선): 추세추종·신규 진입 정상 허용.
-- `risk_off` (지수 < 200일선): `policy.market_regime.risk_off_action` 적용 — 신규 진입 1건/일·축소비중(reduced_entry_weight_pct), R/R·모멘텀 상위 1종목만. `risk_off_blocks_new_entry=true` 면 신규 진입 전면 차단.
+- `risk_off` (지수 < 200일선): `policy.market_regime.risk_off_action` 적용 — 축소비중(reduced_entry_weight_pct)으로 진입, R/R·모멘텀 상위 종목 우선(건수 할당 없음). `risk_off_blocks_new_entry=true` 면 신규 진입 전면 차단.
 - `unknown` (지수 수집 실패): 게이트 보류(어드바이저리만), 리포트에 "레짐 미확정" 1줄 명시.
 - **계좌 기반 회복 단계(0-3)와 시장 기반 레짐 중 더 보수적인 쪽**을 신규 진입 한도에 적용한다.
 
@@ -134,16 +135,16 @@
 각 후보 종목의 **최근 30일 뉴스**에서 `policy.entry_filters.structural_bear_keywords` 매칭 여부 확인:
 - 매칭되는 키워드 발견 → `bear_case`에 명시 의무
 - conviction 점수 -1점 자동 조정
-- 초기 비중을 default 25% → `reduced_entry_weight_pct`(=15%)로 강제 축소
+- 초기 비중을 default 30% → `reduced_entry_weight_pct`(=20%)로 강제 축소
 - 매칭 키워드와 출처 URL을 watchlist `structural_bear_flags` 배열에 기록
 
 ## 2. 분기 처리
 
 ### A. watchlist가 비어있는 경우 (첫 가동)
-1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **3종목을 선정**한다.
+1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 3~4종목을 선정**한다 (`policy.position_sizing.max_positions`=4 이내).
 2. 선정 기준:
    - KOSPI 시총 상위 100위 이내, 관리종목·신규상장 1년 미만 제외
-   - 섹터 분산 (3종목이 같은 섹터에 몰리지 않도록)
+   - 섹터 분산 (여러 종목이 같은 섹터에 몰리지 않도록)
    - 중장기 호재 1개 이상 (실적 모멘텀 / 산업 사이클 / 정책 수혜 등)
    - lessons.md에 반복 손실 패턴 누적된 섹터·종목은 회피
 3. 각 종목에 대해 다음을 산출 (애널리스트 관점, 냉정하게):
@@ -160,7 +161,7 @@
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
    - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
 4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함).
-5. **가상 매수 체결**: 수량은 **리스크 기반 사이징** 우선 — `수량 = floor((equity × 1.5%) / (진입가 − 동적손절가))`. 산출 비중이 `max_position_weight_pct(30%)` 를 넘으면 비중 상한으로 캡, 구조적 악재 매칭 시 `reduced_entry_weight_pct(15%)` 로 축소. ATR 미산출 시 25% 비중 기본으로 폴백. 추세 필터 위배 종목·`risk_off` 차단 시 매수 금지.
+5. **가상 매수 체결**: 수량은 **리스크 기반 사이징** 우선 — `수량 = floor((equity × 1.5%) / (진입가 − 동적손절가))`. 산출 비중이 `max_position_weight_pct(35%)` 를 넘으면 비중 상한으로 캡, 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. ATR 미산출 시 `default_entry_weight_pct(30%)` 비중 기본으로 폴백. 추세 필터 위배 종목·`risk_off` 차단 시 매수 금지.
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신
    - `state/trade_log.jsonl`에 라인 추가:

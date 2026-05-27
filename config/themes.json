@@ -1,8 +1,9 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "last_updated": "2026-05-27",
   "purpose": "선행 산업 메가트렌드 레지스트리. score_candidates.py 가 candidate.theme_exposure(0~1) × theme.strength(0~1) 로 thematic_score 를 산출한다. strength 는 향후 전망 강도이며 sunday_policy_review 에서 주기적으로 재검토·감쇠한다. 후보의 theme_exposure 는 0900/sunday_strategy 가 근거(evidence)+출처(source URL)와 함께 채운다.",
   "scoring_note": "thematic_score = min(1.0, Σ(theme.strength × exposure)). theme_exposure 가 없으면 0.3(중립-하). momentum 을 게이트로 유지하므로 전망이 좋아도 급락 종목은 차단된다.",
+  "holdings_use": "보유종목에도 테마를 반영하되 '느린 신호'로만 쓴다(회전율 방지). 주간(sunday_strategy)이 1차 — 보유종목이 노출된 테마의 strength 가 직전 대비 크게 하향됐거나(예: 정책 폐기·사이클 둔화) 연결 thesis 가 무효화되면 다음 주 비중 축소·교체 후보로 표시한다. 테마 약화 단독으로 당일 단발 매도는 하지 않고, 손절·트레일링스톱·펀더멘털 신호와 함께 판단한다. strength 상향·테마 강세는 홀드 컨빅션 보강 근거.",
   "themes": [
     {
       "id": "ai_memory_hbm",

@@ -15,6 +15,7 @@
 - 다음 주 thesis 설계에 사용할 **후보 종목의 추세 필터 통과 여부**(`entry_filter.passes`)와 가격 신뢰도를 가장 먼저 확인한다.
 - 추세 필터를 통과하지 못한 후보는 `config/candidates.json` 에 그대로 두되, 다음 주 thesis 의 `confirming_signals` 에 "5거래일 누적 ≥ -7%로 회복" 같은 트리거를 명시한다.
 - **미래 테마 점검**: `config/candidates.json` 의 각 후보 `theme_exposure`(근거 URL 포함)를 최신 산업 전망에 맞게 갱신하고, 새 메가트렌드가 부상하면 `config/themes.json` 에 테마를 추가하거나 `strength` 를 조정한다(예: 로봇·AI 전력·방산). 같은 섹터 내 테마 노출 우위 종목(예: 로봇=현대차>기아)을 thesis·후보에 반영한다.
+- **보유종목 테마 건전성 점검**(`config/themes.json.holdings_use`): 보유종목 각각이 노출된 테마의 `strength` 가 직전 대비 크게 하향됐거나 연결 thesis 가 무효화됐는지 확인한다. 약화된 테마에 묶인 보유종목은 다음 주 **비중 축소·교체 후보**로 `weekly_plan` 에 표시한다(테마 약화 단독 당일 매도는 금지 — 손절·트레일링·펀더멘털과 함께 판단). 보유종목의 `theme_exposure` 도 `config/watchlist.json` 해당 종목에 근거와 함께 기록·갱신해 추적 가능하게 한다.
 - **IR/실적 점검 (분기 — 실적시즌)**: `state/fundamentals.json` 의 최신 분기 실적을 thesis 의 `confirming_signals`/`invalidation_triggers` 와 대조한다(영업이익 급증→thesis 확정, 가이던스 컷·적자전환→무효화 검토). 새 IR 덱·실적 발표가 있으면 신사업·가이던스·수주잔고를 읽어 해당 종목의 `theme_exposure` 근거(출처 URL 포함)와 thesis 를 갱신한다. 다가오는 실적 발표일은 `weekly_plan.watch_items` 에 적어 **실적 D-1~당일 신규 진입 보류**(`policy.fundamentals.earnings_blackout`)를 적용한다.
 - **레거시 신뢰도 서술 이월 금지**: 다음 주 `weekly_plan.json`(특히 `watch_items`·`daily_bridge`)을 쓸 때, 과거 리포트·이전 weekly_plan 에 남은 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류 서술을 복제하지 않는다 (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). 신뢰도·진입 가능 여부는 **최신 스냅샷의 `confidence` 와 `entry_filter.passes` 만 근거**로 기술한다.
 

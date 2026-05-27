@@ -186,7 +186,7 @@
 ### B. watchlist가 이미 있는 경우 (이후 영업일)
 각 보유/관심 종목에 대해:
 1. **어제 18시 리포트 결론과 대조** — 어제 "익절/손절/홀드/축소 후보" 로 표시된 종목인지 먼저 확인
-2. 밤사이/금일 새벽 뉴스가 진입 논리를 훼손했는지 점검 — 뉴스뿐 아니라 `state/fundamentals.json` 의 해당 보유종목 `earnings_signal` 도 확인한다(`policy.fundamentals.holdings_use`). `sharp_decline`/적자전환/가이던스 컷이면 thesis 훼손 신호로 보고 가격이 🟢green 이어도 **익절·축소 우선순위 상향·트레일링스톱 강화·추가매수 금지**; `strong_growth`/`growth` 면 홀드 컨빅션 강화·목표가 상향 여지(단 분기 실적은 후행이라 손절가를 느슨하게 풀지는 않음).
+2. 밤사이/금일 새벽 뉴스가 진입 논리를 훼손했는지 점검 — 뉴스뿐 아니라 `state/fundamentals.json` 의 해당 보유종목 `earnings_signal` 도 확인한다(`policy.fundamentals.holdings_use`). `sharp_decline`/적자전환/가이던스 컷이면 thesis 훼손 신호로 보고 가격이 🟢green 이어도 **익절·축소 우선순위 상향·트레일링스톱 강화·추가매수 금지**; `strong_growth`/`growth` 면 홀드 컨빅션 강화·목표가 상향 여지(단 분기 실적은 후행이라 손절가를 느슨하게 풀지는 않음). 보유종목이 노출된 테마(`config/themes.json`)의 strength 가 최근 크게 하향됐거나 thesis 가 무효화됐으면 비중 축소 후보로 메모(`themes.json.holdings_use` — 느린 신호, 단발 매도 금지).
 3. **매수 / 매도 / 홀드** 의견 1개 + 1줄 사유 — 어제 결론과 다를 경우 **반드시 사유 명시**
 4. 단기 모멘텀 코멘트 (수급, 차트, 거래량 — 검색 가능 범위에서)
 5. 정책상 손절가·목표가 도달 여부 확인

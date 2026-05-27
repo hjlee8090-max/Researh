@@ -32,7 +32,13 @@ ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 DART_BASE = "https://opendart.fss.or.kr/api"
 HTTP_TIMEOUT = 15
-ACCOUNTS = {"매출액": "revenue", "영업이익": "operating_profit", "당기순이익": "net_income"}
+# 계정명은 업종마다 다르다(특히 금융지주·은행·증권·보험은 매출액/영업이익 대신 영업수익 등을 쓴다).
+# 지표별로 우선순위 별칭을 순서대로 시도해 매칭률을 높인다(연결 CFS 우선).
+ACCOUNT_ALIASES = {
+    "revenue": ["매출액", "영업수익", "수익(매출액)", "이자수익", "보험손익"],
+    "operating_profit": ["영업이익", "영업이익(손실)"],
+    "net_income": ["당기순이익", "당기순이익(손실)", "분기순이익", "반기순이익", "당기순이익(지배)"],
+}
 # 최신 → 과거 순으로 시도할 (연도오프셋, reprt_code, 라벨). 1Q=11013 반기=11012 3Q=11014 사업=11011.
 REPORT_ORDER = [
     (0, "11013", "1분기"), (0, "11012", "반기"), (0, "11014", "3분기"), (0, "11011", "사업(연간)"),
@@ -123,16 +129,21 @@ def fetch_financials(api_key: str, corp_code: str, year: int) -> dict[str, Any] 
         rows = payload["list"]
         vals: dict[str, Any] = {}
         frmtrm_label = None
-        for want_nm, key in ACCOUNTS.items():
-            # 연결(CFS) 우선, 없으면 별도(OFS).
-            match = next(
-                (r for r in rows if r.get("account_nm") == want_nm and r.get("fs_div") == "CFS"), None
-            ) or next((r for r in rows if r.get("account_nm") == want_nm), None)
+        for key, aliases in ACCOUNT_ALIASES.items():
+            # 지표별 별칭을 우선순위대로, 각 별칭은 연결(CFS) 우선·없으면 별도(OFS) 로 찾는다.
+            match = None
+            for nm in aliases:
+                match = next(
+                    (r for r in rows if r.get("account_nm") == nm and r.get("fs_div") == "CFS"), None
+                ) or next((r for r in rows if r.get("account_nm") == nm), None)
+                if match:
+                    break
             if match:
                 vals[key] = _to_int(match.get("thstrm_amount"))
                 vals[f"{key}_frmtrm"] = _to_int(match.get("frmtrm_amount"))
+                vals[f"{key}_account_nm"] = match.get("account_nm")
                 frmtrm_label = match.get("frmtrm_nm") or frmtrm_label
-        if not any(vals.get(k) for k in ACCOUNTS.values()):
+        if not any(vals.get(k) for k in ACCOUNT_ALIASES):
             continue
         return {
             "bsns_year": year + off,

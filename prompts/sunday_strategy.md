@@ -13,6 +13,7 @@
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다. **다음 주 자본계획(`capital_plan`)의 목표 주식/현금 비중을 regime tier 밴드에 맞춰 설정**한다 — 예: `strong_bull` 이면 주식 80~95%로 적극 배치, `bear`/`deep_bear` 면 현금 비중을 높여 방어. tier=unknown 이면 정책 default 비중.
 - 다음 주 thesis 설계에 사용할 **후보 종목의 추세 필터 통과 여부**(`entry_filter.passes`)와 가격 신뢰도를 가장 먼저 확인한다.
 - 추세 필터를 통과하지 못한 후보는 `config/candidates.json` 에 그대로 두되, 다음 주 thesis 의 `confirming_signals` 에 "5거래일 누적 ≥ -7%로 회복" 같은 트리거를 명시한다.
+- **미래 테마 점검**: `config/candidates.json` 의 각 후보 `theme_exposure`(근거 URL 포함)를 최신 산업 전망에 맞게 갱신하고, 새 메가트렌드가 부상하면 `config/themes.json` 에 테마를 추가하거나 `strength` 를 조정한다(예: 로봇·AI 전력·방산). 같은 섹터 내 테마 노출 우위 종목(예: 로봇=현대차>기아)을 thesis·후보에 반영한다.
 - **레거시 신뢰도 서술 이월 금지**: 다음 주 `weekly_plan.json`(특히 `watch_items`·`daily_bridge`)을 쓸 때, 과거 리포트·이전 weekly_plan 에 남은 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류 서술을 복제하지 않는다 (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). 신뢰도·진입 가능 여부는 **최신 스냅샷의 `confidence` 와 `entry_filter.passes` 만 근거**로 기술한다.
 
 ## 0-B. 휴장일 캘린더 확인

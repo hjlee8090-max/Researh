@@ -278,6 +278,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
     lessons_idx = ROOT / "scripts" / "build_lessons_index.py"
     candidates = ROOT / "config" / "candidates.json"
+    themes = ROOT / "config" / "themes.json"
     calendar = ROOT / "config" / "market_calendar.json"
     for path, label in [
         (fetch, "scripts/fetch_market_data.py"),
@@ -300,6 +301,15 @@ def audit_market_data_tooling(messages: list[str]) -> None:
             messages.append(result("FAIL", f"config/candidates.json parse failed: {exc}"))
     else:
         messages.append(result("WARN", "config/candidates.json missing — 신규 후보 자동 발굴 비활성"))
+    if themes.exists():
+        try:
+            payload = json.loads(themes.read_text(encoding="utf-8"))
+            count = len(payload.get("themes", []))
+            messages.append(result("OK", f"config/themes.json tracks {count} themes (thematic 점수)"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"config/themes.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "config/themes.json missing — thematic 점수 비활성(0.3 중립 폴백)"))
     if calendar.exists():
         try:
             payload = json.loads(calendar.read_text(encoding="utf-8"))

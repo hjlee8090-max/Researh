@@ -15,11 +15,15 @@
   - ret5_score(34%): 단기 급락 회피 게이트 (0%↑=1.0, -2%=0.7, -5%=0.4, -7%=0.1)
   - ret60_score(33%): 중기 추세 지속 (20%↑=1.0 … -10%↓=0.1)
   - high52_score(33%): 52주 고점 근접도 (95%↑=1.0 … 50%↓=0.2) — George&Hwang 52주 고점 효과
+- thematic_score: 선행 산업 메가트렌드 노출. min(1.0, Σ(theme.strength × exposure)).
+  config/themes.json 의 strength × candidate.theme_exposure[].exposure. 노출 정보 없으면 0.3(중립-하).
+  예: 자동차 섹터에서 현대차(humanoid_robotics 노출 0.7)는 기아(0.1)보다 thematic 점수가 높다.
 - confidence_score: high=1.0 / medium=0.5 / low=0.0
 - thesis_score: 활성 thesis 와 linked = 1.0 / candidate-only thesis = 0.6 / 무관 = 0.3
 - bear_flag_penalty: structural_bear_flags 1개당 -0.15
 
-final = (momentum × 0.45 + confidence × 0.25 + thesis × 0.30) - bear_flag_penalty
+final = (momentum × 0.35 + thematic × 0.20 + confidence × 0.20 + thesis × 0.25) - bear_flag_penalty
+momentum 을 게이트(급락 회피)로 유지하므로 전망이 좋아도 추세가 깨진 종목은 entry_filter 에서 차단된다.
 
 시장 레짐(KOSPI 200일선 risk_on/risk_off)은 snapshot.regime 에서 읽어 출력에 표기하고,
 policy.market_regime.risk_off_blocks_new_entry=true 면 risk_off 일 때 tradable 을 차단한다.
@@ -110,6 +114,35 @@ def thesis_score(thesis_id: str | None, active_thesis_ids: set[str], candidate_t
     return 0.3
 
 
+def thematic_score(
+    theme_exposure: list[dict] | None,
+    theme_strength: dict[str, float],
+) -> tuple[float, list[dict]]:
+    """선행 산업 메가트렌드 노출 점수. (점수 0~1, 기여도 상세) 반환.
+
+    score = min(1.0, Σ(theme.strength × exposure)). 노출 정보가 없으면 0.3(중립-하).
+    알 수 없는 theme id 는 strength 0 으로 무시한다.
+    """
+    if not theme_exposure:
+        return 0.3, []
+    total = 0.0
+    parts: list[dict] = []
+    for te in theme_exposure:
+        if not isinstance(te, dict):
+            continue
+        tid = te.get("theme")
+        exposure = te.get("exposure")
+        if tid is None or not isinstance(exposure, (int, float)):
+            continue
+        strength = theme_strength.get(tid, 0.0)
+        contrib = round(strength * float(exposure), 3)
+        total += contrib
+        parts.append({"theme": tid, "exposure": exposure, "strength": strength, "contrib": contrib})
+    if not parts:
+        return 0.3, []
+    return round(min(1.0, total), 3), parts
+
+
 def build_adopt_reasons(
     c: dict,
     ret5: float | None,
@@ -119,6 +152,7 @@ def build_adopt_reasons(
     candidate_ids: set[str],
     ret60: float | None = None,
     pct_high: float | None = None,
+    theme_parts: list[dict] | None = None,
 ) -> list[str]:
     """진입 가능(tradable) 후보가 '왜 채택됐는지' 를 사람이 읽을 수 있는 사유 목록으로 만든다."""
     reasons: list[str] = []
@@ -129,6 +163,10 @@ def build_adopt_reasons(
         reasons.append(f"60일 모멘텀 {ret60:+.1f}%")
     if pct_high is not None:
         reasons.append(f"52주 고점의 {pct_high:.0f}% 수준")
+    if theme_parts:
+        top = sorted(theme_parts, key=lambda p: p.get("contrib", 0), reverse=True)[:2]
+        label = ", ".join(f"{p['theme']}(노출 {p['exposure']})" for p in top)
+        reasons.append(f"미래 테마 노출: {label}")
     conf_word = {"high": "high(2출처 일치)", "medium": "medium(단일출처)"}.get(conf or "", str(conf))
     reasons.append(f"가격 신뢰도 {conf_word}")
     tid = c.get("thesis_id")
@@ -179,6 +217,12 @@ def main() -> int:
     weekly_plan = load_json("config/weekly_plan.json", {})
     snapshot = load_json("state/market_snapshot.json", {"tickers": {}})
     policy = load_json("config/policy.json", {})
+    themes_cfg = load_json("config/themes.json", {"themes": []})
+    theme_strength: dict[str, float] = {
+        t.get("id"): float(t.get("strength", 0.0))
+        for t in themes_cfg.get("themes", [])
+        if isinstance(t, dict) and t.get("id")
+    }
 
     regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
     regime_state = regime.get("state", "unknown") if isinstance(regime, dict) else "unknown"
@@ -221,10 +265,11 @@ def main() -> int:
         bear_flags = c.get("structural_bear_flags", []) or []
 
         m_score, m_parts = momentum_score(ret5, ret60, pct_high)
+        t_score, t_parts = thematic_score(c.get("theme_exposure"), theme_strength)
         c_score = confidence_score(conf)
         th_score = thesis_score(c.get("thesis_id"), active_ids, candidate_ids)
         penalty = 0.15 * len(bear_flags)
-        final = max(0.0, m_score * 0.45 + c_score * 0.25 + th_score * 0.30 - penalty)
+        final = max(0.0, m_score * 0.35 + t_score * 0.20 + c_score * 0.20 + th_score * 0.25 - penalty)
 
         block_reasons: list[str] = []
         if not entry_passes:
@@ -246,7 +291,7 @@ def main() -> int:
             and not (risk_off_blocks and regime_state == "risk_off")
         )
         adopt_reasons = (
-            build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high)
+            build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high, t_parts)
             if tradable else []
         )
         adopt_summary = " · ".join(adopt_reasons) if adopt_reasons else None
@@ -260,6 +305,8 @@ def main() -> int:
             "components": {
                 "momentum": m_score,
                 "momentum_parts": m_parts,
+                "thematic": t_score,
+                "thematic_parts": t_parts,
                 "confidence": c_score,
                 "thesis": th_score,
                 "bear_penalty": penalty,
@@ -272,6 +319,7 @@ def main() -> int:
                 "confidence": conf,
                 "entry_filter_passes": entry_passes,
                 "structural_bear_flags": bear_flags,
+                "theme_exposure": c.get("theme_exposure", []),
             },
             "tradable": tradable,
             "adopt_reasons": adopt_reasons,

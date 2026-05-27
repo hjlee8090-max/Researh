@@ -26,7 +26,7 @@
   - 보유종목(`config/portfolio.json.positions`) + 후보종목(`config/candidates.json.candidates`) 의 네이버·Yahoo 양쪽 가격을 수집한다. (양쪽 종가 gap ≤1% 면 high, 한쪽만 살아 있으면 medium)
   - 출력 요약(stdout)에서 `pass=`(추세필터 통과 후보 수)·`block=`(차단 후보 수)·`low_conf=`(신뢰도 낮음 보유 수) 를 리포트 "한눈에 보기"에 표기한다.
 - `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
-  - 후보 종목을 추세(45%) + 신뢰도(25%) + thesis 연결(30%) - 구조적 악재 가중치 로 점수화.
+  - 후보 종목을 모멘텀(35%) + 미래 테마 노출(20%) + 신뢰도(20%) + thesis 연결(25%) - 구조적 악재 가중치 로 점수화. (테마 노출 = `config/themes.json` 강도 × 후보 `theme_exposure`; 모멘텀은 급락 회피 게이트로 유지)
   - `tradable_count >= 1` 이면 진입 가능 후보가 있다는 뜻 — "한눈에 보기"에 1순위 ticker 표기.
   - **채택 사유 노티**: `candidate_scores.json.report_section_md` (이미 완성된 "### 신규 후보 채택 사유" 마크다운)를 리포트 본문에 **그대로 붙여 넣는다**. 채택 후보가 있으면 각 종목의 점수와 채택 사유(추세·신뢰도·thesis·근거)가, 없으면 "채택 후보 없음"이 들어 있다. 이 섹션이 있어야 send_kakao 가 카톡에 채택 후보를 함께 발송한다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
@@ -158,6 +158,7 @@
    - KOSPI 시총 상위 100위 이내, 관리종목·신규상장 1년 미만 제외
    - 섹터 분산 (여러 종목이 같은 섹터에 몰리지 않도록)
    - 중장기 호재 1개 이상 (실적 모멘텀 / 산업 사이클 / 정책 수혜 등)
+   - **미래 산업 테마 노출 우대** (`config/themes.json`): 같은 섹터라도 메가트렌드 노출이 큰 종목을 우선한다. 예: 자동차 섹터에서 로봇(`humanoid_robotics`) 노출은 현대차(보스턴다이내믹스 지분)가 기아보다 크므로 현대차를 우선. 노출은 뉴스·IR 근거로 판단.
    - lessons.md에 반복 손실 패턴 누적된 섹터·종목은 회피
 3. 각 종목에 대해 다음을 산출 (애널리스트 관점, 냉정하게):
    - **티커 / 종목명**
@@ -169,10 +170,11 @@
    - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). `policy.reward_risk_management.min_reward_risk_ratio_for_new_entry` (=1.2) 미만이면 신규 매수 금지. (단일 출처)
    - **단계 경보 가격**: yellow(-5%), orange(-7%), red(-10%) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)
+   - **미래 테마 노출**: 해당 종목이 `config/themes.json` 의 어떤 메가트렌드에 얼마나 노출돼 있는지 `[{theme, exposure 0~1, evidence, source(URL)}]` 형태로 기록. 근거 출처(URL)는 필수(환각 방지). 노출 테마가 없으면 빈 배열.
    - **리스크 2개** (Bear case) — §1-2에서 구조적 키워드 매칭됐다면 첫 항목으로 우선 기재
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
    - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
-4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함).
+4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함). 후보를 `config/candidates.json` 에 추가·갱신할 때 `theme_exposure`(근거 URL 포함)도 함께 기록해 다음 routine 의 `score_candidates.py` thematic 점수에 반영되게 한다.
 5. **가상 매수 체결**: 수량은 **리스크 기반 사이징** 우선 — `수량 = floor((equity × 1.5%) / (진입가 − 동적손절가))`. 산출 비중이 `max_position_weight_pct(35%)` 를 넘으면 비중 상한으로 캡, 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. ATR 미산출 시 `default_entry_weight_pct(30%)` 비중 기본으로 폴백. 추세 필터 위배 종목·`risk_off` 차단 시 매수 금지.
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신

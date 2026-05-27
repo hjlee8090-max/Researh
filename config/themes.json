@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-05-27",
+  "purpose": "선행 산업 메가트렌드 레지스트리. score_candidates.py 가 candidate.theme_exposure(0~1) × theme.strength(0~1) 로 thematic_score 를 산출한다. strength 는 향후 전망 강도이며 sunday_policy_review 에서 주기적으로 재검토·감쇠한다. 후보의 theme_exposure 는 0900/sunday_strategy 가 근거(evidence)+출처(source URL)와 함께 채운다.",
+  "scoring_note": "thematic_score = min(1.0, Σ(theme.strength × exposure)). theme_exposure 가 없으면 0.3(중립-하). momentum 을 게이트로 유지하므로 전망이 좋아도 급락 종목은 차단된다.",
+  "themes": [
+    {
+      "id": "ai_memory_hbm",
+      "label": "AI 메모리/HBM",
+      "strength": 0.95,
+      "horizon": "2-4y",
+      "keywords": ["HBM", "HBM4", "AI 메모리", "고대역폭", "데이터센터", "온디바이스 AI"],
+      "note": "AI 데이터센터 수요. 삼성전자·SK하이닉스 등."
+    },
+    {
+      "id": "humanoid_robotics",
+      "label": "휴머노이드/로봇",
+      "strength": 0.9,
+      "horizon": "3-5y",
+      "keywords": ["로봇", "휴머노이드", "액추에이터", "Boston Dynamics", "자율보행", "로봇 감속기"],
+      "note": "노동력 대체 메가트렌드. 현대차(보스턴다이내믹스 지분)·삼성·LG·두산 로보틱스 등 — 자동차 섹터 내에서 로봇 노출은 현대차 > 기아."
+    },
+    {
+      "id": "shipbuilding_supercycle",
+      "label": "조선 슈퍼사이클",
+      "strength": 0.8,
+      "horizon": "3-7y",
+      "keywords": ["LNG선", "수주잔고", "친환경 선박", "FLNG", "특수선", "암모니아 추진"],
+      "note": "친환경 선박 교체·LNG 수요. HD조선·삼성중공업·한화오션."
+    },
+    {
+      "id": "power_grid_ai",
+      "label": "전력망/원전·AI 전력",
+      "strength": 0.75,
+      "horizon": "3-6y",
+      "keywords": ["전력망", "변압기", "원전", "SMR", "데이터센터 전력", "전력 인프라"],
+      "note": "AI 데이터센터 전력수요·노후 전력망 교체. HD현대일렉트릭·LS일렉트릭 등."
+    },
+    {
+      "id": "defense_export",
+      "label": "방산 수출",
+      "strength": 0.7,
+      "horizon": "3-5y",
+      "keywords": ["방산", "K-방산", "방산 수출", "자주포", "미사일", "유럽 재무장"],
+      "note": "지정학 리스크·유럽 재무장. 한화에어로스페이스·현대로템·LIG넥스원."
+    },
+    {
+      "id": "value_up",
+      "label": "밸류업/주주환원",
+      "strength": 0.6,
+      "horizon": "1-3y",
+      "keywords": ["밸류업", "자사주", "자사주 소각", "배당 확대", "주주환원", "저PBR"],
+      "note": "정부 밸류업 프로그램·저PBR 재평가. 금융·지주·저PBR 대형주."
+    },
+    {
+      "id": "ev_battery",
+      "label": "전기차/2차전지",
+      "strength": 0.55,
+      "horizon": "3-7y",
+      "keywords": ["2차전지", "전기차", "배터리", "양극재", "ESS", "전고체"],
+      "note": "중기 EV 전환 메가트렌드이나 단기 캐즘·미국 관세 역풍 — strength 보수적."
+    }
+  ]
+}

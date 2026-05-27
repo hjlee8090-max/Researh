@@ -116,6 +116,8 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 | 일 20:00 | **등록 필요** — `prompts/sunday_policy_review.md` (lessons → policy 패치 리뷰) |
 | 일 21:00 | 등록됨 (매주 일요일 21:00 KST — `prompts/sunday_archive.md`) |
 
+> **routine 산출물의 main 자동 반영**: 원격 routine 이 격리 환경에서 세션 브랜치에만 push 하고 main 에 머지되지 않는 경우를 대비해 `.github/workflows/auto_merge_routines.yml` 가 동작한다. routine 커밋 프리픽스(`chore(` / `report:` / `audit:` / `sat-review:` / `sun-strategy:` / `policy-review:` / `weekly:` / `weekly-archive:`)이고 봇 작성자인 브랜치 push 를, routine 커밋을 `origin/main` 위에 rebase 한 뒤 fast-forward 로 main 에 머지한다(헤드 커밋 메시지 보존 → 카톡 알림 정상 발화). 충돌 시에는 머지하지 않고 브랜치를 남겨 수동 검토를 유도한다. routine 프롬프트 §commit 의 `git push origin HEAD:main` 이 환경 제약으로 세션 브랜치에 떨어져도 이 워크플로가 닫아준다.
+
 ### B. 로컬 Claude Code (선택)
 PC에서 직접 돌리고 싶을 때:
 ```

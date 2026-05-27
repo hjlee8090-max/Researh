@@ -1,0 +1,81 @@
+name: Auto-merge routine branches
+
+# 스케줄 routine(00/09/12/15/18시·주말·audit 등)이 격리 환경에서 작업을
+# 세션 브랜치에 push 만 하고 main 에 머지되지 않는 경우를 자동으로 닫아준다.
+# routine 커밋을 origin/main 위에 rebase 한 뒤 fast-forward 로 push 하므로,
+# 헤드 커밋 메시지(chore(00:00)/report: 등)가 그대로 보존되어 기존
+# build_and_notify.yml 의 카톡 알림 분기가 정상 발화한다.
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-merge-main
+  cancel-in-progress: false
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    # 1차 필터: routine 커밋 프리픽스일 때만 러너 기동 (build_and_notify.yml 의 알림 분기와 동일 세트)
+    if: |
+      startsWith(github.event.head_commit.message, 'chore(') ||
+      startsWith(github.event.head_commit.message, 'report:') ||
+      startsWith(github.event.head_commit.message, 'audit:') ||
+      startsWith(github.event.head_commit.message, 'sat-review:') ||
+      startsWith(github.event.head_commit.message, 'sun-strategy:') ||
+      startsWith(github.event.head_commit.message, 'policy-review:') ||
+      startsWith(github.event.head_commit.message, 'weekly:') ||
+      startsWith(github.event.head_commit.message, 'weekly-archive:')
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify committer is the routine bot
+        id: guard
+        env:
+          COMMITTER_EMAIL: ${{ github.event.head_commit.committer.email }}
+        run: |
+          # routine 봇 커밋만 자동 머지 (사람의 WIP 브랜치 오머지 방지)
+          case "$COMMITTER_EMAIL" in
+            hjlee8090@gmail.com|*kospi-autoflow-bot*|*github-actions*|*users.noreply.github.com)
+              echo "ok=true" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "non-bot committer ($COMMITTER_EMAIL) — skip auto-merge"
+              echo "ok=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Rebase routine commits onto main and fast-forward push
+        if: steps.guard.outputs.ok == 'true'
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          SOURCE_REF: ${{ github.ref_name }}
+          HEAD_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          git config user.name "kospi-autoflow-bot"
+          git config user.email "hjlee8090@gmail.com"
+          for i in 1 2 3 4 5; do
+            git fetch origin main
+            git checkout -B routine_work "$SOURCE_SHA"
+            # 이미 main 에 포함됐으면(중복 발화) rebase 는 no-op → push 도 up-to-date
+            if ! git rebase origin/main; then
+              echo "::error::rebase conflict on $SOURCE_REF — leaving branch for manual review"
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin routine_work:main; then
+              echo "auto-merged $SOURCE_REF -> main (head: ${HEAD_MSG%%$'\n'*})"
+              exit 0
+            fi
+            echo "push race on main, retry $i"
+            sleep $((2 ** i))
+          done
+          echo "::error::exhausted retries pushing $SOURCE_REF -> main"
+          exit 1

@@ -18,6 +18,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+import pricecache
+
 ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 # 일부 데이터 출처(특히 Yahoo)는 기본/봇 User-Agent 를 403 으로 거부하므로 브라우저 UA 를 사용한다.
@@ -252,6 +254,11 @@ def build_regime(
             "reason": "지수 데이터 수집 실패(레짐 게이트 보류)",
             "source": "yahoo:^KS11",
         }
+    # 지수 history 도 캐시에 누적 — 백테스트 벤치마크(Buy&Hold KOSPI)용.
+    try:
+        pricecache.upsert_bars(pricecache.index_path("^KS11"), hist)
+    except OSError as exc:
+        logger.warning("index cache upsert failed: %s", exc)
     closes = [h["close"] for h in hist]
     last = closes[-1]
     window = min(ma_window, len(closes))
@@ -330,6 +337,13 @@ def build_ticker_snapshot(
     yahoo_last = yahoo_hist[-1]["close"] if yahoo_hist else None
     confidence, gap_pct = compute_confidence(naver_last, yahoo_last)
     primary_hist = naver_hist or yahoo_hist
+    # 받아온 전체 history(~260일)를 가격 캐시에 누적한다 — 백테스트·벤치마크용.
+    # 기존엔 6일치만 스냅샷에 남기고 버렸다. 실패해도 스냅샷 흐름은 방해하지 않는다(best-effort).
+    if primary_hist:
+        try:
+            pricecache.upsert_bars(pricecache.price_path(ticker), primary_hist)
+        except OSError as exc:
+            logger.warning("price cache upsert failed for %s: %s", ticker, exc)
     ret5 = five_day_return(primary_hist) if primary_hist else None
     filter_passes = ret5 is not None and ret5 >= threshold_pct
     if ret5 is None:

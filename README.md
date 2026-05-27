@@ -23,6 +23,7 @@ config/
   watchlist.json           현재 추천 3종목 + 진입가·목표가·손절가·코멘트
   weekly_plan.json         이번 주 thesis·watch_items·invalidation_triggers
   candidates.json          신규 진입 후보 목록 (fetch_market_data가 5거래일 추세 자동 수집 대상)
+  backtest_universe.json   백테스트·벤치마크용 KOSPI 대형주 유니버스 + 지수(^KS11)
   market_calendar.json     KRX 휴장일 — 모든 평일 routine의 0-A 단계에서 영업일 가드로 사용
 state/
   lessons.md               자기보완 학습 노트 (오차 사유 누적)
@@ -65,6 +66,13 @@ scripts/
   build_html.py            reports/*.md → _site/*.html (GitHub Pages)
   send_kakao.py            카카오 '나에게 보내기' 알림
   kakao_oauth_helper.py    1회 refresh_token 발급
+  pricecache.py            일별 OHLCV 가격 캐시 읽기/병합 (data/ 단일 데이터 소스, 의존성 0)
+  backfill_prices.py       과거 일봉 다년치 대량 백필 → data/ (GitHub Actions에서 실행)
+  strategy_core.py         policy 정량 규칙(모멘텀·레짐·사이징·손절)의 결정론적 룰 코어 (LLM 없음)
+  backtest.py              기계적 베이스라인 백테스트 — vs Buy&Hold KOSPI 알파·CAGR·Sharpe·MDD
+data/
+  prices/<ticker>.csv      종목 일봉 캐시 (영속). fetch_market_data가 매일 누적, backfill이 대량 적재
+  index/_KS11.csv          지수 일봉 캐시 (벤치마크 Buy&Hold KOSPI용)
 ```
 
 ## 스케줄 (Asia/Seoul)
@@ -97,6 +105,21 @@ scripts/
    - `가정오류` (애널리스트 가정 자체가 틀림)
 3. `state/lessons.md`에 누적
 4. **모든 추천·점검 프롬프트는 동작 직전 lessons.md를 먼저 읽고 동일 실수를 피한다**
+
+## 백테스트·벤치마크 (기계적 베이스라인)
+LLM 재량은 과거에 리플레이 불가하므로, 백테스트는 LLM 결정을 재현하는 게 아니라 **LLM이 넘어야 할 객관적 잣대**를 만든다.
+- `scripts/strategy_core.py` 가 policy.json 의 정량 규칙(모멘텀 블렌드·레짐 tier 사이징·R/R·ATR/고정 손절·트레일링)만 **LLM 없이 결정론적으로** 적용한다.
+- `scripts/backtest.py` 가 가격 캐시 위에서 **point-in-time** 리플레이(D일 종가로 결정 → D+1 시가 체결, 손절/목표는 당일 H/L)하고 거래비용을 반영해, **vs Buy&Hold KOSPI 알파**·CAGR·Sharpe·MDD·연도별 수익률·거래통계를 `reports/backtest-*.md` 로 낸다.
+- 비교 잣대 3종: 기계 베이스라인 / Buy&Hold KOSPI / EqualWeight 유니버스.
+
+데이터: 데이터센터 IP 는 Yahoo·Naver **403** 이라 웹 세션이 직접 수집 못 한다 → `data/` 캐시를 단일 소스로 쓴다.
+- 최초 1회: GitHub Actions 의 **Backfill Price History** 워크플로(`.github/workflows/backfill_prices.yml`)를 수동 실행해 다년치 일봉을 `data/` 로 채운다.
+- 이후: 평일 `fetch_prices.yml`(09/12/15/18)이 `fetch_market_data.py` 로 매일 history 를 누적 커밋한다.
+
+실행: `python scripts/backtest.py` (기본 `reports/backtest-<오늘>.md`) · `python scripts/backtest.py --start 2018-01-01 --rebalance-days 10` 처럼 기간·리밸런스 주기 조정 가능.
+
+> *기계 베이스라인조차 Buy&Hold 를 못 이기면, LLM 재량은 더 높은 바를 넘어야 한다.* 이게 "엣지가 진짜인가"의 1차 관문이다.
+> ⚠️ 한계(리포트에 명시): 생존편향(현재 구성종목)·가격수익(무배당)·일봉 체결 근사·Yahoo 데이터 품질·파라미터 미최적화. 실거래 전 point-in-time 구성종목·정밀 데이터로 재검증 필요.
 
 ## 실행 방법
 GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상태를 이어받아 동작.

@@ -1,0 +1,48 @@
+name: Backfill Price History
+
+# 백테스트·벤치마크용 과거 일봉을 data/ 캐시에 대량 적재한다.
+# 데이터센터 IP(웹 세션)는 Yahoo/Naver 403 이므로, 수집 가능한 Actions 러너에서 실행한다.
+# 수동(workflow_dispatch) 또는 주간(일요일)으로 history 를 누적·커밋한다.
+
+on:
+  workflow_dispatch:
+    inputs:
+      range:
+        description: "Yahoo range (1y/2y/5y/10y/max)"
+        required: false
+        default: "10y"
+  schedule:
+    # 매주 일요일 18:10 UTC (월요일 03:10 KST) — 주간 history 보강
+    - cron: "10 18 * * 0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backfill-prices
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Backfill price cache
+        run: python scripts/backfill_prices.py --range "${{ github.event.inputs.range || '10y' }}"
+      - name: Commit price cache if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "no price-cache changes — skip commit"
+          else
+            git commit -m "data(backfill): price history cache $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

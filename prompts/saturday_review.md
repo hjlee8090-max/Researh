@@ -12,6 +12,7 @@
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
 - 토요일은 주말이라 가격 변화는 없지만, 지난주 마지막 영업일 종가·5거래일 누적이 모두 네이버/Yahoo 양쪽에서 확인되는지 점검한다 (신뢰도 평가의 baseline).
 - 후보 종목 중 `entry_filter.passes = true` 인 종목이 있으면 사후분석의 "신규 진입 후보 sanity check" 섹션에 기록한다.
+- **레거시 신뢰도 서술 이월 금지**: 분석 질문 6번("가격 신뢰도 문제")과 "가격 데이터 신뢰도 문제" 섹션을 다룰 때, 이미 해결된 이슈(2026-05-26 네이버+Yahoo 2출처 수집으로 fetch 차단·stooq/Yahoo 403·data confidence=low 해소)를 진행 중 문제처럼 복기하지 않는다. 실제 스냅샷 `confidence` 가 `low` 였던 날만 신뢰도 문제로 기록한다.
 
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`

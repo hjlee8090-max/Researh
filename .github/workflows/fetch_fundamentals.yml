@@ -1,0 +1,49 @@
+name: Fetch Fundamentals (DART)
+
+# IR/펀더멘털 레이어 — 인터넷이 되는 GitHub Actions 러너에서 DART 분기 실적을 수집한다.
+# fetch_fundamentals.py 가 state/fundamentals.json 을 만들고, 웹 세션 routine 은 이를 읽어
+# score_candidates 의 fundamental_tilt·thesis 검증에 사용한다.
+#
+# 전제: 레포 Secret 에 DART_API_KEY 등록 필요 (Settings → Secrets and variables → Actions).
+#       키가 없으면 스크립트가 안전하게 degrade(빈 결과·기존 데이터 보존)하고 실패하지 않는다.
+# 실적은 분기 단위라 주 1회(일요일)면 충분하다.
+
+on:
+  schedule:
+    # 매주 일요일 07:00 KST = 토요일 22:00 UTC. 일요일 전략 routine 전에 갱신.
+    - cron: "0 22 * * 6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-fundamentals
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Fetch fundamentals (DART)
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+        run: python scripts/fetch_fundamentals.py
+      - name: Commit fundamentals if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/fundamentals.json
+          if git diff --cached --quiet; then
+            echo "no fundamentals changes — skip commit"
+          else
+            git commit -m "data(fundamentals): scheduled DART quarterly snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

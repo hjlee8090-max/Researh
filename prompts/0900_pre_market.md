@@ -171,11 +171,12 @@
    - **단계 경보 가격**: yellow(-5%), orange(-7%), red(-10%) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)
    - **미래 테마 노출**: 해당 종목이 `config/themes.json` 의 어떤 메가트렌드에 얼마나 노출돼 있는지 `[{theme, exposure 0~1, evidence, source(URL)}]` 형태로 기록. 근거 출처(URL)는 필수(환각 방지). 노출 테마가 없으면 빈 배열.
+   - **최근 분기 실적**(`state/fundamentals.json` 있으면): 매출·영업이익·영업이익률·전기대비 증감·`earnings_signal`. 컨빅션 보강 근거로 쓰되 타이밍 신호로 과신 금지(후행). 데이터 없으면 생략.
    - **리스크 2개** (Bear case) — §1-2에서 구조적 키워드 매칭됐다면 첫 항목으로 우선 기재
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
    - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
 4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함). 후보를 `config/candidates.json` 에 추가·갱신할 때 `theme_exposure`(근거 URL 포함)도 함께 기록해 다음 routine 의 `score_candidates.py` thematic 점수에 반영되게 한다.
-5. **가상 매수 체결**: 수량은 **리스크 기반 사이징** 우선 — `수량 = floor((equity × 1.5%) / (진입가 − 동적손절가))`. 산출 비중이 `max_position_weight_pct(35%)` 를 넘으면 비중 상한으로 캡, 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. ATR 미산출 시 `default_entry_weight_pct(30%)` 비중 기본으로 폴백. 추세 필터 위배 종목·`risk_off` 차단 시 매수 금지.
+5. **가상 매수 체결**: 수량은 **리스크 기반 사이징** 우선 — `수량 = floor((equity × 1.5%) / (진입가 − 동적손절가))`. 산출 비중이 `max_position_weight_pct(35%)` 를 넘으면 비중 상한으로 캡, 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. ATR 미산출 시 `default_entry_weight_pct(30%)` 비중 기본으로 폴백. 추세 필터 위배 종목·`risk_off` 차단·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 종목은 신규 진입 보류**(`policy.fundamentals.earnings_blackout` — 바이너리 이벤트 리스크).
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신
    - `state/trade_log.jsonl`에 라인 추가:

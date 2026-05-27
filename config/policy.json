@@ -1,7 +1,8 @@
 {
-  "version": "1.7",
+  "version": "1.8",
   "last_updated": "2026-05-27",
   "changelog": [
+    "1.8: IR/펀더멘털 레이어 — DART OpenAPI 분기 실적 수집(scripts/fetch_fundamentals.py, DART_API_KEY 필요). score_candidates 에 fundamental_tilt(±, 확신 레이어) 추가, thesis 확정/무효화·실적 블랙아웃·IR 덱 다이제스트 규칙. sunday_strategy 주간 실행, 데일리는 읽기만",
     "1.7: 미래 산업 테마 점수(thematic_score) — config/themes.json 메가트렌드 레지스트리 + 후보별 theme_exposure. score_candidates 블렌드 재조정(momentum 35·thematic 20·confidence 20·thesis 25). 같은 섹터 내 테마 노출 우위(예: 로봇=현대차>기아) 반영. momentum 게이트 유지로 스토리주 편향 방어",
     "1.6: 시장 레짐 동적 비중(market_regime.dynamic_sizing) — 지수 200일선 위치·기울기·60일선으로 5단계 tier(strong_bull~deep_bear) 산출, tier별 목표 주식 비중 밴드. fetch_market_data 가 tier 산출, compute_allocation.py 가 현재 비중 대비 배치/축소(KRW) 권고. 0900/1200/1500/sunday 루틴에 반영",
     "1.5: 일일 진입 건수 할당(max_new_entries_per_day) 전면 제거 — 리스크는 비중·R/R·검색범위로 통제. 현금 비중 축소·공격적 사이징(max_positions 4, 종목당 35%, 현금 하한 5%, 기본 진입 30%)",
@@ -229,6 +230,16 @@
     "slippage_pct": 0.2,
     "tax_pct": 0.18,
     "commission_pct": 0.015
+  },
+  "fundamentals": {
+    "enabled": true,
+    "purpose": "분기·기업 IR 자료를 구조화해 확신·검증 레이어로 사용한다. 타이밍은 regime·momentum 이 담당하고, 펀더멘털은 후행 지표이므로 점수의 소폭 틸트와 thesis 확정/무효화에만 쓴다.",
+    "source": "DART 전자공시 OpenAPI (scripts/fetch_fundamentals.py). 환경변수 DART_API_KEY 필요(무료: https://opendart.fss.or.kr). 네트워크 정책에 opendart.fss.or.kr 허용 필요.",
+    "cadence": "분기 단위 — sunday_strategy(주간)에서 fetch_fundamentals.py 실행. 데일리 routine 은 state/fundamentals.json 을 읽기만 한다.",
+    "scoring_use": "score_candidates 의 fundamental_tilt(±): strong_growth +0.05 / growth +0.02 / decline -0.03 / sharp_decline -0.06 / unknown 0. 가중 축이 아닌 확신 틸트.",
+    "thesis_link": "weekly_plan thesis 의 confirming_signals/invalidation_triggers 에 실적을 매핑한다. 예: 영업이익 급증 → thesis 확정, 가이던스 컷 → 무효화 검토.",
+    "ir_deck_digest": "IR 덱(PDF)·실적 발표는 분기마다 sunday_strategy/sunday_policy_review 에서 LLM 이 요약해 신사업(예: 로봇 매출 목표)·가이던스·수주잔고를 candidates.theme_exposure 의 근거(evidence+source URL)와 thesis 에 반영한다.",
+    "earnings_blackout": "실적 발표 D-1~당일은 신규 진입 보류·비중 축소(바이너리 이벤트 리스크). 발표 후 결과 반영해 재평가."
   },
   "rebalance_rules": {
     "swap_when": [

@@ -275,6 +275,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     check = ROOT / "scripts" / "check_market_open.py"
     score = ROOT / "scripts" / "score_candidates.py"
     allocation = ROOT / "scripts" / "compute_allocation.py"
+    fundamentals_script = ROOT / "scripts" / "fetch_fundamentals.py"
     reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
     lessons_idx = ROOT / "scripts" / "build_lessons_index.py"
     candidates = ROOT / "config" / "candidates.json"
@@ -285,6 +286,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
         (check, "scripts/check_market_open.py"),
         (score, "scripts/score_candidates.py"),
         (allocation, "scripts/compute_allocation.py"),
+        (fundamentals_script, "scripts/fetch_fundamentals.py"),
         (reconcile, "scripts/reconcile_portfolio.py"),
         (lessons_idx, "scripts/build_lessons_index.py"),
     ]:

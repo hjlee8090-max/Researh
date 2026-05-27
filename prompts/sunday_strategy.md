@@ -11,9 +11,11 @@
 ## 0-A. 시장 데이터 스냅샷
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다. **다음 주 자본계획(`capital_plan`)의 목표 주식/현금 비중을 regime tier 밴드에 맞춰 설정**한다 — 예: `strong_bull` 이면 주식 80~95%로 적극 배치, `bear`/`deep_bear` 면 현금 비중을 높여 방어. tier=unknown 이면 정책 default 비중.
+- `python scripts/fetch_fundamentals.py` 를 실행하여 `state/fundamentals.json`(보유·후보의 DART 분기 실적: 매출·영업이익·마진·전기대비 증감·earnings_signal)을 주간 갱신한다. `DART_API_KEY` 미설정·네트워크 차단 시 직전 데이터를 보존하고 stale 표시만 남긴다(비치명). 이 값은 `score_candidates` 의 fundamental_tilt 와 thesis 검증에 쓰인다.
 - 다음 주 thesis 설계에 사용할 **후보 종목의 추세 필터 통과 여부**(`entry_filter.passes`)와 가격 신뢰도를 가장 먼저 확인한다.
 - 추세 필터를 통과하지 못한 후보는 `config/candidates.json` 에 그대로 두되, 다음 주 thesis 의 `confirming_signals` 에 "5거래일 누적 ≥ -7%로 회복" 같은 트리거를 명시한다.
 - **미래 테마 점검**: `config/candidates.json` 의 각 후보 `theme_exposure`(근거 URL 포함)를 최신 산업 전망에 맞게 갱신하고, 새 메가트렌드가 부상하면 `config/themes.json` 에 테마를 추가하거나 `strength` 를 조정한다(예: 로봇·AI 전력·방산). 같은 섹터 내 테마 노출 우위 종목(예: 로봇=현대차>기아)을 thesis·후보에 반영한다.
+- **IR/실적 점검 (분기 — 실적시즌)**: `state/fundamentals.json` 의 최신 분기 실적을 thesis 의 `confirming_signals`/`invalidation_triggers` 와 대조한다(영업이익 급증→thesis 확정, 가이던스 컷·적자전환→무효화 검토). 새 IR 덱·실적 발표가 있으면 신사업·가이던스·수주잔고를 읽어 해당 종목의 `theme_exposure` 근거(출처 URL 포함)와 thesis 를 갱신한다. 다가오는 실적 발표일은 `weekly_plan.watch_items` 에 적어 **실적 D-1~당일 신규 진입 보류**(`policy.fundamentals.earnings_blackout`)를 적용한다.
 - **레거시 신뢰도 서술 이월 금지**: 다음 주 `weekly_plan.json`(특히 `watch_items`·`daily_bridge`)을 쓸 때, 과거 리포트·이전 weekly_plan 에 남은 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류 서술을 복제하지 않는다 (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). 신뢰도·진입 가능 여부는 **최신 스냅샷의 `confidence` 와 `entry_filter.passes` 만 근거**로 기술한다.
 
 ## 0-B. 휴장일 캘린더 확인

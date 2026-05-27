@@ -22,7 +22,11 @@
 - thesis_score: 활성 thesis 와 linked = 1.0 / candidate-only thesis = 0.6 / 무관 = 0.3
 - bear_flag_penalty: structural_bear_flags 1개당 -0.15
 
-final = (momentum × 0.35 + thematic × 0.20 + confidence × 0.20 + thesis × 0.25) - bear_flag_penalty
+- fundamental_tilt: IR/펀더멘털(후행)은 가중 축이 아닌 소폭 확신 틸트(±). state/fundamentals.json
+  (fetch_fundamentals.py, DART 분기실적)의 earnings_signal → strong_growth +0.05 … sharp_decline -0.06.
+  데이터 없으면 0(무영향).
+
+final = (momentum × 0.35 + thematic × 0.20 + confidence × 0.20 + thesis × 0.25) - bear_flag_penalty + fundamental_tilt
 momentum 을 게이트(급락 회피)로 유지하므로 전망이 좋아도 추세가 깨진 종목은 entry_filter 에서 차단된다.
 
 시장 레짐(KOSPI 200일선 risk_on/risk_off)은 snapshot.regime 에서 읽어 출력에 표기하고,
@@ -143,6 +147,18 @@ def thematic_score(
     return round(min(1.0, total), 3), parts
 
 
+# IR/펀더멘털은 후행 지표 → 가중 축이 아닌 '확신 틸트'(±, 소폭)로만 반영한다.
+# state/fundamentals.json(fetch_fundamentals.py, DART) 의 earnings_signal 을 매핑. 데이터 없으면 0.
+FUND_TILT = {
+    "strong_growth": 0.05,
+    "growth": 0.02,
+    "flat": 0.0,
+    "decline": -0.03,
+    "sharp_decline": -0.06,
+    "unknown": 0.0,
+}
+
+
 def build_adopt_reasons(
     c: dict,
     ret5: float | None,
@@ -223,6 +239,7 @@ def main() -> int:
         for t in themes_cfg.get("themes", [])
         if isinstance(t, dict) and t.get("id")
     }
+    fundamentals = load_json("state/fundamentals.json", {}).get("tickers", {})
 
     regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
     regime_state = regime.get("state", "unknown") if isinstance(regime, dict) else "unknown"
@@ -268,8 +285,11 @@ def main() -> int:
         t_score, t_parts = thematic_score(c.get("theme_exposure"), theme_strength)
         c_score = confidence_score(conf)
         th_score = thesis_score(c.get("thesis_id"), active_ids, candidate_ids)
+        fund = fundamentals.get(ticker, {}) if isinstance(fundamentals, dict) else {}
+        earnings_signal = fund.get("earnings_signal")
+        fund_tilt = FUND_TILT.get(earnings_signal, 0.0)
         penalty = 0.15 * len(bear_flags)
-        final = max(0.0, m_score * 0.35 + t_score * 0.20 + c_score * 0.20 + th_score * 0.25 - penalty)
+        final = max(0.0, m_score * 0.35 + t_score * 0.20 + c_score * 0.20 + th_score * 0.25 - penalty + fund_tilt)
 
         block_reasons: list[str] = []
         if not entry_passes:
@@ -294,6 +314,12 @@ def main() -> int:
             build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high, t_parts)
             if tradable else []
         )
+        if adopt_reasons and earnings_signal in ("strong_growth", "growth"):
+            g = fund.get("op_growth_pop_pct")
+            adopt_reasons.append(
+                f"실적 모멘텀({earnings_signal}, 영업이익 전기대비 {g:+.0f}%)" if isinstance(g, (int, float))
+                else f"실적 모멘텀({earnings_signal})"
+            )
         adopt_summary = " · ".join(adopt_reasons) if adopt_reasons else None
 
         ranked.append({
@@ -310,6 +336,8 @@ def main() -> int:
                 "confidence": c_score,
                 "thesis": th_score,
                 "bear_penalty": penalty,
+                "fundamental_tilt": fund_tilt,
+                "earnings_signal": earnings_signal,
             },
             "final_score": round(final, 3),
             "data": {
@@ -320,6 +348,14 @@ def main() -> int:
                 "entry_filter_passes": entry_passes,
                 "structural_bear_flags": bear_flags,
                 "theme_exposure": c.get("theme_exposure", []),
+                "fundamentals": {
+                    "revenue": fund.get("revenue"),
+                    "operating_profit": fund.get("operating_profit"),
+                    "op_margin_pct": fund.get("op_margin_pct"),
+                    "op_growth_pop_pct": fund.get("op_growth_pop_pct"),
+                    "period_label": fund.get("period_label"),
+                    "earnings_signal": earnings_signal,
+                } if fund else None,
             },
             "tradable": tradable,
             "adopt_reasons": adopt_reasons,

@@ -21,6 +21,19 @@ TRADE_ACTIONS_BUY = {"BUY"}
 TRADE_ACTIONS_SELL = {"SELL", "TRAILING_STOP", "SCALE_OUT"}
 
 
+def _is_buy(action: str | None) -> bool:
+    if not action:
+        return False
+    return action in TRADE_ACTIONS_BUY or action.startswith("BUY_")
+
+
+def _is_sell(action: str | None) -> bool:
+    # SELL_GIVE_BACK_STOP / SELL_TIME_STOP / SELL_TARGET 등 exit 변형도 모두 수용한다.
+    if not action:
+        return False
+    return action in TRADE_ACTIONS_SELL or action.startswith("SELL_")
+
+
 def load_json(rel: str) -> dict:
     return json.loads((ROOT / rel).read_text(encoding="utf-8"))
 
@@ -52,13 +65,13 @@ def compute_expected(trade_log: list[dict], initial_capital: float) -> dict:
     for e in trade_log:
         action = e.get("action")
         ticker = e.get("ticker")
-        if action in TRADE_ACTIONS_BUY:
+        if _is_buy(action):
             qty = int(num(e.get("shares")))
             price = num(e.get("price"))
             cash -= qty * price
             shares[ticker] = shares.get(ticker, 0) + qty
             trade_count += 1
-        elif action in TRADE_ACTIONS_SELL:
+        elif _is_sell(action):
             qty = int(num(e.get("shares")))
             net = num(e.get("net_proceeds"))
             pnl = num(e.get("realized_pnl"))

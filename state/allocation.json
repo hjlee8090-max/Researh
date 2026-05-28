@@ -1,23 +1,36 @@
 {
-  "as_of": "2026-05-27T15:02:28+09:00",
-  "snapshot_as_of": "2026-05-27T12:32:01+09:00",
+  "as_of": "2026-05-28T09:12:22+09:00",
+  "snapshot_as_of": "2026-05-27T18:40:40+09:00",
   "snapshot_stale": true,
   "current": {
-    "equity_krw": 4937477,
+    "equity_krw": 4904877,
     "cash_krw": 3234077,
-    "stock_value_krw": 1703400,
-    "stock_pct": 34.5,
-    "cash_pct": 65.5
+    "stock_value_krw": 1670800,
+    "stock_pct": 34.1,
+    "cash_pct": 65.9
   },
   "signals": {
-    "pct_vs_ma200": 78.58,
-    "pct_vs_ma60": null,
-    "ma200_slope_pct": null,
+    "pct_vs_ma200": 74.02,
+    "pct_vs_ma60": 30.74,
+    "ma200_slope_pct": 9.91,
     "legacy_state": "risk_on"
   },
-  "tier": "unknown",
+  "tier": "strong_bull",
+  "effective_tier": "strong_bull",
+  "hysteresis_hold": false,
+  "prev_tier": "unknown",
+  "target_equity_pct": [
+    80,
+    95
+  ],
+  "entry_mode": "default",
+  "tier_narrative": "강세 추세 — 지수 200·60일선 위 + 200일선 상승. 주식 비중 80~95%(현금 5~20%), 기본 진입비중·4종목 풀가동.",
   "recommendation": {
-    "action": "advisory_only",
-    "note": "regime tier 미확정(구버전 snapshot·지수 수집 실패·dynamic_sizing 비활성) — 동적 비중 권고 보류. 정책 default 사이징 사용."
-  }
+    "action": "deploy",
+    "krw": 2619204,
+    "target_midpoint_pct": 87.5,
+    "deployable_cash_krw": 2988833,
+    "note": "주식 비중 34.1% < 목표 하한 80% → 약 2,619,204원 추가 배치 권고(목표 중앙 88%, 현금 하한 5% 준수)."
+  },
+  "reconcile_note": "weekly_recovery_plan(누적손실 단계)·entry_filter 와 함께 '더 보수적인 쪽'을 최종 적용한다. deep_bear/entry_mode=block 이면 신규 진입 중단이 비중 배치보다 우선."
 }

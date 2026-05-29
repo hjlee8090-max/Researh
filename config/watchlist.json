@@ -146,6 +146,26 @@
           "tier": "candidate",
           "opinion": "재진입 보류",
           "one_liner": "12:00 stale 스냅샷(11:51:54) 300,750원 — confidence=high, 5d+8.97% 추세필터 통과. 그러나 R/R=0.74(52w 고가 323,000 기준) < 1.2(최소) → 진입 BLOCKED. 최소 목표가 336,840원 달성 필요(52w 고가 경신 수준). 가격 추가 조정(-5% 이하) 시 R/R 개선 가능 — 15시 재검토. ※시세 근사값."
+        },
+        {
+          "ts": "2026-05-29T09:05:00+09:00",
+          "action": "WATCH_BLOCKED",
+          "tier": "candidate",
+          "opinion": "WATCH — 진입 조건 충족이나 data confidence 차단",
+          "data_confidence": "medium",
+          "snapshot_stale": true,
+          "one_liner": "【5/29 09:00 진입 검토】웹검색 기준 시가 290,000원(단일 소스) — entry 조건(290,000 이하) 충족. 신규 목표가 340,000원 / 손절가 261,000원(red -10%) / R/R=1.67(≥1.5 금요일 기준 ✓). 단 오늘 snapshot HTTP 403 실패 → data confidence=medium(웹 단일 소스) → policy.allowed_actions_by_confidence.medium에 NEW_ENTRY 미포함 → 차단. intraday range 266,000~291,500 확인(5/22 292,500 대비 -9.1% → 5d filter 차단 가능성 ⚠️). 이란 휴전 MOU로 위험선호 개선·반도체 수출 5월 +202% thesis 강화. ※웹 단일 소스 근사값.",
+          "entry_filter_blocks": {
+            "005930": "data_confidence=medium(웹 단일 소스, stale 스냅샷) — NEW_ENTRY 차단. 12:00 routine에서 교차검증 후 재검토"
+          },
+          "new_target_price": 340000,
+          "new_stop_price": 261000,
+          "new_rr_ratio": 1.67,
+          "next_action_candidates": [
+            "12시 routine: 웹 2소스 교차검증 → confidence=high 확인 시 290,000 근처 진입 재검토",
+            "intraday 실제 현재가 확인 후 5d return 재계산 필수(range 저점 266,000은 -9.1% → filter 차단 가능)",
+            "이란 휴전 MOU + 반도체 수출 +202% thesis 강화 유지"
+          ]
         }
       ]
     },
@@ -627,6 +647,21 @@
             "【최우선】09시 개장 직후 가격 확인 → 414,780 이탈 시 즉시 50% 비중 축소",
             "401,400원 하회 시 전량 가상 청산",
             "500,000원 도달 시 익절 검토"
+          ]
+        },
+        {
+          "ts": "2026-05-29T09:05:00+09:00",
+          "action": "HOLD",
+          "tier": "yellow",
+          "opinion": "홀드 — 이란 휴전 MOU로 자정 경보 완화",
+          "data_confidence": "high",
+          "snapshot_stale": true,
+          "one_liner": "【5/29 09:00 개장 점검】미국-이란 60일 휴전 MOU 체결(미국장 마감 전) → WTI Brent 하락 반전. 자정 이란 교전 경보 역전. stale 스냅샷 415,000원(HIGH confidence). 진입가(446,000) 대비 -6.95% 🟡 yellow 유지. LNG 수주잔고·1Q26 strong_growth thesis 훼손 없음. 손절(401,400)까지 -3.27%. R/R=6.25. ※시세 stale 근사값.",
+          "next_action_candidates": [
+            "orange(414,780) 이탈 시 즉시 50% 비중 축소",
+            "401,400원 하회 시 전량 가상 청산",
+            "500,000원 도달 시 익절 검토",
+            "12시 routine에서 실제 가격 교차검증 후 tier 재판정"
           ]
         }
       ]

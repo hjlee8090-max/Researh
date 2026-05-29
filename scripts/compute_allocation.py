@@ -99,10 +99,18 @@ def main() -> int:
     hysteresis_pct = float(dyn.get("hysteresis_pct", 1.0))
     pos_cfg = policy.get("position_sizing", {}) if isinstance(policy.get("position_sizing"), dict) else {}
     min_cash_pct = float(pos_cfg.get("min_cash_weight_pct", 5.0))
-    max_positions = int(pos_cfg.get("max_positions", 4))
+    max_positions = int(pos_cfg.get("max_positions", 5))
     max_pos_weight_pct = float(pos_cfg.get("max_position_weight_pct", 35.0))
-    n_positions = len([p for p in portfolio.get("positions", []) if p.get("ticker")])
+    held_tickers = {p.get("ticker") for p in portfolio.get("positions", []) if p.get("ticker")}
+    n_positions = len(held_tickers)
     vacant_slots = max(0, max_positions - n_positions)
+    # v2.2 — 진입 가능한 '신규' 후보 수(보유 종목 제외). per_new 분모로 써서, 슬롯만 늘렸을 때
+    # 종목당 배분이 deploy÷빈슬롯으로 과도하게 쪼그라드는 것을 막는다(후보 부족과 겹친 비중 하락 방지).
+    cand_scores = load_json("state/candidate_scores.json", {})
+    tradable_new = sum(
+        1 for r in cand_scores.get("ranked", [])
+        if isinstance(r, dict) and r.get("tradable") and r.get("ticker") not in held_tickers
+    )
 
     equity, cash, stock_value = portfolio_equity(portfolio)
     stock_pct = round(stock_value / equity * 100, 1) if equity > 0 else None
@@ -219,19 +227,25 @@ def main() -> int:
         action = "hold"
         note = f"주식 비중 {stock_pct}% 가 목표 밴드 {band_min}~{band_max}% 안 — 유지."
 
-    # v2.0 — 신규 진입 1종목당 배분액. deploy 권고 KRW 를 빈 슬롯 수로 나누되 종목당 비중 상한으로 캡.
-    # 프롬프트가 이 값 ÷ 진입가 = 목표 수량으로 변환해 '1주만 사는' 과소 사이징을 방지한다.
+    # v2.0/2.2 — 신규 진입 1종목당 배분액. deploy 권고 KRW 를 '빈 슬롯과 진입 가능 신규 후보 수
+    # 중 작은 값'으로 나누되 종목당 비중 상한으로 캡. 프롬프트가 이 값 ÷ 진입가 = 목표 수량으로
+    # 변환해 '1주만 사는' 과소 사이징과 '슬롯만 늘려 종목당 배분이 쪼그라드는' 문제를 함께 막는다.
     per_pos_cap = round(equity * max_pos_weight_pct / 100)
-    if action == "deploy":
-        # 빈 슬롯이 있으면 신규 1종목당 배분액 = deploy krw / 빈 슬롯 수(종목당 상한 캡).
-        # 빈 슬롯이 없으면 기존 보유 추가매수(scale-in)로 전액 배정한다.
-        per_new = round(min(krw / vacant_slots, per_pos_cap)) if vacant_slots > 0 else krw
+    if action == "deploy" and vacant_slots > 0:
+        # 분모 = min(빈 슬롯, 진입 가능 신규 후보 수). 후보가 적으면 그 수로 나눠 종목당 충분히
+        # 배분하고(과소 배분 방지), 후보가 채워지면 빈 슬롯 수로 더 분산된다. 후보 정보가 없으면
+        # (candidate_scores 부재) 빈 슬롯으로 폴백한다.
+        denom = min(vacant_slots, tradable_new) if tradable_new > 0 else vacant_slots
+        per_new = round(min(krw / max(1, denom), per_pos_cap))
+    elif action == "deploy":
+        per_new = krw  # 빈 슬롯 없음 → 기존 보유 추가매수(scale-in)로 전액 배정
     else:
         per_new = 0
     out["recommendation"] = {
         "action": action,
         "krw": krw,
         "vacant_slots": vacant_slots,
+        "tradable_new_count": tradable_new,
         "per_new_position_krw": per_new,
         "max_position_krw": per_pos_cap,
         "target_midpoint_pct": round(midpoint, 1),

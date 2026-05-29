@@ -91,7 +91,7 @@
 `state/allocation.json` (= `compute_allocation.py` 산출) 을 읽어 **지수 성장세 tier → 목표 주식 비중 밴드**와 현재 비중·권고를 "한눈에 보기" 에 1줄 표기한다.
 - `regime.tier`: `strong_bull`(주식 80~95%) / `bull`(65~80%) / `neutral`(45~60%) / `bear`(25~40%) / `deep_bear`(0~25%). 200일선 위치+기울기·60일선으로 산출.
 - `recommendation.action` 을 신규 진입·축소의 1차 기준으로 삼는다:
-  - `deploy`: `recommendation.krw` 한도 안에서 신규 진입·비중 확대(현금 하한 준수). **신규 1종목당 목표 금액 = `recommendation.per_new_position_krw`**(= deploy krw ÷ `vacant_slots`, 종목당 35% 캡). **목표 수량 = floor(per_new_position_krw ÷ 진입가)** 를 §2 공통 사이징의 '목표비중 기반 수량'으로 쓴다. R/R(레짐 적응)·entry_filter 통과 후보 우선. `vacant_slots`(빈 슬롯)가 여러 개면 점수 상위 후보로 **복수 종목 진입**해 deploy 한도를 소진한다 — 강세장에 현금만 들고 끝내지 않는다.
+  - `deploy`: `recommendation.krw` 한도 안에서 신규 진입·비중 확대(현금 하한 준수). **신규 1종목당 목표 금액 = `recommendation.per_new_position_krw`**(= deploy krw ÷ **min(`vacant_slots`, `tradable_new_count`)**, 종목당 35% 캡). 즉 진입 가능 후보가 빈 슬롯보다 적으면 그 후보 수로 나눠 종목당 충분히 배분하고(현금이 덜 남도록), 후보가 채워지면 빈 슬롯 수로 더 분산된다. **목표 수량 = floor(per_new_position_krw ÷ 진입가)** 를 §2 공통 사이징의 '목표비중 기반 수량'으로 쓴다. R/R(레짐 적응)·entry_filter 통과 후보 우선. 빈 슬롯이 여러 개면 점수 상위 후보로 **복수 종목 진입**해 deploy 한도를 소진한다 — 강세장에 현금만 들고 끝내지 않는다.
   - `trim`: 주식 비중이 목표 상한 초과 — 익절·트레일링스톱 우선 종목부터 약 `krw` 만큼 축소.
   - `hold`: 목표 밴드 안 — 신규 진입은 교체(가장 약한 보유 대비 우월할 때)만.
   - `advisory_only`(tier=unknown·stale): 동적 비중 보류, 정책 default 사이징 사용.
@@ -173,7 +173,7 @@
 > - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
 
 ### A. watchlist가 비어있는 경우 (첫 가동)
-1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 3~4종목을 선정**한다 (`policy.position_sizing.max_positions`=4 이내).
+1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 4~5종목을 선정**한다 (`policy.position_sizing.max_positions`=5 이내).
 2. 선정 기준:
    - KOSPI 시총 상위 100위 이내, 관리종목·신규상장 1년 미만 제외
    - 섹터 분산 (여러 종목이 같은 섹터에 몰리지 않도록)
@@ -222,7 +222,7 @@
 2. `state/candidate_scores.json.ranked` 에서 `tradable=true` 후보를 점수 내림차순으로 본다 (`tradable` = 추세필터 통과 + confidence **medium 이상** + 구조적 악재 미매칭 — v2.0 에서 medium 도 진입 허용).
 3. 각 tradable 후보에 §2 공통 규칙으로 진입가·동적손절가·목표가(강세 tier 상향)·R/R(레짐 적응 하한) 산출. R/R 통과 시 **목표 수량 = §2 공통 사이징**으로 가상 매수 체결(trade_log + portfolio 갱신, `weekly_thesis_id` 기록).
 4. `vacant_slots` 와 deploy krw 한도가 남는 한 다음 순위 후보로 **반복(복수 종목 진입)**. 종목당 35%·현금 하한 5% 준수.
-5. tradable 후보가 0건이면: (a) 매크로·시총 상위·테마 노출(`config/themes.json`) 기반으로 `candidates.json` 에 **3~4종목 신규 발굴·추가**(다음 routine 부터 자동 추적), (b) 이번 회차는 "후보 부족으로 배치 보류 — 다음 routine 재시도" 를 리포트에 명시한다. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
+5. tradable 후보가 0건이면: (a) 매크로·시총 상위·테마 노출(`config/themes.json`) 기반으로 `candidates.json` 에 **3~5종목 신규 발굴·추가**(다음 routine 부터 자동 추적), (b) 이번 회차는 "후보 부족으로 배치 보류 — 다음 routine 재시도" 를 리포트에 명시한다. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
 6. `caution`/`defensive` 회복 단계, `risk_off`(차단 설정 시), `deep_bear`(entry_mode=block) 이면 이 경로보다 보수 단계가 우선(더 보수적인 쪽 적용).
 
 ## 3. 대화창 출력 (카톡과 별개 — Claude 대답란)

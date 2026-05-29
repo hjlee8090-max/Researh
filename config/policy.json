@@ -1,7 +1,8 @@
 {
-  "version": "2.1",
+  "version": "2.2",
   "last_updated": "2026-05-29",
   "changelog": [
+    "2.2: max_positions 4→5(분산 강화) + per_new_position_krw 분모를 '빈 슬롯'에서 'min(빈 슬롯, 진입 가능 신규 후보 수)'로 변경. 슬롯만 늘리면 종목당 배분이 deploy÷빈슬롯으로 쪼그라들어(후보 부족과 겹쳐) 주식 비중이 오히려 낮아지던 문제를 해결 — 진입 가능 후보가 적으면 그 수로 나눠 종목당 충분히 배분하고(종목당 35% 캡 유지), 후보가 채워지면 빈 슬롯 수로 자연히 더 분산된다. compute_allocation 이 candidate_scores.json 의 tradable(미보유) 수를 읽어 산출(recommendation.tradable_new_count). strong_bull narrative·0900 후보 선정 개수도 5 기준으로 갱신.",
     "2.1: 가격 데이터 노화(age) 추적·차등 적용. 직전까지 stale 키(직접 수집 실패)만 보고 '수집 시각 vs routine 실행 시각' 나이(age)는 무시 — GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 데이터처럼 매매에 썼다(stale_after_minutes:20 은 강제되지 않는 죽은 파라미터였음). ①compute_allocation 이 snapshot_age_min·freshness(fresh≤20분/acceptable≤75분/stale_intraday) 산출. ②price_data_quality.data_freshness 신설 — 손절선·단계경보(orange/red) ±3%·목표가 ±2% 임계 근접 종목은 freshness 가 fresh 가 아니면 웹 실시간 1회 교차확인 후 체결(묵은 가격에 의한 손절 지연 방지). ③0900/1200/1500 에 신선도 점검·손절 안전망, 1500 마감 임박 특례(동시각 수집 우선) 추가.",
     "2.0: 현금 단방향 누적·과소 매수 해소 패치. ①medium confidence 에서도 NEW_ENTRY/SCALE_IN 허용(축소비중·R/R+0.1) — 매도만 집행되고 매수는 high 를 요구하던 비대칭 제거(price_data_quality.allowed_actions_by_confidence). ②사이징을 리스크기반·목표비중 중 '큰 쪽' 채택, deploy 시 종목당 배분액(compute_allocation.per_new_position_krw) 우선·고가주 floor 반올림 보정(position_sizing.sizing_method). ③레짐 적응형 R/R 하한(strong_bull 1.0 … deep_bear 1.6)·강세 tier 목표가 상향으로 '이미 오른 모멘텀주가 R/R<1.2 로 진입 봉쇄되던' 역설 해소(reward_risk_management.regime_adaptive_rr). ④후보 풀 확대(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭)+주식 비중<목표 하한이고 빈 슬롯 있으면 신규 후보 자동 발굴 의무(0900 분기 C).",
     "1.9: 펀더멘털·실적 신호를 보유종목 의사결정에도 반영(fundamentals.holdings_use). sharp_decline/적자전환/가이던스 컷이면 가격 green 이어도 익절·축소 우선·트레일링스톱 강화. 0900/1200/1500/1800 보유 평가에 소비 단계 추가. 금융주 계정명 fallback(영업수익 등)",
@@ -91,7 +92,7 @@
           "gates": {"price_vs_ma200_min": 0.0, "price_vs_ma60_min": 0.0, "ma200_slope_min": 0.5},
           "target_equity_pct": [80, 95],
           "entry_mode": "default",
-          "narrative": "강세 추세 — 지수 200·60일선 위 + 200일선 상승. 주식 비중 80~95%(현금 5~20%), 기본 진입비중·4종목 풀가동."
+          "narrative": "강세 추세 — 지수 200·60일선 위 + 200일선 상승. 주식 비중 80~95%(현금 5~20%), 기본 진입비중·5종목 풀가동."
         },
         {
           "tier": "bull",
@@ -253,7 +254,7 @@
   },
   "position_sizing": {
     "initial_capital_krw": 5000000,
-    "max_positions": 4,
+    "max_positions": 5,
     "max_position_weight_pct": 35.0,
     "min_cash_weight_pct": 5.0,
     "default_entry_weight_pct": 30.0,

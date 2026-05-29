@@ -6,7 +6,14 @@ name: Fetch Prices & Score Candidates
 
 on:
   schedule:
-    # KST 09/12/15/18 = UTC 00/03/06/09 (월~금). schedule 은 기본 브랜치에서만 실행됨.
+    # v2.0 — routine 10분 전에 미리 수집해 '신선한' 스냅샷을 커밋한다.
+    #   직전까지는 routine 과 동시각(KST 09/12/15/18)에만 수집해, 웹 세션 routine 이
+    #   Actions 보다 먼저 돌면 스냅샷이 stale→신규 진입이 medium 으로 막히곤 했다.
+    # KST 08:50 월~금 = UTC 23:50 일~목 (09시 routine 10분 전)
+    - cron: "50 23 * * 0-4"
+    # KST 11:50/14:50/17:50 월~금 = UTC 02:50/05:50/08:50 월~금 (12/15/18시 routine 10분 전)
+    - cron: "50 2,5,8 * * 1-5"
+    # 백업 — routine 동시각(KST 09/12/15/18 = UTC 00/03/06/09). schedule 은 기본 브랜치에서만 실행됨.
     - cron: "0 0,3,6,9 * * 1-5"
   workflow_dispatch:
 

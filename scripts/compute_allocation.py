@@ -97,9 +97,12 @@ def main() -> int:
     dyn = regime_cfg.get("dynamic_sizing", {}) if isinstance(regime_cfg.get("dynamic_sizing"), dict) else {}
     tiers = dyn.get("tiers", [])
     hysteresis_pct = float(dyn.get("hysteresis_pct", 1.0))
-    min_cash_pct = float(
-        policy.get("position_sizing", {}).get("min_cash_weight_pct", 5.0)
-    )
+    pos_cfg = policy.get("position_sizing", {}) if isinstance(policy.get("position_sizing"), dict) else {}
+    min_cash_pct = float(pos_cfg.get("min_cash_weight_pct", 5.0))
+    max_positions = int(pos_cfg.get("max_positions", 4))
+    max_pos_weight_pct = float(pos_cfg.get("max_position_weight_pct", 35.0))
+    n_positions = len([p for p in portfolio.get("positions", []) if p.get("ticker")])
+    vacant_slots = max(0, max_positions - n_positions)
 
     equity, cash, stock_value = portfolio_equity(portfolio)
     stock_pct = round(stock_value / equity * 100, 1) if equity > 0 else None
@@ -186,9 +189,21 @@ def main() -> int:
         action = "hold"
         note = f"주식 비중 {stock_pct}% 가 목표 밴드 {band_min}~{band_max}% 안 — 유지."
 
+    # v2.0 — 신규 진입 1종목당 배분액. deploy 권고 KRW 를 빈 슬롯 수로 나누되 종목당 비중 상한으로 캡.
+    # 프롬프트가 이 값 ÷ 진입가 = 목표 수량으로 변환해 '1주만 사는' 과소 사이징을 방지한다.
+    per_pos_cap = round(equity * max_pos_weight_pct / 100)
+    if action == "deploy":
+        # 빈 슬롯이 있으면 신규 1종목당 배분액 = deploy krw / 빈 슬롯 수(종목당 상한 캡).
+        # 빈 슬롯이 없으면 기존 보유 추가매수(scale-in)로 전액 배정한다.
+        per_new = round(min(krw / vacant_slots, per_pos_cap)) if vacant_slots > 0 else krw
+    else:
+        per_new = 0
     out["recommendation"] = {
         "action": action,
         "krw": krw,
+        "vacant_slots": vacant_slots,
+        "per_new_position_krw": per_new,
+        "max_position_krw": per_pos_cap,
         "target_midpoint_pct": round(midpoint, 1),
         "deployable_cash_krw": round(deployable_cash),
         "note": note,

@@ -293,9 +293,13 @@ def main() -> int:
 
         block_reasons: list[str] = []
         if not entry_passes:
-            block_reasons.append(
-                ts.get("entry_filter", {}).get("reason") if isinstance(ts, dict) else "5거래일 추세 데이터 없음"
-            )
+            ef_reason = ts.get("entry_filter", {}).get("reason") if isinstance(ts, dict) else None
+            if not ef_reason:
+                ef_reason = (
+                    "스냅샷 미수집 — candidates 에 신규 추가됨, 다음 정기 수집(fetch_prices) 후 추세·신뢰도 평가"
+                    if not ts else "5거래일 추세 데이터 없음"
+                )
+            block_reasons.append(ef_reason)
         if conf == "low":
             block_reasons.append("가격 신뢰도 low — 신규 매매 차단")
         if bear_flags:

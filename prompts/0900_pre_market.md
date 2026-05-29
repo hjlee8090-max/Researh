@@ -36,6 +36,7 @@
 - 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다 — 사람이 웹검색으로 임의 재판정하지 않는다. 스냅샷이 `high`/`medium` 이면 그대로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류 **레거시 서술을 이월·복제하지 않는다** (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). `stale` 키가 있어도 confidence 값은 스냅샷 그대로 — **stale ≠ low.**
 - 스냅샷의 신뢰도(`confidence`)가 **실제로** 모두 `low` 일 때만 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
+- **(v2.0) `medium` 에서도 신규 진입 허용**: `policy.price_data_quality.allowed_actions_by_confidence.medium` 에 `NEW_ENTRY`·`SCALE_IN` 이 포함된다. medium(단일 출처 또는 stale 2출처)이면 진입을 막지 말고 **축소비중(`reduced_entry_weight_pct`)·R/R 하한 +0.1** 의 '불확실 프리미엄'으로 집행한다(`medium_new_entry_rule`). 직전까지 medium 에서 손절(EXIT)만 집행되고 매수만 high 를 요구해 **현금이 단방향으로 쌓이던 비대칭을 제거**한 것이다. `low` 만 매매(매수·매도) 차단.
 
 ## 0. 컨텍스트 적재 (반드시 이 순서)
 1. `config/policy.json` — 정책 파라미터
@@ -90,12 +91,21 @@
 `state/allocation.json` (= `compute_allocation.py` 산출) 을 읽어 **지수 성장세 tier → 목표 주식 비중 밴드**와 현재 비중·권고를 "한눈에 보기" 에 1줄 표기한다.
 - `regime.tier`: `strong_bull`(주식 80~95%) / `bull`(65~80%) / `neutral`(45~60%) / `bear`(25~40%) / `deep_bear`(0~25%). 200일선 위치+기울기·60일선으로 산출.
 - `recommendation.action` 을 신규 진입·축소의 1차 기준으로 삼는다:
-  - `deploy`: `recommendation.krw` 한도 안에서 신규 진입·비중 확대(현금 하한 준수). R/R≥1.2·entry_filter 통과 후보 우선.
+  - `deploy`: `recommendation.krw` 한도 안에서 신규 진입·비중 확대(현금 하한 준수). **신규 1종목당 목표 금액 = `recommendation.per_new_position_krw`**(= deploy krw ÷ `vacant_slots`, 종목당 35% 캡). **목표 수량 = floor(per_new_position_krw ÷ 진입가)** 를 §2 공통 사이징의 '목표비중 기반 수량'으로 쓴다. R/R(레짐 적응)·entry_filter 통과 후보 우선. `vacant_slots`(빈 슬롯)가 여러 개면 점수 상위 후보로 **복수 종목 진입**해 deploy 한도를 소진한다 — 강세장에 현금만 들고 끝내지 않는다.
   - `trim`: 주식 비중이 목표 상한 초과 — 익절·트레일링스톱 우선 종목부터 약 `krw` 만큼 축소.
   - `hold`: 목표 밴드 안 — 신규 진입은 교체(가장 약한 보유 대비 우월할 때)만.
   - `advisory_only`(tier=unknown·stale): 동적 비중 보류, 정책 default 사이징 사용.
 - `entry_mode` 가 `block`(deep_bear) 이면 비중 배치보다 **신규 진입 중단**이 우선.
 - **0-3 회복 단계·0-4 레짐·0-5 목표비중 중 가장 보수적인 쪽**을 최종 신규 진입 한도로 적용한다.
+
+## 0-6. 가격 신선도(age) 점검 (v2.1 — 의무)
+가격 수집(GitHub Actions)을 routine 1시간 전으로 당겼으므로, routine 이 보는 스냅샷 가격은 **항상 수십 분 묵은 값**이다. `confidence`(2출처 일치)와 **`freshness`(나이)는 별개 축**이며 둘 다 본다.
+- `state/allocation.json` 의 `snapshot_age_min`(분)·`freshness`(fresh/acceptable/stale_intraday)를 읽어 "한눈에 보기" 에 **"데이터 신선도: N분 전(HH:MM 수집), 등급"** 1줄로 표기한다(`policy.price_data_quality.data_freshness`).
+- 등급별 행동:
+  - `fresh`(≤20분): 스냅샷 가격 그대로 사용.
+  - `acceptable`(≤75분): 매매 허용하되 **지연 인지**. 아래 §B-5 의 임계 근접 종목은 웹 실시간 1회 교차확인. 신규 진입 R/R 이 적용 하한 ±0.1 경계면 실시간 가격으로 재확인 후 체결.
+  - `stale_intraday`(>75분 또는 전일자): 신규 진입은 웹 실시간 교차확인 필수, 손절은 임계 접근 시 즉시 웹 확인.
+- **age 가 크다고 confidence 를 강등하지 않는다**(별개 축). 단 1시간 묵은 가격으로 손절·익절을 그대로 체결하지 않도록 §B-5 안전망을 반드시 적용한다.
 
 ## 1. 웹 검색 (필수)
 
@@ -152,6 +162,16 @@
 
 ## 2. 분기 처리
 
+> **(v2.0) 신규 진입 사이징·R/R 공통 규칙** — A/B/C 어느 경로든 신규 매수는 이 규칙을 따른다. (직전까지 고가주를 '1주(9%)'만 사고 강세장 모멘텀주가 R/R<1.2 로 막히던 문제를 해소):
+> - **수량 = max(리스크기반, 목표비중기반)** (`policy.position_sizing.sizing_method`):
+>   - (a) 리스크기반 = floor((equity × 1.5%) ÷ (진입가 − 동적손절가))
+>   - (b) 목표비중기반 = floor(target_krw ÷ 진입가), `target_krw = min(allocation.recommendation.per_new_position_krw, equity × entry_weight_pct/100)` (entry_weight_pct = default 30%, medium·구조적악재 시 reduced 20%)
+>   - `recommendation.action=deploy`(주식 비중 < 목표 하한)면 **(b)를 우선 채택**해 현금을 실제로 소진한다. 최종 수량은 종목당 35%·deploy krw·deployable_cash(현금 하한) 한도로 캡.
+> - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 종목당 상한 안에서 **+1주 허용**.
+> - **R/R 하한은 레짐 적응형**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`): strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6. tier 미확정이면 1.2. **data confidence=medium 이면 +0.1**.
+> - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
+> - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
+
 ### A. watchlist가 비어있는 경우 (첫 가동)
 1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 3~4종목을 선정**한다 (`policy.position_sizing.max_positions`=4 이내).
 2. 선정 기준:
@@ -165,9 +185,9 @@
    - **현재가 추정** (검색 기반, 정확하지 않을 수 있음을 명시)
    - **최근 5거래일 누적 수익률 추정** (추세 필터 통과 여부 명시) — §1-1 결과
    - **진입가** (현재가 ±1% 이내)
-   - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이지만, `weekly_plan.objective.gap_to_target`, 종목별 촉매, 저항선, 기대 보상/위험 비율을 함께 반영한다.
+   - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이지만, `weekly_plan.objective.gap_to_target`, 종목별 촉매, 저항선, R/R 을 함께 반영한다. **강세 tier(strong_bull/bull)에서는 `dynamic_exit_model.target_price_rule` 대로 max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점)까지 상향**해 reward 를 확보한다(이미 오른 모멘텀주의 R/R 정상화).
    - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`). 기본값 = **진입가 − 2×ATR14** (`market_snapshot.tickers.<t>.volatility.atr14`). 단, 단계경보 red(-10%)보다 깊지 않게, 또 단일 거래 예상 손실이 `equity × max_single_trade_risk_pct_of_equity(1.5%)` 를 넘지 않게 조정한다(더 타이트한 값 채택). ATR 데이터가 없으면 진입가 × 0.90 으로 폴백.
-   - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). `policy.reward_risk_management.min_reward_risk_ratio_for_new_entry` (=1.2) 미만이면 신규 매수 금지. (단일 출처)
+   - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). **레짐 적응 하한**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6; tier 미확정 1.2; medium confidence +0.1) 미만이면 신규 매수 금지.
    - **단계 경보 가격**: yellow(-5%), orange(-7%), red(-10%) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)
    - **미래 테마 노출**: 해당 종목이 `config/themes.json` 의 어떤 메가트렌드에 얼마나 노출돼 있는지 `[{theme, exposure 0~1, evidence, source(URL)}]` 형태로 기록. 근거 출처(URL)는 필수(환각 방지). 노출 테마가 없으면 빈 배열.
@@ -176,7 +196,7 @@
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
    - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
 4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함). 후보를 `config/candidates.json` 에 추가·갱신할 때 `theme_exposure`(근거 URL 포함)도 함께 기록해 다음 routine 의 `score_candidates.py` thematic 점수에 반영되게 한다.
-5. **가상 매수 체결**: 수량은 **리스크 기반 사이징** 우선 — `수량 = floor((equity × 1.5%) / (진입가 − 동적손절가))`. 산출 비중이 `max_position_weight_pct(35%)` 를 넘으면 비중 상한으로 캡, 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. ATR 미산출 시 `default_entry_weight_pct(30%)` 비중 기본으로 폴백. 추세 필터 위배 종목·`risk_off` 차단·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 종목은 신규 진입 보류**(`policy.fundamentals.earnings_blackout` — 바이너리 이벤트 리스크).
+5. **가상 매수 체결**: 수량은 위 **§2 신규 진입 사이징 공통 규칙**(v2.0 — max(리스크기반, 목표비중기반)·고가주 floor 보정·레짐 적응 R/R·강세 tier 목표가 상향)을 따른다. 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. 추세 필터 위배 종목·`risk_off` 차단(`risk_off_blocks_new_entry=true` 시)·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 종목은 신규 진입 보류**(`policy.fundamentals.earnings_blackout` — 바이너리 이벤트 리스크).
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신
    - `state/trade_log.jsonl`에 라인 추가:
@@ -190,10 +210,20 @@
 3. **매수 / 매도 / 홀드** 의견 1개 + 1줄 사유 — 어제 결론과 다를 경우 **반드시 사유 명시**
 4. 단기 모멘텀 코멘트 (수급, 차트, 거래량 — 검색 가능 범위에서)
 5. 정책상 손절가·목표가 도달 여부 확인
-   - 손절가 하회 또는 목표가 상회 시 → **즉시 가상 청산 체결**, portfolio·trade_log 갱신
+   - **(v2.1 손절 안전망)** 보유 종목이 스냅샷 가격 기준 손절선·orange(-7%)·red(-10%) 임계의 ±3%(`data_freshness.stop_loss_proximity_pct`) 안이거나 목표가 ±2% 안인데 `freshness`가 `fresh`가 아니면, **묵은 스냅샷 가격으로 즉시 체결하지 말고 웹검색 실시간 가격을 1회 교차확인**한 뒤 그 가격으로 단계·체결을 판정한다(1시간 전 가격이 -6%였는데 실제 -11% 뚫린 경우의 손절 지연 방지 — 기아 5/20 패턴).
+   - 손절가 하회 또는 목표가 상회 시(위 교차확인 반영) → **즉시 가상 청산 체결**, portfolio·trade_log 갱신
    - 동적 목표가/손절가를 재계산했으면 기존 값과 변경 사유를 comments에 기록한다.
 6. watchlist.json의 `comments` 필드에 09:00 코멘트 추가 (어제 결론과의 연결성 한 줄 포함)
 7. 어제 `next_day_plan.candidate_sectors` 에 메모된 후보 섹터가 있으면 → 신규 진입 후보 발굴 시 우선 검토
+
+### C. 신규 진입 — 비중 미달 + 빈 슬롯 (v2.0, A/B 경로와 함께 매 영업일 의무 점검)
+보유 여부와 무관하게, **다음 조건이면 신규 진입을 적극 검토**한다 (강세장에 현금만 쌓이는 것을 방지 — 이번 패치의 핵심 목적):
+1. `state/allocation.json.recommendation.action == "deploy"` (주식 비중 < 목표 하한) **그리고** `recommendation.vacant_slots ≥ 1`.
+2. `state/candidate_scores.json.ranked` 에서 `tradable=true` 후보를 점수 내림차순으로 본다 (`tradable` = 추세필터 통과 + confidence **medium 이상** + 구조적 악재 미매칭 — v2.0 에서 medium 도 진입 허용).
+3. 각 tradable 후보에 §2 공통 규칙으로 진입가·동적손절가·목표가(강세 tier 상향)·R/R(레짐 적응 하한) 산출. R/R 통과 시 **목표 수량 = §2 공통 사이징**으로 가상 매수 체결(trade_log + portfolio 갱신, `weekly_thesis_id` 기록).
+4. `vacant_slots` 와 deploy krw 한도가 남는 한 다음 순위 후보로 **반복(복수 종목 진입)**. 종목당 35%·현금 하한 5% 준수.
+5. tradable 후보가 0건이면: (a) 매크로·시총 상위·테마 노출(`config/themes.json`) 기반으로 `candidates.json` 에 **3~4종목 신규 발굴·추가**(다음 routine 부터 자동 추적), (b) 이번 회차는 "후보 부족으로 배치 보류 — 다음 routine 재시도" 를 리포트에 명시한다. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
+6. `caution`/`defensive` 회복 단계, `risk_off`(차단 설정 시), `deep_bear`(entry_mode=block) 이면 이 경로보다 보수 단계가 우선(더 보수적인 쪽 적용).
 
 ## 3. 대화창 출력 (카톡과 별개 — Claude 대답란)
 사용자에게 다음을 markdown으로 출력 (한국어, 초보자 친화):

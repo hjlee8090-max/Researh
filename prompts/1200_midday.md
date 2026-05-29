@@ -18,6 +18,7 @@
 - **가격·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조일 뿐이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다. 스냅샷이 `high`/`medium` 이면 그대로 high/medium 으로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 에 남아 있는 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류의 레거시 서술을 **이월·복제하지 않는다** (해당 이슈는 2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨).
 - `stale` 키가 있으면 "직전 정기 수집본"임을 1줄 명시하되 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.**
+- **(v2.1 신선도)** `state/allocation.json` 의 `snapshot_age_min`·`freshness`(fresh≤20분/acceptable≤75분/stale_intraday)를 "한눈에 보기"에 "데이터 신선도: N분 전, 등급" 1줄로 표기한다. 1시간 전 수집이라 장중엔 보통 acceptable~stale_intraday 다 — 아래 §2 단계경보의 임계 근접 종목은 묵은 가격을 그대로 믿지 말고 웹 실시간 1회 교차확인한다. `freshness` 는 `confidence` 와 **별개 축**(age 로 confidence 강등 안 함).
 - 스냅샷 confidence 가 실제로 `low` (또는 전 종목 low)일 때만 매매 차단(`policy.price_data_quality.block_trade_if_confidence_below`)을 적용한다.
 
 ## 0. 컨텍스트 적재
@@ -48,6 +49,8 @@
 | 🔴 **red** | 변동률 ≤ -10% | **전량 가상 청산** + lessons.md 즉시 기록 |
 
 > 09시 대비 단순 변동 -3% 이내(green 구간 내)는 정책상 추가 액션 자제 (no_swap_when). 단계 경보는 **진입가 대비**임에 유의.
+
+> **(v2.1 손절 안전망 — 묵은 가격 보정)** 단계 판정에 쓰는 스냅샷 가격은 1시간 전 수집이라 묵었을 수 있다. 종목이 스냅샷 기준 orange(-7%)·red(-10%)·손절선 임계의 ±3% 안이거나 목표가 ±2% 안인데 `freshness`(allocation.json)가 `fresh`가 아니면, **그 종목만 웹검색으로 실시간 가격을 1회 교차확인**한 뒤 실제 가격으로 단계·체결을 판정한다(`policy.price_data_quality.data_freshness.action_on_proximity_when_not_fresh`). 1시간 전 -6%(yellow)였는데 실제 -11% 뚫려 손절이 늦던 위험(기아 5/20 패턴) 방지. fresh 거나 임계에서 멀면 스냅샷 그대로 사용.
 
 ## 2-1. 주간 목표 진행률 점검 (의무)
 12시는 오전 판단이 실제로 주간 목표에 기여하고 있는지 확인하는 시간이다.

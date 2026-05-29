@@ -112,10 +112,40 @@ def main() -> int:
     pct_vs_ma200 = regime.get("pct_vs_ma")
     stale = bool(snapshot.get("stale"))
 
+    # v2.1 — 스냅샷 나이(age) 계산: 수집 시각(as_of) vs 현재. freshness 등급 산출.
+    # stale 키(직접 수집 실패)와 별개로, GitHub Actions 가 성공 수집한 가격도 routine
+    # 시점엔 최대 1시간 묵을 수 있으므로 age 를 명시해 다운스트림(프롬프트)이 보정하게 한다.
+    now = datetime.now(KST)
+    snap_as_of = snapshot.get("as_of")
+    age_min: int | None = None
+    if snap_as_of:
+        try:
+            collected = datetime.fromisoformat(snap_as_of)
+            age_min = round((now - collected).total_seconds() / 60)
+        except (ValueError, TypeError):
+            age_min = None
+    fresh_cfg = (
+        policy.get("price_data_quality", {}).get("data_freshness", {})
+        if isinstance(policy.get("price_data_quality", {}).get("data_freshness"), dict)
+        else {}
+    )
+    fresh_max = float(fresh_cfg.get("fresh_max_min", 20))
+    intraday_max = float(fresh_cfg.get("intraday_acceptable_max_min", 75))
+    if age_min is None:
+        freshness = "unknown"
+    elif age_min <= fresh_max:
+        freshness = "fresh"
+    elif age_min <= intraday_max:
+        freshness = "acceptable"
+    else:
+        freshness = "stale_intraday"
+
     out: dict[str, Any] = {
-        "as_of": datetime.now(KST).isoformat(timespec="seconds"),
+        "as_of": now.isoformat(timespec="seconds"),
         "snapshot_as_of": snapshot.get("as_of"),
         "snapshot_stale": stale,
+        "snapshot_age_min": age_min,
+        "freshness": freshness,
         "current": {
             "equity_krw": round(equity),
             "cash_krw": round(cash),
@@ -215,7 +245,8 @@ def main() -> int:
     _write(out)
     print(
         f"allocation: tier={eff_tier}{'(hold)' if held else ''} stock_pct={stock_pct} "
-        f"target={band_min}~{band_max}% action={action} krw={krw}"
+        f"target={band_min}~{band_max}% action={action} krw={krw} "
+        f"freshness={freshness}(age={age_min}m)"
     )
     return 0
 

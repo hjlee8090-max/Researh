@@ -17,6 +17,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 - **마감 임박치·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다. 스냅샷이 `high`/`medium` 이면 그대로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류 / 트레일링 스톱 미집행" 류의 레거시 서술을 **이월·복제하지 않는다** (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨).
 - `stale` 키가 있어도 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.** 따라서 confidence 가 medium 이상이면 트레일링 스톱·익절 후보 등의 익일 액션을 "data confidence=low" 사유로 보류하지 않는다.
+- **(v2.1 신선도 + 마감 임박 특례)** `state/allocation.json` 의 `snapshot_age_min`·`freshness` 를 "한눈에 보기"에 표기한다. 15시는 마감(15:30) 직전이라 **신선도가 특히 중요**하다 — 1시간 전 수집(14:00경)이면 age≈60분(stale_intraday)이라 "마감 임박치"로 쓰기엔 묵었다. 이 경우 **동시각(15:00) 수집분이 들어와 있으면 그것을 우선 사용**하고, 없으면 종가 임박치를 웹검색("[종목명] 현재가")으로 보강한다. 손절선·목표가 ±3%/±2% 임계 근접 종목은 `freshness` 가 fresh 가 아니면 웹 실시간 1회 교차확인 후 단계·체결을 판정한다(`data_freshness.action_on_proximity_when_not_fresh`).
 
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`

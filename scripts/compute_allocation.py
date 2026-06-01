@@ -63,6 +63,41 @@ def portfolio_equity(portfolio: dict) -> tuple[float, float, float]:
     return equity, cash, stock_value
 
 
+def portfolio_heat(portfolio: dict, equity: float, budget_pct: float) -> dict:
+    """전 포지션 합산 손절위험(open risk)과 heat 예산 잔여를 산출한다(v2.2).
+
+    포지션별 open_risk = shares × max(0, current_price − stop_price). 트레일링스톱이
+    현재가 위로 올라가 이익이 확정된 구간은 0. 합계가 portfolio heat.
+    remaining_krw = max(0, equity × budget_pct/100 − 합산 open_risk) — 신규 진입 가능 리스크.
+    """
+    per_pos: list[dict] = []
+    total = 0.0
+    for pos in portfolio.get("positions", []):
+        if not isinstance(pos, dict):
+            continue
+        shares = float(pos.get("shares") or 0)
+        cur = float(
+            pos.get("current_price")
+            or pos.get("current_price_approx")
+            or pos.get("entry_price")
+            or 0
+        )
+        stop = float(pos.get("stop_price") or 0)
+        risk = shares * max(0.0, cur - stop) if (cur and stop) else 0.0
+        total += risk
+        per_pos.append({"ticker": pos.get("ticker"), "open_risk_krw": round(risk)})
+    budget_krw = equity * budget_pct / 100 if equity > 0 else 0.0
+    remaining = max(0.0, budget_krw - total)
+    return {
+        "budget_pct": budget_pct,
+        "budget_krw": round(budget_krw),
+        "current_open_risk_krw": round(total),
+        "remaining_krw": round(remaining),
+        "heat_pct_of_equity": round(total / equity * 100, 2) if equity > 0 else None,
+        "per_position": per_pos,
+    }
+
+
 def find_tier(name: str | None, tiers: list[dict]) -> dict | None:
     for t in tiers:
         if t.get("tier") == name:
@@ -173,6 +208,13 @@ def main() -> int:
             "legacy_state": regime.get("state"),
         },
     }
+
+    # v2.2 — 포트폴리오 히트(전 포지션 합산 손절위험) 예산·잔여를 모든 출력 경로에 싣는다.
+    risk_cfg = policy.get("risk", {}) if isinstance(policy.get("risk"), dict) else {}
+    out["portfolio_heat"] = portfolio_heat(
+        portfolio, equity, float(risk_cfg.get("portfolio_heat_budget_pct_of_equity", 6.0))
+    )
+    out["per_trade_risk_pct"] = float(risk_cfg.get("max_single_trade_risk_pct_of_equity", 2.0))
 
     if not raw_tier or raw_tier == "unknown" or not tiers:
         out["tier"] = "unknown"

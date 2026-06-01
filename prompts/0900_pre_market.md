@@ -67,7 +67,7 @@
 - 현재 현금 비중 / 투자 비중
 - 현재 보유 종목이 기존 목표가에 모두 도달할 때 계좌 수익률
 - 신규 진입이 필요한지 여부: "필요 / 보류 / 금지"
-- 오늘 신규 매수 1건당 허용 손실액 = `portfolio.equity × policy.risk.max_single_trade_risk_pct_of_equity / 100`
+- 오늘 신규 매수 1건당 허용 손실액 = `portfolio.equity × policy.risk.max_single_trade_risk_pct_of_equity / 100`(2.0%) · **포트폴리오 히트 잔여 = `allocation.portfolio_heat.remaining_krw`**(전 포지션 합산 손절위험 6% 예산의 잔여 — 신규 진입 총 리스크는 이 안에서만 허용)
 
 이 계산 결과가 "보유 종목이 목표가에 가도 주간 목표에 부족"이면, 단순 HOLD만 쓰지 말고 **현금 활용 후보 / 목표 하향 / 리스크 축소** 중 하나를 명시한다.
 
@@ -163,11 +163,12 @@
 ## 2. 분기 처리
 
 > **(v2.0) 신규 진입 사이징·R/R 공통 규칙** — A/B/C 어느 경로든 신규 매수는 이 규칙을 따른다. (직전까지 고가주를 '1주(9%)'만 사고 강세장 모멘텀주가 R/R<1.2 로 막히던 문제를 해소):
-> - **수량 = min(리스크상한, 목표비중)** — 단일거래 리스크 상한이 하드 천장 (`policy.position_sizing.sizing_method` = risk_capped_target_weight):
->   - (a) 리스크상한 = floor((equity × 1.5%) ÷ (진입가 − 동적손절가)) — **이 값을 절대 초과하지 않는다**(`single_trade_risk_cap.is_hard_ceiling`).
+> - **수량 = min(리스크상한, 목표비중, 히트잔여)** — 단일거래 리스크 상한·포트폴리오 히트 예산이 하드 천장 (`policy.position_sizing.sizing_method` = risk_capped_target_weight):
+>   - (a) 리스크상한 = floor((equity × 2.0% =`max_single_trade_risk_pct_of_equity`) ÷ (진입가 − 동적손절가)) — **절대 초과 불가**(`single_trade_risk_cap.is_hard_ceiling`).
 >   - (b) 목표비중 = floor(target_krw ÷ 진입가), `target_krw = min(allocation.recommendation.per_new_position_krw, equity × entry_weight_pct/100)` (entry_weight_pct = default 30%, medium·구조적악재 시 reduced 20%)
->   - **최종 수량 = min((a),(b))**, 추가로 종목당 35%·deploy krw·deployable_cash(현금 하한)로 캡. `deploy`(주식 비중 < 목표 하한)에서 현금을 소진하는 방법은 한 종목을 (a) 위로 키우는 게 아니라 **빈 슬롯에 다른 종목을 추가 진입(breadth)**하는 것이다. 통과 후보가 부족하면 현금을 남긴다(자본보존 > 완전배치).
-> - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 +1주를 검토하되, **+1주 후에도 (a) 리스크 상한과 35% 비중을 모두 지킬 때만** 허용한다(위반 시 +1 안 함).
+>   - (c) 히트잔여상한 = floor(`allocation.portfolio_heat.remaining_krw` ÷ (진입가 − 동적손절가)) — 진입 후 전 포지션 합산 손절위험이 `portfolio_heat_budget_pct_of_equity`(6.0%)를 넘지 않게 한다. **잔여가 0 이면 신규 진입 보류**(기존 리스크가 빠질 때까지).
+>   - **최종 수량 = min((a),(b),(c))**, 추가로 종목당 35%·deploy krw·deployable_cash(현금 하한)로 캡. `deploy`(주식 비중 < 목표 하한)에서 현금을 소진하는 방법은 한 종목을 (a)·(c) 위로 키우는 게 아니라 **빈 슬롯에 다른 종목을 추가 진입(breadth)**하는 것이다. 합산 heat 가 예산을 채우거나 통과 후보가 부족하면 현금을 남긴다(자본보존 > 완전배치).
+> - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 +1주를 검토하되, **+1주 후에도 (a) 리스크 상한·(c) 히트잔여·35% 비중을 모두 지킬 때만** 허용한다(위반 시 +1 안 함).
 > - **R/R 하한은 레짐 적응형**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`): strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6. tier 미확정이면 1.2. **data confidence=medium 이면 +0.1**.
 > - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
 > - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
@@ -196,7 +197,7 @@
    - **최근 5거래일 누적 수익률 추정** (추세 필터 통과 여부 명시) — §1-1 결과
    - **진입가** (현재가 ±1% 이내)
    - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이지만, `weekly_plan.objective.gap_to_target`, 종목별 촉매, 저항선, R/R 을 함께 반영한다. **강세 tier(strong_bull/bull)에서는 `dynamic_exit_model.target_price_rule` 대로 max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점)까지 상향**해 reward 를 확보한다(이미 오른 모멘텀주의 R/R 정상화).
-   - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`). 기본값 = **진입가 − 2×ATR14** (`market_snapshot.tickers.<t>.volatility.atr14`). 단, 단계경보 red(-10%)보다 깊지 않게, 또 단일 거래 예상 손실이 `equity × max_single_trade_risk_pct_of_equity(1.5%)` 를 넘지 않게 조정한다(더 타이트한 값 채택). ATR 데이터가 없으면 진입가 × 0.90 으로 폴백.
+   - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`). 기본값 = **진입가 − 2×ATR14** (`market_snapshot.tickers.<t>.volatility.atr14`). 단, 단계경보 red(-10%)보다 깊지 않게, 또 단일 거래 예상 손실이 `equity × max_single_trade_risk_pct_of_equity(2.0%)` 를 넘지 않고, 진입 후 전 포지션 합산 손절위험이 `portfolio_heat_budget_pct_of_equity(6.0%)` 를 넘지 않게 조정한다(가장 타이트한 값 채택). ATR 데이터가 없으면 진입가 × 0.90 으로 폴백.
    - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). **레짐 적응 하한**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6; tier 미확정 1.2; medium confidence +0.1) 미만이면 신규 매수 금지.
    - **단계 경보 가격**: yellow(-5%), orange(-7%), red(-10%) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)

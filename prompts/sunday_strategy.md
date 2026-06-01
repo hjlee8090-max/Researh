@@ -81,7 +81,8 @@
 - 다음 주 시작 자산
 - 다음 주 목표 자산 = 시작 자산 × `policy.risk.weekly_account_target_return_pct`
 - 허용 최대 주간 손실 = 시작 자산 × `policy.risk.max_weekly_drawdown_pct`
-- 단일 거래 허용 손실 = 현재 equity × `max_single_trade_risk_pct_of_equity`
+- 단일 거래 허용 손실 = 현재 equity × `max_single_trade_risk_pct_of_equity`(2.0%)
+- 포트폴리오 히트 예산 = 현재 equity × `portfolio_heat_budget_pct_of_equity`(6.0%) — 전 포지션 합산 손절위험 상한. 다음 주 신규 진입의 총 리스크 예산으로 본다(`state/allocation.json.portfolio_heat`).
 - 보유 종목이 목표가에 도달할 때 예상 자산
 - 현금 활용 필요 여부
 

@@ -117,6 +117,7 @@ def main() -> int:
         "alloc_in_sync": alloc_in_sync,
         "scores_snapshot_as_of": scores_as_of,
         "alloc_snapshot_as_of": alloc_as_of,
+        "portfolio_heat": alloc.get("portfolio_heat") if isinstance(alloc, dict) else None,
         "reconcile_issues": recon_issues,
         "valuation_issues": val_issues,
         "warnings": val_warnings,

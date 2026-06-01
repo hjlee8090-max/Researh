@@ -3,8 +3,9 @@
 
 GitHub Actions 에서 09/12/15/18 routine 푸시 후 호출.
 커밋 메시지 프리픽스에 따라 다른 요약을 보낸다:
-  - "report:"   → reports/ 최신 .md 의 '한눈에 보기' 요약
-  - "chore(...)" → config/watchlist.json 의 종목별 최신 코멘트 요약
+  - 일일 routine(chore(09/12/15)·"report:") → 현재 평가금액(config/portfolio.json)
+    + 주요 뉴스(리포트 '한눈에 보기'의 매크로/시황·슬롯 한 줄) 간결 요약
+  - 주말/감사/전략 등("weekly:"/"audit:"/"sun-strategy:" 등) → 해당 리포트 요약 불릿
 
 필요한 환경변수:
   KAKAO_REST_API_KEY    카카오 REST API 키
@@ -147,26 +148,123 @@ def extract_one_glance(section_text: str) -> list[str]:
     return lines
 
 
+def portfolio_equity_line() -> str | None:
+    """config/portfolio.json 의 현재 평가금액·누적수익률을 카톡 1줄로."""
+    path = ROOT / "config" / "portfolio.json"
+    try:
+        d = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    eq = d.get("equity")
+    if not isinstance(eq, (int, float)):
+        return None
+    cum = d.get("cumulative_return_pct")
+    cum_txt = f" (누적 {cum:+.2f}%)" if isinstance(cum, (int, float)) else ""
+    return f"💰 평가금액 {int(round(eq)):,}원{cum_txt}"
+
+
+def cap(s: str, n: int = 64) -> str:
+    """공백 정리 후 n자 이내로. 넘으면 구분자(·—,.공백) 경계에서 자르고 … 표기."""
+    s = " ".join(s.split())
+    if len(s) <= n:
+        return s
+    cut = s[:n]
+    for sep in ("·", " — ", "—", ". ", ", ", " "):
+        idx = cut.rfind(sep)
+        if idx >= int(n * 0.6):
+            return cut[:idx].rstrip(" ·—,.") + "…"
+    return cut.rstrip() + "…"
+
+
+def glance_subsection(section_text: str) -> str:
+    """슬롯 섹션 안에서 '### 한눈에 보기' 서브섹션 본문만 반환(없으면 섹션 전체)."""
+    m = re.search(r"###\s*한눈에 보기.*?\n(.+?)(?=\n###|\Z)", section_text, re.DOTALL)
+    return m.group(1) if m else section_text
+
+
+def extract_glance_fields(section_text: str) -> list[tuple[str, str]]:
+    """'한눈에 보기' 의 표(| 라벨 | 값 |) 또는 불릿(- 라벨: 값)에서 (라벨, 값) 목록을 추출."""
+    fields: list[tuple[str, str]] = []
+    for raw in section_text.splitlines():
+        line = raw.strip()
+        if line.startswith("|") and line.count("|") >= 3:
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) >= 2:
+                label = cells[0].replace("*", "").strip()
+                value = cells[1].replace("*", "").strip()
+                if label and value and set(label) != {"-"} and label != "항목":
+                    fields.append((label, value))
+        elif line.startswith(("-", "•")):
+            body = line.lstrip("-•").strip()
+            if ":" in body:
+                label, value = body.split(":", 1)
+                fields.append((label.replace("*", "").strip(), value.replace("*", "").strip()))
+            elif body:
+                fields.append(("", body.replace("*", "").strip()))
+    return fields
+
+
+NEWS_LABELS = ("매크로", "핵심 인사이트", "인사이트", "KOSPI", "시장 환경", "시황", "뉴스", "지수")
+HEADLINE_LABELS = ("한 줄", "오늘의 액션", "액션", "핵심")
+
+
+def pick_news_lines(fields: list[tuple[str, str]], max_lines: int = 2) -> list[str]:
+    """라벨 우선순위로 '주요 뉴스/시황' 값을 최대 max_lines 개 고른다(매크로/시황 → 슬롯 한 줄)."""
+    picked: list[str] = []
+    used: set[int] = set()
+    for groups in (NEWS_LABELS, HEADLINE_LABELS):
+        for i, (label, value) in enumerate(fields):
+            if i in used or not value:
+                continue
+            if any(kw in label for kw in groups):
+                picked.append(value)
+                used.add(i)
+                break
+        if len(picked) >= max_lines:
+            break
+    if not picked:  # 라벨 매칭 실패 — 첫 비어있지 않은 값으로 폴백
+        for _, value in fields:
+            if value:
+                picked.append(value)
+            if len(picked) >= max_lines:
+                break
+    return picked[:max_lines]
+
+
+def compose_daily_body(news: list[str]) -> str:
+    """평가금액 1줄 + 주요 뉴스 1~2줄(각 캡). 본문이 길면 뉴스 줄 수를 줄여 200자 안에 둔다."""
+    lines: list[str] = []
+    eq = portfolio_equity_line()
+    if eq:
+        lines.append(eq)
+    for nv in news:
+        lines.append(f"📰 {cap(nv)}")
+    # 본문이 길면(타이틀+여백 고려) 뉴스 줄 수를 줄여 카톡 200자 한도 안에 둔다.
+    while len(lines) > 2 and len("\n".join(lines)) > 168:
+        lines.pop()
+    return "\n".join(lines)
+
+
 def build_slot_message(slot_meta: tuple[str, str, str, str]) -> tuple[str, str, Path | None] | None:
-    """리포트 파일에서 해당 시간대 섹션의 '한눈에 보기' 를 뽑아 카톡 본문 생성.
+    """리포트 시간대 섹션의 '한눈에 보기' 에서 주요 뉴스를 뽑아 '평가금액 + 주요 뉴스' 본문 생성.
 
     시간대별 분리 파일(`YYYY-MM-DD-{HH}.md`)을 우선 찾고, 없으면 구버전 단일 파일에서 섹션 추출.
-    리포트 섹션이 아직 없으면 watchlist.json 폴백.
+    리포트가 없으면 watchlist.json 종목 의견으로 폴백.
     반환: (title, body, source_path) — source_path는 URL 매핑에 사용.
     """
     emoji, slot_title, section_header, slot_hh = slot_meta
+    title = f"{emoji} {slot_title}"
     report = find_slot_report(slot_hh)
+    news: list[str] = []
     if report is not None:
-        text = report.read_text(encoding="utf-8")
-        section = extract_section(text, section_header)
+        section = extract_section(report.read_text(encoding="utf-8"), section_header)
         if section:
-            glance = extract_one_glance(section)
-            if glance:
-                title = f"{emoji} {slot_title}"
-                body = "\n".join(f"- {line}" for line in glance[:4])
-                return title, body, report
+            news = pick_news_lines(extract_glance_fields(glance_subsection(section)))
+    body = compose_daily_body(news)
+    if body:
+        return title, body, report
 
-    # 폴백: watchlist.json 종목별 의견
+    # 폴백: watchlist.json 종목별 최신 의견(평가금액·뉴스 추출 실패 시)
     wl_path = ROOT / "config" / "watchlist.json"
     if not wl_path.exists():
         return None
@@ -178,14 +276,9 @@ def build_slot_message(slot_meta: tuple[str, str, str, str]) -> tuple[str, str, 
     for s in stocks:
         name = s.get("name", s.get("ticker", "?"))
         comments = s.get("comments") or []
-        if not comments:
-            lines.append(f"- {name}: 코멘트 없음")
-            continue
-        last = comments[-1]
-        verdict = last.get("opinion") or last.get("action") or ""
+        verdict = (comments[-1].get("opinion") or comments[-1].get("action") or "") if comments else "코멘트 없음"
         lines.append(f"- {name}: {verdict}")
-    title = f"{emoji} {slot_title}"
-    return title, "\n".join(lines), None
+    return title, "\n".join(lines), report
 
 
 def build_report_message() -> tuple[str, str, str] | None:
@@ -200,20 +293,14 @@ def build_report_message() -> tuple[str, str, str] | None:
     date = page_stem.split("-18")[0] if page_stem.endswith("-18") else page_stem
     text = report.read_text(encoding="utf-8")
     section = extract_section(text, REPORT_HEADER_18)
-    if section:
-        glance = extract_one_glance(section)
-    else:
+    if not section:
         # 18시 섹션이 없는 구버전 호환: 옛 '## 한눈에 보기' 탐색
         m = re.search(r"##\s*한눈에 보기\s*\n(.+?)(?=\n##|\Z)", text, re.DOTALL)
-        glance = []
-        if m:
-            for raw in m.group(1).strip().splitlines():
-                s = raw.strip()
-                if s.startswith("-"):
-                    glance.append(s.lstrip("-").strip())
-    summary = "\n".join(f"- {l}" for l in glance[:4]) if glance else "오늘 리포트가 갱신되었습니다."
-    title = f"📊 {date} KOSPI 일일 종합 리포트"
-    return title, summary, page_stem
+        section = m.group(1) if m else ""
+    news = pick_news_lines(extract_glance_fields(glance_subsection(section))) if section else []
+    body = compose_daily_body(news) or "오늘 리포트가 갱신되었습니다."
+    title = f"📊 {date} KOSPI 일일 종합"
+    return title, body, page_stem
 
 
 def build_weekend_message() -> tuple[str, str, str] | None:
@@ -261,32 +348,6 @@ def build_pattern_report_message(pattern: str, title_prefix: str, fallback: str)
     return title, summary, date
 
 
-def adopted_candidates_line() -> str | None:
-    """state/candidate_scores.json 에서 신규 채택 후보의 '채택 사유' 한 줄을 만든다.
-
-    파일이 GitHub Actions(fetch_prices.yml)에 의해 커밋돼 있을 때만 동작한다.
-    """
-    path = ROOT / "state" / "candidate_scores.json"
-    if not path.exists():
-        return None
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return None
-    adopted = data.get("adopted") or []
-    if not adopted:
-        return None
-    if len(adopted) == 1:
-        a = adopted[0]
-        summary = a.get("summary") or ""
-        line = f"✅ 신규 채택: {a.get('name')}({a.get('ticker')})"
-        if summary:
-            line += f" — {summary}"
-        return line
-    names = ", ".join(f"{a.get('name')}({a.get('ticker')})" for a in adopted[:3])
-    return f"✅ 신규 채택 {len(adopted)}건: {names}"
-
-
 def send_kakao(access_token: str, title: str, body: str, url: str, button_title: str) -> dict:
     text = f"{title}\n\n{body}"
     if len(text) > 200:
@@ -332,7 +393,6 @@ def main():
     is_sun_strategy = COMMIT_MESSAGE.startswith("sun-strategy:")
     is_policy_review = COMMIT_MESSAGE.startswith("policy-review:")
     base_url = PAGES_URL or "https://github.com/hjlee8090-max/Researh"
-    daily_routine = False
 
     if is_weekly_archive:
         msg = build_pattern_report_message("*-archive.md", "🗂️ 주간 archive", "지난주 archive 파일이 갱신되었습니다.")
@@ -390,9 +450,7 @@ def main():
         title, body, date = msg
         url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
         button = "리포트 열기"
-        daily_routine = True
     else:
-        daily_routine = True
         slot_meta = detect_slot(COMMIT_MESSAGE)
         if slot_meta is None:
             # 시간대 미식별 시 최신 리포트로 폴백
@@ -414,11 +472,6 @@ def main():
             else:
                 url = base_url
             button = "리포트 열기"
-
-    if daily_routine:
-        adopt_line = adopted_candidates_line()
-        if adopt_line:
-            body = f"{adopt_line}\n{body}"
 
     res = send_kakao(access_token, title, body, url, button)
     print(f"sent: {res}", flush=True)

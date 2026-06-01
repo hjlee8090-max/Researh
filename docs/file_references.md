@@ -168,6 +168,11 @@
 - 출력: stdout JSON(`verdict`) + exit code (0=ok/live_verify, 1=block/resync)
 - **매매(booking) 직전 게이트**(`policy.price_data_quality.pre_trade_gate`). freshness·점수/비중 스냅샷 동기화·장부/평가 정합성을 점검해 `ok`/`live_verify_required`/`resync_required`/`block` 판정. 09/12/15 routine 의 §2-PRE(1-PRE/0-C) 에서 모든 BUY/SELL 직전 호출. 2026-06-01 묵은 스냅샷 신규매수 레이스 재발 방지.
 
+### `scripts/check_trade_log_gate.py` (신규 v2.2)
+- 읽기: `state/trade_log.jsonl`, `config/policy.json` (+ `reconcile_portfolio` BUY/SELL 분류 재사용)
+- 출력: stdout JSON + exit code (0=통과, 1=위반)
+- **trade provenance 하드 게이트**(`policy.price_data_quality.trade_provenance_gate`). `price_source_required_since`(2026-06-02) 이후 booking 항목에 `price_source`(snapshot_fresh|web_verified) 누락 시 exit 1. `auto_merge_routines.yml` 가 병합 전 실행해 위반 커밋의 main 병합을 차단하고, `audit_pipeline.py(audit_trade_provenance)` 가 build_and_notify 빌드를 FAIL 시킨다. 프롬프트(pre_trade_gate)를 우회한 묵은/미검증 체결의 마지막 방어선.
+
 ### `scripts/build_lessons_index.py` (신규)
 - 읽기: `state/lessons.md`
 - 쓰기: `state/lessons_index.json` (gitignored)

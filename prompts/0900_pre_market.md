@@ -211,7 +211,8 @@
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신
    - `state/trade_log.jsonl`에 라인 추가:
-     `{"ts":"2026-05-20T09:05:00+09:00","action":"BUY","ticker":"...","name":"...","price":...,"shares":...,"cash_after":...,"reason":"..."}`
+     `{"ts":"2026-05-20T09:05:00+09:00","action":"BUY","ticker":"...","name":"...","price":...,"shares":...,"cash_after":...,"price_source":"snapshot_fresh|web_verified","verify_url":"(web_verified 시 필수)","reason":"..."}`
+     - **`price_source` 필수**(`snapshot_fresh`=fresh 스냅샷가 / `web_verified`=웹 교차확인가). `web_verified` 면 `verify_url`·확인 시각도 기록. **누락 시 `scripts/check_trade_log_gate.py` 가 CI(build_and_notify 빌드·auto_merge 병합)에서 차단**(2026-06-02부터, `policy.price_data_quality.trade_provenance_gate`). 프롬프트의 §2-PRE 를 건너뛰어도 묵은 가격 체결이 main 에 도달하지 못하게 하는 하드 안전장치다.
    - 신규 매수 시 `weekly_plan.weekly_thesis` 중 어떤 thesis와 연결되는지 `weekly_thesis_id`를 반드시 기록한다.
 
 ### B. watchlist가 이미 있는 경우 (이후 영업일)

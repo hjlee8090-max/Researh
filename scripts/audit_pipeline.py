@@ -278,6 +278,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     fundamentals_script = ROOT / "scripts" / "fetch_fundamentals.py"
     reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
     pre_trade = ROOT / "scripts" / "pre_trade_check.py"
+    trade_gate = ROOT / "scripts" / "check_trade_log_gate.py"
     lessons_idx = ROOT / "scripts" / "build_lessons_index.py"
     candidates = ROOT / "config" / "candidates.json"
     themes = ROOT / "config" / "themes.json"
@@ -290,6 +291,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
         (fundamentals_script, "scripts/fetch_fundamentals.py"),
         (reconcile, "scripts/reconcile_portfolio.py"),
         (pre_trade, "scripts/pre_trade_check.py"),
+        (trade_gate, "scripts/check_trade_log_gate.py"),
         (lessons_idx, "scripts/build_lessons_index.py"),
     ]:
         if path.exists():
@@ -403,11 +405,39 @@ def audit_github_notify(messages: list[str]) -> None:
         messages.append(result("WARN", "notification triggers incomplete: " + ", ".join(missing)))
 
 
+def audit_trade_provenance(messages: list[str]) -> None:
+    """check_trade_log_gate.py 를 subprocess 로 실행 — price_source 누락 booking(묵은/미검증 체결)을 FAIL 로 차단.
+
+    위반이 있으면 [FAIL] 을 남겨 audit_pipeline 이 exit 1 → build_and_notify 빌드 실패로 가시화한다.
+    """
+    script = ROOT / "scripts" / "check_trade_log_gate.py"
+    if not script.exists():
+        messages.append(result("WARN", "scripts/check_trade_log_gate.py 없음 — trade provenance 게이트 비활성"))
+        return
+    proc = subprocess.run([sys.executable, str(script)], capture_output=True, text=True)
+    try:
+        payload = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        messages.append(result("WARN", "check_trade_log_gate output 파싱 실패"))
+        return
+    violations = payload.get("violations", [])
+    if proc.returncode == 0 and not violations:
+        messages.append(
+            result("OK", f"trade provenance OK (booking {payload.get('checked', 0)}건 price_source 검증)")
+        )
+    else:
+        for v in violations[:5]:
+            messages.append(result("FAIL", f"trade provenance: {v}"))
+        if not violations and proc.returncode != 0:
+            messages.append(result("WARN", "check_trade_log_gate 비정상 종료(violation 미보고)"))
+
+
 def main() -> int:
     messages: list[str] = []
     messages.append(f"Pipeline audit @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     data = audit_json_files(messages)
     audit_trade_log(messages)
+    audit_trade_provenance(messages)
     audit_reconciliation(messages)
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)

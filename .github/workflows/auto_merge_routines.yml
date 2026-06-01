@@ -44,6 +44,12 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
+      # 묵은/미검증 가격 체결(price_source 누락 booking)이 main 에 병합되는 것을 하드 차단한다.
+      # 위반 시 이 스텝이 비정상 종료 → 이후 rebase/merge 스텝이 실행되지 않아 routine 커밋은
+      # 세션 브랜치에 격리된다(policy.price_data_quality.trade_provenance_gate).
+      - name: Trade provenance gate (block stale/unverified bookings from reaching main)
+        run: python3 scripts/check_trade_log_gate.py
+
       - name: Verify committer is the routine bot
         id: guard
         env:

@@ -182,6 +182,16 @@
         "ok": "freshness=fresh·동기화·정합성 충족 — 스냅샷 가격으로 booking 가능."
       }
     },
+    "trade_provenance_gate": {
+      "enabled": true,
+      "purpose": "v2.2 — pre_trade_gate(프롬프트 의존)를 우회해 묵은/미검증 가격으로 체결되는 것을 CI 에서 하드 차단하는 마지막 안전장치. 모든 booking(BUY/SELL 계열) trade_log 항목은 price_source 를 기록해야 하며, scripts/check_trade_log_gate.py 가 위반 시 exit 1 → audit_pipeline(build_and_notify) 빌드 FAIL + auto_merge_routines 병합 차단을 일으킨다(프롬프트가 무시돼도 묵은 가격 체결이 main 에 도달하지 못함).",
+      "script": "scripts/check_trade_log_gate.py",
+      "price_source_required_since": "2026-06-02",
+      "allowed_price_sources": ["snapshot_fresh", "web_verified"],
+      "require_verify_url_for": ["web_verified"],
+      "note": "price_source_required_since 이전 항목은 grandfather(소급 미적용 — 기존 trade_log 보존). web_verified 는 verify_url 동반 필수. EOD_EVAL/OPEN_CHECK/HOLD 등 비체결 액션은 대상 아님(BUY/SELL 계열만). 직접 main push 경로는 build_and_notify 빌드 FAIL 로 가시화되고, 진짜 병합 차단까지 원하면 main 브랜치 보호규칙에 이 체크를 required status 로 등록한다(레포 설정).",
+      "enforced_by": ["scripts/check_trade_log_gate.py", "scripts/audit_pipeline.py(audit_trade_provenance)", ".github/workflows/auto_merge_routines.yml"]
+    },
     "data_freshness": {
       "enabled": true,
       "purpose": "v2.1 — 스냅샷의 '수집 시각(as_of) vs routine 실행 시각' 차이(age, 분)를 추적·차등 적용한다. 직전까지 stale 키(=직접 수집 실패)만 봤고 데이터 노화(age)는 무시해, GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 high 데이터처럼 매매에 썼다('stale 키 없음 ≠ 신선함'). 가격 수집을 routine 1시간 전으로 당기면서 routine 시점 age 가 상시 40~60분이 되었으므로 age 를 명시·게이트한다. compute_allocation.py 가 snapshot_age_min 과 freshness 등급을 state/allocation.json 에 기록하고, 각 routine 0-B 가 이를 읽어 적용한다.",

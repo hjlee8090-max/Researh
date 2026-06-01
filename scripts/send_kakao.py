@@ -176,6 +176,49 @@ def cap(s: str, n: int = 64) -> str:
     return cut.rstrip() + "…"
 
 
+TIER_EMOJI = {"green": "🟢", "yellow": "🟡", "orange": "🟠", "red": "🔴"}
+
+
+def _tier_emoji(tier: str | None, pct: float | None) -> str:
+    """단계색 이모지. tier 필드 우선, 없으면 진입가 대비 변동률로 추정."""
+    if tier in TIER_EMOJI:
+        return TIER_EMOJI[tier]
+    if isinstance(pct, (int, float)):
+        if pct <= -10:
+            return "🔴"
+        if pct <= -7:
+            return "🟠"
+        if pct <= -5:
+            return "🟡"
+        return "🟢"
+    return ""
+
+
+def portfolio_holdings_line() -> str | None:
+    """config/portfolio.json 의 보유 종목을 '종목 N주 ±X%🟢' 형태로 1줄 요약(캡 66자)."""
+    path = ROOT / "config" / "portfolio.json"
+    try:
+        d = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    positions = [p for p in d.get("positions", []) if isinstance(p, dict) and p.get("shares")]
+    if not positions:
+        return "📌 보유 없음 · 현금 100%"
+    parts = []
+    for p in positions:
+        name = p.get("name") or p.get("ticker") or "?"
+        shares = p.get("shares")
+        pct = p.get("pct_from_entry")
+        if not isinstance(pct, (int, float)):
+            ep, cp = p.get("entry_price"), p.get("current_price")
+            if isinstance(ep, (int, float)) and isinstance(cp, (int, float)) and ep:
+                pct = (cp - ep) / ep * 100
+        pct_txt = f"{pct:+.1f}%" if isinstance(pct, (int, float)) else ""
+        emoji = _tier_emoji(p.get("tier"), pct if isinstance(pct, (int, float)) else None)
+        parts.append(f"{name} {shares}주 {pct_txt}{emoji}".strip())
+    return cap("📌 보유: " + ", ".join(parts), 66)
+
+
 def glance_subsection(section_text: str) -> str:
     """슬롯 섹션 안에서 '### 한눈에 보기' 서브섹션 본문만 반환(없으면 섹션 전체)."""
     m = re.search(r"###\s*한눈에 보기.*?\n(.+?)(?=\n###|\Z)", section_text, re.DOTALL)
@@ -232,17 +275,23 @@ def pick_news_lines(fields: list[tuple[str, str]], max_lines: int = 2) -> list[s
 
 
 def compose_daily_body(news: list[str]) -> str:
-    """평가금액 1줄 + 주요 뉴스 1~2줄(각 캡). 본문이 길면 뉴스 줄 수를 줄여 200자 안에 둔다."""
-    lines: list[str] = []
+    """평가금액 + 보유 포트폴리오 + 주요 뉴스. 평가금액·보유는 항상 포함하고,
+    뉴스는 카톡 200자 한도(본문 ≤168자) 안에서 들어가는 만큼만 그리디로 추가한다."""
+    head: list[str] = []
     eq = portfolio_equity_line()
     if eq:
-        lines.append(eq)
+        head.append(eq)
+    hold = portfolio_holdings_line()
+    if hold:
+        head.append(hold)
+    body_lines = list(head)
     for nv in news:
-        lines.append(f"📰 {cap(nv)}")
-    # 본문이 길면(타이틀+여백 고려) 뉴스 줄 수를 줄여 카톡 200자 한도 안에 둔다.
-    while len(lines) > 2 and len("\n".join(lines)) > 168:
-        lines.pop()
-    return "\n".join(lines)
+        candidate = body_lines + [f"📰 {cap(nv)}"]
+        if len("\n".join(candidate)) <= 168:
+            body_lines = candidate
+        else:
+            break
+    return "\n".join(body_lines)
 
 
 def build_slot_message(slot_meta: tuple[str, str, str, str]) -> tuple[str, str, Path | None] | None:

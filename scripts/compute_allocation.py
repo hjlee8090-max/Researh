@@ -83,9 +83,17 @@ def portfolio_heat(portfolio: dict, equity: float, budget_pct: float) -> dict:
             or 0
         )
         stop = float(pos.get("stop_price") or 0)
-        risk = shares * max(0.0, cur - stop) if (cur and stop) else 0.0
+        # 손절가 미설정(0/누락)이면 0(무위험)으로 과소산정하지 않고 red(-10%) 프록시로 보수 추정한다
+        # (손절 없는 포지션이 heat 예산을 우회하는 것을 방지; policy.volatility_sizing.fallback 과 동일 -10%).
+        stop_missing = stop <= 0
+        if stop_missing and cur:
+            stop = cur * 0.9
+        risk = shares * max(0.0, cur - stop) if cur else 0.0
         total += risk
-        per_pos.append({"ticker": pos.get("ticker"), "open_risk_krw": round(risk)})
+        entry = {"ticker": pos.get("ticker"), "open_risk_krw": round(risk)}
+        if stop_missing:
+            entry["stop_missing"] = True
+        per_pos.append(entry)
     budget_krw = equity * budget_pct / 100 if equity > 0 else 0.0
     remaining = max(0.0, budget_krw - total)
     return {

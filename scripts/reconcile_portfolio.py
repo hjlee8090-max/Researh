@@ -172,7 +172,11 @@ def valuation_checks(portfolio: dict, snapshot: dict | None = None) -> tuple[lis
         issues.append(f"equity {num(equity):,.0f} ≠ cash+Σmarket_value {cash + mv_sum:,.0f}")
     upnl = portfolio.get("unrealized_pnl")
     if upnl is not None and abs(num(upnl) - upnl_sum) > 1:
-        issues.append(f"unrealized_pnl {num(upnl):+,.0f} ≠ Σ(market_value−cost_basis) {upnl_sum:+,.0f}")
+        # 표시용 파생값 — 사이징/heat 안전성과 무관하므로 매매를 막는 hard issue 가 아닌 warning 으로 둔다
+        # (equity·market_value 산식은 hard issue 유지: 이 둘은 사이징·heat 계산의 입력이므로).
+        warnings.append(
+            f"unrealized_pnl {num(upnl):+,.0f} ≠ Σ(market_value−cost_basis) {upnl_sum:+,.0f} (표시값 재계산 권고)"
+        )
     return issues, warnings
 
 

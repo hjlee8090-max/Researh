@@ -31,7 +31,7 @@
   - **채택 사유 노티**: `candidate_scores.json.report_section_md` (이미 완성된 "### 신규 후보 채택 사유" 마크다운)를 리포트 본문에 **그대로 붙여 넣는다**. 채택 후보가 있으면 각 종목의 점수와 채택 사유(추세·신뢰도·thesis·근거)가, 없으면 "채택 후보 없음"이 들어 있다. 이 섹션이 있어야 send_kakao 가 카톡에 채택 후보를 함께 발송한다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
 
-> **스냅샷 출처 주의**: 이 웹 세션은 네트워크가 차단돼 `fetch_market_data.py` 가 직접 시세를 못 가져올 수 있다(네이버/yahoo 403). 그 경우 스크립트는 GitHub Actions(`fetch_prices.yml`)가 정기 수집·커밋해 둔 직전 스냅샷을 보존하고 `stale` 표시만 남긴다. `market_snapshot.json` 에 `stale` 키가 있으면 "데이터가 직전 정기 수집본"임을 리포트에 명시한다.
+> **스냅샷 출처 주의**: 이 웹 세션은 네트워크가 차단돼 `fetch_market_data.py` 가 직접 시세를 못 가져올 수 있다(네이버/yahoo 403). 그 경우 스크립트는 GitHub Actions(`fetch_prices.yml`)가 정기 수집·커밋해 둔 직전 스냅샷을 보존하고 `stale` 표시만 남긴다. `market_snapshot.json` 에 `stale` 키가 있으면 "데이터가 직전 정기 수집본"임을 리포트에 명시한다. 단, **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결**한다 — 묵은 가격으로 먼저 체결하고 나중에 재확인하는 조건부 체결은 금지.
 - `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
 - 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다 — 사람이 웹검색으로 임의 재판정하지 않는다. 스냅샷이 `high`/`medium` 이면 그대로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류 **레거시 서술을 이월·복제하지 않는다** (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). `stale` 키가 있어도 confidence 값은 스냅샷 그대로 — **stale ≠ low.**
@@ -163,14 +163,24 @@
 ## 2. 분기 처리
 
 > **(v2.0) 신규 진입 사이징·R/R 공통 규칙** — A/B/C 어느 경로든 신규 매수는 이 규칙을 따른다. (직전까지 고가주를 '1주(9%)'만 사고 강세장 모멘텀주가 R/R<1.2 로 막히던 문제를 해소):
-> - **수량 = max(리스크기반, 목표비중기반)** (`policy.position_sizing.sizing_method`):
->   - (a) 리스크기반 = floor((equity × 1.5%) ÷ (진입가 − 동적손절가))
->   - (b) 목표비중기반 = floor(target_krw ÷ 진입가), `target_krw = min(allocation.recommendation.per_new_position_krw, equity × entry_weight_pct/100)` (entry_weight_pct = default 30%, medium·구조적악재 시 reduced 20%)
->   - `recommendation.action=deploy`(주식 비중 < 목표 하한)면 **(b)를 우선 채택**해 현금을 실제로 소진한다. 최종 수량은 종목당 35%·deploy krw·deployable_cash(현금 하한) 한도로 캡.
-> - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 종목당 상한 안에서 **+1주 허용**.
+> - **수량 = min(리스크상한, 목표비중)** — 단일거래 리스크 상한이 하드 천장 (`policy.position_sizing.sizing_method` = risk_capped_target_weight):
+>   - (a) 리스크상한 = floor((equity × 1.5%) ÷ (진입가 − 동적손절가)) — **이 값을 절대 초과하지 않는다**(`single_trade_risk_cap.is_hard_ceiling`).
+>   - (b) 목표비중 = floor(target_krw ÷ 진입가), `target_krw = min(allocation.recommendation.per_new_position_krw, equity × entry_weight_pct/100)` (entry_weight_pct = default 30%, medium·구조적악재 시 reduced 20%)
+>   - **최종 수량 = min((a),(b))**, 추가로 종목당 35%·deploy krw·deployable_cash(현금 하한)로 캡. `deploy`(주식 비중 < 목표 하한)에서 현금을 소진하는 방법은 한 종목을 (a) 위로 키우는 게 아니라 **빈 슬롯에 다른 종목을 추가 진입(breadth)**하는 것이다. 통과 후보가 부족하면 현금을 남긴다(자본보존 > 완전배치).
+> - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 +1주를 검토하되, **+1주 후에도 (a) 리스크 상한과 35% 비중을 모두 지킬 때만** 허용한다(위반 시 +1 안 함).
 > - **R/R 하한은 레짐 적응형**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`): strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6. tier 미확정이면 1.2. **data confidence=medium 이면 +0.1**.
 > - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
 > - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
+
+### 2-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)
+신규/추가 매수·청산을 `state/trade_log.jsonl`·`config/portfolio.json` 에 기록하기 **직전** 다음을 수행하고, 통과 전에는 booking 하지 않는다 (`policy.price_data_quality.pre_trade_gate`):
+1. `git pull --rebase origin main || git pull --rebase origin master` — 스케줄 `fetch_prices.yml` 가 0-1 직후 늦게 도착했을 수 있다(2026-06-01 레이스: 신선본이 routine pull 직후 09:13·10:37 에 커밋됨).
+2. `python scripts/fetch_market_data.py && python scripts/score_candidates.py && python scripts/compute_allocation.py` 재실행 — 점수·비중을 **현재 스냅샷과 동기화**(snapshot_as_of 일치).
+3. `python scripts/pre_trade_check.py` 의 `verdict`:
+   - `block` → 매매 없이 사용자 보고 후 종료. `resync_required` → 2단계 재수행 후 재판정.
+   - `live_verify_required` → 신규/추가 매수·임계 근접 청산은 **해당 종목 실시간가를 웹검색으로 1회 교차확인**해 진입가·R/R·사이징을 재계산한 뒤 booking. `trade_log` 에 `price_source:"web_verified"` + 확인 URL·시각 기록.
+   - `ok` → 스냅샷 가격으로 booking (`price_source:"snapshot_fresh"`).
+- **금지: 묵은 스냅샷 가격으로 먼저 체결하고 다음 회차에 재확인하는 조건부 체결(booking-then-verify).** 검증이 체결을 선행한다 (`policy.price_data_quality.new_entry_freshness_rule`). (2026-06-01: 5/29 종가 317,634 로 삼성 4주 선체결·12시 재확인 미룸 사례 차단.)
 
 ### A. watchlist가 비어있는 경우 (첫 가동)
 1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 3~4종목을 선정**한다 (`policy.position_sizing.max_positions`=4 이내).
@@ -196,7 +206,7 @@
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
    - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
 4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함). 후보를 `config/candidates.json` 에 추가·갱신할 때 `theme_exposure`(근거 URL 포함)도 함께 기록해 다음 routine 의 `score_candidates.py` thematic 점수에 반영되게 한다.
-5. **가상 매수 체결**: 수량은 위 **§2 신규 진입 사이징 공통 규칙**(v2.0 — max(리스크기반, 목표비중기반)·고가주 floor 보정·레짐 적응 R/R·강세 tier 목표가 상향)을 따른다. 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. 추세 필터 위배 종목·`risk_off` 차단(`risk_off_blocks_new_entry=true` 시)·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 종목은 신규 진입 보류**(`policy.fundamentals.earnings_blackout` — 바이너리 이벤트 리스크).
+5. **가상 매수 체결**: **체결 직전 §2-PRE 게이트(재동기화·검증)를 통과해야 한다.** 수량은 위 **§2 신규 진입 사이징 공통 규칙**(v2.2 — min(리스크상한, 목표비중)·단일거래 리스크 상한 하드 천장·고가주 floor 보정·레짐 적응 R/R·강세 tier 목표가 상향)을 따른다. 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. 추세 필터 위배 종목·`risk_off` 차단(`risk_off_blocks_new_entry=true` 시)·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 종목은 신규 진입 보류**(`policy.fundamentals.earnings_blackout` — 바이너리 이벤트 리스크).
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신
    - `state/trade_log.jsonl`에 라인 추가:

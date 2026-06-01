@@ -1,7 +1,8 @@
 {
-  "version": "2.1",
-  "last_updated": "2026-05-29",
+  "version": "2.2",
+  "last_updated": "2026-06-01",
   "changelog": [
+    "2.2: 리스크 상한 우선·매매 직전 재검증·평가 버그 수정. ①단일거래 리스크 상한(max_single_trade_risk_pct_of_equity, 1.5%)을 사이징의 '하드 천장'으로 명문화 — position_sizing.sizing_rule_v2 를 max((a)리스크,(b)목표비중) 에서 min((a),(b)) 로 바꾸고 single_trade_risk_cap.is_hard_ceiling=true 추가. deploy 로 현금을 소진하는 방법은 단일 종목 오버사이징이 아니라 빈 슬롯 추가 진입(breadth)이며, 후보가 부족하면 현금을 남긴다(자본보존>완전배치). 고가주 floor +1 보정도 리스크 상한·35% 비중을 모두 지킬 때만 허용. (2026-06-01 삼성전자 4주=equity 2.6% 리스크가 1.5% 상한을 deploy 우선으로 초과한 사례.) ②매매 booking 직전 재동기화·재검증 게이트 신설(price_data_quality.pre_trade_gate + scripts/pre_trade_check.py) — 스케줄 fetch 가 routine 의 0-1 pull 직후 도착하는 레이스로 묵은 스냅샷에 신규매수가 체결되던 문제(2026-06-01 5/29 종가로 삼성 booking, 신선본은 09:13·10:37 별도 커밋) 차단. ③new_entry_freshness_rule — 신규/추가 매수는 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결, 'booking 후 재확인' 조건부 체결 금지. ④compute_allocation.py 평가금액 버그 수정(market_value/current_price 필드명 — 진입가로 비중 계산하던 것을 현재가 기준으로) + reconcile_portfolio.py 에 평가금액 산식·스냅샷 괴리 점검(valuation_checks) 추가.",
     "2.1: 가격 데이터 노화(age) 추적·차등 적용. 직전까지 stale 키(직접 수집 실패)만 보고 '수집 시각 vs routine 실행 시각' 나이(age)는 무시 — GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 데이터처럼 매매에 썼다(stale_after_minutes:20 은 강제되지 않는 죽은 파라미터였음). ①compute_allocation 이 snapshot_age_min·freshness(fresh≤20분/acceptable≤75분/stale_intraday) 산출. ②price_data_quality.data_freshness 신설 — 손절선·단계경보(orange/red) ±3%·목표가 ±2% 임계 근접 종목은 freshness 가 fresh 가 아니면 웹 실시간 1회 교차확인 후 체결(묵은 가격에 의한 손절 지연 방지). ③0900/1200/1500 에 신선도 점검·손절 안전망, 1500 마감 임박 특례(동시각 수집 우선) 추가.",
     "2.0: 현금 단방향 누적·과소 매수 해소 패치. ①medium confidence 에서도 NEW_ENTRY/SCALE_IN 허용(축소비중·R/R+0.1) — 매도만 집행되고 매수는 high 를 요구하던 비대칭 제거(price_data_quality.allowed_actions_by_confidence). ②사이징을 리스크기반·목표비중 중 '큰 쪽' 채택, deploy 시 종목당 배분액(compute_allocation.per_new_position_krw) 우선·고가주 floor 반올림 보정(position_sizing.sizing_method). ③레짐 적응형 R/R 하한(strong_bull 1.0 … deep_bear 1.6)·강세 tier 목표가 상향으로 '이미 오른 모멘텀주가 R/R<1.2 로 진입 봉쇄되던' 역설 해소(reward_risk_management.regime_adaptive_rr). ④후보 풀 확대(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭)+주식 비중<목표 하한이고 빈 슬롯 있으면 신규 후보 자동 발굴 의무(0900 분기 C).",
     "1.9: 펀더멘털·실적 신호를 보유종목 의사결정에도 반영(fundamentals.holdings_use). sharp_decline/적자전환/가이던스 컷이면 가격 green 이어도 익절·축소 우선·트레일링스톱 강화. 0900/1200/1500/1800 보유 평가에 소비 단계 추가. 금융주 계정명 fallback(영업수익 등)",
@@ -60,7 +61,7 @@
       "atr_source": "market_snapshot.json.tickers.<ticker>.volatility.atr14 (ATR%는 atr_pct)",
       "atr_stop_multiple": 2.0,
       "stop_rule": "동적 손절가 = 진입가 - (atr_stop_multiple × ATR14). 단, 단계경보 red(-10%)보다 깊을 수 없고, 단일 거래 손실은 equity의 1.5%를 넘기지 않는다(둘 중 더 타이트한 값 채택).",
-      "position_sizing_rule": "리스크 기반 사이징 우선 — 수량 = floor((equity × max_single_trade_risk_pct_of_equity/100) / (진입가 - 동적손절가)). 산출 비중이 max_position_weight_pct 를 넘으면 비중 상한으로 캡.",
+      "position_sizing_rule": "리스크 기반 사이징 우선 — 수량 = floor((equity × max_single_trade_risk_pct_of_equity/100) / (진입가 - 동적손절가)). 산출 비중이 max_position_weight_pct 를 넘으면 비중 상한으로 캡. 이 리스크기반 수량은 신규 진입 수량의 하드 상한이다 — position_sizing.sizing_rule_v2 의 목표비중·deploy 경로가 이 값을 초과할 수 없다(single_trade_risk_cap.is_hard_ceiling=true).",
       "vol_compression_size_reduction": "ATR%가 종목 60일 중앙값의 70% 미만(변동성 압축)이면 사이즈 30% 축소, 1.5배 초과(변동성 확대)면 손절폭 확대·사이즈 추가 축소 검토.",
       "fallback_when_atr_missing": "ATR 데이터가 없으면(데이터 부족) 기존 고정 -10% 손절·default_entry_weight_pct 로 폴백한다."
     }
@@ -157,6 +158,23 @@
     "medium_new_entry_rule": "v2.0 — medium(단일 출처, 또는 stale 2출처)에서도 NEW_ENTRY/SCALE_IN 을 허용한다. 단 '데이터 불확실 프리미엄'으로 (a)진입비중을 reduced_entry_weight_pct 로 축소하고 (b)R/R 하한을 regime_adaptive_rr 적용값 +0.1 상향한다. 2출처 일치 high 면 default 비중·기본 R/R. 이 규칙의 목적: 직전까지 medium 에서 EXIT(손절)는 집행되는데 NEW_ENTRY 만 high 를 요구해, 데이터 차단(HTTP 403) 구간에 매도만 일어나고 매수는 막혀 현금이 단방향으로 누적되던 구조적 비대칭을 제거한다. 전 종목 신뢰도가 실제 low 일 때만 block_trade_if_confidence_below 로 매수·매도 모두 차단된다.",
     "low_confidence_eval_rule": "신뢰도 low 인 보유 종목은 trade_log 에 EXIT/SCALE_IN 을 기록하지 않는다. EVAL/HOLD 만 허용하며 portfolio.history 의 평가금액은 직전 신뢰 가능 종가를 그대로 사용하고 note 에 'price_confidence=low, valuation carried over from <YYYY-MM-DD>' 를 명시한다.",
     "fallback_on_all_sources_failed": "출처 모두 실패한 routine 은 신규 매매·청산 모두 차단. 보유 종목은 EVAL/HOLD 만 유지. 24시간 연속 실패 시 lessons.md 에 '루틴 오차(데이터 차단)' 항목 강제 추가.",
+    "new_entry_freshness_rule": "신규 진입(NEW_ENTRY)·추가매수(SCALE_IN)는 freshness=fresh(해당 routine 회차에서 수집 성공, age ≤ data_freshness.fresh_max_min)인 스냅샷 가격, 또는 같은 routine 에서 웹으로 교차확인한 실시간 가격으로만 booking 한다. 묵은(stale_intraday/acceptable) 스냅샷 가격으로 먼저 체결하고 다음 회차에 '재확인'하는 조건부 체결(booking-then-verify)은 금지한다 — 검증이 체결을 선행한다. trade_log 항목에 price_source(snapshot_fresh | web_verified)를 기록하고, web_verified 면 확인 URL·시각을 함께 남긴다. (2026-06-01: 5/29 종가 317,634 로 삼성전자 4주를 먼저 booking 하고 12시 재확인으로 미룬 사례 차단)",
+    "pre_trade_gate": {
+      "enabled": true,
+      "purpose": "v2.2 — 2026-06-01 레이스(스케줄 fetch_prices 가 routine 의 0-1 git pull 직후 도착 → routine 이 60시간 묵은 5/29 스냅샷으로 삼성전자 신규매수를 체결, 신선본은 09:13·10:37 에 별도 커밋) 재발 방지. 매수·매도를 trade_log/portfolio 에 기록(booking)하기 직전 스냅샷을 재동기화·재검증한다.",
+      "script": "scripts/pre_trade_check.py",
+      "procedure": [
+        "1) git pull --rebase 로 스케줄 fetch 가 늦게 도착했는지 다시 받는다.",
+        "2) fetch_market_data.py → score_candidates.py → compute_allocation.py 재실행해 점수·비중을 최신 스냅샷과 일치시킨다(candidate_scores/allocation 의 snapshot_as_of 가 market_snapshot.as_of 와 같아야 한다).",
+        "3) pre_trade_check.py 를 실행해 verdict 를 따른다."
+      ],
+      "verdicts": {
+        "block": "trade_log↔portfolio 정합성 또는 평가금액 산식 불일치 — 매매 금지, 사용자 보고 후 종료.",
+        "resync_required": "candidate_scores/allocation 의 snapshot_as_of 가 현재 스냅샷과 불일치 — 2)단계 재수행 후 재판정.",
+        "live_verify_required": "freshness 가 fresh 가 아니거나 스냅샷 가격의 last_date 가 오늘이 아님(또는 stale 보존본) — 신규/추가 매수 및 임계 근접 청산은 해당 종목 실시간 가격을 웹으로 1회 교차확인하고 그 가격으로 진입가·R/R·사이징을 재계산한 뒤 booking 한다(new_entry_freshness_rule).",
+        "ok": "freshness=fresh·동기화·정합성 충족 — 스냅샷 가격으로 booking 가능."
+      }
+    },
     "data_freshness": {
       "enabled": true,
       "purpose": "v2.1 — 스냅샷의 '수집 시각(as_of) vs routine 실행 시각' 차이(age, 분)를 추적·차등 적용한다. 직전까지 stale 키(=직접 수집 실패)만 봤고 데이터 노화(age)는 무시해, GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 high 데이터처럼 매매에 썼다('stale 키 없음 ≠ 신선함'). 가격 수집을 routine 1시간 전으로 당기면서 routine 시점 age 가 상시 40~60분이 되었으므로 age 를 명시·게이트한다. compute_allocation.py 가 snapshot_age_min 과 freshness 등급을 state/allocation.json 에 기록하고, 각 routine 0-B 가 이를 읽어 적용한다.",
@@ -258,11 +276,17 @@
     "min_cash_weight_pct": 5.0,
     "default_entry_weight_pct": 30.0,
     "reduced_entry_weight_pct": 20.0,
-    "sizing_method": "max_of_risk_and_target_weight",
-    "sizing_rule_v2": "v2.0 — 신규 진입 수량을 두 방식 중 '큰 쪽'으로 정한다. (a)리스크기반 = floor((equity × max_single_trade_risk_pct_of_equity/100) / (진입가 − 동적손절가)). (b)목표비중기반 = floor(target_krw / 진입가), target_krw = min(compute_allocation.recommendation.per_new_position_krw, equity × entry_weight_pct/100). entry_weight_pct 는 default 30%(medium·구조적악재 시 reduced 20%). deploy 신호(주식 비중<목표 하한)에서는 (b)를 우선 채택해 강세장에서 현금을 실제로 소진한다. 최종 수량은 max((a),(b)) 이되 종목당 max_position_weight_pct(35%)·deploy krw 한도·deployable_cash(현금 하한 준수)를 넘지 않게 캡한다.",
-    "high_price_floor_correction": "고가주 floor 반올림 보정 — 산출 수량 × 진입가가 목표비중(target_krw)의 min_fill_ratio_of_target 미만이면, 종목당 비중 상한·deploy 한도를 넘지 않는 선에서 +1주 허용한다. (예: 446,000원 종목이 1.66주→floor 1주=9% 로 떨어지던 문제 보정)",
+    "sizing_method": "risk_capped_target_weight",
+    "sizing_rule_v2": "v2.2 — 신규 진입 수량은 목표비중으로 정하되 단일거래 리스크 상한을 '하드 천장'으로 적용한다(둘 중 작은 쪽). (a)리스크상한 = floor((equity × max_single_trade_risk_pct_of_equity/100) / (진입가 − 동적손절가)) — 이 값을 절대 초과하지 않는다(single_trade_risk_cap.is_hard_ceiling). (b)목표비중 = floor(target_krw / 진입가), target_krw = min(compute_allocation.recommendation.per_new_position_krw, equity × entry_weight_pct/100). entry_weight_pct 는 default 30%(medium·구조적악재 시 reduced 20%). 최종 수량 = min((a),(b)) 이며, 추가로 종목당 max_position_weight_pct(35%)·deploy krw 한도·deployable_cash(현금 하한)로 캡한다. deploy 신호(주식 비중<목표 하한)에서 현금을 소진하는 방법은 한 종목을 (a) 위로 키우는 것이 아니라 빈 슬롯에 다른 종목을 추가 진입(breadth)하는 것이다 — 통과 후보가 부족해 목표 비중에 못 미치면 현금을 남긴다(자본보존 > 완전배치). 이는 v2.0 의 max((a),(b)) 가 deploy 욕구로 단일거래 리스크 상한(1.5%)을 초과시키던 충돌을 해소한 것이다(2026-06-01 삼성전자 4주=equity 2.6% 리스크 사례).",
+    "single_trade_risk_cap": {
+      "is_hard_ceiling": true,
+      "ref": "risk.max_single_trade_risk_pct_of_equity (기본 1.5%)",
+      "rule": "어떤 사이징 경로(리스크기반·목표비중·deploy·고가주 floor 보정)도 단일 신규 진입의 예상 손실 = 수량 × (진입가 − 동적손절가) 이 equity × max_single_trade_risk_pct_of_equity 를 넘게 만들 수 없다. 초과하면 한도 내 최대 정수 수량으로 내림하고, 그 결과가 0 이면 진입하지 않는다(손절폭이 너무 넓어 1주도 리스크 예산을 넘는 고가·고변동 종목). deploy override·target-weight 우선보다 이 상한이 항상 우선한다.",
+      "structural_note": "max_position_weight_pct(35%) × 손절폭(예: red −10%) = equity 의 3.5% 로 1.5% 상한과 구조적으로 충돌할 수 있다. 이때 리스크 상한이 비중을 끌어내리는 것이 의도된 동작이다. 더 큰 단일 비중을 원하면 (i)손절폭 타이트화(휩쏘 주의) (ii)max_positions 상향(종목 수로 배치) (iii)max_single_trade_risk_pct_of_equity 상향 중 하나를 정책 결정으로 택한다."
+    },
+    "high_price_floor_correction": "고가주 floor 반올림 보정 — 산출 수량 × 진입가가 목표비중(target_krw)의 min_fill_ratio_of_target 미만이면 +1주를 검토하되, +1주 후에도 single_trade_risk_cap(단일거래 리스크 상한)과 종목당 비중 상한(35%)을 모두 지킬 때만 허용한다. 둘 중 하나라도 위반하면 +1 하지 않고 작은 수량(또는 0)을 유지한다. (v2.0 의 무조건 +1 이 리스크 상한을 우회하던 문제 보정)",
     "min_fill_ratio_of_target": 0.7,
-    "deploy_priority_note": "tier=strong_bull/bull 등 recommendation.action=deploy 이면, 1일 진입 건수 제한은 없다(정책 1.5에서 폐지). 빈 슬롯(max_positions − 현재 보유 수)이 있고 R/R·추세필터·신뢰도(medium 이상)를 통과하는 후보가 있는 한, deploy krw 한도가 소진되거나 목표 비중 밴드에 도달할 때까지 복수 종목 진입을 허용한다. '레짐 미확정 보수적 1건/일' 같은 임의 축소를 적용하지 않는다 — tier 가 unknown 이면 default 사이징으로 진행하되 신규는 1종목으로 신중."
+    "deploy_priority_note": "tier=strong_bull/bull 등 recommendation.action=deploy 이면 1일 진입 건수 제한은 없다(정책 1.5에서 폐지). 빈 슬롯(max_positions − 현재 보유 수)이 있고 R/R·추세필터·신뢰도(medium 이상)·single_trade_risk_cap 를 통과하는 후보가 있는 한 복수 종목 진입을 허용한다. 단 현금 소진은 단일 종목 오버사이징이 아니라 종목 수(breadth)로 달성한다 — 리스크 상한 때문에 한 종목이 목표비중에 못 미치면 다른 후보로 빈 슬롯을 채우고, 후보가 없으면 현금을 남긴다(자본보존 우선). 'tier 미확정 1건/일' 같은 임의 축소는 적용하지 않는다."
   },
   "trading_cost": {
     "slippage_pct": 0.2,

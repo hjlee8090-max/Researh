@@ -158,9 +158,15 @@
 - 09시 routine 0-B 단계에서 `fetch_market_data.py` 직후 호출. 후보 점수·진입 가능 여부 랭킹.
 
 ### `scripts/reconcile_portfolio.py` (신규)
-- 읽기: `config/portfolio.json`, `state/trade_log.jsonl`
-- 출력: stdout JSON + exit code (0=일치, 1=불일치)
+- 읽기: `config/portfolio.json`, `state/trade_log.jsonl`, `state/market_snapshot.json`
+- 출력: stdout JSON(`issues`+`warnings`) + exit code (0=일치, 1=불일치)
+- trade_log↔portfolio 정합성 + (v2.2) 평가금액 산식 정합성(`valuation_checks`: market_value=shares×current_price, equity=cash+Σmv, unrealized_pnl)과 스냅샷 대비 평가가격 3% 초과 괴리 경고.
 - 09시 routine 0-B 단계의 사전 점검. `audit_pipeline.py` 가 subprocess 로 호출해 audit 결과에 흡수.
+
+### `scripts/pre_trade_check.py` (신규 v2.2)
+- 읽기: `state/market_snapshot.json`, `state/candidate_scores.json`, `state/allocation.json`, `config/portfolio.json`, `config/policy.json` (+ `reconcile_portfolio` 함수 재사용)
+- 출력: stdout JSON(`verdict`) + exit code (0=ok/live_verify, 1=block/resync)
+- **매매(booking) 직전 게이트**(`policy.price_data_quality.pre_trade_gate`). freshness·점수/비중 스냅샷 동기화·장부/평가 정합성을 점검해 `ok`/`live_verify_required`/`resync_required`/`block` 판정. 09/12/15 routine 의 §2-PRE(1-PRE/0-C) 에서 모든 BUY/SELL 직전 호출. 2026-06-01 묵은 스냅샷 신규매수 레이스 재발 방지.
 
 ### `scripts/build_lessons_index.py` (신규)
 - 읽기: `state/lessons.md`

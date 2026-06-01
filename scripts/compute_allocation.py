@@ -34,14 +34,27 @@ def load_json(rel: str, default: Any = None) -> Any:
 
 
 def portfolio_equity(portfolio: dict) -> tuple[float, float, float]:
-    """(equity, cash, stock_value) 를 반환. stock_value 는 market_value_approx 합(폴백: shares×현재가)."""
+    """(equity, cash, stock_value) 를 반환. stock_value 는 포지션 평가금액 합.
+
+    평가금액은 `market_value`(→ 폴백 `market_value_approx`)를 우선 사용하고, 없으면
+    shares × (`current_price` → `current_price_approx` → `entry_price`) 로 폴백한다.
+    ※ portfolio.json 의 실제 필드명은 `market_value`/`current_price` 이며 `_approx` 가 아니다.
+      직전까지 `_approx` 만 읽어 둘 다 None 으로 떨어지면서 **현재가가 아닌 진입가로 비중을
+      계산**하던 버그가 있었다(예: HD조선 진입 446,000 vs 현재 423,000 — 비중 과대평가)."""
     cash = float(portfolio.get("cash", 0) or 0)
     stock_value = 0.0
     for pos in portfolio.get("positions", []):
-        mv = pos.get("market_value_approx")
+        mv = pos.get("market_value")
+        if mv is None:
+            mv = pos.get("market_value_approx")
         if mv is None:
             shares = pos.get("shares") or 0
-            price = pos.get("current_price_approx") or pos.get("entry_price") or 0
+            price = (
+                pos.get("current_price")
+                or pos.get("current_price_approx")
+                or pos.get("entry_price")
+                or 0
+            )
             mv = shares * price
         stock_value += float(mv or 0)
     equity = cash + stock_value

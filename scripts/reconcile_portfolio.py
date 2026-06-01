@@ -118,6 +118,64 @@ def compare(expected: dict, portfolio: dict) -> list[str]:
     return issues
 
 
+def load_snapshot() -> dict:
+    path = ROOT / "state" / "market_snapshot.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+
+
+def valuation_checks(portfolio: dict, snapshot: dict | None = None) -> tuple[list[str], list[str]]:
+    """포트폴리오 평가금액 '산식' 정합성(issues)과 스냅샷 대비 평가가격 괴리(warnings)를 점검한다.
+
+    issues(하드, 자동계산이라 어긋나면 안 됨):
+      - market_value ≠ shares × current_price
+      - equity ≠ cash + Σ market_value
+      - unrealized_pnl ≠ Σ(market_value − cost_basis)
+    warnings(권고): current_price 가 최신 스냅샷 last_close 대비 3% 초과 괴리 — 평가가 묵었을 수 있음
+      (2026-06-01 삼성전자: portfolio 평가 317,000 vs 스냅샷 344,500 = 8% 괴리를 잡기 위한 신호).
+    """
+    snapshot = snapshot or {}
+    issues: list[str] = []
+    warnings: list[str] = []
+    cash = num(portfolio.get("cash"))
+    ts = snapshot.get("tickers", {}) if isinstance(snapshot, dict) else {}
+    mv_sum = 0.0
+    upnl_sum = 0.0
+    for p in portfolio.get("positions", []):
+        if not isinstance(p, dict):
+            continue
+        tk = p.get("ticker")
+        shares = num(p.get("shares"))
+        cur = num(p.get("current_price"))
+        mv_field = p.get("market_value")
+        mv = num(mv_field) if mv_field is not None else shares * cur
+        mv_sum += mv
+        if cur and abs(mv - shares * cur) > 1:
+            issues.append(f"{tk} market_value {mv:,.0f} ≠ shares×current_price {shares * cur:,.0f}")
+        cost = p.get("cost_basis")
+        if cost is not None:
+            upnl_sum += mv - num(cost)
+        snap_t = ts.get(tk) if isinstance(ts, dict) else None
+        snap_close = snap_t.get("last_close") if isinstance(snap_t, dict) else None
+        if cur and snap_close:
+            gap = abs(cur - snap_close) / snap_close * 100
+            if gap > 3.0:
+                warnings.append(
+                    f"{tk} 평가가격 {cur:,.0f} 이 최신 스냅샷 {snap_close:,.0f} 대비 {gap:.1f}% 괴리 — 평가 stale 가능(재평가 권고)"
+                )
+    equity = portfolio.get("equity")
+    if equity is not None and abs(num(equity) - (cash + mv_sum)) > 1:
+        issues.append(f"equity {num(equity):,.0f} ≠ cash+Σmarket_value {cash + mv_sum:,.0f}")
+    upnl = portfolio.get("unrealized_pnl")
+    if upnl is not None and abs(num(upnl) - upnl_sum) > 1:
+        issues.append(f"unrealized_pnl {num(upnl):+,.0f} ≠ Σ(market_value−cost_basis) {upnl_sum:+,.0f}")
+    return issues, warnings
+
+
 def main() -> int:
     portfolio = load_json("config/portfolio.json")
     trade_log = load_trade_log()
@@ -125,6 +183,8 @@ def main() -> int:
 
     expected = compute_expected(trade_log, initial_capital)
     issues = compare(expected, portfolio)
+    val_issues, val_warnings = valuation_checks(portfolio, load_snapshot())
+    issues = issues + val_issues
 
     summary = {
         "trade_log_lines": len(trade_log),
@@ -134,6 +194,7 @@ def main() -> int:
         "actual_cash": round(num(portfolio.get("cash"))),
         "actual_realized_pnl": round(num(portfolio.get("realized_pnl"))),
         "issues": issues,
+        "warnings": val_warnings,
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 1 if issues else 0

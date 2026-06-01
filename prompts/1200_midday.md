@@ -14,7 +14,7 @@
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 이 웹 세션 네트워크가 차단돼 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
 - `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. `recommendation.action`(deploy/trim/hold)·목표 주식 비중 밴드를 장중 신규 진입·축소 판단의 1차 기준으로 쓴다(tier=unknown 이면 정책 default 사이징).
-- **(v2.0) 장중 신규 진입 사이징·R/R·후보 발굴은 `prompts/0900_pre_market.md` §2 공통 규칙·C경로를 동일 적용**한다: medium 신뢰도도 진입 허용(축소비중·R/R+0.1), 수량 = max(리스크기반, 목표비중기반 `recommendation.per_new_position_krw ÷ 진입가`)·고가주 floor 보정, R/R 레짐 적응 하한(strong_bull 1.0…), 강세 tier 목표가 상향. `deploy`·`vacant_slots≥1` 이면 tradable 후보로 복수 종목 진입해 현금만 쌓이지 않게 한다.
+- **(v2.2) 장중 신규 진입 사이징·R/R·후보 발굴은 `prompts/0900_pre_market.md` §2 공통 규칙·C경로를 동일 적용**한다: medium 신뢰도도 진입 허용(축소비중·R/R+0.1), 수량 = **min(리스크상한, 목표비중)·단일거래 리스크 상한이 하드 천장**(`single_trade_risk_cap`, 초과 불가)·고가주 floor 보정(상한 준수 시만 +1), R/R 레짐 적응 하한(strong_bull 1.0…), 강세 tier 목표가 상향. `deploy`·`vacant_slots≥1` 이면 tradable 후보로 복수 종목 진입(breadth)해 현금만 쌓이지 않게 하되, 한 종목을 리스크 상한 위로 키우지 않는다. **신규/추가 매수는 §1-PRE 게이트(재동기화·검증) 통과 후 fresh/웹확인 가격으로만 체결한다.**
 - **가격·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조일 뿐이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다. 스냅샷이 `high`/`medium` 이면 그대로 high/medium 으로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 에 남아 있는 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류의 레거시 서술을 **이월·복제하지 않는다** (해당 이슈는 2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨).
 - `stale` 키가 있으면 "직전 정기 수집본"임을 1줄 명시하되 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.**
@@ -37,6 +37,16 @@
 - "KOSPI 오전 시황" / "외국인 기관 매매 동향 오전"
 - 보유 종목 각각: "[종목명] 뉴스 오늘"
 - 특이 공시: "KIND 공시 오늘 [종목명]"
+
+## 1-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)
+§2 단계경보 청산(orange/red)·신규/추가 매수를 기록하기 **직전** 수행하고, 통과 전에는 booking 하지 않는다 (`policy.price_data_quality.pre_trade_gate`):
+1. `git pull --rebase origin main || git pull --rebase origin master` (스케줄 fetch 가 0-1 직후 늦게 도착하는 레이스 방지 — 2026-06-01 사례).
+2. `python scripts/fetch_market_data.py && python scripts/score_candidates.py && python scripts/compute_allocation.py` 재실행 — 점수·비중을 현재 스냅샷과 동기화.
+3. `python scripts/pre_trade_check.py` 의 `verdict`:
+   - `block` → 매매 없이 사용자 보고·종료. `resync_required` → 2단계 재수행 후 재판정.
+   - `live_verify_required` → 신규/추가 매수·**임계 근접 청산(orange/red 경계 ±3%)**은 해당 종목 실시간가를 웹으로 1회 교차확인해 단계·진입가·R/R·사이징을 재계산한 뒤 booking(`trade_log` 에 `price_source:"web_verified"`+URL).
+   - `ok` → 스냅샷 가격으로 booking.
+- **금지**: 묵은 스냅샷 가격으로 먼저 체결하고 다음 회차에 재확인하는 조건부 체결. 검증이 체결을 선행한다 (`new_entry_freshness_rule`).
 
 ## 2. 단계 경보 산정 (모든 보유 종목 의무)
 각 종목마다 **진입가 대비 현재가 변동률**로 단계를 결정한다 (`policy.risk.tiered_alerts` 기준):

@@ -277,6 +277,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     allocation = ROOT / "scripts" / "compute_allocation.py"
     fundamentals_script = ROOT / "scripts" / "fetch_fundamentals.py"
     reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
+    pre_trade = ROOT / "scripts" / "pre_trade_check.py"
     lessons_idx = ROOT / "scripts" / "build_lessons_index.py"
     candidates = ROOT / "config" / "candidates.json"
     themes = ROOT / "config" / "themes.json"
@@ -288,6 +289,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
         (allocation, "scripts/compute_allocation.py"),
         (fundamentals_script, "scripts/fetch_fundamentals.py"),
         (reconcile, "scripts/reconcile_portfolio.py"),
+        (pre_trade, "scripts/pre_trade_check.py"),
         (lessons_idx, "scripts/build_lessons_index.py"),
     ]:
         if path.exists():

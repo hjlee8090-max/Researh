@@ -348,10 +348,26 @@ def build_ticker_snapshot(
         if atr14 is not None and last_close
         else None
     )
+    # 오늘자 OHLC(시가/고가/저가/현재가) — 웹 교차확인이 '개장/장중 고가'를 '현재가'로 오인하는 것을
+    # 막기 위한 범위 맥락(policy.price_data_quality.web_verify_guard). 마지막 캔들 날짜가 오늘일 때만 채운다.
+    today_kst = datetime.now(KST).date().isoformat()
+    last_bar = primary_hist[-1] if primary_hist else None
+    today_ohlc = (
+        {
+            "date": last_bar["date"],
+            "open": last_bar.get("open"),
+            "high": last_bar.get("high"),
+            "low": last_bar.get("low"),
+            "close": last_bar.get("close"),
+        }
+        if last_bar and last_bar.get("date") == today_kst
+        else None
+    )
     return {
         "name": meta.get("name", ""),
         "role": meta.get("role", "candidate"),
         "last_close": last_close,
+        "today_ohlc": today_ohlc,
         "sources": [
             {
                 "name": "naver",

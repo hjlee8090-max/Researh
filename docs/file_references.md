@@ -147,10 +147,11 @@
 - `audit_trade_provenance` 가 `check_trade_log_gate.py` 를 subprocess 로 실행해 price_source 누락 + 장중 시간 밖 booking 을 FAIL 로 흡수
 - 쓰기: 없음 (stdout만)
 
-### `scripts/fetch_market_data.py` (신규)
+### `scripts/fetch_market_data.py` (신규, v2.4 today_ohlc 추가)
 - 읽기: `config/portfolio.json` (보유), `config/candidates.json` (후보), `config/policy.json` (`entry_filters.block_if_cumulative_return_below_pct`)
 - 네트워크: 네이버 siseJson 일별 + Yahoo Finance v8 chart JSON (양쪽 시도, 둘 다 실패 시 직전 스냅샷 보존+stale)
 - 쓰기: `state/market_snapshot.json` (GitHub Actions `fetch_prices.yml` 가 수집·커밋, 추적됨)
+- (v2.4) 종목별 `today_ohlc`(시가/고가/저가/현재가, last_date=오늘일 때만) 노출 — 웹 교차확인이 개장/장중 고가를 '현재가'로 오인하는 것을 막는 범위 맥락(`policy.price_data_quality.web_verify_guard`). 이미 수집한 일봉에서 파생, 네트워크 무관.
 
 ### `scripts/check_market_open.py` (신규)
 - 읽기: `config/market_calendar.json`
@@ -247,3 +248,4 @@
 - [ ] (신규) 오늘이 휴장일이면 `check_market_open.py` 결과대로 routine 이 축약 모드로 진행됐는가?
 - [ ] (v2.3) 모든 BUY/SELL 체결의 `ts` 시각이 정규장(09:00~15:30) 안인가? 18시 종가 청산은 `ts=15:30`+`execution_venue=closing_auction` 로 기록됐는가? (`check_trade_log_gate.py` 가 자동 검증 — 위반 시 CI FAIL)
 - [ ] (v2.3) 18시 routine 이 신규 진입(BUY)을 booking 하지 않고 다음 영업일 09시로 이연했는가?
+- [ ] (v2.4) 종목별 '현재가'가 `today_ohlc`(시가/고가/저가)와 함께 제시됐는가? 웹 보강값이 스냅샷 close 대비 ±3% 초과 outlier인데 `today_high` 근처면 버리고 스냅샷을 썼는가? 출처 URL 없는 '○○ 기대감 추정' 촉매 서술이 없는가? (`policy.price_data_quality.web_verify_guard`)

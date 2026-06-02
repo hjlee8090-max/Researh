@@ -40,6 +40,7 @@
 
 ## 1. 종가 확보 및 목표가 검증
 - 보유 종목 각각의 **오늘자 KOSPI 종가**는 `state/market_snapshot.json` 을 1순위 출처로 사용한다 (0-A 에서 `last_date`=오늘 확인 완료). 종가 미반영(`last_date`≠오늘)일 때만 웹 검색으로 보강하고 다중 출처 교차한다.
+- **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 종가 보강을 위해 웹을 쓸 때, 웹 값을 그대로 채택하지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가/현재가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 셋 다 충족 시만 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '장중 고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**(원인 미확인으로 기록), 가격 변동 단독으로 thesis·목표가 오차 분류를 단정하지 않는다. 후보 종목 평가에도 동일 적용.
 - 각 종목에 대해:
   - **종가 vs 목표가 괴리(%)** 계산
   - 정책상 허용 오차 `tolerance_band_pct = 5%` 이내인지 판정

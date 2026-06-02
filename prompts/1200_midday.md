@@ -8,8 +8,9 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
-## 0-A. 영업일 가드
+## 0-A. 영업일 가드 + 장중 세션 가드
 - `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 12시 점검 생략" 1줄만 리포트하고 종료한다.
+- `python scripts/check_market_session.py` 실행. 12시는 **`execution_mode=live`(정규장)** 가 정상이다 (`policy.market_hours`). live 구간이므로 §1-PRE 게이트 통과 후 실시간 체결하고, trade_log 의 BUY/SELL 에 `execution_venue":"regular"` 를 기록한다. mode 가 `live` 가 아니면 실시간 체결을 하지 말고 사용자에게 보고한다.
 
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 이 웹 세션 네트워크가 차단돼 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.

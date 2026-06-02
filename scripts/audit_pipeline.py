@@ -270,9 +270,10 @@ def as_number_simple(value: object) -> float | None:
 
 
 def audit_market_data_tooling(messages: list[str]) -> None:
-    """fetch_market_data.py·check_market_open.py 및 그 입력 설정의 무결성 확인."""
+    """fetch_market_data.py·check_market_open.py·check_market_session.py 및 그 입력 설정의 무결성 확인."""
     fetch = ROOT / "scripts" / "fetch_market_data.py"
     check = ROOT / "scripts" / "check_market_open.py"
+    session_check = ROOT / "scripts" / "check_market_session.py"
     score = ROOT / "scripts" / "score_candidates.py"
     allocation = ROOT / "scripts" / "compute_allocation.py"
     fundamentals_script = ROOT / "scripts" / "fetch_fundamentals.py"
@@ -286,6 +287,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     for path, label in [
         (fetch, "scripts/fetch_market_data.py"),
         (check, "scripts/check_market_open.py"),
+        (session_check, "scripts/check_market_session.py"),
         (score, "scripts/score_candidates.py"),
         (allocation, "scripts/compute_allocation.py"),
         (fundamentals_script, "scripts/fetch_fundamentals.py"),
@@ -406,13 +408,13 @@ def audit_github_notify(messages: list[str]) -> None:
 
 
 def audit_trade_provenance(messages: list[str]) -> None:
-    """check_trade_log_gate.py 를 subprocess 로 실행 — price_source 누락 booking(묵은/미검증 체결)을 FAIL 로 차단.
+    """check_trade_log_gate.py 를 subprocess 로 실행 — price_source 누락(묵은/미검증) + 장중 시간 밖 booking 을 FAIL 로 차단.
 
     위반이 있으면 [FAIL] 을 남겨 audit_pipeline 이 exit 1 → build_and_notify 빌드 실패로 가시화한다.
     """
     script = ROOT / "scripts" / "check_trade_log_gate.py"
     if not script.exists():
-        messages.append(result("WARN", "scripts/check_trade_log_gate.py 없음 — trade provenance 게이트 비활성"))
+        messages.append(result("WARN", "scripts/check_trade_log_gate.py 없음 — trade log 게이트 비활성"))
         return
     proc = subprocess.run([sys.executable, str(script)], capture_output=True, text=True)
     try:
@@ -423,11 +425,15 @@ def audit_trade_provenance(messages: list[str]) -> None:
     violations = payload.get("violations", [])
     if proc.returncode == 0 and not violations:
         messages.append(
-            result("OK", f"trade provenance OK (booking {payload.get('checked', 0)}건 price_source 검증)")
+            result(
+                "OK",
+                f"trade log gate OK (provenance {payload.get('checked', 0)}건 "
+                f"+ timing {payload.get('timing_checked', 0)}건 검증)",
+            )
         )
     else:
         for v in violations[:5]:
-            messages.append(result("FAIL", f"trade provenance: {v}"))
+            messages.append(result("FAIL", f"trade log gate: {v}"))
         if not violations and proc.returncode != 0:
             messages.append(result("WARN", "check_trade_log_gate 비정상 종료(violation 미보고)"))
 

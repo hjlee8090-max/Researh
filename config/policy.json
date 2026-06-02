@@ -1,7 +1,8 @@
 {
-  "version": "2.2",
-  "last_updated": "2026-06-01",
+  "version": "2.3",
+  "last_updated": "2026-06-02",
   "changelog": [
+    "2.3: 장중 시간(세션) 정책 신설(market_hours) — 직전까지 영업일(요일/공휴일)만 판정하고 '시각(time-of-day)'은 보지 않아 한국장 거래 시간(정규장 09:00~15:30) 밖의 체결이 trade_log 에 기록됐다(2026-06-01 SELL_ORANGE_STOP 의 ts=18:00 — 종가 도달 손절을 routine 실행 시각 18시로 booking). ①config/market_calendar.json 에 sessions(정규장·개장/마감 동시호가·시간외·반장) 추가. ②scripts/check_market_session.py 신설 — check_market_open(영업일)의 '시각' 짝꿍 가드로 현재 세션(pre_open/opening_auction/regular/closing_auction/post_close/closed_holiday)과 execution_mode(live/closing_price/none)를 산출, 각 routine 0-A 에서 호출. ③market_hours.rules: 현재가(시장가) 체결은 live(정규장)에서만, 마감(15:30) 후 신규 진입·추가매수 금지(다음 영업일 09시 이연), 18시 routine 은 '종가 기준' 손절/목표/트레일링 청산만 booking 하고 그 항목의 ts 는 18:00 이 아니라 마감 동시호가(15:30)로 기록하며 execution_venue=closing_auction 명시. ④trade_timing_gate — check_trade_log_gate.py 를 확장해 체결 ts 시각이 정규장 밖이면 CI FAIL(audit_pipeline + auto_merge_routines), 단 execution_venue=closing_auction 인 SELL(EOD 종가 청산)은 예외. enforced_since=2026-06-02(이전 booking grandfather). 시간외 단일가(16:00~18:00)는 일봉 기반 시뮬에서 모델링하지 않음.",
     "2.2: 리스크 상한 우선·매매 직전 재검증·평가 버그 수정. ①단일거래 리스크 상한(max_single_trade_risk_pct_of_equity, 1.5%)을 사이징의 '하드 천장'으로 명문화 — position_sizing.sizing_rule_v2 를 max((a)리스크,(b)목표비중) 에서 min((a),(b)) 로 바꾸고 single_trade_risk_cap.is_hard_ceiling=true 추가. deploy 로 현금을 소진하는 방법은 단일 종목 오버사이징이 아니라 빈 슬롯 추가 진입(breadth)이며, 후보가 부족하면 현금을 남긴다(자본보존>완전배치). 고가주 floor +1 보정도 리스크 상한·35% 비중을 모두 지킬 때만 허용. (2026-06-01 삼성전자 4주=equity 2.6% 리스크가 1.5% 상한을 deploy 우선으로 초과한 사례.) ②매매 booking 직전 재동기화·재검증 게이트 신설(price_data_quality.pre_trade_gate + scripts/pre_trade_check.py) — 스케줄 fetch 가 routine 의 0-1 pull 직후 도착하는 레이스로 묵은 스냅샷에 신규매수가 체결되던 문제(2026-06-01 5/29 종가로 삼성 booking, 신선본은 09:13·10:37 별도 커밋) 차단. ③new_entry_freshness_rule — 신규/추가 매수는 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결, 'booking 후 재확인' 조건부 체결 금지. ④compute_allocation.py 평가금액 버그 수정(market_value/current_price 필드명 — 진입가로 비중 계산하던 것을 현재가 기준으로) + reconcile_portfolio.py 에 평가금액 산식·스냅샷 괴리 점검(valuation_checks) 추가. ⑤(2026-06-01 후속·사용자 결정) 단일거래 상한 1.5→2.0% 상향 + 포트폴리오 히트 예산(portfolio_heat_budget_pct_of_equity=6.0%) 도입 — 전 포지션 합산 손절위험(open risk)을 6%로 캡. compute_allocation.py 가 allocation.portfolio_heat(current/budget/remaining)를 산출하고, 사이징은 min((a)단일상한,(b)목표비중,(c)히트잔여)로 확장. 강세장 완전배치 한계를 종목 수(breadth)로 풀되 누적 리스크를 통제.",
     "2.1: 가격 데이터 노화(age) 추적·차등 적용. 직전까지 stale 키(직접 수집 실패)만 보고 '수집 시각 vs routine 실행 시각' 나이(age)는 무시 — GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 데이터처럼 매매에 썼다(stale_after_minutes:20 은 강제되지 않는 죽은 파라미터였음). ①compute_allocation 이 snapshot_age_min·freshness(fresh≤20분/acceptable≤75분/stale_intraday) 산출. ②price_data_quality.data_freshness 신설 — 손절선·단계경보(orange/red) ±3%·목표가 ±2% 임계 근접 종목은 freshness 가 fresh 가 아니면 웹 실시간 1회 교차확인 후 체결(묵은 가격에 의한 손절 지연 방지). ③0900/1200/1500 에 신선도 점검·손절 안전망, 1500 마감 임박 특례(동시각 수집 우선) 추가.",
     "2.0: 현금 단방향 누적·과소 매수 해소 패치. ①medium confidence 에서도 NEW_ENTRY/SCALE_IN 허용(축소비중·R/R+0.1) — 매도만 집행되고 매수는 high 를 요구하던 비대칭 제거(price_data_quality.allowed_actions_by_confidence). ②사이징을 리스크기반·목표비중 중 '큰 쪽' 채택, deploy 시 종목당 배분액(compute_allocation.per_new_position_krw) 우선·고가주 floor 반올림 보정(position_sizing.sizing_method). ③레짐 적응형 R/R 하한(strong_bull 1.0 … deep_bear 1.6)·강세 tier 목표가 상향으로 '이미 오른 모멘텀주가 R/R<1.2 로 진입 봉쇄되던' 역설 해소(reward_risk_management.regime_adaptive_rr). ④후보 풀 확대(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭)+주식 비중<목표 하한이고 빈 슬롯 있으면 신규 후보 자동 발굴 의무(0900 분기 C).",
@@ -206,6 +207,40 @@
       "target_proximity_pct": 2.0,
       "action_on_proximity_when_not_fresh": "보유 종목이 스냅샷 가격 기준으로 손절선·orange(-7%)·red(-10%) 임계의 stop_loss_proximity_pct(±3%) 안이거나 목표가의 target_proximity_pct(±2%) 안인데 freshness 가 fresh 가 아니면, 묵은 스냅샷 가격으로 즉시 체결·단계판정하지 말고 웹검색 실시간 가격을 1회 교차확인한 뒤 그 가격으로 판정한다. 이는 '1시간 전 가격이 -6%(yellow) 였는데 실제로는 이미 -11% 를 뚫어 손절이 늦게·더 깊게 체결되던' 위험(기아 5/20 패턴)을 막기 위함이다.",
       "note": "1시간 지연은 의도된 수집 정책의 결과이므로 매매를 '차단'하지 않고 '인지·보정'한다. age 가 큰 것 자체로 confidence 를 강등하지 않는다 — confidence(2출처 일치)와 freshness(나이)는 별개 축이며, 둘을 함께 표기한다."
+    }
+  },
+
+  "market_hours": {
+    "purpose": "v2.3 — 장중 시간(세션) 정책. 직전까지 영업일(요일/공휴일)만 판정하고 '시각'은 보지 않아, 18시 routine 이 종가 도달 손절을 routine 실행 시각(18:00)으로 체결 기록하는 등 한국장 거래 시간(정규장 09:00~15:30) 밖의 체결이 trade_log 에 남았다(2026-06-01 SELL_ORANGE_STOP ts=18:00). 정규장에서만 실시간 체결을 허용하고, 마감 후 routine 은 종가 기준 청산만 하도록 명문화한다.",
+    "timezone": "Asia/Seoul",
+    "calendar_sessions_ref": "config/market_calendar.json.sessions (정규장 09:00~15:30·개장/마감 동시호가·시간외·반장)",
+    "guard_script": "scripts/check_market_session.py",
+    "regular_session": {"open": "09:00", "close": "15:30"},
+    "execution_mode_by_slot": {
+      "00:00": "none (글로벌 야간 — 한국장 폐장, 거래 없음)",
+      "09:00": "live (정규장 개장)",
+      "12:00": "live (정규장 장중)",
+      "15:00": "live (정규장 — 15:20~15:30 은 마감 동시호가=종가 단일가 체결)",
+      "18:00": "closing_price (마감 후 — 종가 기준 청산만)"
+    },
+    "rules": {
+      "live_execution_only_in_regular_session": "현재가(시장가) 기준 신규 진입·청산은 execution_mode=live(정규장 09:00~15:30, 동시호가 포함)에서만 booking 한다. 각 routine 0-A 에서 scripts/check_market_session.py 를 실행해 mode 를 확인하고, mode 가 live 가 아니면 실시간 체결을 하지 않는다.",
+      "no_new_entry_after_close": "정규장 마감(15:30) 후에는 신규 진입(NEW_ENTRY)·추가매수(SCALE_IN)를 booking 하지 않는다 — 다음 영업일 09시로 이연한다. 18시 routine 은 평가·종가 청산 전용이다.",
+      "eod_settlement": "마감 후(post_close) 18시 routine 은 손절/목표/트레일링스톱에 '종가 기준'으로 도달한 종목의 청산만 booking 한다(execution_mode=closing_price). 청산가는 확정 종가 기준(갭으로 종가가 손절가를 관통했으면 종가, 장중 손절선 도달분은 해당 09/12/15 routine 에서 이미 실시간 체결).",
+      "eod_settlement_timestamp": "종가 청산 trade_log 항목의 ts 는 routine 실행 시각(18:00)이 아니라 정규장 마감 동시호가 시각(해당일 regular.close=15:30, 반장이면 그 close)으로 기록하고 execution_venue=\"closing_auction\" 을 명시한다. 이로써 '18시에 거래가 일어난 것처럼' 보이는 기록을 없앤다. trade_timing_gate 가 이 규칙을 CI 에서 강제한다.",
+      "after_hours_not_modeled": "시간외 단일가매매(16:00~18:00)는 일봉 기반 본 시뮬레이션에서 모델링하지 않는다. 모든 마감 후 체결은 종가 기준 closing_auction 으로만 처리한다.",
+      "intraday_closing_auction_note": "09/12/15 routine 은 live 구간이므로 기존 사이징·게이트(pre_trade_gate 등) 그대로 실시간 체결한다. 단 15:20~15:30 은 마감 동시호가이므로, 15시 routine 의 신규/시장가 주문은 '동시호가=종가 단일가 체결'임을 인지한다(15:00 시점은 정규 체결, 15:20 이후 제출분은 종가 체결)."
+    },
+    "trade_timing_gate": {
+      "enabled": true,
+      "purpose": "v2.3 — market_hours.rules 를 CI 에서 하드 강제하는 마지막 안전장치(trade_provenance_gate 와 동일 패턴). 프롬프트가 무시돼도 장중 시간 밖 체결이 main 에 도달하지 못하게 한다.",
+      "script": "scripts/check_trade_log_gate.py (audit_pipeline + auto_merge_routines 가 실행)",
+      "enforced_since": "2026-06-02",
+      "regular_session": {"open": "09:00", "close": "15:30"},
+      "allowed_eod_venues": ["closing_auction"],
+      "rule": "체결(BUY/SELL 계열) ts 의 시각이 정규장(09:00~15:30, 경계 포함) 밖이면 위반. 단 execution_venue ∈ allowed_eod_venues(closing_auction) 인 SELL 계열(EOD 종가 청산)은 예외로 허용하되, 그 ts 시각은 마감 동시호가(15:30)로 기록되어야 한다. BUY(신규/추가매수)는 정규장 밖이면 예외 없이 위반(마감 후 신규진입 금지).",
+      "note": "enforced_since 이전 ts 의 booking 은 grandfather(소급 미적용 — 기존 trade_log 보존). 2026-06-01 SELL_ORANGE_STOP(ts=18:00, 종가 기준)은 grandfather 되며, 이후 EOD 청산은 ts=15:30 + execution_venue=closing_auction 규칙을 따른다. EOD_EVAL/OPEN_CHECK/MIDDAY_CHECK/HOLD 등 비체결 액션은 대상 아님(BUY/SELL 계열만 — reconcile_portfolio 분류 재사용).",
+      "enforced_by": ["scripts/check_trade_log_gate.py", "scripts/audit_pipeline.py(audit_trade_provenance)", ".github/workflows/auto_merge_routines.yml"]
     }
   },
 

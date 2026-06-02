@@ -7,8 +7,9 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
-## 0-A. 영업일 가드
+## 0-A. 영업일 가드 + 장중 세션 가드
 - `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 15시 점검 생략" 1줄만 리포트하고 종료한다.
+- `python scripts/check_market_session.py` 실행. 15:00 은 **`execution_mode=live`(정규장)** 이나, **15:20~15:30 은 마감 동시호가(`session=closing_auction`)** 이므로 그 구간(또는 그 이후 제출분)의 신규/시장가 주문은 '동시호가=종가 단일가 체결'임을 인지한다(`policy.market_hours.rules.intraday_closing_auction_note`). 15:00 시점 실시간 체결은 trade_log 에 `execution_venue":"regular"`, 15:20 이후 종가 체결분은 `execution_venue":"closing_auction"` 으로 기록한다. mode 가 `live`/`closing_price` 가 아니면 체결하지 않는다.
 
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 네트워크 차단으로 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.

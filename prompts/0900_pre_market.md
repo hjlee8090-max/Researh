@@ -20,6 +20,7 @@
   - 0-B 단계(시장 데이터 수집) 는 건너뛴다.
   - 끝에 `chore(09:00 ...): 휴장` 메시지로 commit/push 후 종료.
 - `is_open=true`: 정상 진행 (0-B 단계로).
+- **장중 세션 가드**: `python scripts/check_market_session.py` 를 실행한다. 09시는 **`execution_mode=live`(정규장)** 가 정상이다 (`policy.market_hours`). live 구간이므로 신규/추가 매수·청산은 §2-PRE 게이트 통과 후 실시간(현재가) 체결한다. 이때 trade_log 의 BUY/SELL 항목에는 `execution_venue":"regular"` 를 기록한다(정규장 체결). mode 가 `live` 가 아니면(예외적 시각) 실시간 체결을 하지 말고 사용자에게 보고한다.
 
 ## 0-B. 시장 데이터 스냅샷 수집 (영업일에만)
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
@@ -211,8 +212,9 @@
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신
    - `state/trade_log.jsonl`에 라인 추가:
-     `{"ts":"2026-05-20T09:05:00+09:00","action":"BUY","ticker":"...","name":"...","price":...,"shares":...,"cash_after":...,"price_source":"snapshot_fresh|web_verified","verify_url":"(web_verified 시 필수)","reason":"..."}`
+     `{"ts":"2026-05-20T09:05:00+09:00","action":"BUY","ticker":"...","name":"...","price":...,"shares":...,"cash_after":...,"price_source":"snapshot_fresh|web_verified","verify_url":"(web_verified 시 필수)","execution_venue":"regular","reason":"..."}`
      - **`price_source` 필수**(`snapshot_fresh`=fresh 스냅샷가 / `web_verified`=웹 교차확인가). `web_verified` 면 `verify_url`·확인 시각도 기록. **누락 시 `scripts/check_trade_log_gate.py` 가 CI(build_and_notify 빌드·auto_merge 병합)에서 차단**(2026-06-02부터, `policy.price_data_quality.trade_provenance_gate`). 프롬프트의 §2-PRE 를 건너뛰어도 묵은 가격 체결이 main 에 도달하지 못하게 하는 하드 안전장치다.
+     - **`execution_venue` 권장**(`regular`=정규장 실시간 체결). 09시 체결은 `regular` 다. 마감 후 종가 청산만 `closing_auction`(18시 routine 전용). `ts` 시각이 정규장(09:00~15:30) 밖인데 `execution_venue`≠`closing_auction` 이면 `check_trade_log_gate.py` 가 "장중 시간 밖 체결"로 CI FAIL 시킨다(`policy.market_hours.trade_timing_gate`).
    - 신규 매수 시 `weekly_plan.weekly_thesis` 중 어떤 thesis와 연결되는지 `weekly_thesis_id`를 반드시 기록한다.
 
 ### B. watchlist가 이미 있는 경우 (이후 영업일)

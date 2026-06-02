@@ -1,9 +1,19 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "market": "KRX",
   "timezone": "Asia/Seoul",
-  "last_updated": "2026-05-22",
-  "note": "KRX 한국거래소 휴장일. 정규 영업일 외 토·일은 자동 휴장. 임시공휴일·연말폐장은 KRX 공식 공고 기준 추가 보강. 09시 routine이 시작 시 scripts/check_market_open.py 로 영업일 여부 확인.",
+  "last_updated": "2026-06-02",
+  "note": "KRX 한국거래소 휴장일 + 장중 세션(거래 시간). 정규 영업일 외 토·일은 자동 휴장. 임시공휴일·연말폐장은 KRX 공식 공고 기준 추가 보강. 영업일 판정은 scripts/check_market_open.py, 장중 시각(세션) 판정은 scripts/check_market_session.py 가 각 routine 0-A 단계에서 호출.",
+  "sessions": {
+    "timezone": "Asia/Seoul",
+    "preopen_auction": {"start": "08:30", "end": "09:00", "note": "장 시작 동시호가 — 시가(09:00)를 단일가로 결정"},
+    "regular": {"open": "09:00", "close": "15:30", "note": "정규장 — 실시간(현재가) 체결이 가능한 유일한 구간"},
+    "closing_auction": {"start": "15:20", "end": "15:30", "note": "장 마감 동시호가 — 종가를 단일가로 결정. 이 구간(또는 그 이전) 제출 주문이 종가로 체결된다"},
+    "after_hours_single_price": {"start": "16:00", "end": "18:00", "modeled": false, "note": "시간외 단일가매매(정규장 종가 ±제한). 본 일봉 기반 시뮬레이션에서는 모델링하지 않는다 — EOD 청산은 종가 기준으로만 처리"},
+    "tradable_window_for_sim": {"open": "09:00", "close": "15:30", "note": "시뮬레이션에서 실시간 신규/시장가 체결을 허용하는 유일한 시각 구간. 마감(15:30) 후 신규 진입은 다음 영업일 09시로 이연하고, 종가 도달 손절/목표/트레일링은 마감 동시호가(15:30) 기준으로만 청산한다"}
+  },
+  "half_days": [],
+  "half_day_note": "반장(단축거래일·연말 폐장일 등 조기 마감)이 있으면 {\"date\":\"YYYY-MM-DD\",\"close\":\"12:30\",\"closing_auction\":\"12:20\",\"name\":\"...\"} 형식으로 추가한다(KRX 공고 기준). scripts/check_market_session.py 가 해당일에는 이 close 를 정규장 마감으로 우선 적용한다.",
   "holidays_2026": [
     {"date": "2026-01-01", "name": "신정"},
     {"date": "2026-02-16", "name": "설날 연휴"},

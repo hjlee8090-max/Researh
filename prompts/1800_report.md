@@ -6,8 +6,11 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
-## 0-A. 영업일 가드 + 종가 데이터 수집
+## 0-A. 영업일 가드 + 장중 세션 가드 + 종가 데이터 수집
 - `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 종가 평가 생략" 으로 18시 routine 을 축약 모드로 진행 (다음 영업일 액션 플랜만 작성, 포트폴리오 history append 보류).
+- `python scripts/check_market_session.py` 실행. 18시는 **`execution_mode=closing_price`(정규장 마감 후)** 가 정상이다 (`policy.market_hours`). 이 시각에는:
+  - **현재가(시장가) 기준 신규 진입(NEW_ENTRY)·추가매수(SCALE_IN)를 booking 하지 않는다** — 발굴한 후보는 "내일 액션 플랜"에 메모만 하고 **다음 영업일 09시로 이연**한다 (`market_hours.rules.no_new_entry_after_close`).
+  - 허용되는 체결은 손절/목표/트레일링스톱에 **종가 기준으로 도달한 종목의 청산**뿐이다(아래 §1).
 - 영업일이면 `python scripts/fetch_market_data.py` 를 실행해 보유·후보 종목의 **확정 종가**를 `state/market_snapshot.json` 에 기록한다.
 - **종가 반영 지연 주의**: 네이버/Yahoo Finance 일별 캔들은 한국장 마감(15:30) 후 1~3시간 지연 후 갱신될 수 있다. 18시 실행 시 `market_snapshot.json` 의 보유 종목 `sources[*].last_date` 가 **오늘 날짜인지** 반드시 확인.
   - 오늘 날짜 ✓ → 스냅샷 종가를 1순위 출처로 사용.
@@ -44,7 +47,11 @@
 - 손절가 / 목표가 도달했다면 **종가 기준 가상 청산 체결** 처리
   - 매도가 = 종가 × (1 - slippage 0.002 - tax 0.0018 - commission 0.00015)
   - `portfolio.json`의 cash·positions·realized_pnl·win/loss_count 갱신
-  - `state/trade_log.jsonl`에 라인 추가
+  - `state/trade_log.jsonl`에 라인 추가. **(v2.3 장중 시간 규칙)** 18시는 장 마감 후이므로 이 청산은 마감 동시호가(15:30)에 일어난 것으로 본다:
+    - `ts` 는 routine 실행 시각(18:00)이 아니라 **정규장 마감 시각 `YYYY-MM-DDT15:30:00+09:00`** 로 기록한다 (반장이면 그 close).
+    - `execution_venue":"closing_auction"` 을 **반드시** 포함한다. 이것이 없으면 `scripts/check_trade_log_gate.py` 가 "정규장 밖 체결"로 CI FAIL 시킨다 (`policy.market_hours.trade_timing_gate`).
+    - 예: `{"ts":"2026-06-01T15:30:00+09:00","action":"SELL_ORANGE_STOP","ticker":"...","execution_venue":"closing_auction","price_source":"snapshot_fresh|web_verified","close_price":...,"execution_price":...,"reason":"orange 단계 종가 확정 — ..."}`
+  - **장중에 손절선을 이미 통과한 종목**은 09/12/15 routine 에서 실시간 체결됐어야 한다 — 18시는 그날 종가로 비로소 손절/목표에 도달한 분만 종가 청산한다.
 
 ## 2. 포트폴리오 평가
 종가 기준으로:

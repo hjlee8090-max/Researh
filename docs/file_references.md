@@ -3,6 +3,11 @@
 이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
 시간대별 리포트 분리 + 시장 데이터 자동 수집 + 휴장일 가드 작업 이후 갱신.
 
+> **신규 추가 (2026-06-02, v2.3 장중 시간 정책)**
+> - `config/market_calendar.json.sessions` — KRX 장중 세션(정규장 09:00~15:30·동시호가·시간외·반장)
+> - `scripts/check_market_session.py` — 장중 세션·execution_mode 판정 (모든 평일 routine 0-A 에서 호출)
+> - `policy.market_hours` + `trade_timing_gate` — 마감 후 신규진입 금지·종가 청산은 ts=15:30+execution_venue=closing_auction, CI 하드 강제
+>
 > **신규 추가 (2026-05-22)**
 > - `config/candidates.json` — 신규 진입 후보 종목 목록
 > - `config/market_calendar.json` — KRX 휴장일 캘린더
@@ -138,19 +143,27 @@
 ## 4. 보조 스크립트의 참조 구조
 
 ### `scripts/audit_pipeline.py`
-- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py` 존재 확인
+- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py`·`scripts/check_market_session.py`·`scripts/check_trade_log_gate.py` 존재 확인
+- `audit_trade_provenance` 가 `check_trade_log_gate.py` 를 subprocess 로 실행해 price_source 누락 + 장중 시간 밖 booking 을 FAIL 로 흡수
 - 쓰기: 없음 (stdout만)
 
-### `scripts/fetch_market_data.py` (신규)
+### `scripts/fetch_market_data.py` (신규, v2.4 today_ohlc 추가)
 - 읽기: `config/portfolio.json` (보유), `config/candidates.json` (후보), `config/policy.json` (`entry_filters.block_if_cumulative_return_below_pct`)
 - 네트워크: 네이버 siseJson 일별 + Yahoo Finance v8 chart JSON (양쪽 시도, 둘 다 실패 시 직전 스냅샷 보존+stale)
 - 쓰기: `state/market_snapshot.json` (GitHub Actions `fetch_prices.yml` 가 수집·커밋, 추적됨)
+- (v2.4) 종목별 `today_ohlc`(시가/고가/저가/현재가, last_date=오늘일 때만) 노출 — 웹 교차확인이 개장/장중 고가를 '현재가'로 오인하는 것을 막는 범위 맥락(`policy.price_data_quality.web_verify_guard`). 이미 수집한 일봉에서 파생, 네트워크 무관.
 
 ### `scripts/check_market_open.py` (신규)
 - 읽기: `config/market_calendar.json`
 - 인자: `--date YYYY-MM-DD` (옵션, 생략 시 오늘 KST)
 - 출력: stdout JSON 1줄 + exit code (0=영업일, 10=주말, 11=공휴일)
 - 모든 평일 routine 의 0-A 단계 가드. 휴장 시 routine 은 축약 모드 진행 또는 종료.
+
+### `scripts/check_market_session.py` (신규 v2.3)
+- 읽기: `config/market_calendar.json.sessions`(+ `check_market_open` 영업일 판정 재사용), `policy.market_hours`
+- 인자: `--date YYYY-MM-DD`, `--at HH:MM`, `--now ISO8601` (테스트용 임의 시각)
+- 출력: stdout JSON 1줄(session·execution_mode·live_trading_allowed·eod_settlement_allowed) + exit code (0=live, 20=closing_price, 21=none(장 시작 전), 30=closed(비영업일))
+- `check_market_open`(영업일)의 '시각' 짝꿍 가드. 모든 평일 routine 0-A 에서 호출해 현재 세션(pre_open/opening_auction/regular/closing_auction/post_close)과 허용 체결 모드를 판정. 18시(post_close)는 `closing_price` — 신규진입 금지·종가 청산만(`policy.market_hours`).
 
 ### `scripts/score_candidates.py` (신규)
 - 읽기: `config/candidates.json`, `config/weekly_plan.json`, `state/market_snapshot.json`, `config/policy.json`
@@ -168,10 +181,13 @@
 - 출력: stdout JSON(`verdict`) + exit code (0=ok/live_verify, 1=block/resync)
 - **매매(booking) 직전 게이트**(`policy.price_data_quality.pre_trade_gate`). freshness·점수/비중 스냅샷 동기화·장부/평가 정합성을 점검해 `ok`/`live_verify_required`/`resync_required`/`block` 판정. 09/12/15 routine 의 §2-PRE(1-PRE/0-C) 에서 모든 BUY/SELL 직전 호출. 2026-06-01 묵은 스냅샷 신규매수 레이스 재발 방지.
 
-### `scripts/check_trade_log_gate.py` (신규 v2.2)
+### `scripts/check_trade_log_gate.py` (신규 v2.2, 확장 v2.3)
 - 읽기: `state/trade_log.jsonl`, `config/policy.json` (+ `reconcile_portfolio` BUY/SELL 분류 재사용)
-- 출력: stdout JSON + exit code (0=통과, 1=위반)
-- **trade provenance 하드 게이트**(`policy.price_data_quality.trade_provenance_gate`). `price_source_required_since`(2026-06-02) 이후 booking 항목에 `price_source`(snapshot_fresh|web_verified) 누락 시 exit 1. `auto_merge_routines.yml` 가 병합 전 실행해 위반 커밋의 main 병합을 차단하고, `audit_pipeline.py(audit_trade_provenance)` 가 build_and_notify 빌드를 FAIL 시킨다. 프롬프트(pre_trade_gate)를 우회한 묵은/미검증 체결의 마지막 방어선.
+- 출력: stdout JSON(`provenance_violations`+`timing_violations`+통합 `violations`+`ok`) + exit code (0=통과, 1=위반)
+- **trade log 하드 게이트 — 두 검사를 한 번에**:
+  - (1) **provenance**(`policy.price_data_quality.trade_provenance_gate`): `price_source_required_since`(2026-06-02) 이후 booking 에 `price_source`(snapshot_fresh|web_verified) 누락 시 위반.
+  - (2) **timing**(`policy.market_hours.trade_timing_gate`, v2.3): `enforced_since`(2026-06-02) 이후 체결 ts 시각이 정규장(09:00~15:30) 밖이면 위반. 단 `execution_venue=closing_auction` 인 SELL(EOD 종가 청산)은 예외, BUY(마감 후 신규진입)는 예외 없음.
+- `auto_merge_routines.yml` 가 병합 전 실행해 위반 커밋의 main 병합을 차단하고, `audit_pipeline.py(audit_trade_provenance)` 가 build_and_notify 빌드를 FAIL 시킨다. 프롬프트(pre_trade_gate·market_hours)를 우회한 묵은/미검증·장외 체결의 마지막 방어선.
 
 ### `scripts/build_lessons_index.py` (신규)
 - 읽기: `state/lessons.md`
@@ -230,3 +246,6 @@
 - [ ] 일요일 21:00 archive 가 매주 생성되어 평일 routine 콘텍스트가 한 주치 응축으로 유지되는가?
 - [ ] (신규) `state/market_snapshot.json` 의 `as_of` 가 최신 routine 시각과 일치하는가? 보유종목 `confidence` 가 모두 `low` 면 출처 차단 신호.
 - [ ] (신규) 오늘이 휴장일이면 `check_market_open.py` 결과대로 routine 이 축약 모드로 진행됐는가?
+- [ ] (v2.3) 모든 BUY/SELL 체결의 `ts` 시각이 정규장(09:00~15:30) 안인가? 18시 종가 청산은 `ts=15:30`+`execution_venue=closing_auction` 로 기록됐는가? (`check_trade_log_gate.py` 가 자동 검증 — 위반 시 CI FAIL)
+- [ ] (v2.3) 18시 routine 이 신규 진입(BUY)을 booking 하지 않고 다음 영업일 09시로 이연했는가?
+- [ ] (v2.4) 종목별 '현재가'가 `today_ohlc`(시가/고가/저가)와 함께 제시됐는가? 웹 보강값이 스냅샷 close 대비 ±3% 초과 outlier인데 `today_high` 근처면 버리고 스냅샷을 썼는가? 출처 URL 없는 '○○ 기대감 추정' 촉매 서술이 없는가? (`policy.price_data_quality.web_verify_guard`)

@@ -8,8 +8,9 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
-## 0-A. 영업일 가드
+## 0-A. 영업일 가드 + 장중 세션 가드
 - `python scripts/check_market_open.py` 실행. `is_open=false` 이면 "휴장 — 12시 점검 생략" 1줄만 리포트하고 종료한다.
+- `python scripts/check_market_session.py` 실행. 12시는 **`execution_mode=live`(정규장)** 가 정상이다 (`policy.market_hours`). live 구간이므로 §1-PRE 게이트 통과 후 실시간 체결하고, trade_log 의 BUY/SELL 에 `execution_venue":"regular"` 를 기록한다. mode 가 `live` 가 아니면 실시간 체결을 하지 말고 사용자에게 보고한다.
 
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 이 웹 세션 네트워크가 차단돼 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
@@ -19,6 +20,7 @@
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다. 스냅샷이 `high`/`medium` 이면 그대로 high/medium 으로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 에 남아 있는 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류의 레거시 서술을 **이월·복제하지 않는다** (해당 이슈는 2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨).
 - `stale` 키가 있으면 "직전 정기 수집본"임을 1줄 명시하되 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.**
 - **(v2.1 신선도)** `state/allocation.json` 의 `snapshot_age_min`·`freshness`(fresh≤20분/acceptable≤75분/stale_intraday)를 "한눈에 보기"에 "데이터 신선도: N분 전, 등급" 1줄로 표기한다. 1시간 전 수집이라 장중엔 보통 acceptable~stale_intraday 다 — 아래 §2 단계경보의 임계 근접 종목은 묵은 가격을 그대로 믿지 말고 웹 실시간 1회 교차확인한다. `freshness` 는 `confidence` 와 **별개 축**(age 로 confidence 강등 안 함).
+- **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 위 웹 실시간 교차확인 값을 그대로 현재가로 쓰지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 셋 다 충족 시만 채택, 아니면 스냅샷 `close` 보수 채택. **`today_high` 근처 값이면 '고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**, 가격 변동 단독으로 thesis 판정 금지. 보유+후보 동일(2026-06-02 현대차 사고 방지).
 - 스냅샷 confidence 가 실제로 `low` (또는 전 종목 low)일 때만 매매 차단(`policy.price_data_quality.block_trade_if_confidence_below`)을 적용한다.
 
 ## 0. 컨텍스트 적재

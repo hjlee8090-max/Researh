@@ -23,7 +23,7 @@ config/
   watchlist.json           현재 추천 3종목 + 진입가·목표가·손절가·코멘트
   weekly_plan.json         이번 주 thesis·watch_items·invalidation_triggers
   candidates.json          신규 진입 후보 목록 (fetch_market_data가 5거래일 추세 자동 수집 대상)
-  market_calendar.json     KRX 휴장일 — 모든 평일 routine의 0-A 단계에서 영업일 가드로 사용
+  market_calendar.json     KRX 휴장일 + 장중 세션(정규장 09:00~15:30·동시호가) — 0-A 영업일·세션 가드
 state/
   lessons.md               자기보완 학습 노트 (오차 사유 누적)
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
@@ -57,6 +57,7 @@ docs/
 scripts/
   fetch_market_data.py     네이버 + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
+  check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
   build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
@@ -76,7 +77,7 @@ scripts/
 | 09:00 | 자정 예측 검증 + 미국장 마감(05:00)까지 흐름 + 한국 개장 인사이트 | `reports/YYYY-MM-DD-09.md` |
 | 12:00 | 장중 점검 (단계 경보·함정 패턴 cross-check) | `reports/YYYY-MM-DD-12.md` |
 | 15:00 | 마감 임박 점검, 종가 임박치로 1차 검증, 익일 09시 액션 후보 정리 | `reports/YYYY-MM-DD-15.md` |
-| 18:00 | 종가 확정 → 목표가 오차 판정 → lessons.md 갱신, 포트폴리오 평가·체결, 종합 리포트 | `reports/YYYY-MM-DD-18.md` |
+| 18:00 | (마감 후) 종가 확정 → 목표가 오차 판정 → lessons.md 갱신, 포트폴리오 평가, **종가 청산만**(ts=15:30·closing_auction, 신규진입은 09시 이연), 종합 리포트 | `reports/YYYY-MM-DD-18.md` |
 
 **주말**
 

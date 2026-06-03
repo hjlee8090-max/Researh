@@ -281,6 +281,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     pre_trade = ROOT / "scripts" / "pre_trade_check.py"
     trade_gate = ROOT / "scripts" / "check_trade_log_gate.py"
     lessons_idx = ROOT / "scripts" / "build_lessons_index.py"
+    lessons_applied = ROOT / "scripts" / "check_lessons_applied.py"
     candidates = ROOT / "config" / "candidates.json"
     themes = ROOT / "config" / "themes.json"
     calendar = ROOT / "config" / "market_calendar.json"
@@ -295,6 +296,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
         (pre_trade, "scripts/pre_trade_check.py"),
         (trade_gate, "scripts/check_trade_log_gate.py"),
         (lessons_idx, "scripts/build_lessons_index.py"),
+        (lessons_applied, "scripts/check_lessons_applied.py"),
     ]:
         if path.exists():
             messages.append(result("OK", f"{label} present"))
@@ -407,6 +409,37 @@ def audit_github_notify(messages: list[str]) -> None:
         messages.append(result("WARN", "notification triggers incomplete: " + ", ".join(missing)))
 
 
+def audit_lessons_applied(messages: list[str]) -> None:
+    """check_lessons_applied.py 를 실행 — lessons.md 의 자기-인지 미반영 교훈(명문화 필요·미적용 등 +
+    반복 마커)이 policy/prompts 에 실제 반영됐는지 대조한다(v2.5).
+
+    hard 미반영은 WARN 으로 표면화(자기보완 루프가 교훈을 드롭하던 갭을 매 감사에서 노출).
+    하드 차단(FAIL)을 원하면 워크플로우에서 LESSONS_ENFORCE=1 로 이 스크립트를 별도 게이트로 돌린다.
+    """
+    script = ROOT / "scripts" / "check_lessons_applied.py"
+    if not script.exists():
+        messages.append(result("WARN", "scripts/check_lessons_applied.py 없음 — 교훈 반영 점검 비활성"))
+        return
+    proc = subprocess.run([sys.executable, str(script)], capture_output=True, text=True)
+    payload_path = ROOT / "state" / "lessons_applied.json"
+    try:
+        payload = json.loads(payload_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        messages.append(result("WARN", "lessons_applied.json 파싱 실패 — 교훈 반영 점검 건너뜀"))
+        return
+    hard = payload.get("open_items_hard", [])
+    soft = payload.get("open_items_soft", [])
+    if hard:
+        for it in hard[:3]:
+            messages.append(result("WARN", f"교훈 미반영(반복): {it.get('section')} — policy/prompt 에 강제 필요"))
+        if len(hard) > 3:
+            messages.append(result("WARN", f"교훈 미반영(반복) 외 {len(hard) - 3}건 더 — state/lessons_applied.json 참조"))
+    elif soft:
+        messages.append(result("INFO", f"교훈 미반영(단발) {len(soft)}건 — sunday_policy_review 에서 검토"))
+    else:
+        messages.append(result("OK", "lessons.md 자기-인지 미반영 교훈 없음(또는 모두 policy/prompt 반영됨)"))
+
+
 def audit_trade_provenance(messages: list[str]) -> None:
     """check_trade_log_gate.py 를 subprocess 로 실행 — price_source 누락(묵은/미검증) + 장중 시간 밖 booking 을 FAIL 로 차단.
 
@@ -444,6 +477,7 @@ def main() -> int:
     data = audit_json_files(messages)
     audit_trade_log(messages)
     audit_trade_provenance(messages)
+    audit_lessons_applied(messages)
     audit_reconciliation(messages)
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)

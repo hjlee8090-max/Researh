@@ -18,6 +18,10 @@
 - thematic_score: 선행 산업 메가트렌드 노출. min(1.0, Σ(theme.strength × exposure)).
   config/themes.json 의 strength × candidate.theme_exposure[].exposure. 노출 정보 없으면 0.3(중립-하).
   예: 자동차 섹터에서 현대차(humanoid_robotics 노출 0.7)는 기아(0.1)보다 thematic 점수가 높다.
+- relative_strength_score: 섹터 로테이션/상대강도 (v2.5). KOSPI 대비 60일 초과수익으로
+  주도 섹터를 우대한다. excess = stock.ret_60d − KOSPI.ret_60d → ≥+30%p=1.0 … <−25%p=0.05.
+  '오르는 장'에서 절대 모멘텀은 후행 섹터(반도체 주도장의 조선·금융)도 양(+)이라 구분이 안 되지만,
+  초과수익은 주도 섹터만 높게 준다. 지수 수익률 없으면(regime unknown) 0.5 중립 폴백.
 - confidence_score: high=1.0 / medium=0.5 / low=0.0
 - thesis_score: 활성 thesis 와 linked = 1.0 / candidate-only thesis = 0.6 / 무관 = 0.3
 - bear_flag_penalty: structural_bear_flags 1개당 -0.15
@@ -26,7 +30,9 @@
   (fetch_fundamentals.py, DART 분기실적)의 earnings_signal → strong_growth +0.05 … sharp_decline -0.06.
   데이터 없으면 0(무영향).
 
-final = (momentum × 0.35 + thematic × 0.20 + confidence × 0.20 + thesis × 0.25) - bear_flag_penalty + fundamental_tilt
+final = (momentum × 0.30 + relative_strength × 0.20 + thematic × 0.15 + confidence × 0.15
+         + thesis × 0.20) - bear_flag_penalty + fundamental_tilt
+가중치는 policy.entry_filters.relative_strength.score_blend_weights 로 조정 가능(없으면 모듈 BLEND_WEIGHTS).
 momentum 을 게이트(급락 회피)로 유지하므로 전망이 좋아도 추세가 깨진 종목은 entry_filter 에서 차단된다.
 
 시장 레짐(KOSPI 200일선 risk_on/risk_off)은 snapshot.regime 에서 읽어 출력에 표기하고,
@@ -108,6 +114,46 @@ def confidence_score(level: str | None) -> float:
     return {"high": 1.0, "medium": 0.5, "low": 0.0}.get(level or "low", 0.0)
 
 
+def relative_strength_score(
+    stock_ret60: float | None, index_ret60: float | None
+) -> tuple[float, float | None]:
+    """섹터 로테이션/상대강도 점수 (v2.5). KOSPI 대비 60일 초과수익으로 주도 섹터를 우대한다.
+
+    excess = stock_ret60 − KOSPI_ret60. '오르는 장'에서 절대 모멘텀은 후행 섹터도 양(+)이라
+    구분이 안 되지만, 초과수익은 지금 자금이 쏠리는 주도 섹터(반도체 등)만 높게 준다.
+    지수 수익률이 없으면(regime unknown) 0.5 중립으로 폴백해 점수를 왜곡하지 않는다.
+
+    반환: (점수 0~1, excess %p 또는 None).
+    """
+    if stock_ret60 is None or index_ret60 is None:
+        return 0.5, None
+    excess = round(stock_ret60 - index_ret60, 2)
+    if excess >= 30.0:
+        s = 1.0
+    elif excess >= 10.0:
+        s = 0.85
+    elif excess >= 0.0:
+        s = 0.65
+    elif excess >= -10.0:
+        s = 0.4
+    elif excess >= -25.0:
+        s = 0.2
+    else:
+        s = 0.05
+    return s, excess
+
+
+# v2.5 — score blend 가중치(합 1.0). policy.entry_filters.relative_strength.score_blend_weights 와 일치.
+# momentum 은 급락 회피 게이트로 유지하되 비중을 줄이고, relative_strength(섹터 로테이션) 0.20 을 신설.
+BLEND_WEIGHTS = {
+    "momentum": 0.30,
+    "relative_strength": 0.20,
+    "thematic": 0.15,
+    "confidence": 0.15,
+    "thesis": 0.20,
+}
+
+
 def thesis_score(thesis_id: str | None, active_thesis_ids: set[str], candidate_thesis_ids: set[str]) -> float:
     if not thesis_id:
         return 0.3
@@ -169,6 +215,7 @@ def build_adopt_reasons(
     ret60: float | None = None,
     pct_high: float | None = None,
     theme_parts: list[dict] | None = None,
+    rs_excess: float | None = None,
 ) -> list[str]:
     """진입 가능(tradable) 후보가 '왜 채택됐는지' 를 사람이 읽을 수 있는 사유 목록으로 만든다."""
     reasons: list[str] = []
@@ -177,6 +224,9 @@ def build_adopt_reasons(
         reasons.append(f"5거래일 누적 {ret5:+.1f}% — 추세필터 통과({trend_word})")
     if ret60 is not None:
         reasons.append(f"60일 모멘텀 {ret60:+.1f}%")
+    if rs_excess is not None:
+        lead_word = "주도주" if rs_excess >= 10 else ("동행" if rs_excess >= -10 else "후행주")
+        reasons.append(f"상대강도: KOSPI 대비 {rs_excess:+.1f}%p ({lead_word})")
     if pct_high is not None:
         reasons.append(f"52주 고점의 {pct_high:.0f}% 수준")
     if theme_parts:
@@ -243,8 +293,17 @@ def main() -> int:
 
     regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
     regime_state = regime.get("state", "unknown") if isinstance(regime, dict) else "unknown"
+    # v2.5 — 섹터 로테이션 벤치마크: KOSPI 60일 수익률(없으면 상대강도는 중립 폴백).
+    kospi_ret60 = regime.get("ret_60d_pct") if isinstance(regime, dict) else None
     regime_cfg = policy.get("market_regime", {}) if isinstance(policy, dict) else {}
     risk_off_blocks = bool(regime_cfg.get("risk_off_blocks_new_entry", False))
+
+    # v2.5 — score blend 가중치(policy 우선, 없으면 모듈 기본값 BLEND_WEIGHTS).
+    blend_cfg = (
+        policy.get("entry_filters", {}).get("relative_strength", {}).get("score_blend_weights")
+        if isinstance(policy.get("entry_filters"), dict) else None
+    )
+    weights = {**BLEND_WEIGHTS, **blend_cfg} if isinstance(blend_cfg, dict) else dict(BLEND_WEIGHTS)
 
     theses = weekly_plan.get("weekly_thesis", []) if isinstance(weekly_plan, dict) else []
     active_ids: set[str] = set()
@@ -282,6 +341,7 @@ def main() -> int:
         bear_flags = c.get("structural_bear_flags", []) or []
 
         m_score, m_parts = momentum_score(ret5, ret60, pct_high)
+        rs_score, rs_excess = relative_strength_score(ret60, kospi_ret60)
         t_score, t_parts = thematic_score(c.get("theme_exposure"), theme_strength)
         c_score = confidence_score(conf)
         th_score = thesis_score(c.get("thesis_id"), active_ids, candidate_ids)
@@ -289,7 +349,16 @@ def main() -> int:
         earnings_signal = fund.get("earnings_signal")
         fund_tilt = FUND_TILT.get(earnings_signal, 0.0)
         penalty = 0.15 * len(bear_flags)
-        final = max(0.0, m_score * 0.35 + t_score * 0.20 + c_score * 0.20 + th_score * 0.25 - penalty + fund_tilt)
+        final = max(
+            0.0,
+            m_score * weights["momentum"]
+            + rs_score * weights["relative_strength"]
+            + t_score * weights["thematic"]
+            + c_score * weights["confidence"]
+            + th_score * weights["thesis"]
+            - penalty
+            + fund_tilt,
+        )
 
         block_reasons: list[str] = []
         if not entry_passes:
@@ -315,7 +384,7 @@ def main() -> int:
             and not (risk_off_blocks and regime_state == "risk_off")
         )
         adopt_reasons = (
-            build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high, t_parts)
+            build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high, t_parts, rs_excess)
             if tradable else []
         )
         if adopt_reasons and earnings_signal in ("strong_growth", "growth"):
@@ -335,6 +404,8 @@ def main() -> int:
             "components": {
                 "momentum": m_score,
                 "momentum_parts": m_parts,
+                "relative_strength": rs_score,
+                "rs_excess_vs_kospi_pct": rs_excess,
                 "thematic": t_score,
                 "thematic_parts": t_parts,
                 "confidence": c_score,
@@ -374,7 +445,9 @@ def main() -> int:
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "snapshot_as_of": snapshot.get("as_of") if isinstance(snapshot, dict) else None,
-        "regime": {"state": regime_state, "detail": regime, "blocks_new_entry": risk_off_blocks},
+        "regime": {"state": regime_state, "detail": regime, "blocks_new_entry": risk_off_blocks,
+                   "kospi_ret_60d_pct": kospi_ret60},
+        "score_blend_weights": weights,
         "active_thesis_ids": sorted(active_ids),
         "candidate_thesis_ids": sorted(candidate_ids),
         "ranked": ranked,

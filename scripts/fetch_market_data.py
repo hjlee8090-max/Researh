@@ -261,6 +261,11 @@ def build_regime(
     ma60 = _mean(closes[-60:]) if len(closes) >= 60 else None
     pct_vs_ma60 = round((last / ma60 - 1) * 100, 2) if ma60 else None
 
+    # v2.5 — 섹터 로테이션(상대강도) 벤치마크: KOSPI 자체의 60일·20일 수익률.
+    # score_candidates.py 가 종목 ret_60d_pct 에서 이 값을 빼 '초과수익(excess)'을 점수화한다.
+    ret_60d_pct = round((last / closes[-61] - 1) * 100, 2) if len(closes) >= 61 else None
+    ret_20d_pct = round((last / closes[-21] - 1) * 100, 2) if len(closes) >= 21 else None
+
     slope_pct: float | None = None
     if len(closes) >= window + slope_lookback:
         ma200_prev = _mean(closes[-(window + slope_lookback):-slope_lookback])
@@ -277,6 +282,8 @@ def build_regime(
         "above_ma": above,
         "pct_vs_ma": pct_vs_ma200,
         "pct_vs_ma60": pct_vs_ma60,
+        "ret_60d_pct": ret_60d_pct,
+        "ret_20d_pct": ret_20d_pct,
         "ma200_slope_pct": slope_pct,
         "slope_lookback_days": slope_lookback,
         "state": "risk_on" if above else "risk_off",

@@ -15,6 +15,15 @@
   - 누적 카운트 ≥ 3 인 분류 (반복 패턴)
 - 이 JSON 을 1차 입력으로 사용한다. lessons.md 본문은 검증 시에만 참조.
 
+## 0-B. 교훈 반영 자동 대조 (미반영 강제 표면화)
+- `python scripts/check_lessons_applied.py` 를 실행하여 `state/lessons_applied.json` 을 만든다.
+  - `open_items_hard`: 작성자가 "명문화 필요·미적용" 등으로 표시 + 반복 마커(⚠️·연속·재발)가 있는데
+    policy.json·prompts 에 신호가 발견되지 않은 항목 — **이번 리뷰에서 최우선으로 policy/prompt 패치**.
+  - `open_items_soft`: 단발 미반영 — 검토 후보.
+  - `resolved_items`: 신호가 이미 policy/prompt 에 있는 항목(과거 마커 잔존, 조치 불필요).
+- `open_items_hard` 가 1건 이상이면 1-1 추적 결과에 그대로 옮기고, 각 항목에 대해 patch 후보(필드명·기본값·
+  근거 lessons 라인)를 반드시 제안한다. (이 대조는 audit_pipeline 에도 연동되어 매 평일 감사에서 WARN 으로 노출된다.)
+
 ## 0. 컨텍스트 적재 (이 순서)
 1. `state/lessons_index.json` (0-A 단계 생성) — 1차 입력
 2. `state/lessons.md` — 원문 (인덱스 항목의 컨텍스트 확인 시 사용)

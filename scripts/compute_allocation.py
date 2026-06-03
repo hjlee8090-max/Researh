@@ -106,6 +106,25 @@ def portfolio_heat(portfolio: dict, equity: float, budget_pct: float) -> dict:
     }
 
 
+def heat_budget_for_tier(risk_cfg: dict, tier: str | None) -> tuple[float, str]:
+    """레짐 tier 에 따른 포트폴리오 히트 예산(%)을 고른다(v2.5).
+
+    단일거래 상한 2% + 손절 ~10% 면 종목당 비중이 ~20% 로 묶여, flat 6% 히트예산은
+    3종목(≈60%)에서 막혀 strong_bull 목표비중(80~95%)에 닿지 못했다(강세장 미배치).
+    risk.portfolio_heat_budget_by_tier 의 tier별 값으로 강세장에서 breadth(종목 수)로
+    목표비중을 채우게 한다. 표가 없거나 tier 가 unknown 이면 flat 기본값으로 폴백한다.
+
+    반환: (예산_pct, 근거문자열). 근거는 매칭된 tier 이름 또는 'flat_fallback'.
+    """
+    flat = float(risk_cfg.get("portfolio_heat_budget_pct_of_equity", 6.0))
+    by_tier = risk_cfg.get("portfolio_heat_budget_by_tier")
+    if isinstance(by_tier, dict) and tier and tier in by_tier:
+        val = by_tier.get(tier)
+        if isinstance(val, (int, float)):
+            return float(val), tier
+    return flat, "flat_fallback"
+
+
 def find_tier(name: str | None, tiers: list[dict]) -> dict | None:
     for t in tiers:
         if t.get("tier") == name:
@@ -218,10 +237,12 @@ def main() -> int:
     }
 
     # v2.2 — 포트폴리오 히트(전 포지션 합산 손절위험) 예산·잔여를 모든 출력 경로에 싣는다.
+    # v2.5 — 예산은 레짐 tier 에 따라 차등(강세장에서 목표비중 도달 가능하도록). raw_tier 사용
+    # (히스테리시스는 비중 권고에만, 히트 예산은 현재 레짐 그대로 — 보수적 단순화).
     risk_cfg = policy.get("risk", {}) if isinstance(policy.get("risk"), dict) else {}
-    out["portfolio_heat"] = portfolio_heat(
-        portfolio, equity, float(risk_cfg.get("portfolio_heat_budget_pct_of_equity", 6.0))
-    )
+    heat_budget_pct, heat_budget_basis = heat_budget_for_tier(risk_cfg, raw_tier)
+    out["portfolio_heat"] = portfolio_heat(portfolio, equity, heat_budget_pct)
+    out["portfolio_heat"]["budget_basis"] = heat_budget_basis
     out["per_trade_risk_pct"] = float(risk_cfg.get("max_single_trade_risk_pct_of_equity", 2.0))
 
     if not raw_tier or raw_tier == "unknown" or not tiers:

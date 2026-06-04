@@ -150,13 +150,22 @@ def valuation_checks(portfolio: dict, snapshot: dict | None = None) -> tuple[lis
             continue
         tk = p.get("ticker")
         shares = num(p.get("shares"))
+        # 평가가격·평가금액은 routine 에 따라 current_price/market_value 또는 _approx 접미 필드로 기록된다.
+        # compute_allocation.py 와 동일하게 _approx(→entry_price) 폴백을 적용해 필드명 불일치로
+        # 평가금액이 0 으로 떨어지며 equity 정합성이 FAIL 하던 문제를 막는다(2026-06-04 삼성전자 매수 사례).
         cur = num(p.get("current_price"))
+        if not cur:
+            cur = num(p.get("current_price_approx")) or num(p.get("entry_price"))
         mv_field = p.get("market_value")
+        if mv_field is None:
+            mv_field = p.get("market_value_approx")
         mv = num(mv_field) if mv_field is not None else shares * cur
         mv_sum += mv
         if cur and abs(mv - shares * cur) > 1:
             issues.append(f"{tk} market_value {mv:,.0f} ≠ shares×current_price {shares * cur:,.0f}")
         cost = p.get("cost_basis")
+        if cost is None:
+            cost = p.get("cost_basis_total")
         if cost is not None:
             upnl_sum += mv - num(cost)
         snap_t = ts.get(tk) if isinstance(ts, dict) else None

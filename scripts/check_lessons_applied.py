@@ -135,6 +135,7 @@ def main() -> int:
 
     hard: list[dict] = []
     soft: list[dict] = []
+    manual: list[dict] = []
     resolved: list[dict] = []
 
     for sec in sections:
@@ -154,17 +155,24 @@ def main() -> int:
                 "weak_signals": weak,
                 "matched_signals": matched,
             }
+            line_repeat = section_has_repeat or any(rm in line for rm in REPEAT_MARKERS)
             if matched:
                 # strong 신호가 policy/prompt 에 이미 존재 → 사실상 반영됨(과거 마커 잔존).
                 item["status"] = "likely_applied"
                 resolved.append(item)
-            elif section_has_repeat or any(rm in line for rm in REPEAT_MARKERS):
+            elif not strong:
+                # 대조할 앵커(따옴표/백틱 신호)가 없어 자동 검증 불가 → 사람이 판단(어드바이저리).
+                # 앵커 없는 줄을 hard 로 두면 codify 해도 영구 false-HARD 가 되므로 manual 로 분리한다.
+                item["status"] = "manual_review"
+                item["why"] = "대조 앵커(따옴표/백틱 신호) 없음 — 자동 검증 불가, sunday_policy_review 에서 수동 확인"
+                manual.append(item)
+            elif line_repeat:
                 item["status"] = "unapplied_hard"
-                item["why"] = "반복/재발 마커 + 미해결 마커 — policy/prompts 에 신호 미발견"
+                item["why"] = "반복/재발 마커 + 미해결 마커 + 앵커 미발견 — policy/prompts 에 강제 필요"
                 hard.append(item)
             else:
                 item["status"] = "unapplied_soft"
-                item["why"] = "미해결 마커 — policy/prompts 에 신호 미발견"
+                item["why"] = "미해결 마커 + 앵커 미발견 — policy/prompts 미반영"
                 soft.append(item)
 
     repeated_3plus = {k: v for k, v in counter.items() if v >= 3}
@@ -175,11 +183,13 @@ def main() -> int:
         "haystack_files": haystack_files,
         "open_items_hard": hard,
         "open_items_soft": soft,
+        "open_items_manual": manual,
         "resolved_items": resolved,
         "repeated_3plus": repeated_3plus,
         "summary": {
             "hard": len(hard),
             "soft": len(soft),
+            "manual_review": len(manual),
             "likely_applied": len(resolved),
             "repeated_3plus": list(repeated_3plus),
         },
@@ -188,8 +198,8 @@ def main() -> int:
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     print(
-        f"lessons_applied: hard={len(hard)} soft={len(soft)} applied={len(resolved)} "
-        f"repeated_3plus={list(repeated_3plus)}"
+        f"lessons_applied: hard={len(hard)} soft={len(soft)} manual={len(manual)} "
+        f"applied={len(resolved)} repeated_3plus={list(repeated_3plus)}"
     )
     for it in hard:
         print(f"  [HARD 미반영] {it['section']} :: {it['marker_line'][:120]}")

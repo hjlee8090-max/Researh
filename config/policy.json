@@ -338,6 +338,19 @@
       "score_blend_weights": {"momentum": 0.30, "relative_strength": 0.20, "thematic": 0.15, "confidence": 0.15, "thesis": 0.20},
       "blend_note": "v2.0 의 momentum 0.35·thematic 0.20·confidence 0.20·thesis 0.25 를 재조정해 relative_strength 0.20 을 신설하고 나머지를 비례 축소했다(합 1.0). momentum 은 여전히 급락 회피 게이트로 entry_filter 에서 -7% 누적을 차단한다 — relative_strength 는 '주도 섹터 우대' 가중일 뿐 게이트가 아니다."
     },
+    "post_surge_cooldown": {
+      "purpose": "v2.5 codify — lessons.md 2026-05-28 HD조선 교훈 ①(수주·호재 발표 직후 급등한 종목은 1~2일 소화 기간 후 진입, 급등 당일·다음날 진입 시 차익실현 노출 위험). HD조선 5/27 LNG 5조2511억 수주 급등 직후(09:10) 진입 → 5/28~6/1 매물 소화·섹터 소외로 orange 청산(-43,098). 급등 직후 진입의 차익실현 노출을 게이트한다.",
+      "single_day_surge_pct": 8.0,
+      "cooldown_trading_days": 1,
+      "rule": "직전 거래일 일간 등락률(today_ohlc close/전일 close − 1)이 single_day_surge_pct(+8%) 이상으로 급등했거나, '수주·계약·호재' 촉매(출처 URL 동반)로 당일 급등한 종목은 신규 진입을 cooldown_trading_days(1거래일) 이연한다. 이연 중에는 candidate 로 추적하되 booking 하지 않고, 소화(cool-down) 후 추세필터·R/R 재확인 시 진입한다. 트레일링스톱 상향·기존 보유 평가에는 적용하지 않는다(신규 진입 게이트 한정).",
+      "exception": "strong_bull tier 에서 상대강도(relative_strength) 상위·52주 신고점 돌파 등 추세 지속이 명확하면 1거래일 소화 대신 진입가를 직전 종가 근처로 보수 설정하고 손절을 ATR 기반으로 타이트하게 잡는 조건부 진입을 허용한다(모멘텀 추격과 차익실현 회피의 균형)."
+    },
+    "intraday_breach_contingency": {
+      "purpose": "v2.5 codify — lessons.md 2026-05-28·05-29 HD조선 교훈 ③(장중 orange/red 이탈을 하루 4회 routine 사이에 실시간 감지 못해 종가 후에야 확인 — 407K·405K 장중 이탈 미대응). 정기 수집 스냅샷이 있어도 장중 임계 이탈 대응이 늦는 갭의 '비상 대응 절차'를 명문화한다.",
+      "covered_by": "보유 종목이 손절선·orange(-7%)·red(-10%) 임계의 ±3% 안이면 price_data_quality.data_freshness.action_on_proximity_when_not_fresh 가 freshness≠fresh 일 때 웹 실시간 1회 교차확인을 의무화한다(묵은 가격에 의한 손절 지연 방지). 12·15시 prompt 0-B 가 이를 적용한다.",
+      "residual_gap": "4회 routine(09/12/15/18) '사이' 시간대의 장중 이탈은 여전히 실시간 감지 불가 — 진정한 해결은 장중(09:00~15:30) 주기적 가격 점검·알림 워크플로(별도 인프라)다. 보유 종목이 orange 근접(±3%)이면 해당일 12·15시 점검에서 부분청산(50%)을 선제 검토해 routine 간 공백 리스크를 줄인다(slow-exit). 전면 실시간 모니터는 인프라 작업으로 분리.",
+      "preemptive_partial_exit": "보유 종목 종가가 orange 경계의 +3% 이내로 3거래일 연속 근접하면(장중 이탈·종가 회복 반복 패턴) 4거래일째 전량 청산을 기다리지 말고 3거래일째 50% 부분청산을 검토한다(lessons.md 2026-06-01 HD조선 교훈 ③)."
+    },
     "structural_bear_keywords": [
       "관세", "보조금 폐지", "규제", "제재", "감독원", "소송", "리콜",
       "공급망 단절", "임원 리스크", "회계 이슈", "공정위", "특별검사",

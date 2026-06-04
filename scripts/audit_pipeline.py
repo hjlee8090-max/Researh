@@ -429,6 +429,7 @@ def audit_lessons_applied(messages: list[str]) -> None:
         return
     hard = payload.get("open_items_hard", [])
     soft = payload.get("open_items_soft", [])
+    manual = payload.get("open_items_manual", [])
     if hard:
         for it in hard[:3]:
             messages.append(result("WARN", f"교훈 미반영(반복): {it.get('section')} — policy/prompt 에 강제 필요"))
@@ -437,7 +438,9 @@ def audit_lessons_applied(messages: list[str]) -> None:
     elif soft:
         messages.append(result("INFO", f"교훈 미반영(단발) {len(soft)}건 — sunday_policy_review 에서 검토"))
     else:
-        messages.append(result("OK", "lessons.md 자기-인지 미반영 교훈 없음(또는 모두 policy/prompt 반영됨)"))
+        messages.append(result("OK", "lessons.md 자기-인지 미반영(반복/단발) 교훈 없음"))
+    if manual:
+        messages.append(result("INFO", f"교훈 수동검토 {len(manual)}건(자동 검증 불가 앵커 부재) — sunday_policy_review 확인"))
 
 
 def audit_trade_provenance(messages: list[str]) -> None:

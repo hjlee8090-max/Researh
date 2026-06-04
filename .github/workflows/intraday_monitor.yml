@@ -1,0 +1,77 @@
+name: Intraday Tier Monitor
+
+# 장중(09:00~15:30 KST) routine 4회 '사이'의 보유 종목 orange/red 단계 이탈을 실시간 감지·경보.
+# lessons.md HD조선 교훈(장중 이탈 미대응)의 잔여 갭 — policy.entry_filters.intraday_breach_contingency.
+# '경보'만 한다(실제 체결은 09/12/15/18 routine). 보유 0이면 즉시 no-op.
+
+on:
+  schedule:
+    # 장중 09:00~15:30 KST = 00:00~06:30 UTC, 평일(KST Mon-Fri = UTC Mon-Fri). 30분 간격.
+    # 정각(분=00)은 전 세계 큐 혼잡으로 지연되므로 :03/:33 으로 회피. 06:30 KST 15:30 마감 포함.
+    - cron: "3,33 0-6 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: intraday-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: KST date (dedup cache key)
+        id: date
+        run: echo "d=$(TZ=Asia/Seoul date +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Market open gate (영업일?)
+        id: open
+        run: |
+          if python scripts/check_market_open.py; then
+            echo "open=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "휴장 — 모니터 skip"
+            echo "open=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Session gate (정규장 live 만)
+        id: session
+        if: steps.open.outputs.open == '1'
+        run: |
+          set +e
+          python scripts/check_market_session.py > /tmp/sess.json
+          set -e
+          MODE=$(python -c "import json;print(json.load(open('/tmp/sess.json')).get('execution_mode',''))")
+          echo "현재 execution_mode=$MODE"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+
+      # 당일 직전 경보 단계(dedup) 복원. key 는 매 run 고유 + restore-keys 로 같은 날 최신본 복원
+      # (actions/cache 는 동일 key 갱신 불가 → run 별 고유 key + 접두 복원으로 당일 상태를 이어받는다).
+      - name: Restore alert dedup state
+        if: steps.session.outputs.mode == 'live'
+        uses: actions/cache@v4
+        with:
+          path: state/intraday_alert_state.json
+          key: intraday-state-${{ steps.date.outputs.d }}-${{ github.run_id }}
+          restore-keys: |
+            intraday-state-${{ steps.date.outputs.d }}-
+
+      - name: Fetch fresh prices
+        if: steps.session.outputs.mode == 'live'
+        run: python scripts/fetch_market_data.py
+
+      - name: Check intraday tier breaches & alert
+        if: steps.session.outputs.mode == 'live'
+        env:
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          PAGES_URL: ${{ vars.PAGES_URL }}
+        run: python scripts/check_intraday_alerts.py

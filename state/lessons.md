@@ -66,7 +66,7 @@ _(최종 갱신: 2026-06-02 18시)_
 - 목표가: 500,000원 / 실제 종가: 415,000원 (괴리 -17.0%, 진입가 446,000 대비 -6.95%)
 - 사유 요약: 전일 KOSPI +4.65% 역대 최고 경신 후 차익실현 압력이 전 섹터 확산. 미국의 이란 군사시설 공습 소식(5/27 현지)이 지정학 리스크 재부각. 조선 섹터는 5/26~5/27 카타르에너지 LNG 17척(5조2511억) 수주 급등 이후 매물 소화 기간 진입. 오늘 장중 저가 407,000원(orange 414,780 하회)이나 종가는 415,000원(orange 미체결).
 - 다음 추천 시 반영할 교훈: ①수주·호재 발표 직후 급등한 종목은 1~2일 소화(cool-down) 기간 후 진입 재검토. 급등 당일 또는 다음날 진입 시 차익실현 노출 위험이 크다. ②역대 최고 경신 다음날은 lessons.md 5/22 교훈 재확인 — 전 섹터 차익실현 동반. 이 날 신규 진입한 포지션은 초기 손절선을 더 타이트하게 설정(ATR 기반 -5%p 추가 여유). ③HTTP 403 실시간 데이터 차단으로 장중 orange 이탈(407,000)을 감지하지 못했음 — 정기 수집 스냅샷이 있어도 장중 orange 이탈 대응이 불가할 경우를 대비한 비상 대응 절차 필요.
-- ✅ **codify(2026-06-04 v2.5)**: ①급등 직후 진입 → `policy.entry_filters.post_surge_cooldown`(직전일 +8% 급등 또는 수주·호재 촉매 시 1거래일 소화 후 진입). ③장중 orange 실시간 미대응 → `policy.entry_filters.intraday_breach_contingency`(임계 ±3% 근접 시 data_freshness 웹 교차확인 + orange 근접 3거래일 연속 시 3거래일째 50% 부분청산). 전면 실시간 모니터는 인프라 작업으로 분리(잔여 갭 명시).
+- ✅ **codify(2026-06-04 v2.5)**: ①급등 직후 진입 → `policy.entry_filters.post_surge_cooldown`(직전일 +8% 급등 또는 수주·호재 촉매 시 1거래일 소화 후 진입). ③장중 orange 실시간 미대응 → `policy.entry_filters.intraday_breach_contingency` + **`.github/workflows/intraday_monitor.yml`·`scripts/check_intraday_alerts.py`(평일 장중 30분 간격 실시간 단계 감지·카카오 경보, dedup)** 신설. 임계 ±3% 근접 시 data_freshness 웹 교차확인 + orange 근접 3거래일 연속 시 3거래일째 50% 부분청산도 병행. (잔여: Actions schedule 지연 가능성.)
 - 분류 신뢰도: 높음 (스냅샷 HIGH confidence, naver+yahoo 쌍 일치)
 
 ### 2026-05-28 12:00 / KB금융(105560) — give-back 손절 체결

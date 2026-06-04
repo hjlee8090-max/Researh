@@ -282,6 +282,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     trade_gate = ROOT / "scripts" / "check_trade_log_gate.py"
     lessons_idx = ROOT / "scripts" / "build_lessons_index.py"
     lessons_applied = ROOT / "scripts" / "check_lessons_applied.py"
+    intraday_alerts = ROOT / "scripts" / "check_intraday_alerts.py"
     candidates = ROOT / "config" / "candidates.json"
     themes = ROOT / "config" / "themes.json"
     calendar = ROOT / "config" / "market_calendar.json"
@@ -297,6 +298,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
         (trade_gate, "scripts/check_trade_log_gate.py"),
         (lessons_idx, "scripts/build_lessons_index.py"),
         (lessons_applied, "scripts/check_lessons_applied.py"),
+        (intraday_alerts, "scripts/check_intraday_alerts.py"),
     ]:
         if path.exists():
             messages.append(result("OK", f"{label} present"))

@@ -65,8 +65,11 @@ def find_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int
                 f"{tag}: price_source 누락/유효하지 않음(={ps!r}) — 허용 {sorted(allowed)}"
             )
             continue
-        if ps in need_url and not e.get("verify_url"):
-            violations.append(f"{tag}: price_source=web_verified 인데 verify_url 없음")
+        # verify_url 은 routine 에 따라 `verify_url` 또는 `web_verify_url` 로 기록된다(필드명 불일치).
+        # 둘 중 하나라도 출처가 있으면 통과시킨다(2026-06-04 삼성전자 매수: 실제 출처 URL 을
+        # web_verify_url 에 기록했는데 gate 가 verify_url 만 보고 FAIL → build_and_notify 차단 사례).
+        if ps in need_url and not (e.get("verify_url") or e.get("web_verify_url")):
+            violations.append(f"{tag}: price_source=web_verified 인데 verify_url/web_verify_url 없음")
     return violations, checked, since
 
 

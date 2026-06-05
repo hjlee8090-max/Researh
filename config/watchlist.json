@@ -516,6 +516,38 @@
             "손절가(317,286원) 이탈 즉시 전량 가상 청산",
             "목표가(415,000원) 도달 시 트레일링스톱 활성화(임계 398,866원)"
           ]
+        },
+        {
+          "ts": "2026-06-05T12:00:00+09:00",
+          "action": "HOLD_WATCH",
+          "tier": "orange",
+          "opinion": "🟠 ORANGE 경보 — 체결 보류(confidence=low, web_verify 미충족)",
+          "data_confidence": "low",
+          "snapshot_stale": true,
+          "freshness": "stale_intraday",
+          "web_verify_guard": "FAIL",
+          "one_liner": "【12:00 장중 점검 · ORANGE 경보】스냅샷(10:35 KST, stale_intraday) naver 333,000원/yahoo 326,000원 — 진입가(361,221) 대비 naver -7.81%·yahoo -9.75% 🟠 ORANGE. 오늘 OHLC [시가333,500/고가335,000/저가325,000], 고가(335,000)도 orange 경계(335,936) 하회 — 장 내내 orange. confidence=LOW(출처 간 2.102% 괴리) → 매매 차단(policy.block_trade_if_confidence_below=medium). web_verify_guard 3조건 미충족 → 50% 부분매도 BLOCKED. yahoo 326,000원은 red 경계(325,099) 거의 근접(+0.28%). KOSPI 오전 regime 8,050 추정(전일 8,639 대비 약 -6.8% — Broadcom shock·외국인 순매도 매크로). 15시 web_verify 재시도 필수. ※시세 stale 근사값. 학습·시뮬레이션.",
+          "pct_from_entry_naver": -7.81,
+          "pct_from_entry_yahoo": -9.75,
+          "orange_threshold_price": 335936,
+          "red_threshold_price": 325099,
+          "stop_price": 317286,
+          "today_ohlc_1035kst": {"open": 333500, "high": 335000, "low": 325000, "close_approx": 333000},
+          "trade_blocked_reason": "confidence=LOW(2.102% source gap) + web_verify_guard FAIL(URL+시각+OHLC 3조건 미충족)",
+          "cause_analysis_3": [
+            "①매크로: KOSPI 오전 regime 8,050(전일 8,639 대비 약 -6.8% 추정) — Broadcom -12% AI guidance shock 글로벌 확산·반도체 섹터 포함 광범위 하락 (스냅샷 regime 8050.84·09시 리포트 Broadcom -12% 확인)",
+            "②섹터: 외국인 20거래일 이상 순매도 지속(연간 누적 약 39.5조원) — 반도체·IT 직접 매도 압력(웹검색 확인)",
+            "③개별: Jensen Huang 방한(6/4~6/5) 삼성-NVIDIA HBM4E 공급 계약 확정 보도 미확인 → 기대 해소 가능성(웹검색 나무위키·SBS 기사에서 삼성 직접 미팅 내용 미확인)"
+          ],
+          "cross_check_notes": [
+            "단일 보유 종목(삼성전자 1종목) — 추가 함정패턴 cross-check 대상 없음. KOSPI -6.8% 매크로 하락이면 신규 진입 전 후보 동일 압력 — 신규 진입 재검토 필요."
+          ],
+          "next_action_candidates": [
+            "【긴급·1순위】15시 routine: web_verify 재시도(URL+시각+today_ohlc 3조건) → orange 확인 시 50% 부분매도 즉시 체결",
+            "yahoo 326,000원 기준 red 경계(325,099) +0.28% 근접 — 15시 전 손절 도달 가능성 주의",
+            "confidence=low 상태: SCALE_IN 완전 차단, HOLD 유지",
+            "15시에도 데이터 미복구 시: yahoo 326,000 기준 -9.75%(near RED) → 보수 판단으로 50% 청산 또는 전량 청산 검토"
+          ]
         }
       ]
     },

@@ -23,6 +23,7 @@ import os
 import urllib.error
 import urllib.request
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,10 @@ ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 DART_BASE = "https://opendart.fss.or.kr/api"
 HTTP_TIMEOUT = 15
+# 종목별 DART 조회(fetch_financials 가 보고서 우선순위를 순차 시도)는 모두 네트워크
+# 대기(I/O 바운드)다. 종목 단위로 스레드풀에 분산해 전체 소요를 '가장 느린 종목 하나'
+# 수준으로 줄인다. DART OpenAPI 호출 한도를 감안해 동시 요청 수에 상한을 둔다.
+MAX_WORKERS = 8
 # 계정명은 업종마다 다르다(특히 금융지주·은행·증권·보험은 매출액/영업이익 대신 영업수익 등을 쓴다).
 # 지표별로 우선순위 별칭을 순서대로 시도해 매칭률을 높인다(연결 CFS 우선).
 ACCOUNT_ALIASES = {
@@ -180,6 +185,28 @@ def derive(fin: dict[str, Any]) -> dict[str, Any]:
     return fin
 
 
+def build_ticker_entry(
+    ticker: str, name: str, corp_map: dict[str, str], api_key: str, now: datetime
+) -> tuple[dict[str, Any], bool]:
+    """종목 1개의 펀더멘털 항목을 만든다(스레드풀 작업 단위).
+
+    공유 상태를 변경하지 않고 (항목 dict, 성공 여부) 만 반환하므로 병렬 실행에 안전하다.
+    """
+    corp = corp_map.get(ticker)
+    if not corp:
+        return {"name": name, "error": "corp_code 매핑 실패"}, False
+    fin = fetch_financials(api_key, corp, now.year)
+    if not fin:
+        return {"name": name, "corp_code": corp, "error": "재무 데이터 없음"}, False
+    entry = {
+        "name": name,
+        "corp_code": corp,
+        "fetched_at": now.isoformat(timespec="seconds"),
+        **derive(fin),
+    }
+    return entry, True
+
+
 def main() -> int:
     api_key = os.environ.get("DART_API_KEY", "").strip()
     out_path = ROOT / "state" / "fundamentals.json"
@@ -207,19 +234,21 @@ def main() -> int:
         logger.warning("corp_code map fetch failed: %s", exc)
         corp_map = {}
 
+    # 종목별 DART 조회를 스레드풀로 동시에 수행한다. 결과 조립은 기존 종목 순서대로
+    # 하므로 출력(JSON) 순서·내용·fetched_ok 집계는 직렬 버전과 동일하다.
     data: dict[str, Any] = {}
     ok = 0
-    for ticker, name in tickers.items():
-        corp = corp_map.get(ticker)
-        if not corp:
-            data[ticker] = {"name": name, "error": "corp_code 매핑 실패"}
-            continue
-        fin = fetch_financials(api_key, corp, now.year)
-        if not fin:
-            data[ticker] = {"name": name, "corp_code": corp, "error": "재무 데이터 없음"}
-            continue
-        data[ticker] = {"name": name, "corp_code": corp, "fetched_at": now.isoformat(timespec="seconds"), **derive(fin)}
-        ok += 1
+    max_workers = min(len(tickers), MAX_WORKERS) or 1
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {
+            ticker: pool.submit(build_ticker_entry, ticker, name, corp_map, api_key, now)
+            for ticker, name in tickers.items()
+        }
+        for ticker in tickers:
+            entry, is_ok = futures[ticker].result()
+            data[ticker] = entry
+            if is_ok:
+                ok += 1
 
     result = {
         "as_of": now.isoformat(timespec="seconds"),

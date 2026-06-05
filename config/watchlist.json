@@ -548,6 +548,39 @@
             "confidence=low 상태: SCALE_IN 완전 차단, HOLD 유지",
             "15시에도 데이터 미복구 시: yahoo 326,000 기준 -9.75%(near RED) → 보수 판단으로 50% 청산 또는 전량 청산 검토"
           ]
+        },
+        {
+          "ts": "2026-06-05T15:02:00+09:00",
+          "action": "HOLD_WATCH",
+          "tier": "orange",
+          "opinion": "🟠 ORANGE 확인(web 교차확인) — 18시 종가 기준 청산 후보, 15시 체결 없음(§4)",
+          "data_confidence": "high",
+          "snapshot_stale": true,
+          "freshness": "stale_intraday",
+          "web_verify_guard": "PASS",
+          "web_price": 333250,
+          "web_source": "investing.com/equities/samsung-electronics-co-ltd (13:04 KST)",
+          "web_deviation_pct": -0.97,
+          "one_liner": "【15:00 마감 임박】스냅샷(12:30, HIGH) 336,500원 + 웹 교차확인(investing.com, 13:04) 333,250원(편차-0.97%·3조건 ✓). 진입가(361,221) 대비 -7.81% 🟠 ORANGE 확인. 오늘 OHLC 시가333,500/고가343,000/저가325,000 — 장중 저가 325,000원이 RED 경계(325,099) 하회, 사실상 RED 터치. KOSPI 12:30 기준 8,288.9(전일 8,639 대비 -4.1% — Broadcom shock 충격 지속). semiconductor_ai_memory thesis 단기 약화(Broadcom guidance 실망·JH 방한 삼성 확정 보도 미확인). 15시 체결 권유 없음(§4). ※시세 근사값, 종가 15:30 미확정.",
+          "today_ohlc": {"open": 333500, "high": 343000, "low": 325000, "close_approx": 333250},
+          "orange_threshold": 335935,
+          "red_threshold": 325099,
+          "stop_price": 317286,
+          "pct_from_entry": -7.81,
+          "distance_to_target_pct": 24.5,
+          "distance_to_stop_pct": -4.8,
+          "cause_analysis_3": [
+            "①매크로: Broadcom(AVGO) 2Q26 guidance 실망(AI 칩 목표 1,000억달러 상향 미확인) → 반도체 섹터 글로벌 급락. 09시 삼성전자 -6.05%, SK하이닉스 -7.44% (이투데이 2026-06-05)",
+            "②섹터: 외국인 20거래일 이상 순매도 지속(누적 ~39.5조원) — 반도체·IT 직접 수급 압박",
+            "③개별: Jensen Huang 방한(6/5) 삼성-NVIDIA HBM4E 공급 확정 보도 미확인(출처 URL 미확보) — 원인 미확정, 기대감 해소 가능성"
+          ],
+          "friday_weekend_risk": "🔴 ORANGE+RED 터치 상태로 주말 돌입 — 주말 보유 리스크 높음",
+          "next_action_candidates": [
+            "【18시 종가 확인 — 최우선】종가 < 325,099(RED) → 전량 가상 청산 즉시 집행. 종가 < 335,935(ORANGE) → 50% 부분매도 집행. 종가 > 335,935(YELLOW) → 홀드 + 익일 09시 재확인",
+            "【익일 09시 — ORANGE 지속 시】50% 부분매도(1주 청산) 최우선. web_verify 3조건 충족 필수",
+            "【Broadcom shock 후속】미국 6/5 장 반도체 섹터 반등 여부 확인. 반등 시 thesis 복원 가능, 추가 하락 시 전량 청산 강화",
+            "SCALE_IN 완전 차단(ORANGE 상황 + 금요일)"
+          ]
         }
       ]
     },

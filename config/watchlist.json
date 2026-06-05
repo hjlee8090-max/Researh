@@ -482,6 +482,40 @@
             "목표가(415,000원) 도달 시 트레일링스톱 활성화(고점 대비 -3%, 임계 398,866원)",
             "손절가(317,286원) 이탈 즉시 전량 가상 청산"
           ]
+        },
+        {
+          "ts": "2026-06-05T09:00:00+09:00",
+          "action": "HOLD",
+          "tier": "green",
+          "opinion": "홀드 — SCALE_IN 12시 이연(web_verify 미충족)",
+          "data_confidence": "high",
+          "snapshot_stale": true,
+          "pre_trade_verdict": "live_verify_required",
+          "web_verify_guard": "FAIL",
+          "one_liner": "【6/5 09:00 개장 점검】stale 스냅샷(6/4 20:32, HIGH) 351,500원. HTTP 403 전종목 760min 지속 → live_verify_required. Jensen Huang NVIDIA CEO 6/5 삼성 방문·HBM4E 공급 협의 직접 진행 복수 소스 확인 — semiconductor_ai_memory thesis 🔵 강화. 그러나 web_verify 3조건(URL+시각+OHLC) 모두 미충족 → SCALE_IN 2주 체결 불가. 체결 없음. 손절가(317,286)까지 -9.64%, 목표가(415,000)까지 +18.2%, R/R≈1.58 ✓. ※시세 stale 근사값. 학습·시뮬레이션 목적.",
+          "thesis_status": "semiconductor_ai_memory 🔵 강화",
+          "thesis_evidence": [
+            "Jensen Huang NVIDIA CEO 6/5 서울 방문 — 삼성전자 HBM4E 공급 협의 직접 진행 (복수 웹 소스 확인)",
+            "NVIDIA Vera Rubin HBM4 공급사 삼성·SK·마이크론 공식 지명 재확인",
+            "초기업노조 조합원 65,870명 이탈(비반도체 부문) → 파업 리스크 추가 완화",
+            "한국투자증권 KOSPI 9,500 목표 상향"
+          ],
+          "scale_in_deferred": {
+            "reason": "web_verify_guard FAIL (today_ohlc=null, URL+시각 미확인)",
+            "plan": "12시 routine에서 스냅샷 재수집 또는 web_verify 3조건 충족 시 SCALE_IN 2주 재시도",
+            "target_price": 415000,
+            "stop_price": 317286,
+            "max_shares": 2,
+            "risk_per_share_approx": 43214,
+            "total_risk_approx": 86428,
+            "heat_remaining": 379106
+          },
+          "next_action_candidates": [
+            "【1순위·최우선】12시 routine: 스냅샷 재수집 → web_verify(URL+시각+today_ohlc) 3조건 충족 → R/R 재계산(목표 415,000/손절 317,286) → SCALE_IN 2주 체결",
+            "JH 협력 결과 확인 → HBM4E 공급 확정 보도 시 목표가 415,000→430,000 상향 검토",
+            "손절가(317,286원) 이탈 즉시 전량 가상 청산",
+            "목표가(415,000원) 도달 시 트레일링스톱 활성화(임계 398,866원)"
+          ]
         }
       ]
     },

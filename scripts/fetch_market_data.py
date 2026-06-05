@@ -4,7 +4,8 @@
 routine prompt 가 매 시작 시 이 스크립트를 호출하여 `state/market_snapshot.json` 을 갱신하고,
 이후 가격 판단·신규 진입 추세필터·entry 차단 사유를 결정한다.
 
-- 의존성: Python 표준 라이브러리만 사용 (urllib, json). 추가 패키지 설치 불필요.
+- 의존성: Python 표준 라이브러리만 사용 (urllib, json, concurrent.futures). 추가 패키지 설치 불필요.
+- 성능: 종목별 2출처 + 지수 요청을 스레드풀로 동시 수집한다(I/O 바운드 → 직렬 합산이 아닌 최장 요청 수준으로 수렴).
 - 네트워크: 네이버 siseJson 일별 + Yahoo Finance v8 chart JSON. 둘 중 하나만 살아 있어도 medium 신뢰도까지 산출.
 - 출력: state/market_snapshot.json (신규 생성·덮어쓰기). state/audit_log 와 무관.
 """
@@ -14,6 +15,7 @@ import json
 import logging
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -27,6 +29,11 @@ USER_AGENT = (
 )
 HTTP_TIMEOUT = 12
 HTTP_RETRIES = 2
+# 종목별 2출처 + 지수 레짐 요청은 모두 네트워크 대기(I/O 바운드)다. 직렬로 돌리면
+# (2×종목수 + 1)개 요청이 한 줄로 늘어서 전체 소요가 그 합이 되지만, 스레드풀로 동시에
+# 던지면 전체 소요가 '가장 느린 요청 하나' 수준으로 수렴한다(GIL 영향 없음). 출처 부하·
+# rate-limit 을 감안해 동시 요청 수에 상한을 둔다.
+MAX_WORKERS = 8
 
 logger = logging.getLogger(__name__)
 
@@ -423,7 +430,23 @@ def main() -> int:
 
     tickers = collect_tickers()
     now = datetime.now(KST)
-    regime = build_regime(ma_window, tiers, slope_lookback)
+
+    # 지수 레짐(^KS11)과 종목별 스냅샷의 모든 시세 요청을 한 스레드풀에서 동시에 수집한다.
+    # 작업 함수(build_regime·build_ticker_snapshot)는 공유 상태를 변경하지 않고 결과만
+    # 반환하므로 별도 동기화가 필요 없다. 결과 조립·요약은 아래에서 기존 종목 순서대로
+    # 수행하므로 출력(JSON) 순서·내용은 직렬 버전과 동일하다.
+    max_workers = min(len(tickers) + 1, MAX_WORKERS)
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        regime_future = pool.submit(build_regime, ma_window, tiers, slope_lookback)
+        ticker_futures = {
+            ticker: pool.submit(build_ticker_snapshot, ticker, meta, threshold)
+            for ticker, meta in tickers.items()
+        }
+        regime = regime_future.result()
+        ticker_snapshots = {
+            ticker: future.result() for ticker, future in ticker_futures.items()
+        }
+
     snapshot: dict[str, Any] = {
         "as_of": now.isoformat(timespec="seconds"),
         "policy_threshold_pct": threshold,
@@ -438,7 +461,7 @@ def main() -> int:
     sources_ok = 0
 
     for ticker, meta in tickers.items():
-        ts = build_ticker_snapshot(ticker, meta, threshold)
+        ts = ticker_snapshots[ticker]
         snapshot["tickers"][ticker] = ts
         sources_ok += sum(1 for s in ts["sources"] if s["ok"])
         if meta.get("role") == "holding" and ts["confidence"] == "low":

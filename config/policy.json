@@ -352,6 +352,13 @@
       "residual_gap": "GitHub Actions schedule 은 정시 보장이 없어(큐 혼잡) 경보가 수 분~수십 분 지연될 수 있다 — 즉시성이 필요하면 별도 상시 실행 환경이 필요하다. 보강책: 보유 종목이 orange 근접(±3%)이면 해당일 12·15시 점검에서 부분청산(50%)을 선제 검토해 routine 간 공백 리스크를 추가로 줄인다(slow-exit).",
       "preemptive_partial_exit": "보유 종목 종가가 orange 경계의 +3% 이내로 3거래일 연속 근접하면(장중 이탈·종가 회복 반복 패턴) 4거래일째 전량 청산을 기다리지 말고 3거래일째 50% 부분청산을 검토한다(lessons.md 2026-06-01 HD조선 교훈 ③)."
     },
+    "overnight_gap_prediction_buffer": {
+      "purpose": "codify(2026-06-07 policy-review) — lessons.md 2026-05-22 루틴 오차(KOSPI 역대 최대 급등 다음날 갭다운 예측 -1~-2.5% vs 실제 -4.21%, 2%p 과소 추정). 표준 버퍼(±1%)로 추정해 차익실현 규모를 과소 평가한 갭을 gate 한다. prompts/0000_global.md §2-1 자정 갭다운 예측 단계에 적용.",
+      "trigger_abs_change_pct": 7.0,
+      "additional_downside_buffer_pct": 2.0,
+      "rule": "자정 routine 이 KOSPI 전일 일간 등락률 절댓값이 trigger_abs_change_pct(+7%) 이상임을 확인하면, 다음날 갭다운 예측 기준치에 additional_downside_buffer_pct(+2%p) 추가 하향 버퍼를 적용한다 (예: 기본 -1.5% 추정 → 조정 -3.5%). 갭업 예측에는 적용하지 않는다(하방 보수 원칙). 이 규칙은 lessons.md 에서 2번 관찰됐다(5/22 갭다운 과소 추정, 5/28 역대 최고 경신 후 차익실현).",
+      "applies_to": "prompts/0000_global.md §2-1 갭다운 예측"
+    },
     "structural_bear_keywords": [
       "관세", "보조금 폐지", "규제", "제재", "감독원", "소송", "리콜",
       "공급망 단절", "임원 리스크", "회계 이슈", "공정위", "특별검사",

@@ -188,8 +188,8 @@ def main() -> int:
     stale = bool(snapshot.get("stale"))
 
     # v2.1 — 스냅샷 나이(age) 계산: 수집 시각(as_of) vs 현재. freshness 등급 산출.
-    # stale 키(직접 수집 실패)와 별개로, GitHub Actions 가 성공 수집한 가격도 routine
-    # 시점엔 최대 1시간 묵을 수 있으므로 age 를 명시해 다운스트림(프롬프트)이 보정하게 한다.
+    # 외부 dispatch 트리거(routine 5분 전)면 보통 fresh(~5분)지만, 트리거 지연·실패로
+    # 백업 cron 수집본이 오면 age 가 커질 수 있어, age 를 명시해 다운스트림(프롬프트)이 보정하게 한다.
     now = datetime.now(KST)
     snap_as_of = snapshot.get("as_of")
     age_min: int | None = None

@@ -220,6 +220,11 @@
 
 ## 5. GitHub Actions 워크플로우
 
+### `.github/workflows/fetch_prices.yml`
+- 트리거: **`workflow_dispatch`(1순위 — 외부 스케줄러 cron-job.org 가 routine 5분 전 정시 호출)** + `schedule` 백업 1겹(routine 약 1시간 전 :05). 설정: `docs/price_fetch_trigger.md`
+- 단계: `fetch_market_data.py`(시세 병렬 수집) → `score_candidates.py` → 변경 시 `state/market_snapshot.json`·`candidate_scores.json` 커밋·푸시
+- 효과: dispatch 는 큐 지연 0초 → 스냅샷 age ~5분(fresh) → routine 웹 교차확인 부담 해소
+
 ### `.github/workflows/build_and_notify.yml`
 - 트리거: `reports/`·`config/`·`scripts/`·`templates/`·`docs/` 변경, `workflow_dispatch`
 - 단계: audit → build_html → upload pages → deploy → notify (Kakao)

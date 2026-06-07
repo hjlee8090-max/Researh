@@ -100,13 +100,13 @@
 - **0-3 회복 단계·0-4 레짐·0-5 목표비중 중 가장 보수적인 쪽**을 최종 신규 진입 한도로 적용한다.
 
 ## 0-6. 가격 신선도(age) 점검 (v2.1 — 의무)
-가격 수집(GitHub Actions)을 routine 1시간 전으로 당겼으므로, routine 이 보는 스냅샷 가격은 **항상 수십 분 묵은 값**이다. `confidence`(2출처 일치)와 **`freshness`(나이)는 별개 축**이며 둘 다 본다.
+가격 수집(GitHub Actions)은 외부 스케줄러가 routine **5분 전**에 dispatch 로 깨우므로 스냅샷은 **보통 fresh(~5분)**다. 단 외부 트리거가 지연·실패하면 백업 cron 의 수십 분 전 수집본이나 직전 보존본(stale)이 올 수 있다. `confidence`(2출처 일치)와 **`freshness`(나이)는 별개 축**이며 둘 다 본다.
 - `state/allocation.json` 의 `snapshot_age_min`(분)·`freshness`(fresh/acceptable/stale_intraday)를 읽어 "한눈에 보기" 에 **"데이터 신선도: N분 전(HH:MM 수집), 등급"** 1줄로 표기한다(`policy.price_data_quality.data_freshness`).
 - 등급별 행동:
   - `fresh`(≤20분): 스냅샷 가격 그대로 사용.
   - `acceptable`(≤75분): 매매 허용하되 **지연 인지**. 아래 §B-5 의 임계 근접 종목은 웹 실시간 1회 교차확인. 신규 진입 R/R 이 적용 하한 ±0.1 경계면 실시간 가격으로 재확인 후 체결.
   - `stale_intraday`(>75분 또는 전일자): 신규 진입은 웹 실시간 교차확인 필수, 손절은 임계 접근 시 즉시 웹 확인.
-- **age 가 크다고 confidence 를 강등하지 않는다**(별개 축). 단 1시간 묵은 가격으로 손절·익절을 그대로 체결하지 않도록 §B-5 안전망을 반드시 적용한다.
+- **age 가 크다고 confidence 를 강등하지 않는다**(별개 축). 단 fresh 가 아닌(묵은) 가격으로 손절·익절을 그대로 체결하지 않도록 §B-5 안전망을 반드시 적용한다.
 - **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): §B-5·§1-1 등에서 웹으로 실시간가를 확인할 때, 웹 값을 그대로 현재가로 채택하지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가/현재가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 **셋 다 충족할 때만** 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**, 가격 변동 단독으로 thesis 강화/약화 금지. 보유+후보 동일 적용(2026-06-02 현대차 사고 방지).
 
 ## 1. 웹 검색 (필수)

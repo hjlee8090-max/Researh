@@ -206,7 +206,7 @@
     },
     "data_freshness": {
       "enabled": true,
-      "purpose": "v2.1 — 스냅샷의 '수집 시각(as_of) vs routine 실행 시각' 차이(age, 분)를 추적·차등 적용한다. 직전까지 stale 키(=직접 수집 실패)만 봤고 데이터 노화(age)는 무시해, GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 high 데이터처럼 매매에 썼다('stale 키 없음 ≠ 신선함'). 가격 수집을 routine 1시간 전으로 당기면서 routine 시점 age 가 상시 40~60분이 되었으므로 age 를 명시·게이트한다. compute_allocation.py 가 snapshot_age_min 과 freshness 등급을 state/allocation.json 에 기록하고, 각 routine 0-B 가 이를 읽어 적용한다.",
+      "purpose": "v2.1 — 스냅샷의 '수집 시각(as_of) vs routine 실행 시각' 차이(age, 분)를 추적·차등 적용한다. 직전까지 stale 키(=직접 수집 실패)만 봤고 데이터 노화(age)는 무시해, GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 high 데이터처럼 매매에 썼다('stale 키 없음 ≠ 신선함'). (외부 dispatch 트리거 전환 후) 외부 스케줄러가 routine 5분 전 dispatch 로 수집하므로 age 는 보통 fresh(~5분)지만, 외부 트리거 지연·실패 시 백업 cron(약 1시간 전) 수집본으로 age 가 커질 수 있어 age 를 명시·게이트한다. compute_allocation.py 가 snapshot_age_min 과 freshness 등급을 state/allocation.json 에 기록하고, 각 routine 0-B 가 이를 읽어 적용한다.",
       "fresh_max_min": 20,
       "intraday_acceptable_max_min": 75,
       "grades": {
@@ -216,8 +216,8 @@
       },
       "stop_loss_proximity_pct": 3.0,
       "target_proximity_pct": 2.0,
-      "action_on_proximity_when_not_fresh": "보유 종목이 스냅샷 가격 기준으로 손절선·orange(-7%)·red(-10%) 임계의 stop_loss_proximity_pct(±3%) 안이거나 목표가의 target_proximity_pct(±2%) 안인데 freshness 가 fresh 가 아니면, 묵은 스냅샷 가격으로 즉시 체결·단계판정하지 말고 웹검색 실시간 가격을 1회 교차확인한 뒤 그 가격으로 판정한다. 이는 '1시간 전 가격이 -6%(yellow) 였는데 실제로는 이미 -11% 를 뚫어 손절이 늦게·더 깊게 체결되던' 위험(기아 5/20 패턴)을 막기 위함이다.",
-      "note": "1시간 지연은 의도된 수집 정책의 결과이므로 매매를 '차단'하지 않고 '인지·보정'한다. age 가 큰 것 자체로 confidence 를 강등하지 않는다 — confidence(2출처 일치)와 freshness(나이)는 별개 축이며, 둘을 함께 표기한다."
+      "action_on_proximity_when_not_fresh": "보유 종목이 스냅샷 가격 기준으로 손절선·orange(-7%)·red(-10%) 임계의 stop_loss_proximity_pct(±3%) 안이거나 목표가의 target_proximity_pct(±2%) 안인데 freshness 가 fresh 가 아니면, 묵은 스냅샷 가격으로 즉시 체결·단계판정하지 말고 웹검색 실시간 가격을 1회 교차확인한 뒤 그 가격으로 판정한다. 이는 '묵은 스냅샷 가격이 -6%(yellow) 였는데 실제로는 이미 -11% 를 뚫어 손절이 늦게·더 깊게 체결되던' 위험(기아 5/20 패턴)을 막기 위함이다.",
+      "note": "외부 dispatch 전환 후 스냅샷은 보통 fresh 이며, 외부 트리거 지연·실패로 age 가 커진 경우에도 매매를 '차단'하지 않고 '인지·보정'한다. age 가 큰 것 자체로 confidence 를 강등하지 않는다 — confidence(2출처 일치)와 freshness(나이)는 별개 축이며, 둘을 함께 표기한다."
     },
     "web_verify_guard": {
       "purpose": "v2.4 — 웹 교차확인(live_verify)이 묵은 값/개장 고가를 '현재가'로 잘못 채택하고 그 위에 없는 촉매를 지어내 결론을 뒤집는 것을 막는다. (2026-06-02 현대차: 스냅샷 710,000(12:40, naver+yahoo 2출처 high, today_high=772,000)을 두고 웹 754,000(개장 스파이크, today_high 근처)을 '현재가'로 채택 → '+4.29% 급등·관세 완화 기대감 추정' 허구 서사 → 비중 상한 초과·thesis 약화·진입 불가 결론. 실제 종가는 729,000(-2.80%)로 정반대. 스냅샷이 이미 today_ohlc=시가770,000/고가772,000/저가697,000/현재710,000 을 갖고 있었는데 무시됐다.)",

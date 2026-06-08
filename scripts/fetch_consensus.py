@@ -23,7 +23,9 @@ import argparse
 import json
 import logging
 import re
+import ssl
 import sys
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -106,38 +108,67 @@ def _num(s: str | None) -> float | None:
         return None
 
 
-def parse_fnguide(html: str) -> dict[str, Any]:
-    """FnGuide Snapshot 에서 컨센서스 핵심값을 best-effort 추출.
+def _opinion_text(score: float | None) -> str | None:
+    """FnGuide 투자의견 점수(1~5) → 한글 등급. 강력매도1·매도2·중립3·매수4·강력매수5."""
+    if score is None:
+        return None
+    if score >= 4.5:
+        return "강력매수"
+    if score >= 3.5:
+        return "매수"
+    if score >= 2.5:
+        return "중립"
+    if score >= 1.5:
+        return "매도"
+    return "강력매도"
 
-    실제 DOM 구조 확정 전이므로 라벨 근방 숫자를 회수한다. probe 출력으로
-    실패 라벨을 확인해 정밀 파서로 교체한다. 못 찾은 값은 None.
+
+# 컨센 요약 박스의 고정 라벨 시퀀스 뒤에 값 5개가 순서대로 온다(FnGuide 템플릿, probe 확인):
+#   "... 투자의견 목표주가 EPS PER 추정기관수  4.0 415,200 42,998 7.7 25"
+_CONSENSUS_ROW = re.compile(
+    r"투자의견\s+목표주가\s+EPS\s+PER\s+추정기관수[\s:]*"
+    r"([-\d.,]+)\s+([-\d.,]+)\s+([-\d.,]+)\s+([-\d.,]+)\s+([-\d.,]+)"
+)
+_CONSENSUS_DATE = re.compile(r"투자의견\s*컨센서스\s*\[(\d{4}/\d{2}/\d{2})\]")
+
+
+def parse_fnguide(html: str) -> dict[str, Any]:
+    """FnGuide Snapshot 컨센 요약 박스에서 투자의견·목표주가·EPS·PER·추정기관수 추출.
+
+    라벨 시퀀스 '투자의견 목표주가 EPS PER 추정기관수' 직후 5개 값을 회수한다
+    (probe 로 확인한 고정 템플릿). 박스를 못 찾으면 빈 dict.
     """
     text = _strip_tags(html)
     out: dict[str, Any] = {}
-
-    def near(label: str, win: int = 60) -> str | None:
-        i = text.find(label)
-        return text[i + len(label): i + len(label) + win] if i >= 0 else None
-
-    out["target_price"] = _num(near("목표주가"))
-    # 투자의견은 보통 '4.00' 같은 점수 또는 '매수' 텍스트
-    opin = near("투자의견")
-    out["opinion_score"] = _num(opin)
-    if opin:
-        m = re.search(r"(매수|중립|매도|적극매수|비중확대|보유)", opin)
-        out["opinion_text"] = m.group(1) if m else None
-    out["n_estimates"] = _num(near("추정기관수") or near("추정기관"))
-    out["raw_found"] = {a: (a in text) for a in PROBE_ANCHORS}
+    m = _CONSENSUS_ROW.search(text)
+    if m:
+        out["opinion_score"] = _num(m.group(1))
+        out["target_price"] = _num(m.group(2))
+        out["eps_consensus"] = _num(m.group(3))
+        out["per_consensus"] = _num(m.group(4))
+        out["n_estimates"] = _num(m.group(5))
+        out["opinion_text"] = _opinion_text(out["opinion_score"])
+    d = _CONSENSUS_DATE.search(text)
+    if d:
+        out["consensus_date"] = d.group(1)
     return out
 
 
 def fetch_one(ticker: str, name: str, now: datetime) -> tuple[dict[str, Any], bool]:
     url = FNGUIDE_SNAPSHOT.format(ticker=ticker)
-    try:
-        raw = http_get(url)
-    except (urllib.error.URLError, TimeoutError) as exc:
-        logger.warning("fnguide fetch failed %s: %s", ticker, exc)
-        return {"name": name, "error": f"fetch 실패: {type(exc).__name__}"}, False
+    # FnGuide 는 순차 요청이 몰리면 간헐적으로 SSL EOF 로 끊는다. 짧은 backoff 로 재시도.
+    raw = None
+    last_exc: Exception | None = None
+    for attempt in range(3):
+        try:
+            raw = http_get(url)
+            break
+        except (urllib.error.URLError, TimeoutError, ssl.SSLError, ConnectionError) as exc:
+            last_exc = exc
+            time.sleep(1.5 * (attempt + 1))
+    if raw is None:
+        logger.warning("fnguide fetch failed %s: %s", ticker, last_exc)
+        return {"name": name, "error": f"fetch 실패: {type(last_exc).__name__}"}, False
     html = raw.decode("utf-8", "replace")
     parsed = parse_fnguide(html)
     has_any = any(parsed.get(k) is not None for k in ("target_price", "opinion_score", "n_estimates"))
@@ -202,7 +233,9 @@ def main(argv: list[str] | None = None) -> int:
     prior = load_json("state/consensus.json", {})
     data: dict[str, Any] = {}
     ok = 0
-    for ticker, name in tickers.items():
+    for idx, (ticker, name) in enumerate(tickers.items()):
+        if idx:
+            time.sleep(0.8)  # FnGuide 순차요청 SSL EOF 완화
         entry, is_ok = fetch_one(ticker, name, now)
         if is_ok:
             data[ticker] = entry

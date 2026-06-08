@@ -13,6 +13,47 @@
       "shares_held": 0,
       "cost_basis_total": 0,
       "conviction": 3,
+      "thesis": {
+        "id": "hbm_value_up",
+        "statement": "HBM4 양산·밸류업 자사주로 저PBR 재평가 → 목표 304,300 (+10%)",
+        "horizon": "swing_weeks",
+        "key_drivers": [
+          "HBM4 양산 출하·AMD/엔비디아향 공급 협의",
+          "밸류업 자사주 매입·소각 수혜",
+          "AI 데이터센터 DRAM·파운드리 수요 회복"
+        ],
+        "invalidation": [
+          {
+            "id": "hbm_share_loss",
+            "cond": "HBM4 AMD/엔비디아 공급 지명 실패 또는 SK하이닉스 독점 회귀",
+            "type": "개별",
+            "hard": true
+          },
+          {
+            "id": "fx_foreign_sell",
+            "cond": "원달러 1,500원+ 고환율 지속 + 외국인 순매도 심화",
+            "type": "매크로",
+            "hard": false
+          },
+          {
+            "id": "labor_strike",
+            "cond": "노조 총파업 현실화로 DS 생산 차질·노동비용 급증",
+            "type": "개별",
+            "hard": false
+          },
+          {
+            "id": "earnings_miss",
+            "cond": "반기 영업이익 전분기 대비 -15%↓ 가이던스 컷",
+            "type": "가정오류",
+            "hard": true,
+            "linked_catalyst": "005930-2026Half-earnings"
+          }
+        ],
+        "status": "intact",
+        "entry_ts": "2026-05-28T12:10:00+09:00",
+        "seeded": true,
+        "last_review_ts": "2026-06-08T10:40:21+09:00"
+      },
       "bull_case": [
         "HBM4 양산 출하 개시 — AMD·엔비디아향 공급 협의로 SK하이닉스 독점 균열 가능성",
         "영업이익 57.23조(2026 1Q) 대비 저PBR 상태 → 밸류업 프로그램 자사주 매입 수혜",
@@ -532,7 +573,12 @@
           "orange_threshold_price": 335936,
           "red_threshold_price": 325099,
           "stop_price": 317286,
-          "today_ohlc_1035kst": {"open": 333500, "high": 335000, "low": 325000, "close_approx": 333000},
+          "today_ohlc_1035kst": {
+            "open": 333500,
+            "high": 335000,
+            "low": 325000,
+            "close_approx": 333000
+          },
           "trade_blocked_reason": "confidence=LOW(2.102% source gap) + web_verify_guard FAIL(URL+시각+OHLC 3조건 미충족)",
           "cause_analysis_3": [
             "①매크로: KOSPI 오전 regime 8,050(전일 8,639 대비 약 -6.8% 추정) — Broadcom -12% AI guidance shock 글로벌 확산·반도체 섹터 포함 광범위 하락 (스냅샷 regime 8050.84·09시 리포트 Broadcom -12% 확인)",
@@ -562,7 +608,12 @@
           "web_source": "investing.com/equities/samsung-electronics-co-ltd (13:04 KST)",
           "web_deviation_pct": -0.97,
           "one_liner": "【15:00 마감 임박】스냅샷(12:30, HIGH) 336,500원 + 웹 교차확인(investing.com, 13:04) 333,250원(편차-0.97%·3조건 ✓). 진입가(361,221) 대비 -7.81% 🟠 ORANGE 확인. 오늘 OHLC 시가333,500/고가343,000/저가325,000 — 장중 저가 325,000원이 RED 경계(325,099) 하회, 사실상 RED 터치. KOSPI 12:30 기준 8,288.9(전일 8,639 대비 -4.1% — Broadcom shock 충격 지속). semiconductor_ai_memory thesis 단기 약화(Broadcom guidance 실망·JH 방한 삼성 확정 보도 미확인). 15시 체결 권유 없음(§4). ※시세 근사값, 종가 15:30 미확정.",
-          "today_ohlc": {"open": 333500, "high": 343000, "low": 325000, "close_approx": 333250},
+          "today_ohlc": {
+            "open": 333500,
+            "high": 343000,
+            "low": 325000,
+            "close_approx": 333250
+          },
           "orange_threshold": 335935,
           "red_threshold": 325099,
           "stop_price": 317286,
@@ -633,6 +684,41 @@
       "shares_held": 0,
       "cost_basis_total": 0,
       "conviction": 4,
+      "thesis": {
+        "id": "kia_value_rerate",
+        "statement": "글로벌 점유율 4%·저PER 주주환원 재평가 → 목표 199,500 (+10%)",
+        "horizon": "swing_weeks",
+        "key_drivers": [
+          "글로벌 점유율 4% 돌파·5위권 진입",
+          "PER 4.59x 저평가 + 자사주 소각·배당 확대",
+          "EV 라인업 다변화 가격 결정력"
+        ],
+        "invalidation": [
+          {
+            "id": "us_tariff",
+            "cond": "미국 관세 부담(약 7,550억) 확정·확대로 하반기 OP 감소",
+            "type": "섹터",
+            "hard": true
+          },
+          {
+            "id": "byd_competition",
+            "cond": "중국 BYD 저가 EV 경쟁으로 신흥시장 점유율 하락 확인",
+            "type": "섹터",
+            "hard": false
+          },
+          {
+            "id": "earnings_miss",
+            "cond": "반기 실적 가이던스 컷(전분기 대비 -15%↓)",
+            "type": "가정오류",
+            "hard": true,
+            "linked_catalyst": "000270-2026Half-earnings"
+          }
+        ],
+        "status": "intact",
+        "entry_ts": "2026-05-28T12:10:00+09:00",
+        "seeded": true,
+        "last_review_ts": "2026-06-08T10:40:21+09:00"
+      },
       "bull_case": [
         "글로벌 점유율 4% 돌파 — 5위권 진입 목전, 브랜드 프리미엄 재평가 모멘텀",
         "PER 4.59x·PBR 0.85x 저평가 + 자사주 소각·배당 확대로 주주환원 가속",
@@ -681,6 +767,41 @@
       "shares_held": 8,
       "cost_basis_total": 1224800,
       "conviction": 3,
+      "thesis": {
+        "id": "kb_value_up_nim",
+        "statement": "밸류업 자사주 소각 + 고환율 NIM 방어 → 목표 168,400 (+10%)",
+        "horizon": "swing_weeks",
+        "key_drivers": [
+          "고환율 외화대출 이자수익·NIM 방어",
+          "자사주 1.2조 매입·2.3조 소각 결의 PBR 해소",
+          "1분기 순이익 +11.5%·비이자이익 다각화"
+        ],
+        "invalidation": [
+          {
+            "id": "pf_default",
+            "cond": "부동산 PF 부실 확대·대손충당금 급증 공시",
+            "type": "개별",
+            "hard": true
+          },
+          {
+            "id": "rate_cut_nim",
+            "cond": "한은 금리 인하 본격화로 NIM 축소 확인",
+            "type": "매크로",
+            "hard": false
+          },
+          {
+            "id": "earnings_miss",
+            "cond": "반기 순이익 가이던스 컷(전분기 대비 -15%↓)",
+            "type": "가정오류",
+            "hard": true,
+            "linked_catalyst": "105560-2026Half-earnings"
+          }
+        ],
+        "status": "intact",
+        "entry_ts": "2026-05-28T12:10:00+09:00",
+        "seeded": true,
+        "last_review_ts": "2026-06-08T10:40:21+09:00"
+      },
       "bull_case": [
         "고환율(1,500원대) 유지 시 외화대출 이자수익 확대, NIM 방어",
         "정부 밸류업 정책 + 자사주 1.2조 매입·즉시 6,000억 소각 + 2.3조(1,426만주) 소각 결의 → PBR ~0.6x 저평가 해소",
@@ -964,6 +1085,41 @@
       "shares_held": 1,
       "cost_basis_total": 446000,
       "conviction": 3,
+      "thesis": {
+        "id": "shipbuilding_supercycle",
+        "statement": "LNG 슈퍼사이클 수주잔고 + 수익성 개선 → 목표 500,000 (+12%)",
+        "horizon": "swing_weeks",
+        "key_drivers": [
+          "1Q OP +57.8% YoY·컨센 +14.8% 초과",
+          "연간 수주목표 46.4% 달성·수주잔고 가시성",
+          "LNG·특수선 기술우위 도크 가동률 상승"
+        ],
+        "invalidation": [
+          {
+            "id": "steel_plate_cost",
+            "cond": "후판가 급등으로 원가율 상승·OP마진 훼손",
+            "type": "섹터",
+            "hard": false
+          },
+          {
+            "id": "krw_strength",
+            "cond": "원화 급강세로 달러 수주 원화환산 매출 감소",
+            "type": "매크로",
+            "hard": false
+          },
+          {
+            "id": "earnings_miss",
+            "cond": "반기 OP 증가율 둔화·수주 모멘텀 꺾임",
+            "type": "가정오류",
+            "hard": true,
+            "linked_catalyst": "009540-2026Half-earnings"
+          }
+        ],
+        "status": "intact",
+        "entry_ts": "2026-05-28T12:10:00+09:00",
+        "seeded": true,
+        "last_review_ts": "2026-06-08T10:40:21+09:00"
+      },
       "bull_case": [
         "1Q26 매출 +20.2%·영업이익 +57.8% YoY — 컨센서스 OP 대비 +14.8% 초과. 5월 2조1308억원 수주(8척) 추가 계약",
         "연간 수주목표 46.4% 달성(108억달러/94척) — 수주잔고 가시성 높음. LNG운반선 슈퍼사이클 지속",
@@ -1225,6 +1381,34 @@
       "shares_held": 0,
       "cost_basis_total": 0,
       "conviction": 2,
+      "thesis": {
+        "id": "hyundai_rerate_cautious",
+        "statement": "자동차 강세장 밸류 재평가 — 관세·실적 훼손으로 신중 (목표 840,000)",
+        "horizon": "swing_weeks",
+        "key_drivers": [
+          "자동차 섹터 강세 추세(5d +14.5%)",
+          "1Q 어닝 서프라이즈 후 밸류 재평가 기대"
+        ],
+        "invalidation": [
+          {
+            "id": "us_tariff",
+            "cond": "미국 관세 구조적 악재 — 자동차 avoid_sector 등록 유지",
+            "type": "섹터",
+            "hard": true
+          },
+          {
+            "id": "earnings_decline",
+            "cond": "1Q OP -30.8% YoY(sharp_decline) 추세 지속·반기 미회복",
+            "type": "가정오류",
+            "hard": true,
+            "linked_catalyst": "005380-2026Half-earnings"
+          }
+        ],
+        "status": "weakening",
+        "entry_ts": "2026-05-28T12:10:00+09:00",
+        "seeded": true,
+        "last_review_ts": "2026-06-08T10:40:21+09:00"
+      },
       "bull_case": [
         "KOSPI strong_bull 장세에서 자동차 섹터 5d +14.5% 강세 추세 확인",
         "현대차 1Q26 어닝 서프라이즈 후 밸류에이션 재평가 모멘텀",
@@ -1286,14 +1470,21 @@
   "avoid_sectors": [
     {
       "sector": "조선",
-      "tickers": ["009540", "010140", "329180"],
+      "tickers": [
+        "009540",
+        "010140",
+        "329180"
+      ],
       "reason": "동일 섹터 반복 손실 3회 달성(HD조선 5/28 매크로·5/29 섹터·6/1 섹터 orange 청산). 반도체 AI 장세 지속 중 조선 수급 소외 시스템 패턴 확인. policy §4 avoid_sectors 자동 등록.",
       "effective_from": "2026-06-02",
       "re_entry_condition": "반도체 AI 메가 랠리 소강 후 조선 섹터 외국인/기관 순매수 3거래일 이상 확인 시 제거 검토"
     },
     {
       "sector": "자동차",
-      "tickers": ["000270", "005380"],
+      "tickers": [
+        "000270",
+        "005380"
+      ],
       "reason": "관세 구조적 악재(policy.entry_filters). 재진입 시 비중 15% 강제.",
       "effective_from": "2026-05-20",
       "re_entry_condition": "관세 구조적 악재 해소 후 재검토"
@@ -1335,7 +1526,9 @@
       "SK하이닉스(000660) — risk_cap 초과 지속",
       "한화에어로스페이스(012450) — 5d -12.58%% 추세필터 차단"
     ],
-    "current_holdings_summary": {"005930": "1주 보유(ORANGE), 329,000원(종가), 진입가 361,221, 목표 415,000, 손절 317,286"},
+    "current_holdings_summary": {
+      "005930": "1주 보유(ORANGE), 329,000원(종가), 진입가 361,221, 목표 415,000, 손절 317,286"
+    },
     "actions_completed_0605_1800": [
       "삼성전자(005930) ORANGE 종가 확정(329,000 < 335,935) → 50%% 부분매도 1주 가상 체결(net 327,700원, 실현손익 -33,521원). 잔여 1주 주말 보유.",
       "KOSPI 8,172.78(-5.40%%, Broadcom shock+외국인 21거래일 순매도). equity 4,926,299원(일일 -0.93%%, 누적 -1.47%%).",

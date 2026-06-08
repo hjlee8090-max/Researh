@@ -1,0 +1,51 @@
+name: Fetch Consensus (FnGuide)
+
+# 컨센서스 레이어 — 증권사 추정치(목표주가·투자의견·영업이익/EPS 추정)를 수집한다.
+# Phase 2(earnings-preview)의 입력. DART(확정 실적)와 달리 '시장 예상치'를 제공한다.
+#
+# 소스: FnGuide 컴퍼니가이드 Snapshot. 키 불필요. 차단/실패 시 graceful degrade(직전값 보존).
+# 컨센은 분기 흐름이라 주 1회면 충분. fetch_fundamentals(토 22:00 UTC) 직전에 갱신.
+#
+# probe 스텝(continue-on-error)은 첫 실행에서 페이지 접근성·구조(라벨 위치)를 로그에 남겨
+# 파서 정밀화의 근거로 쓴다.
+
+on:
+  schedule:
+    # 매주 일요일 06:45 KST = 토요일 21:45 UTC. catalysts(21:30)·fundamentals(22:00) 사이.
+    - cron: "45 21 * * 6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-consensus
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Probe FnGuide accessibility & structure (diagnostic, non-fatal)
+        continue-on-error: true
+        run: python scripts/fetch_consensus.py --probe
+      - name: Fetch consensus (FnGuide)
+        run: python scripts/fetch_consensus.py
+      - name: Commit consensus if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/consensus.json
+          if git diff --cached --quiet; then
+            echo "no consensus changes — skip commit"
+          else
+            git commit -m "data(consensus): scheduled FnGuide consensus snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

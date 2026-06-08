@@ -76,6 +76,14 @@
 - 정책 이슈: "US tariff news today" (자동차·반도체 노출 시 즉시 보유 종목 영향)
 - 주말 이후 첫 거래일이면: "weekend market news", "Korea stock market next week", "Fed calendar this week", "earnings calendar Korea this week"
 
+### 1-5. 촉매 캘린더 갱신 (catalyst-calendar — 파일 있을 때)
+위 검색에서 **확정된 매크로 이벤트 날짜**(FOMC·한은 금통위·미 CPI/PCE·옵션만기 등)나 보유·후보 종목의 **확정 실적발표일**을 알게 되면 `config/catalysts.json` 의 `manual_events` 에 추가/갱신한다(중복 id 면 갱신):
+```json
+{"id":"macro-2026-06-fomc","type":"macro","scope":"macro","date":"YYYY-MM-DD","confirmed":true,"importance":"high","expectation":"FOMC 금리결정 — 환율·외국인 수급","affects_sectors":["IT/반도체","금융"],"managed_by":"manual","source_url":"..."}
+```
+- 보유 종목 high 매크로 촉매가 **D-2 이내** 면 자정 리포트 "보유 종목별 매핑"에 D-day 경보를 넣고 한국 개장 갭 예측의 불확실도를 넓힌다.
+- `generated_events`(스크립트 소유)는 직접 수정하지 않는다 — 확정 시 `supersedes` 로 manual 에 덮어쓴다.
+
 ## 2. 한국 시장 연계 분석 (핵심 단계)
 검색 결과를 단순 나열하지 않는다. **"이 글로벌 이슈가 우리 보유 종목에 어떻게 작용하는가"** 를 매핑:
 

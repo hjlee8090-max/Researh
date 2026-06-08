@@ -153,6 +153,21 @@
 - 쓰기: `state/market_snapshot.json` (GitHub Actions `fetch_prices.yml` 가 수집·커밋, 추적됨)
 - (v2.4) 종목별 `today_ohlc`(시가/고가/저가/현재가, last_date=오늘일 때만) 노출 — 웹 교차확인이 개장/장중 고가를 '현재가'로 오인하는 것을 막는 범위 맥락(`policy.price_data_quality.web_verify_guard`). 이미 수집한 일봉에서 파생, 네트워크 무관.
 
+### `scripts/fetch_catalysts.py` (신규 — catalyst-calendar Part A)
+- 읽기: `config/portfolio.json`(보유), `config/candidates.json`(후보), `config/catalysts.json`(직전 manual_events 보존), 환경변수 `DART_API_KEY`(옵션)
+- 네트워크: DART list.json(정기공시) — 있으면 최근 제출분으로 다음 회차 보정. 없어도 한국 정기보고서 법정기한(달력)으로 generated_events 생성(graceful degrade)
+- 쓰기: `config/catalysts.json` — `generated_events`(스크립트 소유, 매 실행 재생성) / `manual_events`(사람·routine 소유, 보존) / `events_archive`(경과분 14일 보관)
+- 실행: `.github/workflows/fetch_catalysts.yml` 주 1회(일 06:30 KST). 데일리 routine 은 읽기 + manual_events 갱신만.
+- 소비처: `prompts/0000_global.md`(매크로 촉매 기록·D-day), `0900_pre_market.md`(1-4 촉매 임박 경보), `1500_close.md`(익일 사전 알림), `1800_report.md`(§4 다음 거래일 액션). 정책: `policy.catalysts`.
+
+### `scripts/fetch_consensus.py` (신규 — 컨센서스 레이어, Phase 2 입력)
+- 읽기: `config/portfolio.json`(보유), `config/candidates.json`(후보), `state/consensus.json`(직전값 보존)
+- 네트워크: FnGuide 컴퍼니가이드 Snapshot(comp.fnguide.com) — 브라우저 UA+Referer. 차단 시 graceful degrade(직전값+stale)
+- 쓰기: `state/consensus.json` — 종목별 target_price·opinion·n_estimates(+추정치, 파서 확정 후 확장)
+- 실행: `.github/workflows/fetch_consensus.yml` 주 1회(일 06:45 KST). `--probe` 로 접근성·구조 진단(첫 GH Actions 실행에서 파서 확정).
+- 소비처: Phase 2 earnings-preview 프롬프트(예정). 정책: `policy.consensus`.
+- **검증 상태**: FnGuide 의 러너 접근성은 첫 워크플로 probe 로그로 확정 → 파서 정밀화 후 활성.
+
 ### `scripts/check_market_open.py` (신규)
 - 읽기: `config/market_calendar.json`
 - 인자: `--date YYYY-MM-DD` (옵션, 생략 시 오늘 KST)
@@ -240,6 +255,8 @@
   - 18시 routine 과 audit script 가 이 값을 동기화한다
 - `config/policy.json.risk.weekly_account_target_return_pct` → `config/weekly_plan.json.objective.target_return_pct`
 - `config/watchlist.json` 의 `weekly_thesis_id` → `config/weekly_plan.json.weekly_thesis[].id`
+- (thesis-tracker, Part B) `config/watchlist.json.stocks[].thesis` = `{id, statement, key_drivers[], invalidation[], status, entry_ts, last_review_ts}`. `invalidation[].type` 은 18시 자기보완 4분류(매크로/섹터/개별/가정오류)와 **동일 enum** (`policy.thesis.invalidation_type_enum`). `invalidation[].linked_catalyst` → `config/catalysts.json` 의 earnings 촉매 id (Part C 결합).
+  - 소비처: `0900_pre_market.md`(B 2-1 무효화 1차 점검), `1800_report.md`(2-4 무효화 판정 + 종목별 종가 점검 status 뱃지 + §3 lessons type 기록). audit: `audit_pipeline.audit_thesis`.
 
 ## 7. 점검 체크리스트 (수동 점검 시)
 

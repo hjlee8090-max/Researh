@@ -10,8 +10,10 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+KST = timezone(timedelta(hours=9))
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -214,6 +216,45 @@ def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
         messages.append(result("OK", "보유 종목 모두 R/R 임계(1.2) 이상"))
 
 
+def audit_thesis(data: dict[str, object], messages: list[str]) -> None:
+    """watchlist.stocks[].thesis(thesis-tracker, Part B) 스키마·enum 정합 점검."""
+    policy = data.get("config/policy.json") or {}
+    watchlist = data.get("config/watchlist.json") or {}
+    if not isinstance(policy, dict) or not isinstance(watchlist, dict):
+        return
+    cfg = policy.get("thesis", {}) if isinstance(policy.get("thesis"), dict) else {}
+    if not cfg.get("enabled", True):
+        return
+    type_enum = set(cfg.get("invalidation_type_enum", ["매크로", "섹터", "개별", "가정오류"]))
+    status_enum = set(cfg.get("status_enum", ["intact", "weakening", "invalidated"]))
+    stocks = [s for s in watchlist.get("stocks", []) if isinstance(s, dict)]
+    held = [s for s in stocks if (s.get("shares_held") or 0) > 0]
+    with_thesis = [s for s in stocks if isinstance(s.get("thesis"), dict)]
+    problems: list[str] = []
+    for s in with_thesis:
+        th = s["thesis"]
+        tk = s.get("ticker", "?")
+        if th.get("status") not in status_enum:
+            problems.append(f"{tk} status={th.get('status')}")
+        for inv in th.get("invalidation", []):
+            if not isinstance(inv, dict):
+                problems.append(f"{tk} invalidation 항목 형식 오류")
+                continue
+            if inv.get("type") not in type_enum:
+                problems.append(f"{tk} invalidation.type={inv.get('type')}")
+            if not isinstance(inv.get("hard"), bool):
+                problems.append(f"{tk} invalidation.hard 비불리언")
+    held_no_thesis = [s.get("ticker") for s in held if not isinstance(s.get("thesis"), dict)]
+    if problems:
+        messages.append(result("FAIL", "watchlist thesis 스키마 오류: " + "; ".join(problems)))
+    if held_no_thesis:
+        messages.append(result("WARN", "보유 종목 thesis 누락 — 09시에 작성 필요: " + ", ".join(map(str, held_no_thesis))))
+    if with_thesis and not problems:
+        messages.append(result("OK", f"watchlist thesis-tracker {len(with_thesis)}종목 스키마 정상"))
+    elif not with_thesis:
+        messages.append(result("WARN", "watchlist thesis 미설정 — thesis-tracker 비활성(옵셔널)"))
+
+
 def audit_recovery_stage(data: dict[str, object], messages: list[str]) -> None:
     """누적 수익률 기준 회복 전략 단계 판정 (policy.weekly_recovery_plan).
 
@@ -277,6 +318,8 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     score = ROOT / "scripts" / "score_candidates.py"
     allocation = ROOT / "scripts" / "compute_allocation.py"
     fundamentals_script = ROOT / "scripts" / "fetch_fundamentals.py"
+    catalysts_script = ROOT / "scripts" / "fetch_catalysts.py"
+    consensus_script = ROOT / "scripts" / "fetch_consensus.py"
     reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
     pre_trade = ROOT / "scripts" / "pre_trade_check.py"
     trade_gate = ROOT / "scripts" / "check_trade_log_gate.py"
@@ -286,8 +329,11 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     candidates = ROOT / "config" / "candidates.json"
     themes = ROOT / "config" / "themes.json"
     calendar = ROOT / "config" / "market_calendar.json"
+    catalysts = ROOT / "config" / "catalysts.json"
     for path, label in [
         (fetch, "scripts/fetch_market_data.py"),
+        (catalysts_script, "scripts/fetch_catalysts.py"),
+        (consensus_script, "scripts/fetch_consensus.py"),
         (check, "scripts/check_market_open.py"),
         (session_check, "scripts/check_market_session.py"),
         (score, "scripts/score_candidates.py"),
@@ -331,6 +377,45 @@ def audit_market_data_tooling(messages: list[str]) -> None:
             messages.append(result("FAIL", f"config/market_calendar.json parse failed: {exc}"))
     else:
         messages.append(result("WARN", "config/market_calendar.json missing — 휴장일 가드 비활성"))
+    if catalysts.exists():
+        try:
+            payload = json.loads(catalysts.read_text(encoding="utf-8"))
+            gen = payload.get("generated_events", [])
+            man = payload.get("manual_events", [])
+            if not isinstance(gen, list) or not isinstance(man, list):
+                messages.append(result("FAIL", "config/catalysts.json: generated_events/manual_events 는 배열이어야 함"))
+            else:
+                today = datetime.now(KST).date().isoformat()
+                stale_gen = [e for e in gen if isinstance(e, dict) and e.get("date", "") < today]
+                bad = [e for e in (gen + man) if not isinstance(e, dict) or "date" not in e or "type" not in e]
+                if bad:
+                    messages.append(result("WARN", f"config/catalysts.json: date/type 누락 이벤트 {len(bad)}건"))
+                if stale_gen:
+                    messages.append(result("WARN",
+                        f"config/catalysts.json: 경과한 generated 이벤트 {len(stale_gen)}건 — fetch_catalysts.py 재실행 권장"))
+                messages.append(result("OK",
+                    f"config/catalysts.json tracks {len(gen)} generated + {len(man)} manual catalysts"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"config/catalysts.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "config/catalysts.json missing — 촉매 캘린더 비활성(옵셔널)"))
+    consensus = ROOT / "state" / "consensus.json"
+    if consensus.exists():
+        try:
+            payload = json.loads(consensus.read_text(encoding="utf-8"))
+            tks = payload.get("tickers", {})
+            ok = payload.get("fetched_ok", 0)
+            if not isinstance(tks, dict):
+                messages.append(result("FAIL", "state/consensus.json: tickers 는 객체여야 함"))
+            elif ok == 0 and tks:
+                messages.append(result("WARN",
+                    "state/consensus.json: fetched_ok=0 — FnGuide 수집 실패(전부 stale). Phase 2 입력 점검 필요"))
+            else:
+                messages.append(result("OK", f"state/consensus.json: {ok}/{len(tks)} 종목 컨센 수집"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"state/consensus.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "state/consensus.json missing — 컨센서스 레이어 비활성(Phase 2 입력)"))
 
 
 def audit_prompts_and_scripts(messages: list[str]) -> None:
@@ -486,6 +571,7 @@ def main() -> int:
     audit_reconciliation(messages)
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)
+    audit_thesis(data, messages)
     audit_recovery_stage(data, messages)
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)

@@ -32,6 +32,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 1. `state/lessons.md`
 2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 3. `state/market_snapshot.json` (0-B 에서 갱신 — 가격·신뢰도 1순위)
+3-1. `config/catalysts.json` (있으면 — 익일 09시 사전 알림의 임박 촉매 표출용, 옵셔널)
 4. **시간대별 리포트**:
    - `reports/YYYY-MM-DD-12.md` (오늘 12시 — 반드시 흡수)
    - `reports/YYYY-MM-DD-09.md` (필요 시 참고)
@@ -111,6 +112,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 ### 익일 09시 사전 알림
 - 청산 발생 종목 자리: (있다면) 어떤 섹터·테마 후보로 검토할지
 - 매크로 이벤트: (다가오는 FOMC/CPI/옵션만기 등)
+- **📅 임박 촉매** (`config/catalysts.json` 있을 때): `generated_events`+`manual_events` 중 **D-3 이내** 이벤트를 종목·날짜·중요도와 함께 나열. 익일 실적발표 보유 종목이 있으면 "발표 D-1 → 종가 청산·축소 후보 검토" 로 표시(방향 미확정 이벤트 직전 비중 확대 금지). 없으면 "임박 촉매 없음" 1줄.
 - weekly_plan에서 내일 반드시 이어받을 watch_items 3개
 
 ---

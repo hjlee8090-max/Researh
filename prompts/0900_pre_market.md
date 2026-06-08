@@ -55,6 +55,7 @@
 7. `config/candidates.json` — 신규 진입 후보 (`shipbuilding_candidate` 등) — 자동 추적 대상
 8. `state/market_snapshot.json` — 0-B 단계에서 방금 만든 가격·5거래일 추세 스냅샷
 9. `state/candidate_scores.json` — 0-B 단계의 후보 점수·진입 가능 여부 랭킹
+10. `config/catalysts.json` — **다가오는 촉매(실적발표·배당·매크로) 캘린더** (있으면). `generated_events`(법정기한 추정)+`manual_events`(웹검색 확정)를 합쳐 D-day 임박 이벤트를 1-4 에서 경보로 쓴다. 파일이 없으면 이 단계는 건너뛴다(옵셔널).
 
 > **파이프라인 연결 규칙** (핵심):
 > - 09시는 "어제 18시 (한국 마감) → 오늘 00시 (글로벌 야간) → 야간~새벽 추가 흐름 → 09시 (한국 개장)" 의 **종합 마디**다.
@@ -135,6 +136,15 @@
 - 미국장 마감 후 self-reverse 가 있었는가?
 - 한국 시장이 야간 흐름을 **그대로 반영** vs **차별화** 중 어느 쪽인가?
 - 보유 종목 각각이 야간 시그널을 **그대로 추종 / 약화 추종 / 역행** 중 어느 패턴인가?
+
+### 1-4. 촉매 임박 경보 (catalyst-calendar — 신규 진입·보유 점검 전 의무, 파일 있을 때)
+`config/catalysts.json` 이 있으면 `generated_events` + `manual_events` 를 합쳐 **오늘(=as_of)부터 D-day** 를 계산하고 다음을 적용한다:
+- **보유 종목 high 촉매가 D-1 이내**(실적발표·잠정실적 window 진입 포함) → 그 종목은 **추가매수 금지**, 변동성 경고 메모. 방향 미확정 이벤트 직전이므로 비중 확대하지 않는다.
+- **신규 진입 후보 high 촉매가 D-2 이내** → 발표 결과 확인 전까지 **신규 진입 보류**(이벤트 통과 후 09시 재검토). `confirmed=false`(추정일) 이면 보류는 권고, `confirmed=true` 면 보류 의무.
+- **매크로 이벤트**(scope=macro, 예 FOMC·금통위) D-2 이내 → `affects_sectors` 에 걸린 보유 종목 전반에 신규 진입 신중 메모.
+- 추정 이벤트(`confirmed=false`)는 웹검색("[종목명] 실적발표일", "[이벤트] 일정")으로 확정 시도 → 확정되면 `manual_events` 에 `{...,"confirmed":true,"managed_by":"manual","supersedes":"<generated id>"}` 로 추가(generated 는 다음 수집 때 자동 재생성되므로 직접 수정하지 않는다).
+- D-2 이내 high 촉매가 없으면 "임박 촉매 없음" 1줄만 남기고 통과.
+- **카톡 노출**: D-2 이내 high 촉매가 있으면 이 슬롯 리포트의 "한눈에 보기" 표/불릿에 `📅 촉매: [종목명] [이벤트] D-N` 행을 1줄 추가한다(`send_kakao.py` 가 "촉매" 라벨을 요약에 노출). 없으면 추가하지 않는다.
 
 ### 1-1. 진입 후보 추세 필터 (신규 매수 전 의무)
 신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 확인·기록:
@@ -223,6 +233,11 @@
 각 보유/관심 종목에 대해:
 1. **어제 18시 리포트 결론과 대조** — 어제 "익절/손절/홀드/축소 후보" 로 표시된 종목인지 먼저 확인
 2. 밤사이/금일 새벽 뉴스가 진입 논리를 훼손했는지 점검 — 뉴스뿐 아니라 `state/fundamentals.json` 의 해당 보유종목 `earnings_signal` 도 확인한다(`policy.fundamentals.holdings_use`). `sharp_decline`/적자전환/가이던스 컷이면 thesis 훼손 신호로 보고 가격이 🟢green 이어도 **익절·축소 우선순위 상향·트레일링스톱 강화·추가매수 금지**; `strong_growth`/`growth` 면 홀드 컨빅션 강화·목표가 상향 여지(단 분기 실적은 후행이라 손절가를 느슨하게 풀지는 않음). 보유종목이 노출된 테마(`config/themes.json`)의 strength 가 최근 크게 하향됐거나 thesis 가 무효화됐으면 비중 축소 후보로 메모(`themes.json.holdings_use` — 느린 신호, 단발 매도 금지).
+2-1. **thesis 무효화 1차 점검 (thesis-tracker — 보유 종목 의무, `watchlist.stocks[].thesis` 있을 때)**: 각 보유 종목의 `thesis.invalidation[]` 조건을 밤사이/금일 새벽 뉴스·공시·`state/fundamentals.json` 으로 대조한다(`policy.thesis`).
+   - `hard:true` 조건 충족 → `thesis.status="invalidated"` 로 보고, 가격이 🟢green 이어도 **종가 청산·축소 1순위**(09시는 신규 청산 가능 — 손절선/목표 도달과 무관하게 thesis 붕괴는 매도 사유). 변경 사유를 `comments` 에 기록.
+   - `hard:false` 조건 충족 → `thesis.status="weakening"` → **추가매수 금지·트레일링스톱 강화·목표가 상향 보류**(즉시 매도는 아님).
+   - 미충족 → `intact` 유지. status 가 바뀌면 `thesis.last_review_ts` 갱신 + 18시 자기보완(§3)에서 사유 type(매크로/섹터/개별/가정오류)으로 lessons 기록.
+   - `thesis` 필드가 없는 보유 종목이면 진입 논리·무효화 조건을 이번 점검에서 **새로 작성**해 watchlist 에 채운다(다음 routine 부터 추적).
 3. **매수 / 매도 / 홀드** 의견 1개 + 1줄 사유 — 어제 결론과 다를 경우 **반드시 사유 명시**
 4. 단기 모멘텀 코멘트 (수급, 차트, 거래량 — 검색 가능 범위에서)
 5. 정책상 손절가·목표가 도달 여부 확인

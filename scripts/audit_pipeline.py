@@ -319,6 +319,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     allocation = ROOT / "scripts" / "compute_allocation.py"
     fundamentals_script = ROOT / "scripts" / "fetch_fundamentals.py"
     catalysts_script = ROOT / "scripts" / "fetch_catalysts.py"
+    consensus_script = ROOT / "scripts" / "fetch_consensus.py"
     reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
     pre_trade = ROOT / "scripts" / "pre_trade_check.py"
     trade_gate = ROOT / "scripts" / "check_trade_log_gate.py"
@@ -332,6 +333,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     for path, label in [
         (fetch, "scripts/fetch_market_data.py"),
         (catalysts_script, "scripts/fetch_catalysts.py"),
+        (consensus_script, "scripts/fetch_consensus.py"),
         (check, "scripts/check_market_open.py"),
         (session_check, "scripts/check_market_session.py"),
         (score, "scripts/score_candidates.py"),
@@ -397,6 +399,23 @@ def audit_market_data_tooling(messages: list[str]) -> None:
             messages.append(result("FAIL", f"config/catalysts.json parse failed: {exc}"))
     else:
         messages.append(result("WARN", "config/catalysts.json missing — 촉매 캘린더 비활성(옵셔널)"))
+    consensus = ROOT / "state" / "consensus.json"
+    if consensus.exists():
+        try:
+            payload = json.loads(consensus.read_text(encoding="utf-8"))
+            tks = payload.get("tickers", {})
+            ok = payload.get("fetched_ok", 0)
+            if not isinstance(tks, dict):
+                messages.append(result("FAIL", "state/consensus.json: tickers 는 객체여야 함"))
+            elif ok == 0 and tks:
+                messages.append(result("WARN",
+                    "state/consensus.json: fetched_ok=0 — FnGuide 수집 실패(전부 stale). Phase 2 입력 점검 필요"))
+            else:
+                messages.append(result("OK", f"state/consensus.json: {ok}/{len(tks)} 종목 컨센 수집"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"state/consensus.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "state/consensus.json missing — 컨센서스 레이어 비활성(Phase 2 입력)"))
 
 
 def audit_prompts_and_scripts(messages: list[str]) -> None:

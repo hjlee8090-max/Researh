@@ -160,6 +160,14 @@
 - 실행: `.github/workflows/fetch_catalysts.yml` 주 1회(일 06:30 KST). 데일리 routine 은 읽기 + manual_events 갱신만.
 - 소비처: `prompts/0000_global.md`(매크로 촉매 기록·D-day), `0900_pre_market.md`(1-4 촉매 임박 경보), `1500_close.md`(익일 사전 알림), `1800_report.md`(§4 다음 거래일 액션). 정책: `policy.catalysts`.
 
+### `scripts/fetch_consensus.py` (신규 — 컨센서스 레이어, Phase 2 입력)
+- 읽기: `config/portfolio.json`(보유), `config/candidates.json`(후보), `state/consensus.json`(직전값 보존)
+- 네트워크: FnGuide 컴퍼니가이드 Snapshot(comp.fnguide.com) — 브라우저 UA+Referer. 차단 시 graceful degrade(직전값+stale)
+- 쓰기: `state/consensus.json` — 종목별 target_price·opinion·n_estimates(+추정치, 파서 확정 후 확장)
+- 실행: `.github/workflows/fetch_consensus.yml` 주 1회(일 06:45 KST). `--probe` 로 접근성·구조 진단(첫 GH Actions 실행에서 파서 확정).
+- 소비처: Phase 2 earnings-preview 프롬프트(예정). 정책: `policy.consensus`.
+- **검증 상태**: FnGuide 의 러너 접근성은 첫 워크플로 probe 로그로 확정 → 파서 정밀화 후 활성.
+
 ### `scripts/check_market_open.py` (신규)
 - 읽기: `config/market_calendar.json`
 - 인자: `--date YYYY-MM-DD` (옵션, 생략 시 오늘 KST)

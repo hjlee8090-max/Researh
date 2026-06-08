@@ -153,6 +153,13 @@
 - 쓰기: `state/market_snapshot.json` (GitHub Actions `fetch_prices.yml` 가 수집·커밋, 추적됨)
 - (v2.4) 종목별 `today_ohlc`(시가/고가/저가/현재가, last_date=오늘일 때만) 노출 — 웹 교차확인이 개장/장중 고가를 '현재가'로 오인하는 것을 막는 범위 맥락(`policy.price_data_quality.web_verify_guard`). 이미 수집한 일봉에서 파생, 네트워크 무관.
 
+### `scripts/fetch_catalysts.py` (신규 — catalyst-calendar Part A)
+- 읽기: `config/portfolio.json`(보유), `config/candidates.json`(후보), `config/catalysts.json`(직전 manual_events 보존), 환경변수 `DART_API_KEY`(옵션)
+- 네트워크: DART list.json(정기공시) — 있으면 최근 제출분으로 다음 회차 보정. 없어도 한국 정기보고서 법정기한(달력)으로 generated_events 생성(graceful degrade)
+- 쓰기: `config/catalysts.json` — `generated_events`(스크립트 소유, 매 실행 재생성) / `manual_events`(사람·routine 소유, 보존) / `events_archive`(경과분 14일 보관)
+- 실행: `.github/workflows/fetch_catalysts.yml` 주 1회(일 06:30 KST). 데일리 routine 은 읽기 + manual_events 갱신만.
+- 소비처: `prompts/0000_global.md`(매크로 촉매 기록·D-day), `0900_pre_market.md`(1-4 촉매 임박 경보), `1500_close.md`(익일 사전 알림), `1800_report.md`(§4 다음 거래일 액션). 정책: `policy.catalysts`.
+
 ### `scripts/check_market_open.py` (신규)
 - 읽기: `config/market_calendar.json`
 - 인자: `--date YYYY-MM-DD` (옵션, 생략 시 오늘 KST)

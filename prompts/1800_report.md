@@ -31,6 +31,7 @@
 1. `state/lessons.md`
 2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 3. `state/trade_log.jsonl` (최근 30라인)
+3-1. `config/catalysts.json` (있으면 — §4 다음 거래일 액션의 임박 촉매 반영용, 옵셔널)
 4. **오늘 시간대별 리포트 4개** — 18시 종합의 핵심 재료:
    - `reports/YYYY-MM-DD-00.md` (자정)
    - `reports/YYYY-MM-DD-09.md` (개장)
@@ -113,6 +114,7 @@
 ## 4. 다음 거래일 액션 결정
 - 손절·목표 도달로 청산된 종목 자리 → **다음 09시 신규 추천 후보** 선정 메모를 watchlist.json의 `next_day_plan` 필드에 기록
 - 청산 없이 유지되는 종목은 그대로 watchlist에 둠
+- **📅 임박 촉매 반영** (`config/catalysts.json` 있을 때): `generated_events`+`manual_events` 중 **D-3 이내** 이벤트를 점검. 다음 거래일에 실적발표·매크로 high 촉매가 걸린 **보유 종목은 추가매수 금지·변동성 경고**, **후보는 발표 후로 신규 진입 이연**을 `next_day_plan` 에 1줄로 기록. 추정일(`confirmed=false`)은 웹검색 확정 시도 후 `manual_events` 로 승격.
 - lessons.md의 누적 패턴 카운터가 동일 섹터 손실 3회 이상이면 → 해당 섹터 회피 룰을 watchlist.json의 `avoid_sectors`에 추가
 
 ## 5. 18시 종합 리포트 작성 (시간대별 분리 — 종합 파일 생성)

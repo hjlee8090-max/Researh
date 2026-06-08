@@ -10,8 +10,10 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+KST = timezone(timedelta(hours=9))
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -277,6 +279,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     score = ROOT / "scripts" / "score_candidates.py"
     allocation = ROOT / "scripts" / "compute_allocation.py"
     fundamentals_script = ROOT / "scripts" / "fetch_fundamentals.py"
+    catalysts_script = ROOT / "scripts" / "fetch_catalysts.py"
     reconcile = ROOT / "scripts" / "reconcile_portfolio.py"
     pre_trade = ROOT / "scripts" / "pre_trade_check.py"
     trade_gate = ROOT / "scripts" / "check_trade_log_gate.py"
@@ -286,8 +289,10 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     candidates = ROOT / "config" / "candidates.json"
     themes = ROOT / "config" / "themes.json"
     calendar = ROOT / "config" / "market_calendar.json"
+    catalysts = ROOT / "config" / "catalysts.json"
     for path, label in [
         (fetch, "scripts/fetch_market_data.py"),
+        (catalysts_script, "scripts/fetch_catalysts.py"),
         (check, "scripts/check_market_open.py"),
         (session_check, "scripts/check_market_session.py"),
         (score, "scripts/score_candidates.py"),
@@ -331,6 +336,28 @@ def audit_market_data_tooling(messages: list[str]) -> None:
             messages.append(result("FAIL", f"config/market_calendar.json parse failed: {exc}"))
     else:
         messages.append(result("WARN", "config/market_calendar.json missing — 휴장일 가드 비활성"))
+    if catalysts.exists():
+        try:
+            payload = json.loads(catalysts.read_text(encoding="utf-8"))
+            gen = payload.get("generated_events", [])
+            man = payload.get("manual_events", [])
+            if not isinstance(gen, list) or not isinstance(man, list):
+                messages.append(result("FAIL", "config/catalysts.json: generated_events/manual_events 는 배열이어야 함"))
+            else:
+                today = datetime.now(KST).date().isoformat()
+                stale_gen = [e for e in gen if isinstance(e, dict) and e.get("date", "") < today]
+                bad = [e for e in (gen + man) if not isinstance(e, dict) or "date" not in e or "type" not in e]
+                if bad:
+                    messages.append(result("WARN", f"config/catalysts.json: date/type 누락 이벤트 {len(bad)}건"))
+                if stale_gen:
+                    messages.append(result("WARN",
+                        f"config/catalysts.json: 경과한 generated 이벤트 {len(stale_gen)}건 — fetch_catalysts.py 재실행 권장"))
+                messages.append(result("OK",
+                    f"config/catalysts.json tracks {len(gen)} generated + {len(man)} manual catalysts"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"config/catalysts.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "config/catalysts.json missing — 촉매 캘린더 비활성(옵셔널)"))
 
 
 def audit_prompts_and_scripts(messages: list[str]) -> None:

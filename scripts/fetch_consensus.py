@@ -163,13 +163,27 @@ def probe(tickers: dict[str, str]) -> int:
         return 1
     html = raw.decode("utf-8", "replace")
     print(f"[probe] OK bytes={len(html)}")
-    for a in PROBE_ANCHORS:
-        i = html.find(a)
-        if i < 0:
-            print(f"[probe] anchor {a!r}: NOT FOUND")
-        else:
-            ctx = _strip_tags(html[max(0, i - 30): i + 90])
-            print(f"[probe] anchor {a!r} @ {i}: ...{ctx}...")
+
+    # 1) 각 앵커의 '모든' 출현 위치 (어느 게 메뉴/JS 이고 어느 게 데이터인지 구분용)
+    for a in PROBE_ANCHORS + ["추정기관수", "12(E)", "12(P)", "예상실적", "확정실적"]:
+        idxs = [m.start() for m in re.finditer(re.escape(a), html)]
+        print(f"[probe] anchor {a!r}: {len(idxs)} hits @ {idxs[:12]}")
+
+    # 2) 컨센 요약 박스 덤프 — '추정기관수' 주변(투자의견/목표주가/EPS/추정기관수 값이 모여 있음)
+    i = html.find("추정기관수")
+    if i >= 0:
+        print("[probe] ===== CONSENSUS SUMMARY BOX (around 추정기관수) =====")
+        print(_strip_tags(html[max(0, i - 1800): i + 300]))
+        print("[probe] ===== END SUMMARY BOX =====")
+
+    # 3) 컨센 실적 표 덤프 — '예상실적' 또는 '영업이익, 억원' 주변
+    for key in ("예상실적", "영업이익"):
+        j = html.find(key)
+        if j >= 0:
+            print(f"[probe] ===== EARNINGS TABLE (around {key!r}) =====")
+            print(_strip_tags(html[max(0, j - 200): j + 1400]))
+            print("[probe] ===== END EARNINGS TABLE =====")
+            break
     return 0
 
 

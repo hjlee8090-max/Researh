@@ -1,41 +1,16 @@
 {
-  "as_of": "2026-06-08T09:00:00+09:00",
+  "as_of": "2026-06-08T12:10:00+09:00",
   "base_currency": "KRW",
   "initial_capital": 5000000,
-  "cash": 4597299,
-  "positions": [
-    {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "shares": 1,
-      "entry_price": 361221,
-      "web_price_at_entry": 360500,
-      "cost_basis_total": 361221,
-      "current_price_approx": 329000,
-      "market_value_approx": 329000,
-      "stop_price": 317286,
-      "target_price": 415000,
-      "rr": 7.34,
-      "risk_per_share": 11714,
-      "total_risk_krw": 11714,
-      "data_confidence": "high(stale, valuation carried over from 2026-06-05)",
-      "price_source": "snapshot_stale_carry",
-      "valuation_note": "6/8 web_verify 실패(전종목 HTTP 403 + 웹검색 반환분이 6/1자 MBC 기사 imnews 6826849 로 확인). last-valid 6/5 stale 종가 329,000(ORANGE) carry-over. 원본의 362,000·GREEN·MBC URL 은 6/1 데이터 오인으로 회수(2026-06-08 정정).",
-      "thesis": "semiconductor_ai_memory",
-      "entry_date": "2026-06-04",
-      "trailing_stop_activated": false,
-      "trailing_high": null,
-      "tier": "orange",
-      "snapshot_as_of": "2026-06-08T09:00:00+09:00"
-    }
-  ],
-  "equity": 4926299,
-  "realized_pnl": -41480,
-  "unrealized_pnl": -32221,
-  "cumulative_return_pct": -1.474,
-  "trade_count": 11,
+  "cash": 4909561,
+  "positions": [],
+  "equity": 4909561,
+  "realized_pnl": -90439,
+  "unrealized_pnl": 0,
+  "cumulative_return_pct": -1.809,
+  "trade_count": 12,
   "win_count": 2,
-  "loss_count": 4,
+  "loss_count": 5,
   "history": [
     {
       "date": "2026-05-20",
@@ -504,6 +479,31 @@
       ],
       "correction": "원본은 6/1자 MBC 기사(imnews 6826849, KOSPI 8,788.38·삼성 +10%·시총 2천조)를 6/8 시세로 오인 도용해 ORANGE→GREEN 허구 해소(price_web_verified 362000, equity 4,959,299, 누적 -0.814%)했다. 6/8 유효 가격 부재(전종목 HTTP 403 + 웹검색 반환분이 묵은 6/1 기사)로 6/5 stale(329,000 ORANGE, equity 4,926,299, 누적 -1.474%) carry-over 로 복원(2026-06-08 정정). 이후 source_provenance_gate(recycled_value_gate)가 동일 오류를 CI 에서 차단.",
       "note": "W24 D1 09:00 개장 점검. 6/8 전종목 HTTP 403 + 웹검색 반환분이 묵은 6/1 기사 → 6/8 가격 미검증. 삼성전자 stale 6/5 329,000(ORANGE) carry-over. 신규 거래 없음. equity 4,926,299원(=W23 6/5 최종). 누적 -1.474%. W24 stage=normal. ※stale 근사값. 학습·시뮬레이션 목적."
+    },
+    {
+      "date": "2026-06-08T12:10:00+09:00",
+      "equity_snapshot": 4909561,
+      "cash_snapshot": 4909561,
+      "cumulative_return_pct": -1.809,
+      "action": "SELL_RED_STOP_005930",
+      "holdings": [
+        {
+          "ticker": "005930",
+          "status": "EXITED_RED",
+          "snapshot_price": 313500,
+          "execution_price": 312262,
+          "shares_sold": 1,
+          "net_proceeds": 312262,
+          "realized_pnl": -48959,
+          "price_source": "snapshot_fresh",
+          "data_confidence": "high",
+          "today_ohlc": {"date": "2026-06-08", "open": 293000, "high": 315500, "low": 292500, "close": 313500},
+          "pct_from_entry": -13.22,
+          "tier": "red",
+          "web_verify_note": "웹검색 6/1 MBC기사 반복 반환 — v2.6 채택 불가. 스냅샷 313,500(today, high, fresh) 보수 채택."
+        }
+      ],
+      "note": "W24 D1 12:10 삼성전자 RED 전량 가상 청산. 진입가(361,221) 대비 -13.22%(스냅샷 313,500 today high). 손절가(317,286)·RED임계(325,099) 모두 하회. 매크로(Broadcom shock 2일차·Nasdaq -4.18%)·섹터(외국인 21거래일+ 순매도) 원인. 신규 진입 보류(web_verify 미충족 + 매크로 충격 지속). 전 슬롯 공석. equity 4,909,561원(누적 -1.809%). ※스냅샷 근사값. 학습·시뮬레이션 목적."
     }
   ]
 }

@@ -108,6 +108,7 @@
   - `stale_intraday`(>75분 또는 전일자): 신규 진입은 웹 실시간 교차확인 필수, 손절은 임계 접근 시 즉시 웹 확인.
 - **age 가 크다고 confidence 를 강등하지 않는다**(별개 축). 단 fresh 가 아닌(묵은) 가격으로 손절·익절을 그대로 체결하지 않도록 §B-5 안전망을 반드시 적용한다.
 - **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): §B-5·§1-1 등에서 웹으로 실시간가를 확인할 때, 웹 값을 그대로 현재가로 채택하지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가/현재가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 **셋 다 충족할 때만** 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**, 가격 변동 단독으로 thesis 강화/약화 금지. 보유+후보 동일 적용(2026-06-02 현대차 사고 방지).
+- **(v2.6) 출처 게재일 검증 (필수)** (`policy.price_data_quality.web_verify_guard.source_date_verification`): 웹으로 '오늘 현재가/시황'을 채택할 때 출처(뉴스·기사)의 **게재일(published date)을 URL/본문에서 실제로 읽어 기록**한다(URL path `/YYYY/MM/DD/`·기사 상단 일자). 게재일이 **오늘이 아니거나 스냅샷 `as_of` 보다 과거이면 '현재가'로 채택 금지** — outlier_rule (b)'스냅샷보다 최신'을 **게재일 확인 없이 자기 단정하지 않는다**. 스냅샷이 stale 인데 단일 웹 출처가 ±3% 초과 갭(예: +10%)을 주장하면 **'대규모 갭업 예외' 자가면제 금지** — 동일자(오늘) 복수 출처 + `today_ohlc` 확인 시에만 채택, 아니면 stale `close` 유지하고 리포트에 **'오늘 가격 미검증(stale 유지)'로 명시**한다. CI `source_provenance_gate`(`scripts/check_trade_log_gate.py`)가 묵은 출처 게재일·재활용 종가(예: '오늘 KOSPI 8,788'=직전 일자 종가)를 하드 차단한다. **(2026-06-08 사고: 6/8 routine 이 실제 6/1자 MBC 기사(imnews 6826849, KOSPI 8,788.38·젠슨황 방한)를 '6/8 시세'로 오인 도용 → 삼성전자 ORANGE→GREEN 허구 해소·리포트/lessons/portfolio 오염.)**
 
 ## 1. 웹 검색 (필수)
 

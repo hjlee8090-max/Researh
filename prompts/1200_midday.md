@@ -21,6 +21,7 @@
 - `stale` 키가 있으면 "직전 정기 수집본"임을 1줄 명시하되 confidence 값 자체는 스냅샷 그대로 사용한다 — **stale ≠ low.**
 - **(v2.1 신선도)** `state/allocation.json` 의 `snapshot_age_min`·`freshness`(fresh≤20분/acceptable≤75분/stale_intraday)를 "한눈에 보기"에 "데이터 신선도: N분 전, 등급" 1줄로 표기한다. 1시간 전 수집이라 장중엔 보통 acceptable~stale_intraday 다 — 아래 §2 단계경보의 임계 근접 종목은 묵은 가격을 그대로 믿지 말고 웹 실시간 1회 교차확인한다. `freshness` 는 `confidence` 와 **별개 축**(age 로 confidence 강등 안 함).
 - **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 위 웹 실시간 교차확인 값을 그대로 현재가로 쓰지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 셋 다 충족 시만 채택, 아니면 스냅샷 `close` 보수 채택. **`today_high` 근처 값이면 '고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**, 가격 변동 단독으로 thesis 판정 금지. 보유+후보 동일(2026-06-02 현대차 사고 방지).
+- **(v2.6) 출처 게재일 검증** (`web_verify_guard.source_date_verification`): 웹으로 '오늘가'를 채택하면 출처 **게재일(published date)을 URL/본문에서 읽어 기록**하고, **오늘이 아니거나 스냅샷 `as_of` 보다 과거이면 채택 금지**('스냅샷보다 최신' 자기 단정 금지). stale 스냅샷 + 단일출처 대규모 갭(±3% 초과) '예외' 자가면제 금지 — 미검증이면 stale `close` 유지 명시. CI `source_provenance_gate`(`check_trade_log_gate.py`)가 묵은 출처 게재일·재활용 종가를 하드 차단(2026-06-08 6/1자 MBC 기사를 6/8 시세로 오인 도용한 사고 방지).
 - 스냅샷 confidence 가 실제로 `low` (또는 전 종목 low)일 때만 매매 차단(`policy.price_data_quality.block_trade_if_confidence_below`)을 적용한다.
 
 ## 0. 컨텍스트 적재

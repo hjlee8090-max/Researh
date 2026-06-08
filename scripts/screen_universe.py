@@ -183,8 +183,17 @@ def main() -> int:
     # v2.8 — 섹터 로테이션 재진입 설정(몰입 신호 임계·민감도).
     srr = policy.get("sector_rotation_reentry", {}) if isinstance(policy.get("sector_rotation_reentry"), dict) else {}
     icfg = srr.get("immersion_confirmation", {}) if isinstance(srr.get("immersion_confirmation"), dict) else {}
-    sensitivity = srr.get("sensitivity", "medium")
+    # v2.10 — 시장 상황(레짐 tier)에 따라 민감도 자동 조정(sensitivity_mode=auto). tier unknown·고정모드면 폴백.
     min_sig_map = icfg.get("min_signals_by_sensitivity", {"aggressive": 1, "medium": 2, "conservative": 3})
+    sens_by_tier = srr.get("sensitivity_by_tier", {}) if isinstance(srr.get("sensitivity_by_tier"), dict) else {}
+    sensitivity_mode = srr.get("sensitivity_mode", "auto")
+    tier_for_sens = (snapshot.get("regime", {}) or {}).get("tier") if isinstance(snapshot, dict) else None
+    if sensitivity_mode == "auto" and isinstance(sens_by_tier.get(tier_for_sens), str) and sens_by_tier.get(tier_for_sens) in min_sig_map:
+        sensitivity = sens_by_tier[tier_for_sens]
+        sensitivity_basis = f"auto(tier={tier_for_sens})"
+    else:
+        sensitivity = srr.get("sensitivity", "medium")
+        sensitivity_basis = "fixed" if sensitivity_mode != "auto" else f"fallback(tier={tier_for_sens})"
     min_signals = int(min_sig_map.get(sensitivity, 2))
 
     rules = universe.get("screening_rules", {}) if isinstance(universe.get("screening_rules"), dict) else {}
@@ -326,6 +335,7 @@ def main() -> int:
         "pool_size": len(pool),
         "fetched_count": len(to_fetch),
         "sensitivity": sensitivity,
+        "sensitivity_basis": sensitivity_basis,
         "immersion_min_signals": min_signals,
         "rank_blend": {"relative_strength": w_rs, "thematic": w_th},
         "ranked": ranked,

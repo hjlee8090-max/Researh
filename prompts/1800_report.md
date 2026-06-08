@@ -124,7 +124,8 @@
 - 손절·목표 도달로 청산된 종목 자리 → **다음 09시 신규 추천 후보** 선정 메모를 watchlist.json의 `next_day_plan` 필드에 기록
 - 청산 없이 유지되는 종목은 그대로 watchlist에 둠
 - **📅 임박 촉매 반영** (`config/catalysts.json` 있을 때): `generated_events`+`manual_events` 중 **D-3 이내** 이벤트를 점검. 다음 거래일에 실적발표·매크로 high 촉매가 걸린 **보유 종목은 추가매수 금지·변동성 경고**, **후보는 발표 후로 신규 진입 이연**을 `next_day_plan` 에 1줄로 기록. 추정일(`confirmed=false`)은 웹검색 확정 시도 후 `manual_events` 로 승격.
-- lessons.md의 누적 패턴 카운터가 동일 섹터 손실 3회 이상이면 → 해당 섹터 회피 룰을 watchlist.json의 `avoid_sectors`에 추가
+- lessons.md의 누적 패턴 카운터가 동일 섹터 손실 3회 이상이면 → 해당 섹터 회피 룰을 watchlist.json의 `avoid_sectors`에 추가 (구조화 `re_entry` 포함)
+- **avoid 해제는 추가와 대칭(v2.8)**: `avoid_sectors` 는 영구 블랙리스트가 아니다. 해제는 `policy.sector_rotation_reentry`(호재 촉매 + 몰입 발자국)로 풀린다 — 매 09시 §C-5-1 이 `screen_universe.py` 의 `avoid_reentry` 를 읽어 `immersion_met` + 촉매 web_verify 충족 시 해제·probe 재진입한다. 18시는 avoid 항목들의 `re_entry.lift_when` 진행상황을 `next_day_plan` 에 1줄로 남긴다.
 
 ## 5. 18시 종합 리포트 작성 (시간대별 분리 — 종합 파일 생성)
 **오늘 날짜의 18시 리포트 `reports/YYYY-MM-DD-18.md` 를 새로 생성** 한다 (이미 존재하면 덮어쓰기).

@@ -63,7 +63,7 @@ scripts/
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
-  screen_universe.py       (v2.7) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 → state/universe_screen.json
+  screen_universe.py       (v2.7/2.8) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 + 섹터별 몰입(sector_rotation·avoid_reentry) → state/universe_screen.json
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
   build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
   audit_pipeline.py        파이프라인 무결성 점검 (의존성 0)

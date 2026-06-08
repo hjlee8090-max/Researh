@@ -254,6 +254,11 @@
 3. 각 tradable 후보에 §2 공통 규칙으로 진입가·동적손절가·목표가(강세 tier 상향)·R/R(레짐 적응 하한) 산출. R/R 통과 시 **목표 수량 = §2 공통 사이징**으로 가상 매수 체결(trade_log + portfolio 갱신, `weekly_thesis_id` 기록).
 4. `vacant_slots` 와 deploy krw 한도가 남는 한 다음 순위 후보로 **반복(복수 종목 진입)**. 종목당 35%·현금 하한 5% 준수.
 5. tradable 후보가 **2건 미만**이면(발굴 부재로 후보 풀이 정체된 신호): (a) `python scripts/screen_universe.py` 를 실행해 `state/universe_screen.json` 의 `promote_suggestions`(모집단에서 상대강도 상위 주도주 — candidates 에 없는 종목)·`rotate_out_suggestions`(만성 후행주)를 확인한다. 승격 제안 종목은 web_verify(가격·뉴스 출처 URL)·구조적악재(bear_case) 점검 후 `config/candidates.json` 에 thesis·`theme_exposure`(근거 URL 포함)와 함께 추가한다(다음 routine 부터 자동 추적; **근거 없는 추가 금지**). 회전아웃 제안된 만성 후행주는 강등·교체 후보로 검토. (b) 그래도 이번 회차 tradable 0건이면 "후보 부족으로 배치 보류 — 다음 routine 재시도" 를 리포트에 명시한다. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
+5-1. **avoid 섹터 재진입 점검 (범용 — 호재+몰입, `policy.sector_rotation_reentry`)**: `screen_universe.py` 산출 `state/universe_screen.json` 의 `avoid_reentry`(avoid 섹터별 몰입)·`sector_rotation`(전 섹터 몰입)을 읽는다. **조선 전용이 아니라 avoid 에 오른 모든 섹터에 동일 적용.**
+   - 어떤 avoid 섹터의 `immersion_met=true`(자금 유입 발자국 ≥ min_signals: rs_inflection·volume_surge·sector_breadth)이면 → 그 섹터 **호재(촉매)를 web_verify** 한다(출처 URL+게재일 오늘~D-3, `web_verify_guard.source_date_verification`). **촉매 확인 AND 몰입 충족 둘 다**면 `config/watchlist.json.avoid_sectors` 에서 해당 항목 제거(또는 강등)하고, 섹터 최상위 종목을 **probe 진입**(비중 절반·ATR 타이트 손절, R/R·entry_filter·heat 통과)으로 §2 사이징해 체결.
+   - **촉매 없이 몰입만, 또는 몰입 없이 헤드라인만으론 해제 금지**(스토리≠자금 — 조선이 LNG 스토리 갖고도 3회 진 함정). 가격 변동 단독·무출처 '기대감 추정'은 촉매 불인정.
+   - 비-avoid 섹터라도 `sector_rotation.immersion_met=true` + 촉매 확인이면 그 섹터 리더를 후보 승격·진입 우선순위로 둔다(범용 로테이션 포착).
+   - 해제·probe 근거(촉매 URL+몰입 신호)를 리포트·`lessons.md` 에 1줄 기록. probe 가 이후 손절되면 `avoid_sectors` 재무장(re-arm)+cooldown(`policy.sector_rotation_reentry.on_fail`).
 6. `caution`/`defensive` 회복 단계, `risk_off`(차단 설정 시), `deep_bear`(entry_mode=block) 이면 이 경로보다 보수 단계가 우선(더 보수적인 쪽 적용).
 
 ## 3. 대화창 출력 (카톡과 별개 — Claude 대답란)

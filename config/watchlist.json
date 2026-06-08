@@ -1506,7 +1506,13 @@
       ],
       "reason": "동일 섹터 반복 손실 3회 달성(HD조선 5/28 매크로·5/29 섹터·6/1 섹터 orange 청산). 반도체 AI 장세 지속 중 조선 수급 소외 시스템 패턴 확인. policy §4 avoid_sectors 자동 등록.",
       "effective_from": "2026-06-02",
-      "re_entry_condition": "반도체 AI 메가 랠리 소강 후 조선 섹터 외국인/기관 순매수 3거래일 이상 확인 시 제거 검토"
+      "re_entry": {
+        "mode": "sector_rotation_reentry",
+        "policy_ref": "config/policy.json.sector_rotation_reentry (범용 — 호재 촉매=방아쇠 + 몰입 발자국 ≥ min_signals=안전핀)",
+        "engine_status": "state/universe_screen.json.avoid_reentry (sector=조선) — screen_universe.py 가 몰입 발자국(rs_inflection·volume_surge·sector_breadth) 산출",
+        "lift_when": "①촉매: 조선 섹터 호재(대형 수주·신조선가지수·정책, 출처 URL+게재일 web_verify) 확인 AND ②몰입: avoid_reentry.immersion_met=true(자금 유입 발자국 ≥ min_signals). 둘 다면 avoid 해제 + probe 진입(비중 절반·ATR 타이트 손절·R/R·entry_filter·heat 통과). 손절·촉매 소멸 시 재무장+cooldown.",
+        "legacy_condition": "반도체 AI 메가 랠리 소강 후 조선 섹터 외국인/기관 순매수 3거래일 이상 확인 시 제거 검토"
+      }
     },
     {
       "sector": "자동차",
@@ -1516,7 +1522,14 @@
       ],
       "reason": "관세 구조적 악재(policy.entry_filters). 재진입 시 비중 15% 강제.",
       "effective_from": "2026-05-20",
-      "re_entry_condition": "관세 구조적 악재 해소 후 재검토"
+      "re_entry": {
+        "mode": "sector_rotation_reentry",
+        "block_type": "structural_bear(관세)",
+        "policy_ref": "config/policy.json.sector_rotation_reentry",
+        "engine_status": "state/universe_screen.json.avoid_reentry (sector=자동차)",
+        "lift_when": "①촉매: 관세 구조적 악재 해소(관세 철회/완화 정책·합의, 출처 URL+게재일 web_verify — catalyst_trigger.types '정책·지정학·규제') AND ②몰입: avoid_reentry.immersion_met=true. 해소 전까지 005380 은 비중 15% 상한 예외 진입만 허용.",
+        "legacy_condition": "관세 구조적 악재 해소 후 재검토"
+      }
     }
   ],
   "next_day_plan": {

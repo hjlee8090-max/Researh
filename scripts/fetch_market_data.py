@@ -93,15 +93,20 @@ def fetch_naver(ticker: str) -> list[dict[str, Any]]:
         try:
             d = str(r[0])
             date = f"{d[:4]}-{d[4:6]}-{d[6:8]}"
-            out.append({
+            bar = {
                 "date": date,
                 "open": float(r[1]),
                 "high": float(r[2]),
                 "low": float(r[3]),
                 "close": float(r[4]),
-            })
+            }
         except (IndexError, ValueError, TypeError):
             continue
+        try:  # 거래량(r[5]) — 몰입(거래량 급증) 신호용. 누락/파싱 실패는 None(비치명).
+            bar["volume"] = float(r[5]) if len(r) > 5 and r[5] not in (None, "") else None
+        except (ValueError, TypeError):
+            bar["volume"] = None
+        out.append(bar)
     return out[-260:]
 
 
@@ -124,11 +129,12 @@ def fetch_yahoo(symbol: str) -> list[dict[str, Any]]:
         opens, highs, lows, closes = (
             quote["open"], quote["high"], quote["low"], quote["close"],
         )
+        volumes = quote.get("volume") or [None] * len(closes)
     except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
         logger.warning("yahoo parse failed for %s: %s", symbol, exc)
         return []
     out: list[dict[str, Any]] = []
-    for t, o, h, lo, c in zip(timestamps, opens, highs, lows, closes):
+    for t, o, h, lo, c, v in zip(timestamps, opens, highs, lows, closes, volumes):
         if c is None:
             continue
         d = datetime.fromtimestamp(t, tz=timezone.utc).strftime("%Y-%m-%d")
@@ -138,6 +144,7 @@ def fetch_yahoo(symbol: str) -> list[dict[str, Any]]:
             "high": float(h) if h is not None else float(c),
             "low": float(lo) if lo is not None else float(c),
             "close": float(c),
+            "volume": float(v) if v is not None else None,
         })
     return out[-260:]
 
@@ -202,6 +209,24 @@ def compute_atr(history: list[dict[str, Any]], period: int = 14) -> float | None
     if len(trs) < period:
         return None
     return round(sum(trs[-period:]) / period, 2)
+
+
+def volume_ratio(history: list[dict[str, Any]], period: int = 20) -> float | None:
+    """당일 거래량 ÷ 직전 period 거래일 평균 거래량. '몰입(거래량 급증)' 신호용.
+
+    당일 포함 직전 period+1 바가 필요. 거래량 결측이 많으면 None(비치명).
+    """
+    if len(history) < period + 1:
+        return None
+    vols = [h.get("volume") for h in history[-(period + 1):]]
+    today = vols[-1]
+    prior = [v for v in vols[:-1] if isinstance(v, (int, float)) and v > 0]
+    if not isinstance(today, (int, float)) or len(prior) < period // 2:
+        return None
+    avg = sum(prior) / len(prior)
+    if avg <= 0:
+        return None
+    return round(today / avg, 2)
 
 
 def _mean(values: list[float]) -> float | None:
@@ -357,6 +382,10 @@ def build_ticker_snapshot(
         if atr14 is not None and last_close
         else None
     )
+    # v2.8 — 섹터 로테이션 '몰입' 신호용: 20일 수익률 + 거래량 급증비.
+    ret20 = cumulative_return(primary_hist, 20) if primary_hist else None
+    vol_ratio = volume_ratio(primary_hist, 20) if primary_hist else None
+    last_volume = primary_hist[-1].get("volume") if primary_hist else None
     # 오늘자 OHLC(시가/고가/저가/현재가) — 웹 교차확인이 '개장/장중 고가'를 '현재가'로 오인하는 것을
     # 막기 위한 범위 맥락(policy.price_data_quality.web_verify_guard). 마지막 캔들 날짜가 오늘일 때만 채운다.
     today_kst = datetime.now(KST).date().isoformat()
@@ -397,12 +426,17 @@ def build_ticker_snapshot(
         "five_day_cumulative_return_pct": ret5,
         "momentum": {
             "ret_60d_pct": ret60,
+            "ret_20d_pct": ret20,
             "pct_of_52w_high": high_ratio,
             "high_52w": high_52w,
         },
         "volatility": {
             "atr14": atr14,
             "atr_pct": atr_pct,
+        },
+        "liquidity": {
+            "volume": last_volume,
+            "vol_ratio_20d": vol_ratio,
         },
         "entry_filter": {},  # main() 의 apply_entry_filter 가 레짐 tier 확정 후 채운다(v2.7)
     }

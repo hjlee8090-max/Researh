@@ -14,6 +14,12 @@
 > - `policy.entry_filters.block_if_cumulative_return_below_pct_by_tier` + `relative_strength_leader_widening` + `entry_filter_hard_floor_pct` — 진입필터 레짐 적응형(평면 -7% 제거, `fetch_market_data.apply_entry_filter`)
 > - `policy.risk.max_single_trade_risk_pct_of_equity_by_tier` — 단일거래 리스크캡 레짐 적응형(strong_bull 3.5%, `compute_allocation.per_trade_risk_pct`)
 >
+> **신규 추가 (2026-06-08, v2.8 범용 섹터 로테이션 재진입)**
+> - `policy.sector_rotation_reentry` — 호재(촉매)+몰입(자금 발자국)으로 침체·avoid 섹터 재진입(모든 섹터 범용, 조선 하드코딩 없음)
+> - `fetch_market_data` 추가 필드: 종목별 `momentum.ret_20d_pct`, `liquidity.{volume,vol_ratio_20d}`
+> - `scripts/screen_universe.py` 확장: 섹터/테마별 몰입 신호 → `state/universe_screen.json.{sector_rotation,avoid_reentry}`
+> - `config/watchlist.json.avoid_sectors[].re_entry` — 구조화(해제 규칙). 추가(1800)와 해제(09시 §C-5-1)가 대칭
+>
 > **신규 추가 (2026-05-22)**
 > - `config/candidates.json` — 신규 진입 후보 종목 목록
 > - `config/market_calendar.json` — KRX 휴장일 캘린더
@@ -194,7 +200,7 @@
 ### `scripts/screen_universe.py` (신규 v2.7 — 종목 탐색)
 - 읽기: `config/universe.json`(모집단), `config/candidates.json`(중복 방지), `config/themes.json`(strength), `config/policy.json`(entry_filters 상대강도 임계·하드플로어), `state/market_snapshot.json`(KOSPI ret60 벤치마크 + 기수집 종목 재사용)
 - 네트워크: 모집단 중 스냅샷에 없는 종목만 네이버+Yahoo 수집(주 1회 전제). 차단 시 graceful degrade(데이터 없음·상대강도 중립 폴백).
-- 쓰기: `state/universe_screen.json` — `promote_suggestions`(주도주)·`rotate_out_suggestions`(만성 후행주)·랭킹·리포트 MD
+- 쓰기: `state/universe_screen.json` — `promote_suggestions`·`rotate_out_suggestions` + (v2.8) `sector_rotation`(전 섹터 몰입 신호)·`avoid_reentry`(avoid 섹터별 해제 점검)·랭킹·리포트 MD
 - 소비처: `sunday_strategy`(주간 발굴) + `0900_pre_market.md` §C(tradable<2 미배치 분기). **candidates.json 자동수정 안 함(제안만)** — routine 이 thesis·theme_exposure(근거 URL)와 함께 승격.
 
 ### `scripts/reconcile_portfolio.py` (신규)

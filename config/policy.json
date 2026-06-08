@@ -1,7 +1,8 @@
 {
-  "version": "2.5",
-  "last_updated": "2026-06-03",
+  "version": "2.6",
+  "last_updated": "2026-06-08",
   "changelog": [
+    "2.6: 묵은 뉴스 출처 오인(stale-source misattribution) 차단 — web_verify 가 '오늘'이 아닌 묵은 날짜의 기사를 현재 시세로 도용하던 신규 오류 유형을 게이트한다. (2026-06-08 사고: 6/8 09시 routine 이 stale 6/5 스냅샷 + 전종목 HTTP 403 상황에서 웹검색이 돌려준 실제 2026-06-01자 MBC 기사(imnews 6826849, KOSPI 종가 8,788.38·삼성전자 급등·젠슨황 방한)를 '6/8 시세'로 오인 도용 → 삼성전자 ORANGE(335,935 미만)→GREEN 허구 해소·신규 거짓 lessons 항목·파생 정책룰·portfolio 평가까지 동반 오염. web_verify_guard 의 outlier_rule (b)'스냅샷보다 최신'을 LLM 이 '6/8 장중'으로 거짓 자기인증했고, 이를 강제할 코드 게이트가 없었다.) ①web_verify_guard.source_date_verification 신설 — 웹으로 '오늘가'를 채택할 때 출처 게재일(published date)을 URL/본문에서 실제로 읽어 기록하고, 게재일이 오늘이 아니거나 스냅샷 as_of 보다 과거이면 채택 금지('스냅샷보다 최신' 자기 단정 금지). stale 스냅샷에 단일 웹 출처의 대규모 갭(±3% 초과) '예외' 자가면제 금지 — 동일자 복수 출처+today_ohlc 확인 시에만 채택, 아니면 stale 유지. 0900/1200/1500/1800 프롬프트 웹 교차확인 단계에 반영. ②source_provenance_gate 신설(scripts/check_trade_log_gate.py) — 프롬프트를 우회한 묵은 출처 도용을 CI 에서 하드 차단. source_date_gate: web_verify 출처 URL/문구의 게재일이 항목 ts 일자보다 과거이면 FAIL. recycled_value_gate: 주장하는 '오늘 KOSPI 종가'가 직전 일자 종가와 동일하면(URL 날짜 토큰 없는 imnews 류 보완) FAIL. enforced_since=2026-06-08, OPEN_CHECK 포함 전 액션 검사(오염이 OPEN_CHECK 항목에 있었음). ③오염 산출물 정정 — reports/2026-06-08-09.md·state/lessons.md·state/trade_log.jsonl·config/portfolio.json 의 6/8 허구 시세(8,788·362,000·GREEN 해소) 회수, 삼성전자 last-valid 6/5 stale 329,000(ORANGE) carry-over 로 복원, lessons 의 거짓 '갭 방향 예측 역전' 항목을 실제 교훈('web_verify 출처 게재일 미검증')으로 교체.",
     "2.5: 강세장 자본배치·섹터로테이션·교훈반영 강제 3종 보강(2주 운용 사후 — KOSPI W22 +8.8% 인데 포트폴리오 -1.77%·주식비중 8.7% 로 강세장 역행). ①risk.portfolio_heat_budget_by_tier 신설 — 단일거래 상한 2% + 손절 ~10% 면 종목당 비중이 ~20% 로 묶이고 flat 히트예산 6% 는 3종목(≈60%)에서 막혀 strong_bull 목표비중(80~95%)에 수학적으로 닿지 못하던 구조적 모순 해소(강세장 미배치가 최대 underperformance 원인). tier별 예산(strong_bull 9.0·bull 7.5·neutral 6.0·bear 4.0·deep_bear 2.0)으로 강세장에서 breadth(종목 수)로 목표비중을 채운다. compute_allocation.py 가 raw_tier 로 예산을 고르고 portfolio_heat.budget_basis 에 근거를 남긴다. position_sizing.max_positions 4→5 동반 상향(강세장 5종목×~20%≈목표비중 도달). -5% 주간 드로다운 서킷브레이커·weekly_recovery_plan defensive 단계가 여전히 '실현손실' 백스톱(히트는 '잠재 동시손절' 사이징 예산, 드로다운은 '실현' 차단기 — 별개 축). ②entry_filters.relative_strength 신설 — score_candidates 에 '섹터 로테이션/상대강도' 축 추가(KOSPI 대비 60일 초과수익). 반도체 주도장에 조선·금융 후행주를 반복 보유하던 알파누수(조선 3회·금융 3회 연속 손실) 차단. fetch_market_data 가 regime 에 ret_60d_pct/ret_20d_pct 를 추가하고, score blend 를 재조정(momentum 0.30·relative_strength 0.20·thematic 0.15·confidence 0.15·thesis 0.20). 지수 데이터 없으면 rs 중립(0.5) 폴백으로 왜곡 없음. ③scripts/check_lessons_applied.py 신설 — lessons.md 의 '다음 적용 룰'·반복패턴(⚠️/≥3건)이 policy/prompts 에 실제 반영됐는지 자동 대조(2026-05-29 등록 룰이 6/2 미적용 재발 — 자기보완 루프가 '기록'만 하고 '강제'하지 않던 갭). audit_pipeline·pipeline_audit·sunday_policy_review 0-A 에 연동해 미반영 항목을 매 감사·매주 표면화(기본 WARN; 환경변수 LESSONS_ENFORCE=1 이면 FAIL 로 하드 차단).",
     "2.4: 웹 교차확인 가드 신설(price_data_quality.web_verify_guard) — live_verify 웹 확인이 묵은 값/개장 고가를 '현재가'로 잘못 채택하고 그 위에 출처 없는 촉매를 지어내 결론을 뒤집던 문제 차단. (2026-06-02 현대차 사례: 스냅샷 710,000(12:40, 2출처 high, today_high 772,000)을 두고 웹 754,000(개장 스파이크)을 현재가로 채택 → '관세 완화 기대감 +4.29% 급등' 허구 서사 → 비중 상한 초과·thesis 약화·진입 불가. 실제 종가 729,000 -2.80% 로 정반대.) ①fetch_market_data.py 가 종목별 today_ohlc(시가/고가/저가/현재가)를 스냅샷에 명시 노출(이미 가진 데이터, 네트워크 무관) — OHLC 맥락 부재가 현대차 오인의 직접 원인. ②web_verify_guard: 웹 값이 2출처 스냅샷 close(high/medium) 대비 ±3%(max_web_vs_snapshot_deviation_pct) 초과 시 outlier 로 보고, (a)출처 URL+관측 시각 (b)스냅샷보다 최근 (c)today_ohlc [low,high] 범위 내 셋 다 충족할 때만 채택, 아니면 스냅샷 close 보수 채택. 웹 값이 today_high 근처면 '고가 오인'으로 채택 금지. ③no_unsourced_catalyst: 출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지(원인 미확인으로 기록), 가격 변동 단독으로 thesis 강화/약화 금지. ④09/12/15/18 프롬프트 웹 교차확인 단계에 가드 반영(보유+후보 동일).",
     "2.3: 장중 시간(세션) 정책 신설(market_hours) — 직전까지 영업일(요일/공휴일)만 판정하고 '시각(time-of-day)'은 보지 않아 한국장 거래 시간(정규장 09:00~15:30) 밖의 체결이 trade_log 에 기록됐다(2026-06-01 SELL_ORANGE_STOP 의 ts=18:00 — 종가 도달 손절을 routine 실행 시각 18시로 booking). ①config/market_calendar.json 에 sessions(정규장·개장/마감 동시호가·시간외·반장) 추가. ②scripts/check_market_session.py 신설 — check_market_open(영업일)의 '시각' 짝꿍 가드로 현재 세션(pre_open/opening_auction/regular/closing_auction/post_close/closed_holiday)과 execution_mode(live/closing_price/none)를 산출, 각 routine 0-A 에서 호출. ③market_hours.rules: 현재가(시장가) 체결은 live(정규장)에서만, 마감(15:30) 후 신규 진입·추가매수 금지(다음 영업일 09시 이연), 18시 routine 은 '종가 기준' 손절/목표/트레일링 청산만 booking 하고 그 항목의 ts 는 18:00 이 아니라 마감 동시호가(15:30)로 기록하며 execution_venue=closing_auction 명시. ④trade_timing_gate — check_trade_log_gate.py 를 확장해 체결 ts 시각이 정규장 밖이면 CI FAIL(audit_pipeline + auto_merge_routines), 단 execution_venue=closing_auction 인 SELL(EOD 종가 청산)은 예외. enforced_since=2026-06-02(이전 booking grandfather). 시간외 단일가(16:00~18:00)는 일봉 기반 시뮬에서 모델링하지 않음.",
@@ -227,7 +228,33 @@
       "ohlc_required": "신규 진입·thesis 판정·단계 경보에 쓰는 종목별 '현재가'는 반드시 today_ohlc(시가/고가/저가) 맥락과 함께 제시한다. OHLC 없이 단일 웹 숫자만으로 '현재가'를 확정하지 않는다(현대차 실패의 직접 원인 — OHLC 가진 한화에어로는 고가 497,500 대신 12:40 442,500 을 올바로 채택했다).",
       "no_unsourced_catalyst": "가격 변동에 촉매(뉴스)를 붙이려면 출처 URL 이 있는 실제 보도여야 한다. '○○ 기대감 추정' 처럼 출처 없이 이유를 지어내지 않는다 — 사유 미확인이면 '원인 미확인'으로 적는다. 가격 변동 단독으로 weekly_thesis 를 강화/약화/무효화하지 않는다(촉매 출처 필수).",
       "conflict_resolution": "웹과 스냅샷이 임계 초과로 충돌하고 outlier_rule 로 해소되지 않으면, 결정(진입/청산/단계)에는 더 보수적인 값을 쓰고 confidence 를 1단계 강등하며 리포트에 '웹/스냅샷 가격 충돌 — 보수 채택' 1줄을 남긴다. 충돌하는 더 높은 값으로 '진입 차단·thesis 약화' 같은 단정 결론을 내리지 않는다.",
-      "applies_to": "모든 routine(09/12/15/18)의 웹 교차확인. 보유종목뿐 아니라 후보(candidate) 평가에도 동일 적용(현대차는 후보였다). booking 시에는 trade_provenance_gate 의 web_verified+verify_url 규칙과 함께 적용한다."
+      "applies_to": "모든 routine(09/12/15/18)의 웹 교차확인. 보유종목뿐 아니라 후보(candidate) 평가에도 동일 적용(현대차는 후보였다). booking 시에는 trade_provenance_gate 의 web_verified+verify_url 규칙과 함께 적용한다.",
+      "source_date_verification": {
+        "purpose": "v2.6 — 웹 교차확인(live_verify)이 '오늘'이 아닌 묵은 날짜의 기사를 현재 시세로 도용하는 것을 막는다. (2026-06-08: 6/8 09시 routine 이 stale 6/5 스냅샷을 두고 웹검색이 돌려준 실제 2026-06-01자 MBC 기사(imnews.imbc.com/.../6826849_37004.html, KOSPI 종가 8,788.38·삼성전자 급등·젠슨황 방한)를 '6/8 시세'로 오인 도용 → 삼성전자 ORANGE→GREEN 허구 해소·리포트/lessons/portfolio 동반 오염. web_verify_guard 의 '스냅샷보다 최신' 조건(outlier_rule (b))을 LLM 이 '6/8 장중'으로 거짓 자기인증했고, 출처 게재일이 실제로 6/1 임을 강제 확인하는 절차가 없었다.)",
+        "rule": "웹 교차확인으로 '오늘 현재가/시황'을 채택할 때, 출처(뉴스·기사)의 published date(게재일)를 반드시 URL/본문에서 실제로 읽어 기록한다(예: URL path /YYYY/MM/DD/, 기사 상단 일자). 출처 게재일이 오늘(routine 일자)이 아니거나 스냅샷 as_of 보다 과거이면 '현재가'로 채택 금지 — 동일자(오늘) 출처를 다시 찾거나, 없으면 스냅샷 close 를 stale 로 보수 채택하고 리포트에 '오늘 가격 미검증(stale 유지)'로 명시한다.",
+        "no_self_certified_recency": "'스냅샷보다 최신'·'오늘 장중' 같은 최신성 판정을 출처 게재일 확인 없이 자기 단정하지 않는다(outlier_rule (b) 의 게재일 확인 의무화). URL/페이지에서 실제 게재일 토큰을 읽을 수 없으면 '게재일 미확인'으로 적고 그 출처를 현재가 근거로 쓰지 않는다.",
+        "large_gap_exception_banned_on_stale": "스냅샷이 stale 인데 단일 웹 출처가 max_web_vs_snapshot_deviation_pct(±3%)를 크게 넘는 갭(예: +10%)을 주장하면 '대규모 갭업 예외' 류의 자체 면제를 적용하지 않는다 — 동일자(오늘) 복수 출처가 today_ohlc 와 함께 확인될 때만 채택하고, 아니면 stale close 를 유지한다. (2026-06-08 삼성전자 +10% 갭업 '예외' 자가면제가 사고의 직접 트리거였다.)",
+        "enforced_by_ci": "config/policy.json.price_data_quality.source_provenance_gate (scripts/check_trade_log_gate.py) 가 묵은 출처 게재일·재활용 종가를 CI 에서 하드 차단한다."
+      }
+    },
+    "source_provenance_gate": {
+      "enabled": true,
+      "purpose": "v2.6 — web_verify_guard.source_date_verification(프롬프트 의존)를 우회해 묵은 날짜의 기사가 '오늘 시세'로 trade_log 에 기록되는 것을 CI 에서 하드 차단하는 마지막 안전장치(trade_provenance_gate·trade_timing_gate 와 동일 패턴). 프롬프트가 무시돼도 묵은 출처 도용이 main 에 도달하지 못하게 한다. (2026-06-08 사고: 6/1자 MBC 기사를 6/8 시세로 도용 — 당시 이 게이트가 있었으면 recycled_value_gate 가 'KOSPI 8788=6/1 종가 재활용'으로 차단했다.)",
+      "script": "scripts/check_trade_log_gate.py",
+      "enforced_since": "2026-06-08",
+      "source_date_gate": {
+        "rule": "trade_log 항목의 web_verify 출처 필드(verify_url·web_verify_url·web_verify_source·web_verified 블록의 source)에서 게재일(YYYY-MM-DD, URL path /YYYY/MM/DD/)을 추출해, 가장 최근 날짜가 항목 ts 일자보다 max_source_age_days 초과로 과거이면 FAIL. 스냅샷 출처(source_method·last_date)는 stale 이 정책상 허용되므로 대상이 아니다 — web_verify '오늘 라이브가' 주장 출처에만 적용한다.",
+        "max_source_age_days": 0
+      },
+      "recycled_value_gate": {
+        "rule": "항목이 주장하는 '오늘 KOSPI 종가'(kospi*close 경로, prev/stale/last/ref/history 제외)가 직전 일자(strictly earlier) 종가와 ±match_tolerance_pct 안에서 동일하면 묵은 값 재활용으로 보고 FAIL. 본 항목이 인용한 stale 참조값(kospi_stale 등)과 같으면 정상(제외). URL 에 날짜 토큰이 없는 출처(예: imnews 6826849)는 source_date_gate 가 못 잡으므로 이 게이트가 보완한다.",
+        "match_tolerance_pct": 0.1,
+        "value_min": 1000,
+        "value_max": 20000,
+        "index_close_paths": "kospi*close (kospi_close·kospi_prev_close 포함; change/chg/pct 제외)"
+      },
+      "note": "enforced_since 이전 ts 는 grandfather(소급 미적용). 모든 액션(OPEN_CHECK·EOD_EVAL 포함)을 검사한다 — 2026-06-08 오염은 BUY/SELL 이 아닌 OPEN_CHECK 항목에 있었다.",
+      "enforced_by": ["scripts/check_trade_log_gate.py", "scripts/audit_pipeline.py(audit_trade_provenance)", ".github/workflows/auto_merge_routines.yml"]
     }
   },
 

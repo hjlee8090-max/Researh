@@ -41,6 +41,7 @@
 ## 1. 종가 확보 및 목표가 검증
 - 보유 종목 각각의 **오늘자 KOSPI 종가**는 `state/market_snapshot.json` 을 1순위 출처로 사용한다 (0-A 에서 `last_date`=오늘 확인 완료). 종가 미반영(`last_date`≠오늘)일 때만 웹 검색으로 보강하고 다중 출처 교차한다.
 - **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 종가 보강을 위해 웹을 쓸 때, 웹 값을 그대로 채택하지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가/현재가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 셋 다 충족 시만 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '장중 고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**(원인 미확인으로 기록), 가격 변동 단독으로 thesis·목표가 오차 분류를 단정하지 않는다. 후보 종목 평가에도 동일 적용.
+- **(v2.6) 출처 게재일 검증** (`web_verify_guard.source_date_verification`): 종가를 웹으로 보강할 때 출처(뉴스·기사)의 **게재일(published date)을 URL/본문에서 읽어 기록**하고, **오늘이 아니거나 스냅샷 `as_of` 보다 과거이면 종가로 채택 금지**('스냅샷보다 최신' 자기 단정 금지). stale 스냅샷 + 단일출처 대규모 갭(±3% 초과) '예외' 자가면제 금지 — 미검증이면 stale `close` 유지 명시. CI `source_provenance_gate`(`check_trade_log_gate.py`)가 묵은 출처 게재일·재활용 종가(예: '오늘 KOSPI 8,788'=직전 일자 종가)를 하드 차단(2026-06-08 6/1자 MBC 기사를 6/8 시세로 오인 도용한 사고 방지).
 - 각 종목에 대해:
   - **종가 vs 목표가 괴리(%)** 계산
   - 정책상 허용 오차 `tolerance_band_pct = 5%` 이내인지 판정

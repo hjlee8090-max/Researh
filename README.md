@@ -23,6 +23,7 @@ config/
   watchlist.json           현재 추천 3종목 + 진입가·목표가·손절가·코멘트
   weekly_plan.json         이번 주 thesis·watch_items·invalidation_triggers
   candidates.json          신규 진입 후보 목록 (fetch_market_data가 5거래일 추세 자동 수집 대상)
+  universe.json            (v2.7) 신규 진입 후보의 모집단 — screen_universe.py가 상대강도+테마로 랭킹·승격/회전아웃 제안
   market_calendar.json     KRX 휴장일 + 장중 세션(정규장 09:00~15:30·동시호가) — 0-A 영업일·세션 가드
   catalysts.json           종목별 다가오는 촉매(실적발표·배당·매크로) 캘린더 — generated_events(법정기한 추정)+manual_events(웹검색 확정). D-day 경보·신규 진입 보류 (catalyst-calendar)
 state/
@@ -62,6 +63,7 @@ scripts/
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
+  screen_universe.py       (v2.7) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 → state/universe_screen.json
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
   build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
   audit_pipeline.py        파이프라인 무결성 점검 (의존성 0)

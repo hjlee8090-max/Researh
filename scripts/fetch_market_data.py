@@ -336,7 +336,6 @@ def collect_tickers() -> dict[str, dict[str, str]]:
 def build_ticker_snapshot(
     ticker: str,
     meta: dict[str, str],
-    threshold_pct: float,
 ) -> dict[str, Any]:
     naver_hist = fetch_naver(ticker)
     yahoo_hist = fetch_yahoo(f"{ticker}.KS")
@@ -345,13 +344,9 @@ def build_ticker_snapshot(
     confidence, gap_pct = compute_confidence(naver_last, yahoo_last)
     primary_hist = naver_hist or yahoo_hist
     ret5 = five_day_return(primary_hist) if primary_hist else None
-    filter_passes = ret5 is not None and ret5 >= threshold_pct
-    if ret5 is None:
-        reason = "데이터 부족 — 5거래일 가격 수집 실패"
-    elif not filter_passes:
-        reason = f"5거래일 누적 {ret5}% < 기준 {threshold_pct}%"
-    else:
-        reason = None
+    # entry_filter(추세필터)는 레짐 tier·상대강도에 따라 임계가 달라지므로(v2.7 레짐 적응형),
+    # 여기서는 ret5·ret60 만 산출하고 pass/threshold 판정은 main() 이 레짐 tier 확정 후
+    # apply_entry_filter() 로 채운다(strong_bull 눌림목에서 주도주를 평면 -7% 로 막던 모순 해소).
 
     ret60 = cumulative_return(primary_hist, 60) if primary_hist else None
     high_ratio, high_52w = pct_of_52w_high(primary_hist) if primary_hist else (None, None)
@@ -409,19 +404,72 @@ def build_ticker_snapshot(
             "atr14": atr14,
             "atr_pct": atr_pct,
         },
-        "entry_filter": {
-            "passes": filter_passes,
-            "threshold_pct": threshold_pct,
-            "reason": reason,
-        },
+        "entry_filter": {},  # main() 의 apply_entry_filter 가 레짐 tier 확정 후 채운다(v2.7)
+    }
+
+
+def resolve_entry_threshold(
+    tier: str | None,
+    stock_ret60: float | None,
+    kospi_ret60: float | None,
+    ef_cfg: dict[str, Any],
+) -> tuple[float, str]:
+    """레짐 tier·상대강도(주도주) 기반 5일 추세필터 임계(%)를 산출한다(v2.7).
+
+    base = block_if_cumulative_return_below_pct_by_tier[tier] (없으면 평면 -7.0).
+    주도주 예외: KOSPI 대비 60일 초과수익이 excess_min_pct 이상이면 extra_pct 만큼 임계를
+    더 넓힌다(예 strong_bull -13→-20). 최종값은 entry_filter_hard_floor_pct 아래로는
+    내려가지 않는다(진짜 자유낙하 차단). 반환: (임계_pct, 근거 문자열).
+    """
+    flat = float(ef_cfg.get("block_if_cumulative_return_below_pct", -7.0))
+    base, basis = flat, "flat"
+    by_tier = ef_cfg.get("block_if_cumulative_return_below_pct_by_tier")
+    if isinstance(by_tier, dict) and tier and isinstance(by_tier.get(tier), (int, float)):
+        base, basis = float(by_tier[tier]), f"tier:{tier}"
+    threshold = base
+    rsw = ef_cfg.get("relative_strength_leader_widening")
+    if isinstance(rsw, dict) and stock_ret60 is not None and kospi_ret60 is not None:
+        excess = stock_ret60 - kospi_ret60
+        if excess >= float(rsw.get("excess_min_pct", 10.0)):
+            threshold = base + float(rsw.get("extra_pct", -7.0))
+            basis += "+rs_leader"
+    floor = ef_cfg.get("entry_filter_hard_floor_pct")
+    if isinstance(floor, (int, float)):
+        threshold = max(threshold, float(floor))
+    return round(threshold, 2), basis
+
+
+def apply_entry_filter(
+    ts: dict[str, Any],
+    tier: str | None,
+    kospi_ret60: float | None,
+    ef_cfg: dict[str, Any],
+) -> None:
+    """종목 스냅샷(ts)의 entry_filter 를 레짐 tier 확정 후 채운다(in-place, v2.7).
+
+    build_ticker_snapshot 는 ret5·ret60 만 산출하고, 임계 판정은 레짐(KOSPI ret60)이
+    확정된 main() 에서 이 함수로 수행한다(평면 -7% → tier·상대강도 적응형).
+    """
+    ret5 = ts.get("five_day_cumulative_return_pct")
+    stock_ret60 = (ts.get("momentum") or {}).get("ret_60d_pct")
+    threshold, basis = resolve_entry_threshold(tier, stock_ret60, kospi_ret60, ef_cfg)
+    passes = ret5 is not None and ret5 >= threshold
+    if ret5 is None:
+        reason = "데이터 부족 — 5거래일 가격 수집 실패"
+    elif not passes:
+        reason = f"5거래일 누적 {ret5}% < 기준 {threshold}% ({basis})"
+    else:
+        reason = None
+    ts["entry_filter"] = {
+        "passes": passes,
+        "threshold_pct": threshold,
+        "basis": basis,
+        "reason": reason,
     }
 
 
 def main() -> int:
     policy = load_json("config/policy.json")
-    threshold = (
-        policy.get("entry_filters", {}).get("block_if_cumulative_return_below_pct", -7.0)
-    )
     regime_cfg = policy.get("market_regime", {}) if isinstance(policy.get("market_regime"), dict) else {}
     ma_window = regime_cfg.get("ma_window", 200)
     dyn = regime_cfg.get("dynamic_sizing", {}) if isinstance(regime_cfg.get("dynamic_sizing"), dict) else {}
@@ -439,7 +487,7 @@ def main() -> int:
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         regime_future = pool.submit(build_regime, ma_window, tiers, slope_lookback)
         ticker_futures = {
-            ticker: pool.submit(build_ticker_snapshot, ticker, meta, threshold)
+            ticker: pool.submit(build_ticker_snapshot, ticker, meta)
             for ticker, meta in tickers.items()
         }
         regime = regime_future.result()
@@ -447,9 +495,19 @@ def main() -> int:
             ticker: future.result() for ticker, future in ticker_futures.items()
         }
 
+    # v2.7 — 레짐 tier·KOSPI 60일 수익률 확정 후 종목별 추세필터(레짐 적응형 임계 + 주도주
+    # 예외)를 채운다. 평면 -7% 가 강세장 눌림목에서 주도주를 막던 모순을 tier 로 푼다.
+    ef_cfg = policy.get("entry_filters", {}) if isinstance(policy.get("entry_filters"), dict) else {}
+    regime_tier = regime.get("tier") if isinstance(regime, dict) else None
+    kospi_ret60 = regime.get("ret_60d_pct") if isinstance(regime, dict) else None
+    for ts in ticker_snapshots.values():
+        apply_entry_filter(ts, regime_tier, kospi_ret60, ef_cfg)
+    tier_base_threshold, tier_base_basis = resolve_entry_threshold(regime_tier, None, None, ef_cfg)
+
     snapshot: dict[str, Any] = {
         "as_of": now.isoformat(timespec="seconds"),
-        "policy_threshold_pct": threshold,
+        "policy_threshold_pct": tier_base_threshold,
+        "entry_threshold_basis": tier_base_basis,
         "ticker_count": len(tickers),
         "regime": regime,
         "tickers": {},

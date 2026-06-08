@@ -125,6 +125,24 @@ def heat_budget_for_tier(risk_cfg: dict, tier: str | None) -> tuple[float, str]:
     return flat, "flat_fallback"
 
 
+def single_trade_risk_for_tier(risk_cfg: dict, tier: str | None) -> tuple[float, str]:
+    """레짐 tier 에 따른 단일거래 리스크 상한(%)을 고른다(v2.7).
+
+    평면 2% 단일거래 상한이 손절폭과 곱해져 종목당 포지션을 ~98만원에 묶어 강세장
+    목표비중(80~95%)에 닿지 못하던 문제를 tier별 상한으로 푼다(heat_budget_for_tier 와 대칭).
+    표가 없거나 tier 가 unknown 이면 평면 max_single_trade_risk_pct_of_equity 로 폴백한다.
+
+    반환: (상한_pct, 근거 문자열).
+    """
+    flat = float(risk_cfg.get("max_single_trade_risk_pct_of_equity", 2.0))
+    by_tier = risk_cfg.get("max_single_trade_risk_pct_of_equity_by_tier")
+    if isinstance(by_tier, dict) and tier and tier in by_tier:
+        val = by_tier.get(tier)
+        if isinstance(val, (int, float)):
+            return float(val), tier
+    return flat, "flat_fallback"
+
+
 def find_tier(name: str | None, tiers: list[dict]) -> dict | None:
     for t in tiers:
         if t.get("tier") == name:
@@ -243,7 +261,13 @@ def main() -> int:
     heat_budget_pct, heat_budget_basis = heat_budget_for_tier(risk_cfg, raw_tier)
     out["portfolio_heat"] = portfolio_heat(portfolio, equity, heat_budget_pct)
     out["portfolio_heat"]["budget_basis"] = heat_budget_basis
-    out["per_trade_risk_pct"] = float(risk_cfg.get("max_single_trade_risk_pct_of_equity", 2.0))
+    # v2.7 — 단일거래 리스크 상한도 레짐 tier 연동(평면 2% 가 포지션을 ~98만원에 묶던 매듭 해소).
+    per_trade_pct, per_trade_basis = single_trade_risk_for_tier(risk_cfg, raw_tier)
+    out["per_trade_risk_pct"] = per_trade_pct
+    out["per_trade_risk_basis"] = per_trade_basis
+    out["single_trade_risk_ceiling_krw"] = (
+        round(equity * per_trade_pct / 100) if equity > 0 else None
+    )
 
     if not raw_tier or raw_tier == "unknown" or not tiers:
         out["tier"] = "unknown"

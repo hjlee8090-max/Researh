@@ -253,7 +253,7 @@
 2. `state/candidate_scores.json.ranked` 에서 `tradable=true` 후보를 점수 내림차순으로 본다 (`tradable` = 추세필터 통과 + confidence **medium 이상** + 구조적 악재 미매칭 — v2.0 에서 medium 도 진입 허용).
 3. 각 tradable 후보에 §2 공통 규칙으로 진입가·동적손절가·목표가(강세 tier 상향)·R/R(레짐 적응 하한) 산출. R/R 통과 시 **목표 수량 = §2 공통 사이징**으로 가상 매수 체결(trade_log + portfolio 갱신, `weekly_thesis_id` 기록).
 4. `vacant_slots` 와 deploy krw 한도가 남는 한 다음 순위 후보로 **반복(복수 종목 진입)**. 종목당 35%·현금 하한 5% 준수.
-5. tradable 후보가 0건이면: (a) 매크로·시총 상위·테마 노출(`config/themes.json`) 기반으로 `candidates.json` 에 **3~4종목 신규 발굴·추가**(다음 routine 부터 자동 추적), (b) 이번 회차는 "후보 부족으로 배치 보류 — 다음 routine 재시도" 를 리포트에 명시한다. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
+5. tradable 후보가 **2건 미만**이면(발굴 부재로 후보 풀이 정체된 신호): (a) `python scripts/screen_universe.py` 를 실행해 `state/universe_screen.json` 의 `promote_suggestions`(모집단에서 상대강도 상위 주도주 — candidates 에 없는 종목)·`rotate_out_suggestions`(만성 후행주)를 확인한다. 승격 제안 종목은 web_verify(가격·뉴스 출처 URL)·구조적악재(bear_case) 점검 후 `config/candidates.json` 에 thesis·`theme_exposure`(근거 URL 포함)와 함께 추가한다(다음 routine 부터 자동 추적; **근거 없는 추가 금지**). 회전아웃 제안된 만성 후행주는 강등·교체 후보로 검토. (b) 그래도 이번 회차 tradable 0건이면 "후보 부족으로 배치 보류 — 다음 routine 재시도" 를 리포트에 명시한다. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
 6. `caution`/`defensive` 회복 단계, `risk_off`(차단 설정 시), `deep_bear`(entry_mode=block) 이면 이 경로보다 보수 단계가 우선(더 보수적인 쪽 적용).
 
 ## 3. 대화창 출력 (카톡과 별개 — Claude 대답란)

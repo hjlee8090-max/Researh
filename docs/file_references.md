@@ -8,6 +8,12 @@
 > - `scripts/check_market_session.py` — 장중 세션·execution_mode 판정 (모든 평일 routine 0-A 에서 호출)
 > - `policy.market_hours` + `trade_timing_gate` — 마감 후 신규진입 금지·종가 청산은 ts=15:30+execution_venue=closing_auction, CI 하드 강제
 >
+> **신규 추가 (2026-06-08, v2.7 강세장 배치·종목 탐색)**
+> - `config/universe.json` — 신규 진입 후보의 '모집단'(테마별 대형주 ~30종목)
+> - `scripts/screen_universe.py` — 모집단을 상대강도+테마로 랭킹 → 승격/회전아웃 제안 → `state/universe_screen.json`
+> - `policy.entry_filters.block_if_cumulative_return_below_pct_by_tier` + `relative_strength_leader_widening` + `entry_filter_hard_floor_pct` — 진입필터 레짐 적응형(평면 -7% 제거, `fetch_market_data.apply_entry_filter`)
+> - `policy.risk.max_single_trade_risk_pct_of_equity_by_tier` — 단일거래 리스크캡 레짐 적응형(strong_bull 3.5%, `compute_allocation.per_trade_risk_pct`)
+>
 > **신규 추가 (2026-05-22)**
 > - `config/candidates.json` — 신규 진입 후보 종목 목록
 > - `config/market_calendar.json` — KRX 휴장일 캘린더
@@ -148,7 +154,7 @@
 - 쓰기: 없음 (stdout만)
 
 ### `scripts/fetch_market_data.py` (신규, v2.4 today_ohlc 추가)
-- 읽기: `config/portfolio.json` (보유), `config/candidates.json` (후보), `config/policy.json` (`entry_filters.block_if_cumulative_return_below_pct`)
+- 읽기: `config/portfolio.json` (보유), `config/candidates.json` (후보), `config/policy.json` (`entry_filters` — v2.7 레짐 적응형 임계 `block_if_cumulative_return_below_pct_by_tier`·`relative_strength_leader_widening`·`entry_filter_hard_floor_pct`. 레짐 tier 확정 후 `apply_entry_filter` 로 종목별 임계 산출)
 - 네트워크: 네이버 siseJson 일별 + Yahoo Finance v8 chart JSON (양쪽 시도, 둘 다 실패 시 직전 스냅샷 보존+stale)
 - 쓰기: `state/market_snapshot.json` (GitHub Actions `fetch_prices.yml` 가 수집·커밋, 추적됨)
 - (v2.4) 종목별 `today_ohlc`(시가/고가/저가/현재가, last_date=오늘일 때만) 노출 — 웹 교차확인이 개장/장중 고가를 '현재가'로 오인하는 것을 막는 범위 맥락(`policy.price_data_quality.web_verify_guard`). 이미 수집한 일봉에서 파생, 네트워크 무관.
@@ -184,6 +190,12 @@
 - 읽기: `config/candidates.json`, `config/weekly_plan.json`, `state/market_snapshot.json`, `config/policy.json`
 - 쓰기: `state/candidate_scores.json` (gitignored)
 - 09시 routine 0-B 단계에서 `fetch_market_data.py` 직후 호출. 후보 점수·진입 가능 여부 랭킹.
+
+### `scripts/screen_universe.py` (신규 v2.7 — 종목 탐색)
+- 읽기: `config/universe.json`(모집단), `config/candidates.json`(중복 방지), `config/themes.json`(strength), `config/policy.json`(entry_filters 상대강도 임계·하드플로어), `state/market_snapshot.json`(KOSPI ret60 벤치마크 + 기수집 종목 재사용)
+- 네트워크: 모집단 중 스냅샷에 없는 종목만 네이버+Yahoo 수집(주 1회 전제). 차단 시 graceful degrade(데이터 없음·상대강도 중립 폴백).
+- 쓰기: `state/universe_screen.json` — `promote_suggestions`(주도주)·`rotate_out_suggestions`(만성 후행주)·랭킹·리포트 MD
+- 소비처: `sunday_strategy`(주간 발굴) + `0900_pre_market.md` §C(tradable<2 미배치 분기). **candidates.json 자동수정 안 함(제안만)** — routine 이 thesis·theme_exposure(근거 URL)와 함께 승격.
 
 ### `scripts/reconcile_portfolio.py` (신규)
 - 읽기: `config/portfolio.json`, `state/trade_log.jsonl`, `state/market_snapshot.json`

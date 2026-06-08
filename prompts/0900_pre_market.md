@@ -145,6 +145,7 @@
 - 추정 이벤트(`confirmed=false`)는 웹검색("[종목명] 실적발표일", "[이벤트] 일정")으로 확정 시도 → 확정되면 `manual_events` 에 `{...,"confirmed":true,"managed_by":"manual","supersedes":"<generated id>"}` 로 추가(generated 는 다음 수집 때 자동 재생성되므로 직접 수정하지 않는다).
 - D-2 이내 high 촉매가 없으면 "임박 촉매 없음" 1줄만 남기고 통과.
 - **카톡 노출**: D-2 이내 high 촉매가 있으면 이 슬롯 리포트의 "한눈에 보기" 표/불릿에 `📅 촉매: [종목명] [이벤트] D-N` 행을 1줄 추가한다(`send_kakao.py` 가 "촉매" 라벨을 요약에 노출). 없으면 추가하지 않는다.
+- **earnings-preview 연계** (`policy.earnings_preview` 활성 시): 오늘이 보유 종목 실적 발표일(D-0)이거나 `state/earnings_preview.json.active` 에 해당 종목이 있으면 **`prompts/earnings_preview.md`** 를 따라 (a) 발표 전이면 시나리오 플레이북을 재확인하고, (b) 발표 결과가 이미 나왔으면 SCORE(채점)를 1차 수행한다(확정은 18시). 추정일이었다면 웹검색으로 확정해 `manual_events` 승격 + 프리뷰 날짜 정정.
 
 ### 1-1. 진입 후보 추세 필터 (신규 매수 전 의무)
 신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 확인·기록:
@@ -184,6 +185,7 @@
 > - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 +1주를 검토하되, **+1주 후에도 (a) 리스크 상한·(c) 히트잔여·35% 비중을 모두 지킬 때만** 허용한다(위반 시 +1 안 함).
 > - **R/R 하한은 레짐 적응형**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`): strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6. tier 미확정이면 1.2. **data confidence=medium 이면 +0.1**.
 > - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
+> - **목표가 컨센 교차검증**(`policy.consensus.target_cross_check`, `state/consensus.json` 있고 confidence≠low 일 때): 위에서 산정한 우리 목표가가 **컨센 목표주가(`consensus.tickers.<t>.target_price`) × 1.15 를 초과**하면 ⚠️ 비현실적 목표 경고 → (a)초과를 정당화할 **명시 촉매·근거 1줄을 comments 에 적거나** (b)근거가 없으면 **컨센×1.15 로 상한 적용**한다. 우리 thesis 산정이 1순위이되 외부 컨센으로 과욕을 거른다. 컨센이 없거나 stale/low 면 이 검증은 건너뛰고 우리 목표가를 그대로 쓴다.
 > - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
 
 ### 2-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)

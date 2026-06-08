@@ -470,6 +470,19 @@
     "verification_status": "검증 완료(2026-06-08) — FnGuide 가 GitHub Actions 러너에서 정상 접근(143KB), 파서가 실데이터에서 투자의견·목표주가·EPS·PER·추정기관수 정확 추출. 순차요청 SSL EOF 는 재시도+딜레이로 완화.",
     "phase2_use": "earnings-preview: catalysts.json earnings 촉매 D-1 에 consensus 기준선 대비 시나리오 3종 생성 → 발표 D+1 에 fetch_fundamentals 실제값과 대조해 lessons(가정오류 분류) 적재."
   },
+  "earnings_preview": {
+    "enabled": true,
+    "purpose": "Phase 2 — equity-research earnings-preview 채용. 실적 발표 전(D-1) beat/inline/miss 시나리오 3종 + 사전 확약 액션(플레이북)을 만들어 발표 당일 감정 매매를 막고, 발표 후(D+0~) 실제값과 대조해 자기채점(컨센·가정 오류 학습)한다.",
+    "spec": "prompts/earnings_preview.md (이벤트 기반 — 0900·1800 routine 이 호출). 상태: state/earnings_preview.json (active 프리뷰 + scorecard).",
+    "inputs": "config/catalysts.json(언제) + state/consensus.json(예상치 baseline, EPS 우선) + watchlist.thesis(논리·earnings_miss invalidation) + state/fundamentals.json/웹(발표 후 실제값).",
+    "preview_lead_days": 1,
+    "surprise_thresholds": {"beat_pct": 10, "miss_pct": -10, "note": "컨센 대비 실제 실적 괴리 임계. ±10% 안이면 inline."},
+    "price_reaction_heuristic": {"beat": "+3~6%", "inline": "±1~2%", "miss": "-4~8%", "note": "대형주 기본 밴드. ATR 높으면 확대. 휴리스틱이며 scorecard 로 보정."},
+    "scope": "보유 종목 PREVIEW·SCORE 의무. 후보는 PREVIEW 권고(진입 보류 보조).",
+    "thesis_link": "miss 시나리오는 watchlist.thesis 의 earnings_miss(가정오류) invalidation 을 발동 점검 → Part C(촉매→논리) 결합을 닫는다.",
+    "meta_review": "sunday_policy_review 가 scorecard 누적 hit-rate 를 점검해 임계·휴리스틱·확률배분 가이드를 조정 제안.",
+    "limitation": "컨센 OP 미수집 → beat/miss 1차 기준은 EPS. price_reaction 은 휴리스틱(단정 금지). 종가청산 정책 유지(발표 당일 추격/투매 금지)."
+  },
   "rebalance_rules": {
     "swap_when": [
       "종목이 손절선(-10%) 도달",

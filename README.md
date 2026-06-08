@@ -59,6 +59,8 @@ scripts/
   fetch_market_data.py     네이버 + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
   fetch_catalysts.py       종목별 다가오는 촉매 추정 (정기보고서 법정기한 + DART list.json 보정) → config/catalysts.json
   fetch_consensus.py       증권사 컨센서스 수집 (FnGuide — 목표주가·투자의견·추정치) → state/consensus.json (Phase 2 earnings-preview 입력)
+prompts/
+  earnings_preview.md      Phase 2 — 실적 발표 전 beat/inline/miss 시나리오 + 발표 후 자기채점 (이벤트 기반, 0900·1800 호출)
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹

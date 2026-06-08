@@ -32,6 +32,7 @@
 2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 3. `state/trade_log.jsonl` (최근 30라인)
 3-1. `config/catalysts.json` (있으면 — §4 다음 거래일 액션의 임박 촉매 반영용, 옵셔널)
+3-2. `state/consensus.json`·`state/earnings_preview.json` (있으면 — §2-5 earnings-preview 입력/상태, 옵셔널)
 4. **오늘 시간대별 리포트 4개** — 18시 종합의 핵심 재료:
    - `reports/YYYY-MM-DD-00.md` (자정)
    - `reports/YYYY-MM-DD-09.md` (개장)
@@ -97,6 +98,12 @@
 3. status 가 `intact` 이외로 바뀐 종목은 **충족된 invalidation 의 type(매크로/섹터/개별/가정오류)** 그대로 §3 lessons 에 1줄 기록(가격 오차가 ±5% 이내여도 기록 — "논리는 깨졌으나 가격은 아직"은 중요한 학습이다).
 4. `linked_catalyst` 가 오늘 통과한 실적 촉매면(`catalysts.json`), 그 invalidation(주로 `가정오류` 유형)을 fundamentals 갱신값으로 우선 판정한다(Part C 결합).
 5. 청산으로 watchlist 에서 빠지는 종목의 thesis 최종 status·사유는 `comments` 에 남겨 히스토리를 보존한다.
+
+## 2-5. earnings-preview (Phase 2 — 실적 프리뷰 생성·채점, `policy.earnings_preview` 활성 시)
+`config/catalysts.json` 의 `type=earnings_report` 이벤트를 보고 **`prompts/earnings_preview.md` 스펙을 따른다**:
+- **PREVIEW(D-1)**: 내일이 보유 종목 실적 발표일이면(catalyst D-1) `state/consensus.json` 기준선으로 **beat/inline/miss 시나리오 3종 + 사전 확약 액션**을 생성해 `state/earnings_preview.json.active` 에 적재하고, 18시 리포트에 "📑 실적 프리뷰" 박스 1개를 넣는다. §4 next_day_plan 에 "발표 D-1 — 추가매수 금지·시나리오 플레이북" 1줄(catalysts 경보와 합침).
+- **SCORE(D+0~)**: `active` 의 발표일이 지나고 실제 실적이 확보되면(`fundamentals.json` 또는 웹) **컨센 대비 surprise·실현 시나리오·가격반응**을 채점해 `scorecard` 로 옮기고, §3 lessons(주로 `가정오류`) + §2-4 thesis(`earnings_miss` invalidation) 에 반영한다(Part C 닫기). 실제값 미확보면 다음 routine 으로 이연.
+- 파일/스펙 부재 시 건너뛴다(옵셔널).
 
 ## 3. 자기보완 학습 (lessons.md 갱신)
 오차 범위(±5%)를 벗어난 종목 각각에 대해 `state/lessons.md`에 다음 형식으로 항목 추가:

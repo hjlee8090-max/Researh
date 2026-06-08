@@ -416,6 +416,23 @@ def audit_market_data_tooling(messages: list[str]) -> None:
             messages.append(result("FAIL", f"state/consensus.json parse failed: {exc}"))
     else:
         messages.append(result("WARN", "state/consensus.json missing — 컨센서스 레이어 비활성(Phase 2 입력)"))
+    epreview = ROOT / "state" / "earnings_preview.json"
+    espec = ROOT / "prompts" / "earnings_preview.md"
+    if epreview.exists():
+        try:
+            payload = json.loads(epreview.read_text(encoding="utf-8"))
+            act = payload.get("active", [])
+            sc = payload.get("scorecard", [])
+            if not isinstance(act, list) or not isinstance(sc, list):
+                messages.append(result("FAIL", "state/earnings_preview.json: active/scorecard 는 배열이어야 함"))
+            else:
+                spec_ok = "present" if espec.exists() else "MISSING(prompts/earnings_preview.md)"
+                messages.append(result("OK",
+                    f"state/earnings_preview.json: active={len(act)} scored={len(sc)} (spec {spec_ok})"))
+        except Exception as exc:  # noqa: BLE001
+            messages.append(result("FAIL", f"state/earnings_preview.json parse failed: {exc}"))
+    else:
+        messages.append(result("WARN", "state/earnings_preview.json missing — earnings-preview(Phase 2) 비활성(옵셔널)"))
 
 
 def audit_prompts_and_scripts(messages: list[str]) -> None:

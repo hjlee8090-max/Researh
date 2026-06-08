@@ -145,6 +145,7 @@
 - 추정 이벤트(`confirmed=false`)는 웹검색("[종목명] 실적발표일", "[이벤트] 일정")으로 확정 시도 → 확정되면 `manual_events` 에 `{...,"confirmed":true,"managed_by":"manual","supersedes":"<generated id>"}` 로 추가(generated 는 다음 수집 때 자동 재생성되므로 직접 수정하지 않는다).
 - D-2 이내 high 촉매가 없으면 "임박 촉매 없음" 1줄만 남기고 통과.
 - **카톡 노출**: D-2 이내 high 촉매가 있으면 이 슬롯 리포트의 "한눈에 보기" 표/불릿에 `📅 촉매: [종목명] [이벤트] D-N` 행을 1줄 추가한다(`send_kakao.py` 가 "촉매" 라벨을 요약에 노출). 없으면 추가하지 않는다.
+- **earnings-preview 연계** (`policy.earnings_preview` 활성 시): 오늘이 보유 종목 실적 발표일(D-0)이거나 `state/earnings_preview.json.active` 에 해당 종목이 있으면 **`prompts/earnings_preview.md`** 를 따라 (a) 발표 전이면 시나리오 플레이북을 재확인하고, (b) 발표 결과가 이미 나왔으면 SCORE(채점)를 1차 수행한다(확정은 18시). 추정일이었다면 웹검색으로 확정해 `manual_events` 승격 + 프리뷰 날짜 정정.
 
 ### 1-1. 진입 후보 추세 필터 (신규 매수 전 의무)
 신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 확인·기록:

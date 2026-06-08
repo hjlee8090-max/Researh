@@ -257,6 +257,7 @@
 - `config/watchlist.json` 의 `weekly_thesis_id` → `config/weekly_plan.json.weekly_thesis[].id`
 - (thesis-tracker, Part B) `config/watchlist.json.stocks[].thesis` = `{id, statement, key_drivers[], invalidation[], status, entry_ts, last_review_ts}`. `invalidation[].type` 은 18시 자기보완 4분류(매크로/섹터/개별/가정오류)와 **동일 enum** (`policy.thesis.invalidation_type_enum`). `invalidation[].linked_catalyst` → `config/catalysts.json` 의 earnings 촉매 id (Part C 결합).
   - 소비처: `0900_pre_market.md`(B 2-1 무효화 1차 점검), `1800_report.md`(2-4 무효화 판정 + 종목별 종가 점검 status 뱃지 + §3 lessons type 기록). audit: `audit_pipeline.audit_thesis`.
+- (earnings-preview, Phase 2) `prompts/earnings_preview.md` (이벤트 기반 스펙) + `state/earnings_preview.json`(active 프리뷰 + scorecard). 입력: `catalysts.json`(언제)·`consensus.json`(예상치)·`watchlist.thesis`(논리)·`fundamentals.json`(실제값). 호출: `1800_report.md` §2-5(PREVIEW/SCORE 주), `0900_pre_market.md` 1-4(발표일 재확인/보강). 메타: `sunday_policy_review` 가 scorecard hit-rate 점검. 정책: `policy.earnings_preview`. audit: consensus/earnings_preview 블록.
 
 ## 7. 점검 체크리스트 (수동 점검 시)
 

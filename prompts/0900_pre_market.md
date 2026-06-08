@@ -185,6 +185,7 @@
 > - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 +1주를 검토하되, **+1주 후에도 (a) 리스크 상한·(c) 히트잔여·35% 비중을 모두 지킬 때만** 허용한다(위반 시 +1 안 함).
 > - **R/R 하한은 레짐 적응형**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`): strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6. tier 미확정이면 1.2. **data confidence=medium 이면 +0.1**.
 > - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
+> - **목표가 컨센 교차검증**(`policy.consensus.target_cross_check`, `state/consensus.json` 있고 confidence≠low 일 때): 위에서 산정한 우리 목표가가 **컨센 목표주가(`consensus.tickers.<t>.target_price`) × 1.15 를 초과**하면 ⚠️ 비현실적 목표 경고 → (a)초과를 정당화할 **명시 촉매·근거 1줄을 comments 에 적거나** (b)근거가 없으면 **컨센×1.15 로 상한 적용**한다. 우리 thesis 산정이 1순위이되 외부 컨센으로 과욕을 거른다. 컨센이 없거나 stale/low 면 이 검증은 건너뛰고 우리 목표가를 그대로 쓴다.
 > - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
 
 ### 2-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)

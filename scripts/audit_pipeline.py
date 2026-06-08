@@ -255,6 +255,42 @@ def audit_thesis(data: dict[str, object], messages: list[str]) -> None:
         messages.append(result("WARN", "watchlist thesis 미설정 — thesis-tracker 비활성(옵셔널)"))
 
 
+def audit_target_consensus(data: dict[str, object], messages: list[str]) -> None:
+    """보유 종목 우리 목표가 ↔ 컨센 목표주가 교차검증 (policy.consensus.target_cross_check)."""
+    policy = data.get("config/policy.json") or {}
+    watchlist = data.get("config/watchlist.json") or {}
+    if not isinstance(policy, dict) or not isinstance(watchlist, dict):
+        return
+    cc = (policy.get("consensus", {}) or {}).get("target_cross_check", {})
+    if not isinstance(cc, dict) or not cc.get("enabled", False):
+        return
+    ceiling = cc.get("ceiling_multiple", 1.15)
+    cons_path = ROOT / "state" / "consensus.json"
+    if not cons_path.exists():
+        return
+    try:
+        cons = json.loads(cons_path.read_text(encoding="utf-8")).get("tickers", {})
+    except Exception:  # noqa: BLE001
+        return
+    over: list[str] = []
+    for s in watchlist.get("stocks", []):
+        if not isinstance(s, dict) or (s.get("shares_held") or 0) <= 0:
+            continue
+        our = s.get("target_price")
+        c = cons.get(s.get("ticker"), {})
+        ctp = c.get("target_price")
+        if not isinstance(our, (int, float)) or not isinstance(ctp, (int, float)) or ctp <= 0:
+            continue
+        if c.get("stale") or (c.get("baseline", {}) or {}).get("confidence") == "low":
+            continue
+        if our > ctp * ceiling:
+            over.append(f"{s.get('ticker')} 우리 {our:,.0f} > 컨센 {ctp:,.0f}×{ceiling}")
+    if over:
+        messages.append(result("WARN", "목표가 컨센 상한 초과(근거 명시 또는 상한 적용 필요): " + "; ".join(over)))
+    else:
+        messages.append(result("OK", "보유 종목 목표가 컨센 교차검증 통과(또는 컨센 미확보)"))
+
+
 def audit_recovery_stage(data: dict[str, object], messages: list[str]) -> None:
     """누적 수익률 기준 회복 전략 단계 판정 (policy.weekly_recovery_plan).
 
@@ -589,6 +625,7 @@ def main() -> int:
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)
     audit_thesis(data, messages)
+    audit_target_consensus(data, messages)
     audit_recovery_stage(data, messages)
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)

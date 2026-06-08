@@ -468,7 +468,15 @@
     "fields": "target_price(컨센 목표주가), opinion_score(1~5)/opinion_text(강력매도~강력매수), eps_consensus(주당 추정 EPS), per_consensus, n_estimates(추정기관수), consensus_date(컨센 기준일). 영업이익 추정치는 FnGuide Financial Highlight 표 파싱이 필요해 후속 확장 대상 — EPS 컨센을 earnings-preview 기준선으로 쓴다.",
     "cadence": "주 1회(fetch_consensus.yml, 일 06:45 KST). 데일리 routine 은 state/consensus.json 을 읽고 D-1 종목에 한해 웹검색으로 보강·검증.",
     "verification_status": "검증 완료(2026-06-08) — FnGuide 가 GitHub Actions 러너에서 정상 접근(143KB), 파서가 실데이터에서 투자의견·목표주가·EPS·PER·추정기관수 정확 추출. 순차요청 SSL EOF 는 재시도+딜레이로 완화.",
-    "phase2_use": "earnings-preview: catalysts.json earnings 촉매 D-1 에 consensus 기준선 대비 시나리오 3종 생성 → 발표 D+1 에 fetch_fundamentals 실제값과 대조해 lessons(가정오류 분류) 적재."
+    "phase2_use": "earnings-preview: catalysts.json earnings 촉매 D-1 에 consensus 기준선 대비 시나리오 3종 생성 → 발표 D+1 에 fetch_fundamentals 실제값과 대조해 lessons(가정오류 분류) 적재.",
+    "target_cross_check": {
+      "enabled": true,
+      "rule": "우리 목표가(watchlist.target_price)는 진입가·ATR·R/R·촉매로 산정하되(1순위), 산정 후 컨센 목표주가와 교차검증한다. 컨센은 세팅 입력이 아니라 '상한·정합성 가드'다.",
+      "ceiling_multiple": 1.15,
+      "action": "우리 목표가 > 컨센 목표주가 × ceiling_multiple 이면 (a)초과 정당화 근거를 watchlist comments 에 1줄 명시하거나 (b)근거 없으면 컨센×1.15 로 상한 적용. 우리 목표가 ≤ 컨센이면 그대로 통과.",
+      "skip_when": "consensus.json 에 해당 종목이 없거나 stale 이거나 baseline confidence=low 또는 target_price 결측이면 검증 생략(우리 목표가 그대로).",
+      "applies_at": "0900 신규 진입 목표가 세팅(§2 공통 규칙)·1800 §2-2 목표가 재조정. audit_pipeline 가 watchlist 보유종목 목표가를 컨센과 대조해 초과를 WARN."
+    }
   },
   "earnings_preview": {
     "enabled": true,

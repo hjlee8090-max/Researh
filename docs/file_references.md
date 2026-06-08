@@ -165,7 +165,7 @@
 - 네트워크: FnGuide 컴퍼니가이드 Snapshot(comp.fnguide.com) — 브라우저 UA+Referer. 차단 시 graceful degrade(직전값+stale)
 - 쓰기: `state/consensus.json` — 종목별 target_price·opinion_score/text·eps_consensus·per_consensus·n_estimates·consensus_date
 - 실행: `.github/workflows/fetch_consensus.yml` 주 1회(일 06:45 KST). `--probe` 로 접근성·구조 진단.
-- 소비처: Phase 2 earnings-preview 프롬프트(예정). 정책: `policy.consensus`.
+- 소비처: Phase 2 earnings-preview(`prompts/earnings_preview.md`) baseline + **목표가 컨센 교차검증**(`policy.consensus.target_cross_check` — 0900 §2 진입 목표가·1800 §2-2 재조정 시 우리 목표가가 컨센×1.15 초과면 경고/상한, audit `audit_target_consensus`). 정책: `policy.consensus`.
 - **검증 완료**(2026-06-08): FnGuide 러너 접근 정상, 파서가 컨센 요약 박스(투자의견 4.0/목표주가 415,200/EPS 42,998/PER 7.7/추정기관수 25)를 정확 추출. 영업이익 추정치는 후속 확장.
 
 ### `scripts/check_market_open.py` (신규)

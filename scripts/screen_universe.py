@@ -38,6 +38,7 @@ from fetch_market_data import (  # noqa: E402
     fetch_naver,
     fetch_yahoo,
     five_day_return,
+    price_structure,
     volume_ratio,
 )
 from score_candidates import relative_strength_score  # noqa: E402
@@ -74,6 +75,7 @@ def fetch_returns(ticker: str) -> dict[str, Any]:
         "ret20": cumulative_return(primary, 20) if primary else None,
         "ret60": cumulative_return(primary, 60) if primary else None,
         "vol_ratio": volume_ratio(primary, 20) if primary else None,
+        "price_reversal": price_structure(primary)["price_reversal"] if primary else None,
         "last_close": primary[-1]["close"] if primary else None,
         "confidence": confidence,
         "data_ok": bool(primary),
@@ -84,11 +86,13 @@ def reuse_from_snapshot(ts: dict[str, Any]) -> dict[str, Any]:
     """스냅샷에 이미 있는 종목은 재수집하지 않고 그 값을 재사용한다."""
     mom = ts.get("momentum", {}) if isinstance(ts, dict) else {}
     liq = ts.get("liquidity", {}) if isinstance(ts, dict) else {}
+    struct = ts.get("structure", {}) if isinstance(ts, dict) else {}
     return {
         "ret5": ts.get("five_day_cumulative_return_pct"),
         "ret20": mom.get("ret_20d_pct"),
         "ret60": mom.get("ret_60d_pct"),
         "vol_ratio": liq.get("vol_ratio_20d"),
+        "price_reversal": struct.get("price_reversal"),
         "last_close": ts.get("last_close"),
         "confidence": ts.get("confidence"),
         "data_ok": ts.get("last_close") is not None,
@@ -130,13 +134,16 @@ def compute_immersion(
         or (isinstance(m.get("ret5"), (int, float)) and m["ret5"] > 0)
     )
     sector_breadth = br_count >= breadth_min
+    pr_count = sum(1 for m in valid if m.get("price_reversal") is True)
+    price_reversal = bool(valid) and pr_count >= max(1, len(valid) // 2)
     theme_heat = isinstance(theme_strength, (int, float)) and theme_strength >= heat_min
 
-    # 집계 대상 = '자금이 실제로 도는' 3개 발자국. theme_heat 는 구조적 강도(context)라 집계 제외.
+    # 집계 대상 = '자금이 실제로 도는' 발자국 + 가격구조 반등(v2.9). theme_heat 는 구조적 강도(context)라 집계 제외.
     signals = {
         "rs_inflection": rs_inflection,
         "volume_surge": volume_surge,
         "sector_breadth": sector_breadth,
+        "price_reversal": price_reversal,
     }
     context = {"theme_heat": theme_heat}
     met = sum(1 for v in signals.values() if v)
@@ -231,6 +238,7 @@ def main() -> int:
             "excess_20d": excess20,
             "excess_vs_kospi_pct": excess60,
             "vol_ratio": vol_ratio,
+            "price_reversal": data.get("price_reversal"),
             "rs_score": rs_score,
             "thematic": thematic,
             "screen_score": screen_score,

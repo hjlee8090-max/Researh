@@ -16,7 +16,7 @@
 >
 > **신규 추가 (2026-06-08, v2.8 범용 섹터 로테이션 재진입)**
 > - `policy.sector_rotation_reentry` — 호재(촉매)+몰입(자금 발자국)으로 침체·avoid 섹터 재진입(모든 섹터 범용, 조선 하드코딩 없음)
-> - `fetch_market_data` 추가 필드: 종목별 `momentum.ret_20d_pct`, `liquidity.{volume,vol_ratio_20d}`
+> - `fetch_market_data` 추가 필드: 종목별 `momentum.ret_20d_pct`, `liquidity.{volume,vol_ratio_20d}`, (v2.9) `structure.{ma5,above_ma5,higher_low,price_reversal}`(5일선 회복+higher-low '공격' 모드 신호)
 > - `scripts/screen_universe.py` 확장: 섹터/테마별 몰입 신호 → `state/universe_screen.json.{sector_rotation,avoid_reentry}`
 > - `config/watchlist.json.avoid_sectors[].re_entry` — 구조화(해제 규칙). 추가(1800)와 해제(09시 §C-5-1)가 대칭
 >

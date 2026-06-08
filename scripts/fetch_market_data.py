@@ -229,6 +229,38 @@ def volume_ratio(history: list[dict[str, Any]], period: int = 20) -> float | Non
     return round(today / avg, 2)
 
 
+def price_structure(history: list[dict[str, Any]], ma_period: int = 5) -> dict[str, Any]:
+    """'공격' 모드 가격구조 반등 신호: 5일선 회복 + higher-low (v2.9).
+
+    above_ma5 = 종가 > 최근 5일 종가 평균(단기 흐름이 위로 꺾임).
+    higher_low = 오늘 저가 > 직전 5거래일 최저가(신저점 미갱신 — 바닥 다지기).
+    price_reversal = 둘 다 충족. 데이터 부족·결측이면 None.
+    """
+    none = {"ma5": None, "above_ma5": None, "higher_low": None, "price_reversal": None}
+    if len(history) < ma_period + 1:
+        return none
+    window = history[-(ma_period + 1):]
+    closes = [h.get("close") for h in window]
+    lows = [h.get("low") for h in window]
+    if any(c is None for c in closes):
+        return none
+    ma5 = round(sum(closes[-ma_period:]) / ma_period, 2)
+    above = closes[-1] > ma5
+    today_low = lows[-1]
+    prior_lows = [l for l in lows[:-1] if isinstance(l, (int, float))]
+    higher_low = (
+        isinstance(today_low, (int, float))
+        and len(prior_lows) >= ma_period
+        and today_low > min(prior_lows)
+    )
+    return {
+        "ma5": ma5,
+        "above_ma5": bool(above),
+        "higher_low": bool(higher_low),
+        "price_reversal": bool(above and higher_low),
+    }
+
+
 def _mean(values: list[float]) -> float | None:
     return sum(values) / len(values) if values else None
 
@@ -386,6 +418,8 @@ def build_ticker_snapshot(
     ret20 = cumulative_return(primary_hist, 20) if primary_hist else None
     vol_ratio = volume_ratio(primary_hist, 20) if primary_hist else None
     last_volume = primary_hist[-1].get("volume") if primary_hist else None
+    # v2.9 — '공격' 모드 가격구조 반등 신호(5일선 회복 + higher-low).
+    structure = price_structure(primary_hist) if primary_hist else {"price_reversal": None}
     # 오늘자 OHLC(시가/고가/저가/현재가) — 웹 교차확인이 '개장/장중 고가'를 '현재가'로 오인하는 것을
     # 막기 위한 범위 맥락(policy.price_data_quality.web_verify_guard). 마지막 캔들 날짜가 오늘일 때만 채운다.
     today_kst = datetime.now(KST).date().isoformat()
@@ -438,6 +472,7 @@ def build_ticker_snapshot(
             "volume": last_volume,
             "vol_ratio_20d": vol_ratio,
         },
+        "structure": structure,
         "entry_filter": {},  # main() 의 apply_entry_filter 가 레짐 tier 확정 후 채운다(v2.7)
     }
 

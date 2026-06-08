@@ -415,6 +415,18 @@
     },
     "fundamentals_link": "earnings_report 촉매일이 지난 뒤 fetch_fundamentals 갱신분으로 thesis 의 실적 관련 invalidation(가정오류 유형)을 검증한다(Part C 결합 지점)."
   },
+  "thesis": {
+    "enabled": true,
+    "purpose": "equity-research thesis-tracker 채용(Part B). 종목별 매수 논리(thesis)와 무효화 조건(invalidation)을 watchlist.stocks[].thesis 에 구조화해, 가격 오차와 독립적으로 '논리가 깨졌는가'를 판정한다. 가격이 green 이어도 thesis 가 깨지면 청산 후보.",
+    "location": "config/watchlist.json 의 각 stock.thesis = {id, statement, key_drivers[], invalidation[], status, entry_ts, last_review_ts}. invalidation[] = [{id, cond, type, hard, linked_catalyst?}].",
+    "invalidation_type_enum": ["매크로", "섹터", "개별", "가정오류"],
+    "type_alignment": "invalidation.type 은 18시 자기보완 루프의 오차 4분류와 동일 enum 이다. status 변경 시 그 type 으로 lessons.md 에 기록 → build_lessons_index 분류와 자동 정합.",
+    "status_enum": ["intact", "weakening", "invalidated"],
+    "hard_action": "hard:true 조건 충족 = status invalidated → 가격 무관 종가 청산·축소 1순위(다음 거래일 종가). 종가청산 정책상 즉시 시장가 청산이 아니라 '다음 종가 청산 후보' 로 처리.",
+    "soft_action": "hard:false 조건 충족 = status weakening → 추가매수 금지·트레일링스톱 강화·목표가 상향 보류. 즉시 매도는 아님.",
+    "review_cadence": "보유 종목은 매 09시(1차)·18시(확정) 점검. 신규 진입 시 thesis 를 작성해 채운다. 청산 종목의 최종 status·사유는 comments 에 보존.",
+    "catalyst_link": "invalidation.linked_catalyst 가 config/catalysts.json 의 earnings 촉매와 연결되면, 촉매일 통과 후 fetch_fundamentals 갱신값으로 해당 invalidation 을 우선 판정(Part C)."
+  },
   "rebalance_rules": {
     "swap_when": [
       "종목이 손절선(-10%) 도달",

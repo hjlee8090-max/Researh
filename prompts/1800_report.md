@@ -89,6 +89,14 @@
 - 판정 stage 를 `weekly_plan.json.daily_bridge["18:00"]` 에 1줄 명시.
 - defensive → caution 으로 회복 가능 조건은 누적 수익률이 -3.5% 위로 회복했을 때만 1단계 완화 (점프 금지).
 
+## 2-4. thesis 무효화 판정 (thesis-tracker — 보유 종목 의무, `watchlist.stocks[].thesis` 있을 때)
+목표가 오차(±5%) 판정과 **독립적으로**, 각 보유 종목의 `thesis.invalidation[]` 을 오늘 종가·뉴스·공시·`state/fundamentals.json`·`config/catalysts.json`(실적 촉매 통과 시)으로 대조한다(`policy.thesis`):
+1. 조건별 충족 여부 판정 → `thesis.status` 갱신: `hard:true` 충족 = **invalidated**, `hard:false` 충족 = **weakening**, 미충족 = **intact**. `thesis.last_review_ts` 를 종가 시각으로 갱신.
+2. **invalidated** → 가격이 🟢green·목표가 미달이어도 **다음 거래일 종가 청산·축소 1순위**로 `next_day_plan` 에 기록(§4). **weakening** → 추가매수 금지·트레일링 강화·목표가 상향 보류 메모.
+3. status 가 `intact` 이외로 바뀐 종목은 **충족된 invalidation 의 type(매크로/섹터/개별/가정오류)** 그대로 §3 lessons 에 1줄 기록(가격 오차가 ±5% 이내여도 기록 — "논리는 깨졌으나 가격은 아직"은 중요한 학습이다).
+4. `linked_catalyst` 가 오늘 통과한 실적 촉매면(`catalysts.json`), 그 invalidation(주로 `가정오류` 유형)을 fundamentals 갱신값으로 우선 판정한다(Part C 결합).
+5. 청산으로 watchlist 에서 빠지는 종목의 thesis 최종 status·사유는 `comments` 에 남겨 히스토리를 보존한다.
+
 ## 3. 자기보완 학습 (lessons.md 갱신)
 오차 범위(±5%)를 벗어난 종목 각각에 대해 `state/lessons.md`에 다음 형식으로 항목 추가:
 
@@ -154,6 +162,7 @@
 - 종가: XX,XXX원 (전일 대비 ±X.XX%)
 - 진입가 / 목표가 / 손절가
 - 목표가 대비 괴리: ±X.X% — (오차 ±5% 이내인가? 초과면 사유)
+- **thesis 상태**: 🟩 intact / 🟧 weakening / 🟥 invalidated — (status 가 intact 가 아니면 충족된 invalidation 조건·type 1줄. `thesis` 필드 있을 때만)
 - 오늘의 주요 뉴스 2개 (1줄씩, 검색 출처)
 - 18시 의견: 매수 추가 / 홀드 / 비중 축소 / 매도
 - **초보자 한줄**: 이 종목을 왜 들고 있는지 / 왜 파는지 / 사업 모델 한 줄

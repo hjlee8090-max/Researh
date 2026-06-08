@@ -232,6 +232,11 @@
 각 보유/관심 종목에 대해:
 1. **어제 18시 리포트 결론과 대조** — 어제 "익절/손절/홀드/축소 후보" 로 표시된 종목인지 먼저 확인
 2. 밤사이/금일 새벽 뉴스가 진입 논리를 훼손했는지 점검 — 뉴스뿐 아니라 `state/fundamentals.json` 의 해당 보유종목 `earnings_signal` 도 확인한다(`policy.fundamentals.holdings_use`). `sharp_decline`/적자전환/가이던스 컷이면 thesis 훼손 신호로 보고 가격이 🟢green 이어도 **익절·축소 우선순위 상향·트레일링스톱 강화·추가매수 금지**; `strong_growth`/`growth` 면 홀드 컨빅션 강화·목표가 상향 여지(단 분기 실적은 후행이라 손절가를 느슨하게 풀지는 않음). 보유종목이 노출된 테마(`config/themes.json`)의 strength 가 최근 크게 하향됐거나 thesis 가 무효화됐으면 비중 축소 후보로 메모(`themes.json.holdings_use` — 느린 신호, 단발 매도 금지).
+2-1. **thesis 무효화 1차 점검 (thesis-tracker — 보유 종목 의무, `watchlist.stocks[].thesis` 있을 때)**: 각 보유 종목의 `thesis.invalidation[]` 조건을 밤사이/금일 새벽 뉴스·공시·`state/fundamentals.json` 으로 대조한다(`policy.thesis`).
+   - `hard:true` 조건 충족 → `thesis.status="invalidated"` 로 보고, 가격이 🟢green 이어도 **종가 청산·축소 1순위**(09시는 신규 청산 가능 — 손절선/목표 도달과 무관하게 thesis 붕괴는 매도 사유). 변경 사유를 `comments` 에 기록.
+   - `hard:false` 조건 충족 → `thesis.status="weakening"` → **추가매수 금지·트레일링스톱 강화·목표가 상향 보류**(즉시 매도는 아님).
+   - 미충족 → `intact` 유지. status 가 바뀌면 `thesis.last_review_ts` 갱신 + 18시 자기보완(§3)에서 사유 type(매크로/섹터/개별/가정오류)으로 lessons 기록.
+   - `thesis` 필드가 없는 보유 종목이면 진입 논리·무효화 조건을 이번 점검에서 **새로 작성**해 watchlist 에 채운다(다음 routine 부터 추적).
 3. **매수 / 매도 / 홀드** 의견 1개 + 1줄 사유 — 어제 결론과 다를 경우 **반드시 사유 명시**
 4. 단기 모멘텀 코멘트 (수급, 차트, 거래량 — 검색 가능 범위에서)
 5. 정책상 손절가·목표가 도달 여부 확인

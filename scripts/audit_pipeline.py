@@ -216,6 +216,45 @@ def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
         messages.append(result("OK", "보유 종목 모두 R/R 임계(1.2) 이상"))
 
 
+def audit_thesis(data: dict[str, object], messages: list[str]) -> None:
+    """watchlist.stocks[].thesis(thesis-tracker, Part B) 스키마·enum 정합 점검."""
+    policy = data.get("config/policy.json") or {}
+    watchlist = data.get("config/watchlist.json") or {}
+    if not isinstance(policy, dict) or not isinstance(watchlist, dict):
+        return
+    cfg = policy.get("thesis", {}) if isinstance(policy.get("thesis"), dict) else {}
+    if not cfg.get("enabled", True):
+        return
+    type_enum = set(cfg.get("invalidation_type_enum", ["매크로", "섹터", "개별", "가정오류"]))
+    status_enum = set(cfg.get("status_enum", ["intact", "weakening", "invalidated"]))
+    stocks = [s for s in watchlist.get("stocks", []) if isinstance(s, dict)]
+    held = [s for s in stocks if (s.get("shares_held") or 0) > 0]
+    with_thesis = [s for s in stocks if isinstance(s.get("thesis"), dict)]
+    problems: list[str] = []
+    for s in with_thesis:
+        th = s["thesis"]
+        tk = s.get("ticker", "?")
+        if th.get("status") not in status_enum:
+            problems.append(f"{tk} status={th.get('status')}")
+        for inv in th.get("invalidation", []):
+            if not isinstance(inv, dict):
+                problems.append(f"{tk} invalidation 항목 형식 오류")
+                continue
+            if inv.get("type") not in type_enum:
+                problems.append(f"{tk} invalidation.type={inv.get('type')}")
+            if not isinstance(inv.get("hard"), bool):
+                problems.append(f"{tk} invalidation.hard 비불리언")
+    held_no_thesis = [s.get("ticker") for s in held if not isinstance(s.get("thesis"), dict)]
+    if problems:
+        messages.append(result("FAIL", "watchlist thesis 스키마 오류: " + "; ".join(problems)))
+    if held_no_thesis:
+        messages.append(result("WARN", "보유 종목 thesis 누락 — 09시에 작성 필요: " + ", ".join(map(str, held_no_thesis))))
+    if with_thesis and not problems:
+        messages.append(result("OK", f"watchlist thesis-tracker {len(with_thesis)}종목 스키마 정상"))
+    elif not with_thesis:
+        messages.append(result("WARN", "watchlist thesis 미설정 — thesis-tracker 비활성(옵셔널)"))
+
+
 def audit_recovery_stage(data: dict[str, object], messages: list[str]) -> None:
     """누적 수익률 기준 회복 전략 단계 판정 (policy.weekly_recovery_plan).
 
@@ -513,6 +552,7 @@ def main() -> int:
     audit_reconciliation(messages)
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)
+    audit_thesis(data, messages)
     audit_recovery_stage(data, messages)
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)

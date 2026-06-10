@@ -1,0 +1,39 @@
+name: Fetch Price History (backtest)
+
+# 백테스트용 장기 일봉(~2.5년)을 인터넷 되는 러너에서 수집해 커밋한다.
+# 목표주가 추정식 백테스트(backtest_target_model.py)의 입력. 수동 트리거 전용.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-history
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Fetch long price history
+        run: python scripts/fetch_history.py
+      - name: Commit history if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/price_history.json
+          if git diff --cached --quiet; then
+            echo "no history changes — skip commit"
+          else
+            git commit -m "data(history): backtest price history $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

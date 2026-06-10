@@ -187,6 +187,8 @@
 > - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
 > - **목표가 컨센 교차검증**(`policy.consensus.target_cross_check`, `state/consensus.json` 있고 confidence≠low 일 때): 위에서 산정한 우리 목표가가 **컨센 목표주가(`consensus.tickers.<t>.target_price`) × 1.15 를 초과**하면 ⚠️ 비현실적 목표 경고 → (a)초과를 정당화할 **명시 촉매·근거 1줄을 comments 에 적거나** (b)근거가 없으면 **컨센×1.15 로 상한 적용**한다. 우리 thesis 산정이 1순위이되 외부 컨센으로 과욕을 거른다. 컨센이 없거나 stale/low 면 이 검증은 건너뛰고 우리 목표가를 그대로 쓴다.
 > - **(v2.11) 재진입 게이트**(`policy.entry_filters.reentry_discipline`): 동일 종목 직전 청산 기록(trade_log 최근 SELL 계열)을 확인해 ①**익절(트레일링/목표) 후** 청산가 위 추격 금지 — 청산가 이하 또는 5거래일 베이스 후 돌파만 기본 비중, 아니면 probe(축소비중의 50%) ②**손절(orange/red) 후** 2거래일 냉각 — 단 재진입가가 손절 체결가 대비 -3% 이상 낮으면 면제(저점 복원 허용), 손절가 +3% 재탈환 종가 확인 시 해제 ③**52주 고점 97% 이상** 추격은 probe 사이즈 + ATR 타이트 손절(post_surge_cooldown 의 strong_bull 예외보다 우선). 위반 진입은 booking 금지.
+> - **(v2.11) 이벤트 룰은 차단이 아니라 축소**: 후보 차단 사유가 '이벤트 캘린더(FOMC/CPI/guidance 윈도우)' 단독이면 전면 보류가 아니라 **비중 50% 축소(probe)**로 처리한다(`policy.catalysts.alert_rules` — confirmed=true 고중요도 D-1 만 보류 의무). lessons 발 즉석 제한 룰은 `policy.lessons_rule_sunset`(기본 5거래일 일몰)을 따른다. 당일 후보 **전원**이 차단되면 리포트 '한눈에 보기'에 `⚠️ blocked-day` 플래그를 명시한다.
+> - **(v2.11) 고가주 1주 probe 예외**(`policy.position_sizing.single_trade_risk_cap.one_share_probe_exception`): 1주 리스크가 ceiling 초과로 영구 차단되는 고가·고ATR 종목은 ①score 상위 2위 ②strong_bull/bull ③손절 red 유효임계 캡 ④최대 1주 — 4조건 충족 시 ceiling 200% 까지 허용(heat·35% 캡 유지).
 > - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
 
 ### 2-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)

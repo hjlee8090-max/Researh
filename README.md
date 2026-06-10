@@ -26,6 +26,7 @@ config/
   universe.json            (v2.7) 신규 진입 후보의 모집단 — screen_universe.py가 상대강도+테마로 랭킹·승격/회전아웃 제안
   market_calendar.json     KRX 휴장일 + 장중 세션(정규장 09:00~15:30·동시호가) — 0-A 영업일·세션 가드
   catalysts.json           종목별 다가오는 촉매(실적발표·배당·매크로) 캘린더 — generated_events(법정기한 추정)+manual_events(웹검색 확정). D-day 경보·신규 진입 보류 (catalyst-calendar)
+  news_impact.json         뉴스 유형별 주가 가산점 테이블(+manual_news 기록) — estimate_target_price.py 의 뉴스/촉매 프리미엄 입력
 state/
   lessons.md               자기보완 학습 노트 (오차 사유 누적)
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
@@ -65,6 +66,7 @@ prompts/
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
+  estimate_target_price.py 목표주가 추정 — 밸류 밴드·컨센·테마(호라이즌할인)·뉴스/촉매(시간감쇠)·섹터 활발성 결합 → state/target_estimate.json
   screen_universe.py       (v2.7/2.8) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 + 섹터별 몰입(sector_rotation·avoid_reentry) → state/universe_screen.json
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
   build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
@@ -105,6 +107,20 @@ prompts/
    - `가정오류` (애널리스트 가정 자체가 틀림)
 3. `state/lessons.md`에 누적
 4. **모든 추천·점검 프롬프트는 동작 직전 lessons.md를 먼저 읽고 동일 실수를 피한다**
+
+## 목표주가 추정 레이어 (estimate_target_price.py)
+파이프라인의 흩어진 신호를 하나의 식으로 결합해 **12개월 내 도달 가능한 대략적 목표가(원)** 를 산출한다:
+
+```
+추정목표가 = 기준가 × (1 + 테마P + 뉴스P + 섹터P + 모멘텀틸트) → 천장 캡
+```
+- **기준가**: PER/PBR 5년 밴드 중앙값 적정가(valuation.json) + 컨센서스 목표가(consensus.json) 평균. 결측 시 현재가 폴백(등급 하향)
+- **테마P** (≤20%): Σ(테마 strength × 종목 노출) × 호라이즌 할인 — "3~5년 메가트렌드"는 12개월 목표가에 1/3만 반영
+- **뉴스P** (±12%): `config/news_impact.json` 유형별 가산점 — 과거 뉴스는 90일 시간감쇠, 다가오는 촉매(catalysts.json)는 발생확률×D-day 근접가중×방향(DART earnings_signal)으로 할인
+- **섹터P** (≤8%): 섹터 몰입 신호(universe_screen.json)로 "활발성이 언제 올지"를 4단계(현재 활발/1~2개월/2~4개월/촉매 대기)로 추정해 차등 반영
+- **천장 캡**: policy.valuation_anchor 동일 — min(추정치, 컨센×1.15, 밸류에이션 천장)
+
+출력 `state/target_estimate.json` 은 fetch_prices 워크플로마다 갱신되며, watchlist 의 target_price 를 자동으로 덮어쓰지 않는다(routine 의 dynamic_exit_model 목표가 산정 참고 레이어). 신뢰등급 A/B/C 는 가용 데이터 레이어 수(밸류 밴드·컨센·시세·테마·섹터·실적신호) 기준 — 밸류 밴드·컨센이 시드되기 전에는 B/C 수준의 거친 추정이다.
 
 ## 실행 방법
 GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상태를 이어받아 동작.

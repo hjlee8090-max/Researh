@@ -1,0 +1,61 @@
+{
+  "version": "1.0",
+  "as_of": "2026-06-10",
+  "purpose": "목표주가 추정 레이어(estimate_target_price.py)의 뉴스/촉매 가산점 테이블. '과거에 이런 뉴스가 나오면 주가에 평균 몇 % 가산'을 유형별로 정의하고, 시간감쇠(news_decay_days)·발생확률(confirmed 여부)로 할인해 추정 목표가 프리미엄에 반영한다. impact_pct 는 KOSPI 대형주 기준 보수적 추정치이며 sunday_policy_review 에서 실측 오차(lessons.md 목표가 오차 분류)로 주기 보정한다.",
+  "scoring_note": "뉴스 프리미엄 = clamp(Σ(과거뉴스 impact×감쇠) + Σ(미래촉매 impact×방향×확률×근접가중), ±max_news_premium_pct). 과거뉴스 감쇠 = max(0, 1 - 경과일/news_decay_days) — 이미 주가에 반영된 뉴스는 90일에 걸쳐 가산점이 소멸한다. 미래촉매 근접가중 = D-30 이내 1.0, 이후 1년에 걸쳐 0.2 까지 선형 감소 — '언제 올지'가 가까울수록 현재 목표가에 더 많이 반영. earnings_report 의 방향은 state/fundamentals.json 의 earnings_signal 로 정한다(서프라이즈 방향을 모르면 0).",
+  "params": {
+    "estimate_horizon_months": 12,
+    "news_decay_days": 90,
+    "event_horizon_days": 365,
+    "event_near_window_days": 30,
+    "max_news_premium_pct": 12.0,
+    "max_theme_premium_pct": 20.0,
+    "max_sector_activity_premium_pct": 8.0,
+    "probability_confirmed": 0.9,
+    "probability_unconfirmed": 0.6
+  },
+  "event_type_impact_pct": {
+    "earnings_report": {"high": 6.0, "medium": 3.0, "low": 1.0},
+    "dividend": {"high": 2.0, "medium": 1.0, "low": 0.5},
+    "macro": {"high": 0.0, "medium": 0.0, "low": 0.0}
+  },
+  "earnings_signal_direction": {
+    "strong_growth": 1.0,
+    "growth": 0.6,
+    "flat": 0.0,
+    "decline": -0.6,
+    "sharp_decline": -1.0,
+    "unknown": 0.0
+  },
+  "news_type_impact_pct": {
+    "supply_contract_major": {"impact_pct": 8.0, "label": "대형 공급계약·고객사 공식 지명 (예: NVIDIA HBM 공급사 지명)"},
+    "earnings_surprise_beat": {"impact_pct": 6.0, "label": "실적 서프라이즈(컨센 상회 beat)"},
+    "tech_breakthrough": {"impact_pct": 6.0, "label": "기술 돌파·신제품 양산 개시"},
+    "order_backlog_surprise": {"impact_pct": 5.0, "label": "수주 서프라이즈·수주잔고 급증"},
+    "buyback_cancellation": {"impact_pct": 4.0, "label": "자사주 매입·소각, 배당 확대(주주환원)"},
+    "analyst_target_upgrade": {"impact_pct": 3.0, "label": "증권사 목표주가 상향(복수 기관)"},
+    "policy_support": {"impact_pct": 3.0, "label": "정부 정책 수혜(밸류업·보조금·규제완화)"},
+    "labor_or_litigation_resolved": {"impact_pct": 2.0, "label": "노사분규·소송 리스크 해소"},
+    "labor_dispute": {"impact_pct": -3.0, "label": "파업·노사 갈등 발생"},
+    "regulation_or_tariff": {"impact_pct": -4.0, "label": "규제·관세 역풍"},
+    "supply_glut_or_price_drop": {"impact_pct": -5.0, "label": "공급과잉·판가 하락"},
+    "earnings_miss_or_guidance_cut": {"impact_pct": -6.0, "label": "실적 miss·가이던스 컷"}
+  },
+  "manual_news_schema": "{ticker, type(news_type_impact_pct 키), date(YYYY-MM-DD, 게재일), note, source_url, impact_pct(생략 시 테이블값)} — 0900/1800 routine 또는 sunday_strategy 가 출처 URL+게재일과 함께 추가한다(web_verify_guard.source_date_verification 동일 적용). news_decay_days 가 지난 항목은 자동 0 반영이므로 삭제하지 않아도 된다.",
+  "manual_news": [
+    {
+      "ticker": "005930",
+      "type": "supply_contract_major",
+      "date": "2026-06-05",
+      "note": "NVIDIA Vera Rubin HBM4 공급사 삼성·SK·마이크론 공식 지명 재확인 + Jensen Huang 방한 HBM4E 공급 협의 (watchlist 6/5 09시 기록)",
+      "source_url": "repo:config/watchlist.json#2026-06-05T09:00 thesis_evidence"
+    },
+    {
+      "ticker": "005930",
+      "type": "labor_or_litigation_resolved",
+      "date": "2026-05-27",
+      "note": "임단협 잠정합의안 찬반투표 73.7% 가결 — 파업 리스크 해소 (watchlist 5/27 12시 기록, 머니투데이·뉴스핌 복수 확인)",
+      "source_url": "repo:config/watchlist.json#2026-05-27T12:00"
+    }
+  ]
+}

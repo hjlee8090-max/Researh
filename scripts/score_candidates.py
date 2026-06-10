@@ -204,6 +204,17 @@ FUND_TILT = {
     "unknown": 0.0,
 }
 
+# v2.11 — 밸류에이션 가드(check_valuation_guard.py → state/valuation_check.json)의 verdict 를
+# FUND_TILT 와 동일 패턴의 '확신 틸트'(±, 소폭)로만 반영한다(policy.valuation_anchor.score_tilt).
+# deep_value 는 밸류트랩 위험이 있어 소폭 가점에 그치고, skip(데이터 결측)은 0 — 왜곡 없음.
+VAL_TILT = {
+    "deep_value": 0.03,
+    "ok": 0.0,
+    "cap_target": 0.0,
+    "overheat_entry": -0.03,
+    "skip": 0.0,
+}
+
 
 def build_adopt_reasons(
     c: dict,
@@ -290,6 +301,8 @@ def main() -> int:
         if isinstance(t, dict) and t.get("id")
     }
     fundamentals = load_json("state/fundamentals.json", {}).get("tickers", {})
+    # v2.11 — 밸류에이션 가드 verdict(없으면 빈 dict → 전 종목 tilt 0, 왜곡 없음).
+    valuation_checks = load_json("state/valuation_check.json", {}).get("tickers", {})
 
     regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
     regime_state = regime.get("state", "unknown") if isinstance(regime, dict) else "unknown"
@@ -348,6 +361,8 @@ def main() -> int:
         fund = fundamentals.get(ticker, {}) if isinstance(fundamentals, dict) else {}
         earnings_signal = fund.get("earnings_signal")
         fund_tilt = FUND_TILT.get(earnings_signal, 0.0)
+        val_check = valuation_checks.get(ticker, {}) if isinstance(valuation_checks, dict) else {}
+        val_tilt = VAL_TILT.get(val_check.get("verdict"), 0.0)
         penalty = 0.15 * len(bear_flags)
         final = max(
             0.0,
@@ -357,7 +372,8 @@ def main() -> int:
             + c_score * weights["confidence"]
             + th_score * weights["thesis"]
             - penalty
-            + fund_tilt,
+            + fund_tilt
+            + val_tilt,
         )
 
         block_reasons: list[str] = []
@@ -412,6 +428,7 @@ def main() -> int:
                 "thesis": th_score,
                 "bear_penalty": penalty,
                 "fundamental_tilt": fund_tilt,
+                "valuation_tilt": val_tilt,
                 "earnings_signal": earnings_signal,
             },
             "final_score": round(final, 3),

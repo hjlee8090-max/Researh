@@ -79,7 +79,7 @@
 ## 2-2. R/R 1.2 미만 보유 종목 재조정 (의무)
 종가 평가 후 보유 종목 각각의 R/R = (target_price - close) / (close - stop_price) 를 계산한다.
 - R/R < `policy.reward_risk_management.min_reward_risk_ratio_for_new_entry` (=1.2) 인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
-  - (a) 목표가 재조정 — 현재 가격·촉매·저항선 기반 재산정. **재산정 후 컨센 교차검증**(`policy.consensus.target_cross_check`): 새 목표가가 `state/consensus.json` 컨센 목표주가 × 1.15 초과면 정당화 근거를 comments 에 적거나 컨센×1.15 로 상한(컨센 stale/없음/low 면 생략).
+  - (a) 목표가 재조정 — 현재 가격·촉매·저항선 기반 재산정. **재산정 후 컨센 교차검증**(`policy.consensus.target_cross_check`): 새 목표가가 `state/consensus.json` 컨센 목표주가 × 1.15 초과면 정당화 근거를 comments 에 적거나 컨센×1.15 로 상한(컨센 stale/없음/low 면 생략). **(v2.11) 밸류에이션 천장 동시 적용**(`policy.valuation_anchor`): `state/valuation_check.json` 의 verdict=`cap_target` 이면 `valuation_ceiling_price` 로 캡(skip 이면 생략) — 최종 목표가 = min(재산정값, 컨센×1.15, 밸류에이션 천장).
   - (b) 손절가 상향 — 트레일링스톱 활성화 또는 가격 진입. **(v2.11)** 트레일링은 `policy.risk.trailing_stop` 의 2단 구조를 따른다: 1차 트레일 -max(3, 1.0×ATR%) 이탈 시 **50% 부분익절**, 잔여분은 샹들리에 -2.0×ATR%(최고 종가 기준). 활성화 시 `trailing_first_level`·`trailing_residual_level` 두 레벨을 watchlist 코멘트에 기록.
   - (c) 부분 익절 — 50% 가상 체결
 - 결정을 보류했다면 다음 영업일까지만 허용. 사유를 한 줄 명시.

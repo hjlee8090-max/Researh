@@ -588,6 +588,16 @@
       "applies_at": "0900 신규 진입 목표가 세팅(§2 공통 규칙)·1800 §2-2 목표가 재조정. audit_pipeline 가 watchlist 보유종목 목표가를 컨센과 대조해 초과를 WARN."
     }
   },
+  "valuation_anchor": {
+    "enabled": true,
+    "purpose": "v2.11 — PER/PBR 밴드 기반 '냉정한 목표가 상한'과 진입 과열 가드. 모멘텀·ATR 목표가가 기업가치에서 과도하게 이탈하는 것을 캡한다(2026-05-20~06-09 목표 도달 0/6 — 목표가 인플레가 원인 중 하나). 밸류에이션은 후행·저속 신호이므로 진입 타이밍 신호로 쓰지 않는다 — 상한(ceiling)·과열 경고(overheat)·확신 틸트로만 사용. 사이클 업종(반도체·조선·자동차·전지·중공업)은 PER 함정(피크 실적=최저 PER) 때문에 preferred_metric=PBR.",
+    "config": "config/valuation.json (sunday_strategy 주간 갱신 — bps·eps_fwd·5y 밴드, 출처 URL+게재일 의무. eps_fwd 1차 소스는 state/consensus.json 의 eps_consensus 재사용)",
+    "script": "scripts/check_valuation_guard.py → state/valuation_check.json",
+    "target_ceiling_rule": "최종 목표가 = min( 동적목표가(max(진입가×1.12, 진입가+2.5×ATR14, 52주고점)), 컨센서스×1.15(consensus.target_cross_check), valuation_ceiling_price ). 초과분은 캡 — 캡 사유를 watchlist 코멘트에 1줄 기록. verdict=skip(데이터 결측/90일 stale)이면 이 항 생략(결측이 차단 룰이 되지 않는다).",
+    "overheat_entry_rule": "현재가 멀티플이 5y 밴드 상단 초과(overheat_entry)면 신규/재진입 비중 50% 축소(probe) — entry_filters.reentry_discipline.high_52w_chase_guard 와 중복 시 한 번만 적용.",
+    "deep_value_link": "밴드 하단 미만(deep_value)은 단독 매수 신호가 아니다(밸류트랩) — sector_rotation_reentry 의 촉매+몰입 게이트를 통과할 때 probe 사이징 근거로만 참조.",
+    "score_tilt": "score_candidates 의 fundamental_tilt 와 동일 패턴 valuation_tilt: deep_value +0.03 / ok·skip 0 / overheat_entry −0.03 (확신 틸트, 가중 축 아님)."
+  },
   "earnings_preview": {
     "enabled": true,
     "purpose": "Phase 2 — equity-research earnings-preview 채용. 실적 발표 전(D-1) beat/inline/miss 시나리오 3종 + 사전 확약 액션(플레이북)을 만들어 발표 당일 감정 매매를 막고, 발표 후(D+0~) 실제값과 대조해 자기채점(컨센·가정 오류 학습)한다.",

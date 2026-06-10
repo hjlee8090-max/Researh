@@ -212,7 +212,7 @@
    - **현재가 추정** (검색 기반, 정확하지 않을 수 있음을 명시)
    - **최근 5거래일 누적 수익률 추정** (추세 필터 통과 여부 명시) — §1-1 결과
    - **진입가** (현재가 ±1% 이내)
-   - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이지만, `weekly_plan.objective.gap_to_target`, 종목별 촉매, 저항선, R/R 을 함께 반영한다. **강세 tier(strong_bull/bull)에서는 `dynamic_exit_model.target_price_rule` 대로 max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점)까지 상향**해 reward 를 확보한다(이미 오른 모멘텀주의 R/R 정상화).
+   - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이고, 종목별 촉매, 저항선, R/R 을 함께 반영한다(**v2.11 — `weekly_plan.objective.gap_to_target` 주간 부족분은 목표가에 반영 금지**, 목표가 인플레 차단). **강세 tier(strong_bull/bull)에서는 `dynamic_exit_model.target_price_rule` 대로 max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점)까지 상향**해 reward 를 확보한다(이미 오른 모멘텀주의 R/R 정상화).
    - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`). 기본값 = **진입가 − 2×ATR14** (`market_snapshot.tickers.<t>.volatility.atr14`). 단, **(v2.11)** 단계경보 **유효 red 임계**(atr_adaptive — max(-20%, min(-10%, -2.5×ATR%)))보다 깊지 않게, 또 단일 거래 예상 손실이 `equity × max_single_trade_risk_pct_of_equity(2.0%)` 를 넘지 않고, 진입 후 전 포지션 합산 손절위험이 `portfolio_heat_budget_pct_of_equity(6.0%)` 를 넘지 않게 조정한다(가장 타이트한 값 채택). ATR 데이터가 없으면 진입가 × 0.90 으로 폴백.
    - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). **레짐 적응 하한**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6; tier 미확정 1.2; medium confidence +0.1) 미만이면 신규 매수 금지.
    - **단계 경보 가격**: yellow/orange/red 의 **유효 임계**(v2.11 atr_adaptive — max(-20%, min(고정%, -(배수×ATR%))), 배수 1.5/2.0/2.5) 각각 가격 환산 (사용자 가독용)

@@ -45,7 +45,10 @@
       "levels_logging": "트레일링 활성화 시 watchlist 코멘트에 trailing_first_level(고점×(1−max(3,1.0×ATR%)/100))·trailing_residual_level(최고 종가×(1−2.0×ATR%/100)) 두 레벨을 기록한다.",
       "note": "v2.11 — 고정 -3%(0.5×ATR) 전량 청산이 승자를 조기 절단하던 구조 교정(2026-05-22 삼성전자 +4.84% 익절 후 +20.3% 추가 상승 일실 +236,000원 = 당시 실현손실의 2.6배). 평시 ATR 2~3% 에선 first trail -3% 로 현행과 동일."
     },
-    "weekly_account_target_return_pct": 10.0,
+    "weekly_account_target_return_pct": 1.0,
+    "weekly_target_mode": "relative_to_kospi",
+    "weekly_alpha_target_pct": 0.5,
+    "weekly_target_note": "v2.11 — 주간 목표 = KOSPI 주간수익률 + weekly_alpha_target_pct(0.5%p), 절대 하한 weekly_account_target_return_pct(+1.0%). 기존 절대 +10%/주는 달성 불가능한 목표로 ①목표가 인플레(2026-05-20~06-09 목표 도달 0/6) ②R/R 허수 ③'부족 X%' 추격 압박을 유발했다. audit 스크립트 호환을 위해 weekly_account_target_return_pct 키는 유지(절대 하한으로 재해석).",
     "max_weekly_drawdown_pct": -5.0,
     "max_single_trade_risk_pct_of_equity": 2.0,
     "portfolio_heat_budget_pct_of_equity": 6.0,
@@ -81,7 +84,7 @@
     },
     "dynamic_exit_model": {
       "enabled": true,
-      "target_price_rule": "고정 +10%가 아니라 weekly_plan.remaining_required_return_pct, 종목 변동성, 저항선/뉴스 촉매를 함께 반영한다. v2.0 — 강세 tier(strong_bull/bull)에서는 목표가를 진입가 × 1.10 에 묶지 말고 max(진입가×1.12, 진입가 + 2.5×ATR14, 직전 52주 고점) 까지 상향해 reward 를 확보한다(모멘텀·저항선 돌파 반영). 단, 기대 보상/위험 비율이 regime_adaptive_rr 적용 하한 미만이면 신규 진입 금지. 목표가 상향은 reward 확보 수단이지 손절가를 느슨하게 푸는 것이 아니다.",
+      "target_price_rule": "고정 +10%가 아니라 종목 변동성, 저항선/뉴스 촉매, 밸류에이션 상한(valuation_anchor)을 함께 반영한다. v2.11 — 주간 목표 부족분(weekly_plan.remaining_required_return_pct)을 목표가 산정에 반영하지 않는다(목표가 인플레 차단 — 목표 도달 0/6 의 원인). v2.0 — 강세 tier(strong_bull/bull)에서는 목표가를 진입가 × 1.10 에 묶지 말고 max(진입가×1.12, 진입가 + 2.5×ATR14, 직전 52주 고점) 까지 상향해 reward 를 확보한다(모멘텀·저항선 돌파 반영). 단, 기대 보상/위험 비율이 regime_adaptive_rr 적용 하한 미만이면 신규 진입 금지. 목표가 상향은 reward 확보 수단이지 손절가를 느슨하게 푸는 것이 아니다.",
       "stop_price_rule": "고정 -10%가 아니라 이번 주 남은 손실 예산과 종목별 무효화 가격을 함께 반영한다. 단일 거래 손실은 현재 equity의 max_single_trade_risk_pct_of_equity(2.0%)를 넘기지 않으며, 전 포지션 합산 손절위험(heat)은 portfolio_heat_budget_pct_of_equity(6.0%)를 넘기지 않는다.",
       "scale_out_rule": "목표 기여도의 70% 이상 달성 후 신규 악재가 나오면 50% 부분익절을 우선 검토하고, 나머지는 risk.trailing_stop 의 잔여 트레일(-2.0×ATR% 샹들리에)로 관리한다(v2.11 — 고정 -3% 폐지).",
       "scale_in_rule": "기존 보유 종목 추가매수는 주간 thesis가 강화되고 가격 신뢰도 high이며 현금 비중이 목표보다 높을 때만 허용한다."

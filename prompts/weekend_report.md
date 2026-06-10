@@ -78,7 +78,7 @@
 ## 4. 주간 목표와 리스크 예산 재설계
 `portfolio.json` 기준으로 다음을 계산한다.
 - 다음 주 시작 자산
-- 다음 주 목표 자산 = 시작 자산 × `policy.risk.weekly_account_target_return_pct`
+- 다음 주 목표 자산 = 시작 자산 × (1 + max(KOSPI 직전 주간수익률 + `policy.risk.weekly_alpha_target_pct`(0.5%p), `policy.risk.weekly_account_target_return_pct`(1.0%))/100) — (v2.11 상대 목표, KOSPI 미확인 시 절대 하한만)
 - 허용 최대 주간 손실 = 시작 자산 × `policy.risk.max_weekly_drawdown_pct`
 - 단일 거래 허용 손실 = 현재 equity × `max_single_trade_risk_pct_of_equity`(2.0%)
 - 포트폴리오 히트 예산 = 현재 equity × `portfolio_heat_budget_pct_of_equity`(6.0%) — 전 포지션 합산 손절위험 상한. 다음 주 신규 진입의 총 리스크 예산으로 본다(`state/allocation.json.portfolio_heat`).

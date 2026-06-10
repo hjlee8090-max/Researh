@@ -186,6 +186,7 @@
 > - **R/R 하한은 레짐 적응형**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`): strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6. tier 미확정이면 1.2. **data confidence=medium 이면 +0.1**.
 > - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
 > - **목표가 컨센 교차검증**(`policy.consensus.target_cross_check`, `state/consensus.json` 있고 confidence≠low 일 때): 위에서 산정한 우리 목표가가 **컨센 목표주가(`consensus.tickers.<t>.target_price`) × 1.15 를 초과**하면 ⚠️ 비현실적 목표 경고 → (a)초과를 정당화할 **명시 촉매·근거 1줄을 comments 에 적거나** (b)근거가 없으면 **컨센×1.15 로 상한 적용**한다. 우리 thesis 산정이 1순위이되 외부 컨센으로 과욕을 거른다. 컨센이 없거나 stale/low 면 이 검증은 건너뛰고 우리 목표가를 그대로 쓴다.
+> - **(v2.11) 재진입 게이트**(`policy.entry_filters.reentry_discipline`): 동일 종목 직전 청산 기록(trade_log 최근 SELL 계열)을 확인해 ①**익절(트레일링/목표) 후** 청산가 위 추격 금지 — 청산가 이하 또는 5거래일 베이스 후 돌파만 기본 비중, 아니면 probe(축소비중의 50%) ②**손절(orange/red) 후** 2거래일 냉각 — 단 재진입가가 손절 체결가 대비 -3% 이상 낮으면 면제(저점 복원 허용), 손절가 +3% 재탈환 종가 확인 시 해제 ③**52주 고점 97% 이상** 추격은 probe 사이즈 + ATR 타이트 손절(post_surge_cooldown 의 strong_bull 예외보다 우선). 위반 진입은 booking 금지.
 > - **건수 제한 없음**: 빈 슬롯·deploy 한도가 남고 통과 후보가 있으면 복수 종목 진입. '레짐 미확정 1건/일' 같은 임의 축소 금지(tier=unknown 이면 default 사이징으로 신중하게 1종목).
 
 ### 2-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)
@@ -212,9 +213,9 @@
    - **최근 5거래일 누적 수익률 추정** (추세 필터 통과 여부 명시) — §1-1 결과
    - **진입가** (현재가 ±1% 이내)
    - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이지만, `weekly_plan.objective.gap_to_target`, 종목별 촉매, 저항선, R/R 을 함께 반영한다. **강세 tier(strong_bull/bull)에서는 `dynamic_exit_model.target_price_rule` 대로 max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점)까지 상향**해 reward 를 확보한다(이미 오른 모멘텀주의 R/R 정상화).
-   - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`). 기본값 = **진입가 − 2×ATR14** (`market_snapshot.tickers.<t>.volatility.atr14`). 단, 단계경보 red(-10%)보다 깊지 않게, 또 단일 거래 예상 손실이 `equity × max_single_trade_risk_pct_of_equity(2.0%)` 를 넘지 않고, 진입 후 전 포지션 합산 손절위험이 `portfolio_heat_budget_pct_of_equity(6.0%)` 를 넘지 않게 조정한다(가장 타이트한 값 채택). ATR 데이터가 없으면 진입가 × 0.90 으로 폴백.
+   - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`). 기본값 = **진입가 − 2×ATR14** (`market_snapshot.tickers.<t>.volatility.atr14`). 단, **(v2.11)** 단계경보 **유효 red 임계**(atr_adaptive — max(-20%, min(-10%, -2.5×ATR%)))보다 깊지 않게, 또 단일 거래 예상 손실이 `equity × max_single_trade_risk_pct_of_equity(2.0%)` 를 넘지 않고, 진입 후 전 포지션 합산 손절위험이 `portfolio_heat_budget_pct_of_equity(6.0%)` 를 넘지 않게 조정한다(가장 타이트한 값 채택). ATR 데이터가 없으면 진입가 × 0.90 으로 폴백.
    - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). **레짐 적응 하한**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6; tier 미확정 1.2; medium confidence +0.1) 미만이면 신규 매수 금지.
-   - **단계 경보 가격**: yellow(-5%), orange(-7%), red(-10%) 각각 가격 환산 (사용자 가독용)
+   - **단계 경보 가격**: yellow/orange/red 의 **유효 임계**(v2.11 atr_adaptive — max(-20%, min(고정%, -(배수×ATR%))), 배수 1.5/2.0/2.5) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)
    - **미래 테마 노출**: 해당 종목이 `config/themes.json` 의 어떤 메가트렌드에 얼마나 노출돼 있는지 `[{theme, exposure 0~1, evidence, source(URL)}]` 형태로 기록. 근거 출처(URL)는 필수(환각 방지). 노출 테마가 없으면 빈 배열.
    - **최근 분기 실적**(`state/fundamentals.json` 있으면): 매출·영업이익·영업이익률·전기대비 증감·`earnings_signal`. 컨빅션 보강 근거로 쓰되 타이밍 신호로 과신 금지(후행). 데이터 없으면 생략.

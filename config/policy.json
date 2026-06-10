@@ -409,6 +409,21 @@
       "rule": "직전 거래일 일간 등락률(today_ohlc close/전일 close − 1)이 single_day_surge_pct(+8%) 이상으로 급등했거나, '수주·계약·호재' 촉매(출처 URL 동반)로 당일 급등한 종목은 신규 진입을 cooldown_trading_days(1거래일) 이연한다. 이연 중에는 candidate 로 추적하되 booking 하지 않고, 소화(cool-down) 후 추세필터·R/R 재확인 시 진입한다. 트레일링스톱 상향·기존 보유 평가에는 적용하지 않는다(신규 진입 게이트 한정).",
       "exception": "strong_bull tier 에서 상대강도(relative_strength) 상위·52주 신고점 돌파 등 추세 지속이 명확하면 1거래일 소화 대신 진입가를 직전 종가 근처로 보수 설정하고 손절을 ATR 기반으로 타이트하게 잡는 조건부 진입을 허용한다(모멘텀 추격과 차익실현 회피의 균형)."
     },
+    "reentry_discipline": {
+      "purpose": "v2.11 — 동일 종목 재진입 추격 차단. 2026-06-04 삼성전자 재진입(직전 익절 청산가 354,290 대비 +2.0% 위·52주 신고점 97.6% 위치)이 -82,480원 — 익절 후 더 비싸게 다시 사는 buy-high 루프를 게이트한다. 반대로 2026-06-09 저점 복원 진입(직전 손절가 대비 -5.2%)은 유효했다 — 아래 면제 조항이 이를 허용한다. 직전 청산 기록은 state/trade_log.jsonl 의 해당 종목 최근 SELL 계열 항목으로 확인한다.",
+      "after_profit_exit": {
+        "rule": "트레일링/목표 익절 청산 후 동일 종목 재진입은 (a)청산 체결가 이하 가격, 또는 (b)5거래일 베이스(청산 후 고점 미경신 횡보) 후 신고 돌파 시에만 기본 비중 허용. 둘 다 아니면 reduced_entry_weight_pct 의 50%(probe)로만.",
+        "max_chase_above_exit_pct": 0.0
+      },
+      "after_stop_exit": {
+        "cooldown_trading_days": 2,
+        "exemption": "재진입가가 직전 손절 체결가 대비 -3% 이상 낮으면 cooldown 면제(저점 복원 진입 허용 — 2026-06-09 사례). 또는 손절 체결가 +3% 재탈환 종가 확인 시 해제."
+      },
+      "high_52w_chase_guard": {
+        "pct_of_52w_high_min": 97.0,
+        "action": "진입가가 52주 고점의 97% 이상이면 신규/재진입 비중 50% 축소(probe) + ATR 타이트 손절. post_surge_cooldown 의 strong_bull 예외보다 이 가드가 우선한다."
+      }
+    },
     "intraday_breach_contingency": {
       "purpose": "v2.5 codify — lessons.md 2026-05-28·05-29 HD조선 교훈 ③(장중 orange/red 이탈을 하루 4회 routine 사이에 실시간 감지 못해 종가 후에야 확인 — 407K·405K 장중 이탈 미대응). 정기 수집 스냅샷이 있어도 장중 임계 이탈 대응이 늦는 갭의 '비상 대응 절차'를 명문화한다.",
       "covered_by": "보유 종목이 손절선·orange(-7%)·red(-10%) 임계의 ±3% 안이면 price_data_quality.data_freshness.action_on_proximity_when_not_fresh 가 freshness≠fresh 일 때 웹 실시간 1회 교차확인을 의무화한다(묵은 가격에 의한 손절 지연 방지). 12·15시 prompt 0-B 가 이를 적용한다.",

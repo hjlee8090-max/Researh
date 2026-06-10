@@ -5,6 +5,12 @@ name: Fetch Price History (backtest)
 
 on:
   workflow_dispatch:
+  # 세션 브랜치에서 dispatch 권한 없이도 돌릴 수 있게 push 트리거 병행.
+  # 트리거 파일(state/.history_request)을 갱신해 푸시하면 1회 수집된다.
+  push:
+    paths:
+      - "state/.history_request"
+      - "scripts/fetch_history.py"
 
 permissions:
   contents: write

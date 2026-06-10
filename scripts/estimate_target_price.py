@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""estimate_target_price — 뉴스·밸류에이션·미래 테마·섹터 활발성을 결합한 목표주가 추정 (v1.2).
+"""estimate_target_price — 뉴스·밸류에이션·미래 테마·섹터 활발성을 결합한 목표주가 추정 (v1.3).
 
 기존 파이프라인의 흩어진 신호(PER/PBR 밴드·컨센서스·테마 레지스트리·촉매 캘린더·섹터 몰입)를
 하나의 식으로 결합해 '12개월 내 도달 가능한 대략적 목표가'를 종목별로 산출한다.
@@ -48,6 +48,23 @@ v1.2 (자동 뉴스 피드 연결):
      같은 유형 manual_news 가 ±5일 내 있으면 manual 우선, 유형당 최신 1건만(도배 방지),
      기반영분 차감(②)·추세 게이트(①) 동일 적용. 유형 미분류 기사는 unclassified 로 보존돼
      라우틴이 manual_news 승격 또는 키워드 보강으로 소비한다(재현율 우선).
+
+v1.3 (2026-06-10 섹터·해외 백테스트 보정 — backtest_sector_global.py, universe 30종목+해외 4심볼):
+  ⑤ 연속 섹터값(sector_value) — '섹터에 자금이 몰리는 집중도'를 연속값으로 산출해 섹터
+     프리미엄에 반영: sector_value = 0.7×heat + 0.3×rs.
+       heat = 섹터 거래대금 점유율(20d) ÷ 자기 120d 평균 → clamp((비율-0.8)/0.8, 0, 1)
+       rs   = 섹터 중앙값 20d 초과수익 → clamp((ex20+5)/15, 0, 1)
+     섹터 프리미엄 = max_sector_pct × (0.5×기존 사다리 + 0.5×sector_value) 블렌드.
+     근거: 8개 섹터그룹 60d 예측력 — sv 0.151 > 블렌드 0.136 > 사다리 0.096, 20d 는 블렌드
+     최고(0.093). 주력 섹터에서 블렌드 최강(조선 60d 0.521·AI메모리 0.451). w_heat 0.7 이
+     그리드 최적(집중도>상대모멘텀). price_history(거래량) 없으면 사다리 단독 폴백.
+  ⑥ 해외뉴스 채널 전이 — news_feed.global(영어 쿼리 수집·분류)을 채널 전이계수
+     (news_keywords.global_news.channel_transmission)로 할인해 국내 종목 가산점에 반영.
+     실증(오버나이트 β, 큰 뉴스 |2%|+): SOXX→SK하이닉스 0.42(corr 0.55)·NVDA→SK 0.27 —
+     동종(peer) 0.45·고객(customer) 0.35 로 보정. 비매핑 섹터 전이 ≈0(조선·자동차 β -0.1~0),
+     매크로 0(초과수익 기반 식 — 시장 전체 충격은 지수에 흡수). 한계: 삼성전자처럼 사업이
+     분산된 종목은 전이가 약함(β 0.03~0.10) — 단일 채널 계수가 과대평가할 수 있어 auto
+     factor(0.6)·추세 게이트가 추가 완충.
 
 출력: state/target_estimate.json — 종목별 추정가·프리미엄 분해·섹터 활성화 예상 시점·
 신뢰등급(A/B/C, 가용 데이터 레이어 수) + 리포트용 markdown 섹션.
@@ -185,11 +202,99 @@ def realized_excess_lookup(ticker: str) -> Any:
     return realized
 
 
+GROUP_FALLBACK = {"005930": "ai_memory_hbm", "005380": "humanoid_robotics"}
+
+
+def sector_values_from_history() -> dict[str, dict]:
+    """v1.3 ⑤ — price_history 전 종목 거래대금으로 그룹별 연속 섹터값을 산출.
+
+    sector_value = 0.7×heat + 0.3×rs (백테스트 그리드 최적 w_heat=0.7).
+    heat: 거래대금 점유율(20d) ÷ 자기 120d 평균 점유율 — '자금이 평소보다 몰리는가'.
+    rs: 그룹 중앙값 20d 초과수익(KOSPI 대비). 데이터 없으면 빈 dict(→ 사다리 폴백).
+    """
+    hist = load_json("state/price_history.json", {})
+    tickers = hist.get("tickers") or {}
+    idx_bars = {b["date"]: float(b["close"]) for b in (hist.get("index") or {}).get("bars") or []}
+    if not tickers or not idx_bars:
+        return {}
+    dates = sorted(idx_bars)
+    if len(dates) < 150:
+        return {}
+
+    groups: dict[str, list[str]] = {}
+    series: dict[str, dict[str, dict]] = {}
+    for t, v in tickers.items():
+        g = v.get("group") or GROUP_FALLBACK.get(t)
+        if not g:
+            continue
+        bars = {b["date"]: b for b in v.get("bars") or []}
+        series[t] = bars
+        groups.setdefault(g, []).append(t)
+    groups = {g: ms for g, ms in groups.items() if len(ms) >= 2}
+
+    def tv20(t: str, di: int) -> float:
+        """di 시점 기준 최근 20거래일 평균 거래대금."""
+        seg = []
+        for d in dates[max(0, di - 19): di + 1]:
+            b = series[t].get(d)
+            if b and b.get("volume") and b.get("close"):
+                seg.append(float(b["close"]) * float(b["volume"]))
+        return sum(seg) / len(seg) if len(seg) >= 7 else 0.0
+
+    last = len(dates) - 1
+    # 그룹 점유율 시계열(최근 120일, 6일 간격 샘플) — 분모는 전 추적 그룹 합
+    sample_idx = list(range(max(0, last - 120), last + 1, 6)) + [last]
+    share_hist: dict[str, list[float]] = {g: [] for g in groups}
+    for di in sample_idx:
+        tot = sum(tv20(t, di) for ms in groups.values() for t in ms)
+        if not tot:
+            continue
+        for g, ms in groups.items():
+            share_hist[g].append(sum(tv20(t, di) for t in ms) / tot)
+
+    out: dict[str, dict] = {}
+    for g, ms in groups.items():
+        sh = share_hist[g]
+        if len(sh) < 5:
+            continue
+        cur_share, base = sh[-1], sum(sh[:-1]) / len(sh[:-1])
+        conc_ratio = cur_share / base if base else 1.0
+        heat = max(0.0, min(1.0, (conc_ratio - 0.8) / 0.8))
+        ex20 = []
+        d0, d1 = dates[last - 20], dates[last]
+        for t in ms:
+            b0, b1 = series[t].get(d0), series[t].get(d1)
+            if b0 and b1:
+                ex20.append(
+                    (float(b1["close"]) / float(b0["close"]) - 1) * 100
+                    - (idx_bars[d1] / idx_bars[d0] - 1) * 100
+                )
+        if not ex20:
+            continue
+        ex20.sort()
+        med = ex20[len(ex20) // 2]
+        rs = max(0.0, min(1.0, (med + 5.0) / 15.0))
+        out[g] = {
+            "sector_value": round(0.7 * heat + 0.3 * rs, 3),
+            "heat": round(heat, 3), "rs": round(rs, 3),
+            "conc_ratio": round(conc_ratio, 2), "median_excess_20d": round(med, 2),
+            "members": ms, "as_of": d1,
+        }
+    return out
+
+
+def ticker_group(ticker: str) -> str | None:
+    hist = load_json("state/price_history.json", {})
+    v = (hist.get("tickers") or {}).get(ticker) or {}
+    return v.get("group") or GROUP_FALLBACK.get(ticker)
+
+
 def news_premium(
     ticker: str, cfg: dict, events: list[dict], earnings_signal: str | None, today: date,
     realized_since: Any = None, auto_items: list[dict] | None = None,
+    global_items: list[dict] | None = None, channel_transmission: dict | None = None,
 ) -> tuple[float, list[dict]]:
-    """뉴스(과거: manual+auto)+촉매(미래) 가산점 합산. (프리미엄 %, 기여 상세) 반환."""
+    """뉴스(과거: manual+auto+해외)+촉매(미래) 가산점 합산. (프리미엄 %, 기여 상세) 반환."""
     params = cfg.get("params", {})
     decay_days = int(params.get("news_decay_days", 90))
     horizon_days = int(params.get("event_horizon_days", 365))
@@ -270,6 +375,45 @@ def news_premium(
             "matched_keywords": it.get("matched_keywords"),
         })
 
+    # v1.3 ⑥ 해외뉴스 — 채널 전이계수(실증 β 기반) × auto factor 할인. 유형당 최신 1건.
+    trans = channel_transmission or {}
+    g_latest: dict[str, dict] = {}
+    for it in global_items or []:
+        if not isinstance(it, dict) or not it.get("type") or not it.get("published"):
+            continue
+        if ticker not in (it.get("affects_tickers") or []):
+            continue
+        cur = g_latest.get(it["type"])
+        if cur is None or it["published"] > (cur.get("published") or ""):
+            g_latest[it["type"]] = it
+    for ntype, it in sorted(g_latest.items()):
+        d = _parse_date(it.get("published"))
+        if d is None:
+            continue
+        days_since = (today - d).days
+        if days_since < 0 or days_since > auto_max_age:
+            continue
+        decay = max(0.0, 1.0 - days_since / decay_days)
+        base = _num(it.get("impact_pct")) or 0.0
+        tcoef = float(trans.get(it.get("channel") or "", 0.0))
+        eff = base * tcoef * auto_factor  # 유효 임팩트 상한(전이·자동 할인 후)
+        c = eff * decay
+        realized = realized_since(it["published"]) if realized_since else None
+        if realized is not None:
+            c = c - realized
+            c = max(0.0, min(eff, c)) if eff >= 0 else min(0.0, max(eff, c))
+        c = round(c, 2)
+        if c == 0.0 and tcoef == 0.0:
+            continue  # macro 등 전이 0 채널은 기여 없음 — 노이즈 제거
+        total += c
+        contribs.append({
+            "kind": "news_global", "type": ntype, "date": it.get("published"),
+            "impact_pct": base, "channel": it.get("channel"), "transmission": tcoef,
+            "decay": round(decay, 2), "auto_factor": auto_factor,
+            "realized_since_event_pct": realized, "contrib_pct": c,
+            "note": it.get("title"), "source_url": it.get("url"),
+        })
+
     # 미래 촉매(catalysts) — 확률·근접가중·방향 할인. '언제 오는 이벤트인지'가 가산점 크기를 정한다.
     for ev in events:
         d = _parse_date(ev.get("date"))
@@ -327,9 +471,14 @@ def theme_premium(
 
 
 def sector_activity(
-    ticker: str, sector_rotation: list[dict], next_catalyst: dict | None, max_pct: float
+    ticker: str, sector_rotation: list[dict], next_catalyst: dict | None, max_pct: float,
+    sv: dict | None = None,
 ) -> tuple[float, str, dict | None]:
-    """섹터 활발성 프리미엄 + '활발성이 언제 올지' 추정. (프리미엄 %, 예상 시점, 그룹 요약) 반환."""
+    """섹터 활발성 프리미엄 + '활발성이 언제 올지' 추정. (프리미엄 %, 예상 시점, 그룹 요약) 반환.
+
+    v1.3 ⑤ — sv(연속 섹터값: 자금 집중도 0.7 + 상대모멘텀 0.3)가 있으면
+    프리미엄 = max_pct × (0.5×사다리 + 0.5×sector_value) 블렌드. 없으면 사다리 단독.
+    """
     group = None
     for g in sector_rotation or []:
         if isinstance(g, dict) and ticker in (g.get("tickers") or []):
@@ -340,23 +489,33 @@ def sector_activity(
         dd = next_catalyst.get("d_day")
         dd_label = f"D{dd:+d}" if isinstance(dd, int) else "D?"
         catalyst_note = f" — 다음 촉매 {next_catalyst.get('date')}({next_catalyst.get('type')}, {dd_label}) 전후 재평가"
-    if group is None:
+    if group is None and sv is None:
         return 0.0, "섹터 그룹 미매핑(universe.json 미등록)" + catalyst_note, None
 
-    excess60 = _num(group.get("median_excess_60d"))
-    met = int(group.get("met", 0) or 0)
-    min_sig = max(1, int(group.get("min_signals", 1) or 1))
+    excess60 = _num(group.get("median_excess_60d")) if group else None
+    met = int(group.get("met", 0) or 0) if group else 0
+    min_sig = max(1, int(group.get("min_signals", 1) or 1)) if group else 1
     summary = {
-        "group": group.get("group"), "median_excess_60d": excess60,
-        "signals_met": met, "min_signals": min_sig, "immersion_met": bool(group.get("immersion_met")),
+        "group": (group.get("group") if group else None) or (sv or {}).get("group"),
+        "median_excess_60d": excess60,
+        "signals_met": met, "min_signals": min_sig,
+        "immersion_met": bool(group.get("immersion_met")) if group else False,
+        "sector_value": sv,
     }
     if excess60 is not None and excess60 >= 10.0:
-        return max_pct, f"현재 활발 — 주도 섹터(KOSPI 대비 60일 +{excess60:.0f}%p)", summary
-    if group.get("immersion_met"):
-        return round(max_pct * 0.8, 2), "몰입 신호 충족 — 약 1~2개월 내 본격화 추정", summary
-    if met > 0:
-        return round(max_pct * 0.5, 2), f"부분 몰입({met}/{min_sig}) — 약 2~4개월 내 회복 가능성", summary
-    return 0.0, "휴면 — 자금 발자국 없음" + catalyst_note, summary
+        ladder, eta = 1.0, f"현재 활발 — 주도 섹터(KOSPI 대비 60일 +{excess60:.0f}%p)"
+    elif group and group.get("immersion_met"):
+        ladder, eta = 0.8, "몰입 신호 충족 — 약 1~2개월 내 본격화 추정"
+    elif met > 0:
+        ladder, eta = 0.5, f"부분 몰입({met}/{min_sig}) — 약 2~4개월 내 회복 가능성"
+    else:
+        ladder, eta = 0.0, "휴면 — 자금 발자국 없음" + catalyst_note
+
+    if sv and isinstance(sv.get("sector_value"), (int, float)):
+        blended = 0.5 * ladder + 0.5 * float(sv["sector_value"])
+        eta += f" · 섹터값 {sv['sector_value']:.2f}(집중도 평소 {sv.get('conc_ratio', '?')}배·heat {sv.get('heat')})"
+        return round(max_pct * blended, 2), eta, summary
+    return round(max_pct * ladder, 2), eta, summary
 
 
 def momentum_tilt(excess60_pct: float | None, pct_of_52w_high: float | None) -> float:
@@ -447,7 +606,13 @@ def main() -> int:
     fundamentals = load_json("state/fundamentals.json", {}).get("tickers", {})
     val_checks = load_json("state/valuation_check.json", {}).get("tickers", {})
     sector_rotation = load_json("state/universe_screen.json", {}).get("sector_rotation", [])
-    news_feed = load_json("state/news_feed.json", {}).get("tickers", {})
+    feed_all = load_json("state/news_feed.json", {})
+    news_feed = feed_all.get("tickers", {})
+    global_news = feed_all.get("global", [])
+    channel_transmission = (
+        load_json("config/news_keywords.json", {}).get("global_news", {}).get("channel_transmission", {})
+    )
+    sector_values = sector_values_from_history()  # v1.3 ⑤ — 그룹별 연속 섹터값(없으면 빈 dict)
 
     # 추정 대상: 후보 전체 ∪ 실보유 종목. 후보 항목이 테마 노출·섹터 정보를 가진 1차 소스.
     by_ticker: dict[str, dict] = {}
@@ -479,6 +644,7 @@ def main() -> int:
             ticker, impact_cfg, ticker_events, earnings_signal, today,
             realized_since=realized_excess_lookup(ticker),
             auto_items=(news_feed.get(ticker) or {}).get("classified"),
+            global_items=global_news, channel_transmission=channel_transmission,
         )
         theme_pct_raw, theme_parts = theme_premium(info.get("theme_exposure"), themes, max_theme_pct, horizon_months)
 
@@ -496,7 +662,13 @@ def main() -> int:
             key=lambda e: e.get("d_day", 9999),
         )
         next_cat = upcoming[0] if upcoming else None
-        sector_pct, sector_eta, sector_summary = sector_activity(ticker, sector_rotation, next_cat, max_sector_pct)
+        grp = ticker_group(ticker)
+        sv = sector_values.get(grp) if grp else None
+        if sv is not None:
+            sv = {**sv, "group": grp}
+        sector_pct, sector_eta, sector_summary = sector_activity(
+            ticker, sector_rotation, next_cat, max_sector_pct, sv=sv
+        )
         pct52 = _num(mom.get("pct_of_52w_high")) if isinstance(mom, dict) else None
         tilt_pct = momentum_tilt(excess60, pct52)
 

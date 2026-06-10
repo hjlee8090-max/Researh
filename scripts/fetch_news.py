@@ -61,11 +61,12 @@ def norm(text: str) -> str:
 
 
 # ── 수집 ─────────────────────────────────────────────────────────────────────
-def fetch_google_rss(query: str, max_age_days: int) -> list[dict]:
+def fetch_google_rss(query: str, max_age_days: int, lang: str = "ko") -> list[dict]:
+    locale = "&hl=ko&gl=KR&ceid=KR:ko" if lang == "ko" else "&hl=en-US&gl=US&ceid=US:en"
     url = (
         "https://news.google.com/rss/search?q="
         + urllib.parse.quote(f"{query} when:{max_age_days}d")
-        + "&hl=ko&gl=KR&ceid=KR:ko"
+        + locale
     )
     try:
         raw = http_get(url)
@@ -156,6 +157,66 @@ def classify(title: str, type_keywords: dict, impact_table: dict) -> dict | None
     return {"primary": matched[0], "all": matched}
 
 
+def norm_en(text: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", html.unescape(text or ""))).lower()
+
+
+def classify_en(title: str, type_keywords_en: dict) -> dict | None:
+    """영어 헤드라인 분류 — 소문자·공백정규화 후 구문 부분일치."""
+    t = norm_en(title)
+    matched = []
+    for ntype, kw in type_keywords_en.items():
+        if any(x.lower() in t for x in kw.get("exclude", [])):
+            continue
+        hits = [x for x in kw.get("any", []) if x.lower() in t]
+        if hits:
+            matched.append({"type": ntype, "matched_keywords": hits,
+                            "impact_pct": kw.get("impact_pct")})
+    if not matched:
+        return None
+    matched.sort(key=lambda m: abs(m.get("impact_pct") or 0), reverse=True)
+    return matched[0]
+
+
+def collect_global(kw_cfg: dict, max_age: int, prev_global: list) -> list[dict]:
+    """해외뉴스 수집·분류 (v1.1). 쿼리별 영어 RSS → type_keywords_en 분류 → 채널·대상 태깅.
+
+    전이계수(channel_transmission)는 여기서 곱하지 않는다 — estimate_target_price 가
+    config 값을 읽어 적용(계수 보정 시 재수집 불필요).
+    """
+    gcfg = kw_cfg.get("global_news", {})
+    type_kw = gcfg.get("type_keywords_en", {})
+    out: list[dict] = []
+    fetched_any = False
+    for q in gcfg.get("queries", []):
+        items = fetch_google_rss(q.get("query", ""), max_age, lang="en")
+        if items:
+            fetched_any = True
+        seen: set[str] = set()
+        kept = 0
+        for it in items:
+            key = norm_en(it["title"])[:60]
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            c = classify_en(it["title"], type_kw)
+            if not c:
+                continue
+            out.append({
+                **it, "query_id": q.get("id"), "channel": q.get("channel"),
+                "affects_tickers": q.get("affects_tickers", []),
+                "affects_group": q.get("affects_group"),
+                "type": c["type"], "impact_pct": c["impact_pct"],
+                "matched_keywords": c["matched_keywords"],
+            })
+            kept += 1
+        print(f"  [해외] {q.get('id')}: raw {len(items)} → 분류 {kept}건")
+    if not fetched_any and prev_global:
+        print("  [해외] 전 쿼리 수집 실패 — 직전값 보존(stale)")
+        return prev_global
+    return out
+
+
 def main() -> int:
     now = datetime.now(KST)
     kw_cfg = load_json("config/news_keywords.json", {})
@@ -165,7 +226,8 @@ def main() -> int:
     max_age = int(rules.get("max_age_days", 14))
     keep_uncls = int(rules.get("unclassified_keep", 10))
     impact_table = load_json("config/news_impact.json", {}).get("news_type_impact_pct", {})
-    prev = load_json("state/news_feed.json", {}).get("tickers", {})
+    prev_feed = load_json("state/news_feed.json", {})
+    prev = prev_feed.get("tickers", {})
 
     # 키워드 커버리지 가드 — 가산점 테이블의 유형에 키워드가 없으면 분류가 구멍난다.
     missing = [k for k in impact_table if k not in type_keywords]
@@ -236,16 +298,21 @@ def main() -> int:
             types[x["type"]] = types.get(x["type"], 0) + 1
         print(f"  {name}({ticker}): raw {len(raw_items)} → 분류 {len(classified)}건 {types or ''} / 미분류 보존 {min(len(unclassified), keep_uncls)}건")
 
+    print("해외뉴스 수집:")
+    global_items = collect_global(kw_cfg, max_age, prev_feed.get("global", []))
+
     out = {
         "as_of": now.isoformat(timespec="seconds"),
-        "source": "Google News RSS + 네이버 종목뉴스 (fetch_news.yml — Actions 러너)",
+        "source": "Google News RSS(국문+영문) + 네이버 종목뉴스 (fetch_news.yml — Actions 러너)",
         "keyword_registry": "config/news_keywords.json (news_impact.news_type_impact_pct 와 1:1)",
         "usage_note": "estimate_target_price v1.2 가 classified 를 auto_news_confidence_factor 할인으로 반영. unclassified 는 라우틴 검토용(manual_news 승격 또는 키워드 보강 → sunday_policy_review).",
         "ticker_count": len(tickers),
         "fetched_ok": fetched_ok,
         "classified_total": total_classified,
         "unclassified_total": total_uncls,
+        "global_total": len(global_items),
         "tickers": out_tickers,
+        "global": global_items,
     }
     OUT_PATH.parent.mkdir(exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

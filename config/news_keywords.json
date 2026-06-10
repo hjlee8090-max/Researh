@@ -72,5 +72,103 @@
     "multi_type_rule": "복수 유형 매칭 시 전부 기록하되 primary_type = |impact_pct| 최대 유형. 추정식은 primary_type 만 반영(이중계상 방지).",
     "max_age_days": 14,
     "unclassified_keep": 10
+  },
+  "global_news": {
+    "purpose": "해외뉴스 수집·분류. 해외뉴스는 채널(customer/peer/demand/policy/macro)별 전이계수(channel_transmission)를 곱해 국내 종목 가산점에 반영한다 — 같은 크기 뉴스라도 고객 수요 뉴스가 경쟁사 뉴스보다, 경쟁사 뉴스가 매크로 뉴스보다 국내 종목 '초과수익'에 더 강하게 전이된다. macro 는 0 — 추정식이 KOSPI 대비 초과수익 기반이라 시장 전체 충격은 지수에 흡수되며 레짐·천장 캡이 별도 처리한다. 전이계수는 backtest_target_model 의 오버나이트 전이 연구(미국 심볼 전일 수익률→한국 종목 당일 초과수익 β)로 검증·보정한다.",
+    "channel_transmission": {
+      "customer": 0.35,
+      "peer": 0.45,
+      "demand": 0.4,
+      "policy": 0.4,
+      "macro": 0.0
+    },
+    "transmission_calibration": "2026-06-10 오버나이트 β 실증(backtest_sector_global.py, 큰 뉴스 |2%|+ 기준): NVDA→SK하이닉스 0.27(corr 0.43)·SOXX→SK 0.42(corr 0.55)·TSM→SK 0.32 — 초기값(0.6~0.7)이 2배 과대였다. 비매핑 섹터 전이 ≈0(조선·자동차 β -0.1~0 — 교차섹터 가산 금지 검증), 매크로 0(초과수익 기반 식). 한계: 삼성전자 등 사업 분산 종목은 β 0.03~0.10 으로 단일 계수가 과대 — auto factor·추세 게이트가 완충, 종목별 감응도는 추후 과제.",
+    "queries": [
+      {
+        "id": "ai_memory_customer",
+        "query": "NVIDIA HBM memory orders AI data center capex",
+        "channel": "customer",
+        "affects_group": "ai_memory_hbm",
+        "affects_tickers": ["005930", "000660"]
+      },
+      {
+        "id": "semis_peer_signal",
+        "query": "Micron OR Broadcom OR SanDisk memory guidance outlook",
+        "channel": "peer",
+        "affects_group": "ai_memory_hbm",
+        "affects_tickers": ["005930", "000660"]
+      },
+      {
+        "id": "foundry_peer",
+        "query": "TSMC foundry price capacity",
+        "channel": "peer",
+        "affects_tickers": ["005930"]
+      },
+      {
+        "id": "shipbuilding_demand",
+        "query": "LNG carrier newbuilding order shipyard Korea",
+        "channel": "demand",
+        "affects_group": "shipbuilding_supercycle",
+        "affects_tickers": ["009540", "010140", "042660", "329180"]
+      },
+      {
+        "id": "auto_trade_policy",
+        "query": "US auto tariff Hyundai Korea import",
+        "channel": "policy",
+        "affects_tickers": ["005380"]
+      },
+      {
+        "id": "ev_battery_demand",
+        "query": "EV battery demand ESS orders LGES",
+        "channel": "demand",
+        "affects_group": "ev_battery",
+        "affects_tickers": ["373220"]
+      },
+      {
+        "id": "defense_demand",
+        "query": "Europe defense rearmament artillery Korea export",
+        "channel": "demand",
+        "affects_group": "defense_export",
+        "affects_tickers": ["012450"]
+      },
+      {
+        "id": "macro_fed",
+        "query": "Fed FOMC rate decision",
+        "channel": "macro",
+        "affects_tickers": []
+      }
+    ],
+    "type_keywords_en": {
+      "global_customer_demand": {
+        "impact_pct": 6.0,
+        "any": ["record orders", "capex increase", "raise capex", "AI demand surge", "data center expansion", "sold out", "supply deal", "long-term agreement", "raises forecast", "beats estimates"],
+        "exclude": ["cuts", "miss", "delay", "cancel"]
+      },
+      "global_peer_pricing": {
+        "impact_pct": 3.0,
+        "any": ["price hike", "price increase", "raises prices", "pricing power", "contract price up"],
+        "exclude": ["price cut", "price decline"]
+      },
+      "global_peer_warning": {
+        "impact_pct": -5.0,
+        "any": ["guidance cut", "miss estimates", "missed estimates", "oversupply", "weak demand", "inventory glut", "price decline", "downgrade", "profit warning"],
+        "exclude": ["despite", "rebound"]
+      },
+      "global_order_demand": {
+        "impact_pct": 5.0,
+        "any": ["newbuilding order", "carrier order", "fleet expansion", "shipbuilding boom", "charter rates surge", "wins order", "order backlog", "secures contract"],
+        "exclude": ["order cancel", "delay"]
+      },
+      "global_tariff_trade": {
+        "impact_pct": -4.0,
+        "any": ["tariff", "trade restriction", "export ban", "export control", "sanction", "antitrust probe"],
+        "exclude": ["tariff relief", "exemption", "refund", "tariff cut", "waiver"]
+      },
+      "global_macro_event": {
+        "impact_pct": 0.0,
+        "any": ["rate decision", "FOMC", "rate hike", "rate cut", "inflation data"],
+        "exclude": []
+      }
+    }
   }
 }

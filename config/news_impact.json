@@ -42,6 +42,18 @@
     "earnings_miss_or_guidance_cut": {"impact_pct": -6.0, "label": "실적 miss·가이던스 컷"}
   },
   "manual_news_schema": "{ticker, type(news_type_impact_pct 키), date(YYYY-MM-DD, 게재일), note, source_url, impact_pct(생략 시 테이블값)} — 0900/1800 routine 또는 sunday_strategy 가 출처 URL+게재일과 함께 추가한다(web_verify_guard.source_date_verification 동일 적용). news_decay_days 가 지난 항목은 자동 0 반영이므로 삭제하지 않아도 된다.",
+  "calibration": {
+    "last_backtest": "2026-06-10",
+    "script": "scripts/backtest_target_model.py → state/backtest_target_model.json + reports/2026-06-10-target-model-backtest.md",
+    "data": "삼성전자·현대차·KOSPI 2024-01-02~2026-06-10 (592거래일, fetch_history.py)",
+    "v1_1_changes": [
+      "추세 게이트 — 테마·양(+)뉴스 프리미엄 × (주도주 1.0 / 동행 0.6 / 후행 0.3). 후행주 상시 +프리미엄 편향 교정(현대차 60일 적중률 25.9%→70.4%)",
+      "뉴스 기반영분 차감 — 이벤트일 이후 실현 초과수익을 가산점에서 차감(클램프). 6/1 HBM4 뉴스 당일 +6.41% 즉시 반영 → 점프 후 재가산 이중계상 차단",
+      "모멘텀 틸트 재보정 — 초과수익 [10,30) 최고·≥30 둔화(비단조 실측 반영) + 52주고점 근접항(≥97% +1.5). '과열 댐퍼' 가설은 실측(fwd20 +9.2%)으로 기각"
+    ],
+    "shock_decay_findings": "주도주(삼성) 충격은 드리프트(+충격 60d 지속비율 2.56 — 추세가 흡수), 후행주(현대차) +충격은 완전 평균회귀(60d -1.22). 일률 감쇠 대신 추세 게이트가 이 비대칭을 흡수한다. 음(-)충격은 양쪽 모두 일정 지속(0.31~0.73) — 악재 미게이트 근거.",
+    "event_study_caveat": "라벨 이벤트 12건(2026-05-20~06-10)·중첩 다수 — 유형별 impact_pct 재추정은 표본 부족으로 보류, 테이블 값 유지. 이벤트가 ~30건 누적되면 유형별 재보정 재시도."
+  },
   "manual_news": [
     {
       "ticker": "005930",

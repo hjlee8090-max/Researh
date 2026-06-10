@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""estimate_target_price — 뉴스·밸류에이션·미래 테마·섹터 활발성을 결합한 목표주가 추정 (v1.0).
+"""estimate_target_price — 뉴스·밸류에이션·미래 테마·섹터 활발성을 결합한 목표주가 추정 (v1.1).
 
 기존 파이프라인의 흩어진 신호(PER/PBR 밴드·컨센서스·테마 레지스트리·촉매 캘린더·섹터 몰입)를
 하나의 식으로 결합해 '12개월 내 도달 가능한 대략적 목표가'를 종목별로 산출한다.
@@ -20,9 +20,26 @@
      × D-day 근접가중 × 방향(earnings_signal)으로 할인. ±max_news_premium_pct 클램프.
   4) 섹터 활발성 프리미엄 — universe_screen.json 의 섹터 몰입 신호로 '활발성이 언제 올지'를
      4단계(현재 활발/1~2개월/2~4개월/촉매 대기)로 추정하고 프리미엄을 차등 반영.
-  5) 모멘텀 틸트 — KOSPI 대비 60일 초과수익 기반 ±3% 소폭 보정(확신 틸트, 기존 위계 동일).
+  5) 모멘텀 틸트 — KOSPI 대비 60일 초과수익 + 52주 고점 근접도 기반 ±4% 보정(확신 틸트).
   6) 천장 캡 — policy.valuation_anchor 그대로: min(추정치, 컨센×1.15, 밸류에이션 천장).
      결측은 캡을 만들지 않는다(skip — 래칫 방지).
+
+v1.1 (2026-06-10 백테스트 보정 — backtest_target_model.py, 삼성전자·현대차 2.5년·592거래일):
+  ① 추세 게이트(trend_gate) — 테마 프리미엄과 양(+) 뉴스 프리미엄에 실현 계수를 곱한다:
+     주도주(KOSPI 대비 60일 초과수익 ≥+10%p) 1.0 / 동행(0~10) 0.6 / 후행(<0) 0.3.
+     근거: 후행주(현대차)는 상시 +프리미엄(평균 +6.0%)을 약속했지만 실현 +0.3%·60일 적중률
+     25.9% — '스토리는 자금이 따라올 때만 가격이 된다'(레포 momentum-게이트 ethos 동일).
+     주도주(삼성)는 corr 0.51·적중률 63%로 작동. 음(-) 뉴스는 게이트하지 않는다(후행주에서도
+     악재는 지속 — 충격연구 negative persist 0.31~0.73).
+  ② 뉴스 기반영분 차감(already-realized guard) — 뉴스 가산점에서 '이벤트 날짜 이후 이미
+     움직인 초과수익'을 뺀다. 근거: 6/1 supply_contract_major 는 당일 +6.41%로 테이블(8%)의
+     대부분이 즉시 반영 — 점프 뒤 가산점을 또 더하면 이중계상(CAR5 +0.13%, 후속 드리프트 없음).
+     state/price_history.json(폴백: 스냅샷 five_day_history)으로 이벤트일 이후 실현분을 계산.
+  ③ 모멘텀 틸트 재보정 — v1.0 의 '초과수익 ≥30 최대 가점'은 데이터와 반대(비단조):
+     실측 fwd20 중앙값 [10,30) +9.0%/+28.3% 최고, [30,∞) +1.9%/-5.8% 둔화·역전.
+     신규: ≥30 +1.0 / 10~30 +2.5 / 0~10 -1.0 / -10~0 -2.0 / <-10 0.0(낙폭 반등 중립).
+     + 52주 고점 근접 항: ≥97% +1.5 / 85~97 +0.5 / 70~85 -0.5 / <70 -1.5 (합계 ±4 캡).
+     ※ 당초 가설이던 '과열 댐퍼(고점 97%+ 감점)'는 기각 — 실측 fwd20 +9.2%로 강한 양(+) 신호.
 
 출력: state/target_estimate.json — 종목별 추정가·프리미엄 분해·섹터 활성화 예상 시점·
 신뢰등급(A/B/C, 가용 데이터 레이어 수) + 리포트용 markdown 섹션.
@@ -109,8 +126,60 @@ def anchor_price(
     return None, "기준가 산출 불가(현재가·밸류·컨센 전부 결측)", False
 
 
+def trend_gate(excess60_pct: float | None) -> float:
+    """v1.1 ① — 테마·양(+)뉴스 프리미엄의 실현 계수. '스토리는 자금이 따라올 때만 가격이 된다.'
+
+    백테스트: 후행주(현대차, 초과수익<0)는 +프리미엄 실현 실패(60일 적중률 25.9%),
+    주도주(삼성, ≥+10%p)는 작동(corr 0.51). 데이터 결측은 0.6(동행 취급 — 왜곡 최소).
+    """
+    if excess60_pct is None:
+        return 0.6
+    if excess60_pct >= 10.0:
+        return 1.0
+    if excess60_pct >= 0.0:
+        return 0.6
+    return 0.3
+
+
+def realized_excess_lookup(ticker: str) -> Any:
+    """이벤트일 이후 '이미 실현된 초과수익(%)'을 돌려주는 클로저 — 뉴스 이중계상 가드(v1.1 ②)용.
+
+    1차: state/price_history.json(장기 일봉, KOSPI 보정). 폴백: 스냅샷 five_day_history
+    (지수 보정 없음 — 근사). 둘 다 없으면 None(가드 미적용, 감쇠만).
+    """
+    hist = load_json("state/price_history.json", {})
+    t_bars = ((hist.get("tickers") or {}).get(ticker) or {}).get("bars") or []
+    i_bars = (hist.get("index") or {}).get("bars") or []
+    t_close = {b["date"]: float(b["close"]) for b in t_bars if isinstance(b, dict)}
+    i_close = {b["date"]: float(b["close"]) for b in i_bars if isinstance(b, dict)}
+
+    snap = load_json("state/market_snapshot.json", {})
+    fdh = ((snap.get("tickers") or {}).get(ticker) or {}).get("five_day_history") or []
+    f_close = {b["date"]: float(b["close"]) for b in fdh if isinstance(b, dict) and b.get("close")}
+
+    def realized(since: str) -> float | None:
+        for closes, idx in ((t_close, i_close), (f_close, {})):
+            if not closes:
+                continue
+            dates = sorted(closes)
+            base_dates = [d for d in dates if d <= since]
+            if not base_dates:
+                continue
+            d0, d1 = base_dates[-1], dates[-1]
+            if d0 == d1:
+                return 0.0
+            stock_move = (closes[d1] / closes[d0] - 1.0) * 100.0
+            if idx and d0 in idx and d1 in idx:
+                stock_move -= (idx[d1] / idx[d0] - 1.0) * 100.0
+            return round(stock_move, 2)
+        return None
+
+    return realized
+
+
 def news_premium(
-    ticker: str, cfg: dict, events: list[dict], earnings_signal: str | None, today: date
+    ticker: str, cfg: dict, events: list[dict], earnings_signal: str | None, today: date,
+    realized_since: Any = None,
 ) -> tuple[float, list[dict]]:
     """뉴스(과거)+촉매(미래) 가산점 합산. (프리미엄 %, 기여 상세) 반환."""
     params = cfg.get("params", {})
@@ -139,11 +208,19 @@ def news_premium(
         base = _num(n.get("impact_pct"))
         if base is None:
             base = _num((type_table.get(n.get("type")) or {}).get("impact_pct")) or 0.0
-        c = round(base * decay, 2)
+        c = base * decay
+        # v1.1 ② 기반영분 차감 — 뉴스가 이미 가격을 움직인 만큼 가산점에서 뺀다(이중계상 방지).
+        # 양(+)뉴스: [0, impact] 클램프(역행했어도 테이블 초과 금지). 음(-)뉴스: [impact, 0].
+        realized = realized_since(n["date"]) if realized_since and n.get("date") else None
+        if realized is not None:
+            c = c - realized
+            c = max(0.0, min(base, c)) if base >= 0 else min(0.0, max(base, c))
+        c = round(c, 2)
         total += c
         contribs.append({
             "kind": "news", "type": n.get("type"), "date": n.get("date"),
-            "impact_pct": base, "decay": round(decay, 2), "contrib_pct": c,
+            "impact_pct": base, "decay": round(decay, 2),
+            "realized_since_event_pct": realized, "contrib_pct": c,
             "note": n.get("note"),
         })
 
@@ -236,20 +313,34 @@ def sector_activity(
     return 0.0, "휴면 — 자금 발자국 없음" + catalyst_note, summary
 
 
-def momentum_tilt(stock_ret60: float | None, index_ret60: float | None) -> float:
-    """KOSPI 대비 60일 초과수익 기반 소폭(±3%) 확신 틸트 — 가중 축이 아니라 보정."""
-    if stock_ret60 is None or index_ret60 is None:
-        return 0.0
-    excess = stock_ret60 - index_ret60
-    if excess >= 30.0:
-        return 3.0
-    if excess >= 10.0:
-        return 2.0
-    if excess >= 0.0:
-        return 0.5
-    if excess >= -10.0:
-        return -1.0
-    return -2.0
+def momentum_tilt(excess60_pct: float | None, pct_of_52w_high: float | None) -> float:
+    """v1.1 ③ — 60일 초과수익 + 52주 고점 근접도 확신 틸트(합계 ±4 캡).
+
+    백테스트 재보정: 초과수익은 [10,30) 구간이 최고(fwd20 중앙값 +9.0%/+28.3%)이고
+    ≥30 극단은 둔화·역전(+1.9%/-5.8%) — v1.0 의 '≥30 최대 가점'을 뒤집는다.
+    52주 고점 근접(≥97%)은 강한 양(+) 신호(fwd20 +9.2%) — 과열 댐퍼 가설은 기각됐다.
+    """
+    tilt = 0.0
+    if excess60_pct is not None:
+        if excess60_pct >= 30.0:
+            tilt += 1.0
+        elif excess60_pct >= 10.0:
+            tilt += 2.5
+        elif excess60_pct >= 0.0:
+            tilt += -1.0
+        elif excess60_pct >= -10.0:
+            tilt += -2.0
+        # <-10: 낙폭 과대 반등 혼재(실측 중앙값 -0.1%/+1.4%) — 0.0 중립
+    if pct_of_52w_high is not None:
+        if pct_of_52w_high >= 97.0:
+            tilt += 1.5
+        elif pct_of_52w_high >= 85.0:
+            tilt += 0.5
+        elif pct_of_52w_high >= 70.0:
+            tilt += -0.5
+        else:
+            tilt += -1.5
+    return max(-4.0, min(4.0, round(tilt, 2)))
 
 
 def grade(layers: dict[str, bool]) -> str:
@@ -337,8 +428,20 @@ def main() -> int:
         anchor, anchor_basis, anchor_uses_band = anchor_price(val_cfg, cons_target, current)
 
         ticker_events = [e for e in all_events if isinstance(e, dict) and e.get("ticker") == ticker]
-        news_pct, news_parts = news_premium(ticker, impact_cfg, ticker_events, earnings_signal, today)
-        theme_pct, theme_parts = theme_premium(info.get("theme_exposure"), themes, max_theme_pct, horizon_months)
+        news_pct_raw, news_parts = news_premium(
+            ticker, impact_cfg, ticker_events, earnings_signal, today,
+            realized_since=realized_excess_lookup(ticker),
+        )
+        theme_pct_raw, theme_parts = theme_premium(info.get("theme_exposure"), themes, max_theme_pct, horizon_months)
+
+        # v1.1 ① 추세 게이트 — 테마·양(+)뉴스만 게이트, 음(-)뉴스는 전액 반영(악재는 후행주에서도 지속).
+        excess60 = round(ret60 - _num(kospi_ret60), 2) if ret60 is not None and _num(kospi_ret60) is not None else None
+        gate = trend_gate(excess60)
+        theme_pct = round(theme_pct_raw * gate, 2)
+        max_news = float(params.get("max_news_premium_pct", 12.0))
+        news_pos = sum(p["contrib_pct"] for p in news_parts if p["contrib_pct"] > 0)
+        news_neg = sum(p["contrib_pct"] for p in news_parts if p["contrib_pct"] < 0)
+        news_pct = round(max(-max_news, min(max_news, news_pos * gate + news_neg)), 2)
 
         upcoming = sorted(
             (e for e in news_parts if e.get("kind") == "catalyst" and (e.get("d_day") or 0) >= 0),
@@ -346,7 +449,8 @@ def main() -> int:
         )
         next_cat = upcoming[0] if upcoming else None
         sector_pct, sector_eta, sector_summary = sector_activity(ticker, sector_rotation, next_cat, max_sector_pct)
-        tilt_pct = momentum_tilt(ret60, _num(kospi_ret60))
+        pct52 = _num(mom.get("pct_of_52w_high")) if isinstance(mom, dict) else None
+        tilt_pct = momentum_tilt(excess60, pct52)
 
         total_premium_pct = round(theme_pct + news_pct + sector_pct + tilt_pct, 2)
         raw_estimate = anchor * (1.0 + total_premium_pct / 100.0) if anchor else None
@@ -388,6 +492,12 @@ def main() -> int:
                 "theme": theme_pct, "news": news_pct, "sector": sector_pct,
                 "momentum": tilt_pct, "total": total_premium_pct,
             },
+            "trend_gate": {
+                "factor": gate,
+                "excess60_vs_kospi_pct": excess60,
+                "pct_of_52w_high": pct52,
+                "ungated": {"theme": theme_pct_raw, "news": round(news_pct_raw, 2)},
+            },
             "raw_estimate": round(raw_estimate, -2) if raw_estimate else None,
             "cap_applied": cap_applied,
             "estimate": estimate,
@@ -411,7 +521,7 @@ def main() -> int:
         "as_of": as_of,
         "snapshot_as_of": snapshot.get("as_of") if isinstance(snapshot, dict) else None,
         "horizon_months": horizon_months,
-        "formula": "추정목표가 = 기준가(밸류밴드·컨센 평균, 결측 시 현재가) × (1 + 테마P(호라이즌할인) + 뉴스P(시간감쇠·확률) + 섹터활발성P + 모멘텀틸트) → min(컨센×1.15, 밸류천장) 캡",
+        "formula": "추정목표가 = 기준가(밸류밴드·컨센 평균, 결측 시 현재가) × (1 + 추세게이트×(테마P(호라이즌할인) + 양뉴스P(시간감쇠·확률·기반영차감)) + 음뉴스P + 섹터활발성P + 모멘텀틸트(초과수익+52주고점)) → min(컨센×1.15, 밸류천장) 캡 [v1.1 백테스트 보정]",
         "kospi_ret_60d_pct": kospi_ret60,
         "estimates": results,
         "report_section_md": build_report_section(results, as_of),

@@ -66,7 +66,9 @@ prompts/
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
-  estimate_target_price.py 목표주가 추정 — 밸류 밴드·컨센·테마(호라이즌할인)·뉴스/촉매(시간감쇠)·섹터 활발성 결합 → state/target_estimate.json
+  estimate_target_price.py 목표주가 추정 v1.1 — 밸류 밴드·컨센·테마(호라이즌할인·추세게이트)·뉴스/촉매(시간감쇠·기반영차감)·섹터 활발성 결합 → state/target_estimate.json
+  fetch_history.py         백테스트용 장기 일봉(~2.5년) 수집 → state/price_history.json (fetch_history.yml 수동/push 트리거)
+  backtest_target_model.py 목표주가 추정식 백테스트 — 충격-감쇠·이벤트 스터디·워크포워드 검증, v1.0 vs v1.1 비교 → state/backtest_target_model.json
   screen_universe.py       (v2.7/2.8) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 + 섹터별 몰입(sector_rotation·avoid_reentry) → state/universe_screen.json
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
   build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
@@ -108,12 +110,18 @@ prompts/
 3. `state/lessons.md`에 누적
 4. **모든 추천·점검 프롬프트는 동작 직전 lessons.md를 먼저 읽고 동일 실수를 피한다**
 
-## 목표주가 추정 레이어 (estimate_target_price.py)
+## 목표주가 추정 레이어 (estimate_target_price.py, v1.1)
 파이프라인의 흩어진 신호를 하나의 식으로 결합해 **12개월 내 도달 가능한 대략적 목표가(원)** 를 산출한다:
 
 ```
-추정목표가 = 기준가 × (1 + 테마P + 뉴스P + 섹터P + 모멘텀틸트) → 천장 캡
+추정목표가 = 기준가 × (1 + 추세게이트×(테마P + 양뉴스P) + 음뉴스P + 섹터P + 모멘텀틸트) → 천장 캡
 ```
+
+v1.1은 삼성전자·현대차 2.5년(592거래일) 백테스트로 보정됐다
+(`reports/2026-06-10-target-model-backtest.md`): ①추세 게이트 — 테마·호재는 자금이 따라오는
+주도주(KOSPI 대비 60일 초과수익 ≥+10%p)에서만 전액 반영(후행주 0.3배, 60일 적중률 25.9%→70.4%)
+②뉴스 기반영분 차감 — 뉴스가 이미 움직인 초과수익을 가산점에서 빼 이중계상 차단
+③모멘텀 틸트 재보정 — 초과수익 [10,30) 구간 최고·극단(≥30) 둔화 + 52주고점 근접 가점.
 - **기준가**: PER/PBR 5년 밴드 중앙값 적정가(valuation.json) + 컨센서스 목표가(consensus.json) 평균. 결측 시 현재가 폴백(등급 하향)
 - **테마P** (≤20%): Σ(테마 strength × 종목 노출) × 호라이즌 할인 — "3~5년 메가트렌드"는 12개월 목표가에 1/3만 반영
 - **뉴스P** (±12%): `config/news_impact.json` 유형별 가산점 — 과거 뉴스는 90일 시간감쇠, 다가오는 촉매(catalysts.json)는 발생확률×D-day 근접가중×방향(DART earnings_signal)으로 할인

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""estimate_target_price — 뉴스·밸류에이션·미래 테마·섹터 활발성을 결합한 목표주가 추정 (v1.1).
+"""estimate_target_price — 뉴스·밸류에이션·미래 테마·섹터 활발성을 결합한 목표주가 추정 (v1.2).
 
 기존 파이프라인의 흩어진 신호(PER/PBR 밴드·컨센서스·테마 레지스트리·촉매 캘린더·섹터 몰입)를
 하나의 식으로 결합해 '12개월 내 도달 가능한 대략적 목표가'를 종목별로 산출한다.
@@ -40,6 +40,14 @@ v1.1 (2026-06-10 백테스트 보정 — backtest_target_model.py, 삼성전자�
      신규: ≥30 +1.0 / 10~30 +2.5 / 0~10 -1.0 / -10~0 -2.0 / <-10 0.0(낙폭 반등 중립).
      + 52주 고점 근접 항: ≥97% +1.5 / 85~97 +0.5 / 70~85 -0.5 / <70 -1.5 (합계 ±4 캡).
      ※ 당초 가설이던 '과열 댐퍼(고점 97%+ 감점)'는 기각 — 실측 fwd20 +9.2%로 강한 양(+) 신호.
+
+v1.2 (자동 뉴스 피드 연결):
+  ④ state/news_feed.json(fetch_news.py — Google News RSS+네이버 종목뉴스를 config/
+     news_keywords.json 키워드로 12개 뉴스 유형에 자동 분류)을 뉴스 가산점에 반영한다.
+     자동 항목은 auto_news_confidence_factor(0.6) 할인 — 자동은 후보, 확정은 검증된 manual.
+     같은 유형 manual_news 가 ±5일 내 있으면 manual 우선, 유형당 최신 1건만(도배 방지),
+     기반영분 차감(②)·추세 게이트(①) 동일 적용. 유형 미분류 기사는 unclassified 로 보존돼
+     라우틴이 manual_news 승격 또는 키워드 보강으로 소비한다(재현율 우선).
 
 출력: state/target_estimate.json — 종목별 추정가·프리미엄 분해·섹터 활성화 예상 시점·
 신뢰등급(A/B/C, 가용 데이터 레이어 수) + 리포트용 markdown 섹션.
@@ -179,9 +187,9 @@ def realized_excess_lookup(ticker: str) -> Any:
 
 def news_premium(
     ticker: str, cfg: dict, events: list[dict], earnings_signal: str | None, today: date,
-    realized_since: Any = None,
+    realized_since: Any = None, auto_items: list[dict] | None = None,
 ) -> tuple[float, list[dict]]:
-    """뉴스(과거)+촉매(미래) 가산점 합산. (프리미엄 %, 기여 상세) 반환."""
+    """뉴스(과거: manual+auto)+촉매(미래) 가산점 합산. (프리미엄 %, 기여 상세) 반환."""
     params = cfg.get("params", {})
     decay_days = int(params.get("news_decay_days", 90))
     horizon_days = int(params.get("event_horizon_days", 365))
@@ -195,6 +203,7 @@ def news_premium(
 
     contribs: list[dict] = []
     total = 0.0
+    manual_seen: list[tuple[str, date]] = []  # (type, date) — 자동 뉴스 중복 방지용
 
     # 과거 뉴스(manual_news) — 게재일 기준 시간감쇠. 오래된 호재는 이미 주가에 반영됐다고 본다.
     for n in cfg.get("manual_news", []) or []:
@@ -217,11 +226,48 @@ def news_premium(
             c = max(0.0, min(base, c)) if base >= 0 else min(0.0, max(base, c))
         c = round(c, 2)
         total += c
+        manual_seen.append((n.get("type") or "", d))
         contribs.append({
             "kind": "news", "type": n.get("type"), "date": n.get("date"),
             "impact_pct": base, "decay": round(decay, 2),
             "realized_since_event_pct": realized, "contrib_pct": c,
             "note": n.get("note"),
+        })
+
+    # v1.2 ④ 자동 분류 뉴스(news_feed) — confidence factor 할인, manual 우선, 유형당 최신 1건.
+    auto_factor = float(params.get("auto_news_confidence_factor", 0.6))
+    auto_max_age = int(params.get("auto_news_max_age_days", 14))
+    latest_by_type: dict[str, dict] = {}
+    for it in auto_items or []:
+        if not isinstance(it, dict) or not it.get("type") or not it.get("published"):
+            continue
+        cur = latest_by_type.get(it["type"])
+        if cur is None or it["published"] > (cur.get("published") or ""):
+            latest_by_type[it["type"]] = it
+    for ntype, it in sorted(latest_by_type.items()):
+        d = _parse_date(it.get("published"))
+        if d is None:
+            continue
+        days_since = (today - d).days
+        if days_since < 0 or days_since > auto_max_age:
+            continue
+        if any(t == ntype and abs((d - md).days) <= 5 for t, md in manual_seen):
+            continue  # 같은 유형 manual 기록 존재 — 검증된 쪽 우선
+        decay = max(0.0, 1.0 - days_since / decay_days)
+        base = _num((type_table.get(ntype) or {}).get("impact_pct")) or 0.0
+        c = base * decay * auto_factor
+        realized = realized_since(it["published"]) if realized_since else None
+        if realized is not None:
+            c = c - realized
+            c = max(0.0, min(base * auto_factor, c)) if base >= 0 else min(0.0, max(base * auto_factor, c))
+        c = round(c, 2)
+        total += c
+        contribs.append({
+            "kind": "news_auto", "type": ntype, "date": it.get("published"),
+            "impact_pct": base, "decay": round(decay, 2), "auto_factor": auto_factor,
+            "realized_since_event_pct": realized, "contrib_pct": c,
+            "note": it.get("title"), "source_url": it.get("url"),
+            "matched_keywords": it.get("matched_keywords"),
         })
 
     # 미래 촉매(catalysts) — 확률·근접가중·방향 할인. '언제 오는 이벤트인지'가 가산점 크기를 정한다.
@@ -401,6 +447,7 @@ def main() -> int:
     fundamentals = load_json("state/fundamentals.json", {}).get("tickers", {})
     val_checks = load_json("state/valuation_check.json", {}).get("tickers", {})
     sector_rotation = load_json("state/universe_screen.json", {}).get("sector_rotation", [])
+    news_feed = load_json("state/news_feed.json", {}).get("tickers", {})
 
     # 추정 대상: 후보 전체 ∪ 실보유 종목. 후보 항목이 테마 노출·섹터 정보를 가진 1차 소스.
     by_ticker: dict[str, dict] = {}
@@ -431,6 +478,7 @@ def main() -> int:
         news_pct_raw, news_parts = news_premium(
             ticker, impact_cfg, ticker_events, earnings_signal, today,
             realized_since=realized_excess_lookup(ticker),
+            auto_items=(news_feed.get(ticker) or {}).get("classified"),
         )
         theme_pct_raw, theme_parts = theme_premium(info.get("theme_exposure"), themes, max_theme_pct, horizon_months)
 

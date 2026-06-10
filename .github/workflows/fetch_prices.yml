@@ -40,7 +40,12 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+      - name: Install deps (krx EOD backstop)
+        run: pip install --quiet pykrx || true
       - name: Fetch market data
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
         run: python scripts/fetch_market_data.py
       - name: Score candidates
         run: python scripts/score_candidates.py

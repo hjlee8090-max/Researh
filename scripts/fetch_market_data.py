@@ -149,6 +149,42 @@ def fetch_yahoo(symbol: str) -> list[dict[str, Any]]:
     return out[-260:]
 
 
+def fetch_krx(ticker: str) -> list[dict[str, Any]]:
+    """v2.11 — KRX 공식 EOD 백스톱(pykrx). naver·yahoo 동시 실패(HTTP 403 동시 차단)일 때만 호출.
+
+    장중 실시간성은 없다(확정 일봉 전용) — 18시 종가확정·추세필터·ATR 용도로 충분하다.
+    pykrx 미설치/실패 시 빈 리스트(기존 2출처 동작 보존). 워크플로가 pip install pykrx || true.
+    pykrx 2.x 는 KRX 정보데이터시스템 로그인이 필요 — KRX_ID/KRX_PW 환경변수(GitHub Secrets,
+    data.krx.go.kr 무료 계정) 없으면 조용히 스킵한다(백스톱 비활성 = 기존 2출처 동작).
+    배경: 5/22~26·6/3·6/10 naver·yahoo 동시 403 으로 진입 불가일·stale 운용 반복.
+    """
+    import os
+
+    if not (os.environ.get("KRX_ID") and os.environ.get("KRX_PW")):
+        logger.info("krx backstop skipped for %s: KRX_ID/KRX_PW 미설정", ticker)
+        return []
+    try:
+        from pykrx import stock as krx  # 지연 임포트 — 미설치 환경 무해
+
+        end = datetime.now(KST).date()
+        start = end - timedelta(days=400)
+        df = krx.get_market_ohlcv(start.strftime("%Y%m%d"), end.strftime("%Y%m%d"), ticker)
+        out: list[dict[str, Any]] = []
+        for idx, row in df.iterrows():
+            out.append({
+                "date": idx.strftime("%Y-%m-%d"),
+                "open": float(row["시가"]),
+                "high": float(row["고가"]),
+                "low": float(row["저가"]),
+                "close": float(row["종가"]),
+                "volume": float(row["거래량"]),
+            })
+        return out[-260:]
+    except Exception as exc:  # noqa: BLE001 — ImportError 포함 전부 무해 폴백
+        logger.warning("krx fallback failed for %s: %s", ticker, exc)
+        return []
+
+
 def compute_confidence(naver_last: float | None, yahoo_last: float | None) -> tuple[str, float | None]:
     if naver_last and yahoo_last:
         gap = abs(naver_last - yahoo_last) / max(naver_last, yahoo_last) * 100
@@ -402,10 +438,16 @@ def build_ticker_snapshot(
 ) -> dict[str, Any]:
     naver_hist = fetch_naver(ticker)
     yahoo_hist = fetch_yahoo(f"{ticker}.KS")
+    krx_hist: list[dict[str, Any]] = []
+    if not naver_hist and not yahoo_hist:
+        # v2.11 — naver·yahoo 동시 실패 시 KRX 공식 EOD 백스톱('EOD 확정치는 항상 있는' 상태).
+        krx_hist = fetch_krx(ticker)
     naver_last = naver_hist[-1]["close"] if naver_hist else None
     yahoo_last = yahoo_hist[-1]["close"] if yahoo_hist else None
     confidence, gap_pct = compute_confidence(naver_last, yahoo_last)
-    primary_hist = naver_hist or yahoo_hist
+    if krx_hist:
+        confidence, gap_pct = "medium", None  # 단일 공식출처(KRX) EOD — policy 'medium=1개 신뢰 출처'
+    primary_hist = naver_hist or yahoo_hist or krx_hist
     ret5 = five_day_return(primary_hist) if primary_hist else None
     # entry_filter(추세필터)는 레짐 tier·상대강도에 따라 임계가 달라지므로(v2.7 레짐 적응형),
     # 여기서는 ret5·ret60 만 산출하고 pass/threshold 판정은 main() 이 레짐 tier 확정 후
@@ -459,7 +501,15 @@ def build_ticker_snapshot(
                 "last_date": yahoo_hist[-1]["date"] if yahoo_hist else None,
                 "ok": bool(yahoo_hist),
             },
-        ],
+        ] + ([
+            {
+                "name": "krx",
+                "last_close": krx_hist[-1]["close"],
+                "last_date": krx_hist[-1]["date"],
+                "ok": True,
+                "note": "eod_backstop(pykrx) — naver·yahoo 동시 실패 시만 사용(v2.11)",
+            }
+        ] if krx_hist else []),
         "confidence": confidence,
         "price_gap_pct": gap_pct,
         "five_day_history": (primary_hist or [])[-6:],

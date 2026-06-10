@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""fetch_history — 백테스트용 장기 일봉 수집 (one-shot/주간).
+"""fetch_history — 백테스트용 장기 일봉 수집 (one-shot/주간) v1.1.
 
 fetch_market_data.py 가 routine 용 5일 스냅샷만 남기는 것과 달리, 목표주가 추정식
 백테스트(backtest_target_model.py)가 쓰는 ~2.5년 일봉 전체를 state/price_history.json 에
 저장한다. 네트워크 차단된 웹 세션 대신 GitHub Actions 러너(fetch_history.yml)에서 실행.
 
+v1.1: 수집 범위 확장 — ①universe.json pool 전체(~30종목): 섹터값(자금 집중도) 계산에
+종목별 거래대금이 섹터 단위로 필요 ②해외 심볼(yahoo): 해외뉴스→국내 주가 전이계수
+실증(NVDA·SOXX·S&P500·TSM — 반도체 고객/동종/매크로 채널).
+
 소스: naver siseJson(1차) → yahoo v8 chart(폴백). 지수는 naver symbol=KOSPI → yahoo ^KS11.
-의존성 0(표준 라이브러리).
+해외 심볼은 yahoo 전용. 의존성 0(표준 라이브러리).
 """
 from __future__ import annotations
 
@@ -28,6 +32,33 @@ TICKERS = {
     "005380": {"name": "현대차", "yahoo": "005380.KS"},
 }
 INDEX = {"naver": "KOSPI", "yahoo": "^KS11", "name": "KOSPI"}
+# 해외 채널 심볼(yahoo 전용) — 고객(NVDA)·동종/섹터(SOXX·TSM)·매크로(^GSPC)
+GLOBALS = {
+    "NVDA": "NVIDIA",
+    "SOXX": "iShares Semiconductor ETF",
+    "TSM": "TSMC ADR",
+    "^GSPC": "S&P500",
+}
+
+
+def load_universe_tickers() -> dict[str, dict]:
+    """universe.json pool 전체를 수집 대상으로 — 섹터값(거래대금 집중도) 계산용."""
+    p = ROOT / "config" / "universe.json"
+    out = dict(TICKERS)
+    if not p.exists():
+        return out
+    try:
+        pool = json.loads(p.read_text(encoding="utf-8")).get("pool", [])
+    except (OSError, json.JSONDecodeError):
+        return out
+    for m in pool:
+        if isinstance(m, dict) and m.get("ticker"):
+            out.setdefault(m["ticker"], {
+                "name": m.get("name", m["ticker"]),
+                "yahoo": f"{m['ticker']}.KS",
+                "group": m.get("theme") or m.get("sector"),
+            })
+    return out
 
 
 def http_get(url: str, extra_headers: dict[str, str] | None = None) -> bytes:
@@ -104,15 +135,24 @@ def collect(naver_symbol: str, yahoo_symbol: str, name: str) -> dict[str, Any]:
 
 def main() -> int:
     now = datetime.now(KST)
+    tickers = load_universe_tickers()
     out: dict[str, Any] = {"as_of": now.isoformat(timespec="seconds"), "start_requested": START, "tickers": {}}
-    print("fetch_history:")
-    for t, meta in TICKERS.items():
-        out["tickers"][t] = collect(t, meta["yahoo"], meta["name"])
+    print(f"fetch_history: {len(tickers)} KR tickers + {len(GLOBALS)} global")
+    for t, meta in tickers.items():
+        rec = collect(t, meta["yahoo"], meta["name"])
+        if meta.get("group"):
+            rec["group"] = meta["group"]
+        out["tickers"][t] = rec
     out["index"] = collect(INDEX["naver"], INDEX["yahoo"], INDEX["name"])
+    out["global"] = {}
+    for sym, name in GLOBALS.items():
+        bars = fetch_yahoo(sym)
+        print(f"  {name}({sym}): {len(bars)} bars (yahoo)")
+        out["global"][sym] = {"name": name, "source": "yahoo", "bars": bars}
     OUT_PATH.parent.mkdir(exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False) + "\n", encoding="utf-8")
     total = sum(len(v["bars"]) for v in out["tickers"].values()) + len(out["index"]["bars"])
-    print(f"wrote {OUT_PATH.relative_to(ROOT)} total_bars={total}")
+    print(f"wrote {OUT_PATH.relative_to(ROOT)} total_kr_bars={total}")
     return 0 if total > 0 else 1
 
 

@@ -749,6 +749,27 @@ def main() -> int:
     }
     OUT_PATH.parent.mkdir(exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    # v1.4 — 추정 스냅샷 로그(jsonl 누적). score_target_estimates.py 가 '추정 vs 실현' 주간
+    # 채점에 사용한다. 하루 여러 번 실행돼도 행만 쌓이고, 채점기는 날짜별 마지막 행을 쓴다.
+    log_rec = {
+        "as_of": as_of,
+        "date": as_of[:10],
+        "model": "v1.3",
+        "estimates": [
+            {
+                "ticker": r["ticker"], "name": r["name"],
+                "current_price": r["current_price"], "estimate": r["estimate"],
+                "expected_return_pct": r["expected_return_pct"],
+                "premium_pct": r["premium_pct"], "grade": r["grade"],
+                "trend_gate": (r.get("trend_gate") or {}).get("factor"),
+            }
+            for r in results
+        ],
+    }
+    log_path = ROOT / "state" / "target_estimate_log.jsonl"
+    with log_path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(log_rec, ensure_ascii=False) + "\n")
     graded = {g: sum(1 for r in results if r["grade"] == g) for g in ("A", "B", "C")}
     print(f"wrote {OUT_PATH.relative_to(ROOT)} estimates={len(results)} grades={graded}")
     for r in results:

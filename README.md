@@ -69,7 +69,8 @@ prompts/
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
   estimate_target_price.py 목표주가 추정 v1.1 — 밸류 밴드·컨센·테마(호라이즌할인·추세게이트)·뉴스/촉매(시간감쇠·기반영차감)·섹터 활발성 결합 → state/target_estimate.json
-  fetch_news.py            종목 뉴스 자동 수집(Google News RSS+네이버 종목뉴스)·키워드 분류 → state/news_feed.json (fetch_news.yml 평일 07:30/17:40 KST)
+  fetch_news.py            종목 뉴스 자동 수집(Google News RSS 국문·영문+네이버 종목뉴스)·키워드 분류 → state/news_feed.json (fetch_news.yml 평일 07:30/17:40 KST)
+  score_target_estimates.py 추정 vs 실현 주간 채점 + 뉴스 키워드 보강 점검 → state/estimate_scorecard.json (sunday_policy_review 0-C)
   fetch_history.py         백테스트용 장기 일봉(~2.5년) 수집 → state/price_history.json (fetch_history.yml 수동/push 트리거)
   backtest_target_model.py 목표주가 추정식 백테스트 — 충격-감쇠·이벤트 스터디·워크포워드 검증, v1.0 vs v1.1 비교 → state/backtest_target_model.json
   screen_universe.py       (v2.7/2.8) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 + 섹터별 몰입(sector_rotation·avoid_reentry) → state/universe_screen.json
@@ -139,6 +140,12 @@ v1.3은 해외뉴스와 연속 섹터값을 더했다(`reports/2026-06-11-sector
 affects_tickers 매핑이 강제된다. ②**섹터값** — 섹터 거래대금 점유율(자금 집중도 0.7) +
 상대모멘텀(0.3)의 연속값으로, 섹터 프리미엄 = 최대 8% × (0.5×몰입 사다리 + 0.5×섹터값) 블렌드
 (60일 예측력 사다리 단독 대비 +40%, 조선 0.521·AI메모리 0.451).
+
+v1.4는 자기보완 루프에 편입됐다: 추정 스냅샷이 `state/target_estimate_log.jsonl` 에 매 실행
+적재되고, `score_target_estimates.py` 가 추정 vs 실현(5/20/60거래일)을 채점해
+`state/estimate_scorecard.json` 을 만든다. sunday_policy_review(일 20시)가 0-C 단계에서
+실행해 §1-5 로 점검한다 — 적중률 악화 시 추정식 패치 후보 상정(단 파라미터 변경은 백테스트
+재실행 근거 필수), unclassified/오분류 검토 → manual_news 승격·키워드 보강 의무.
 - **기준가**: PER/PBR 5년 밴드 중앙값 적정가(valuation.json) + 컨센서스 목표가(consensus.json) 평균. 결측 시 현재가 폴백(등급 하향)
 - **테마P** (≤20%): Σ(테마 strength × 종목 노출) × 호라이즌 할인 — "3~5년 메가트렌드"는 12개월 목표가에 1/3만 반영
 - **뉴스P** (±12%): `config/news_impact.json` 유형별 가산점 — 과거 뉴스는 90일 시간감쇠, 다가오는 촉매(catalysts.json)는 발생확률×D-day 근접가중×방향(DART earnings_signal)으로 할인

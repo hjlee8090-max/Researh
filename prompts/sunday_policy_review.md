@@ -24,6 +24,12 @@
 - `open_items_hard` 가 1건 이상이면 1-1 추적 결과에 그대로 옮기고, 각 항목에 대해 patch 후보(필드명·기본값·
   근거 lessons 라인)를 반드시 제안한다. (이 대조는 audit_pipeline 에도 연동되어 매 평일 감사에서 WARN 으로 노출된다.)
 
+## 0-C. 목표가 추정 채점 + 뉴스 키워드 점검
+- `python scripts/score_target_estimates.py` 를 실행하여 `state/estimate_scorecard.json` 을 만든다.
+  - `scoring.by_horizon`: 추정 vs 실현 적중률·기대-실현 오차 (표본 <5 면 '채점 보류' — 통계 과신 금지)
+  - `news_loop`: 뉴스 자동 분류 현황 — `unclassified_samples`(키워드 구멍 후보)·`silent_types`(무음 유형)·`review_checklist`
+- 이 산출물은 1-5 점검의 1차 입력이다. `report_section_md` 를 산출물 1 의 §2-c 에 그대로 붙인다.
+
 ## 0. 컨텍스트 적재 (이 순서)
 1. `state/lessons_index.json` (0-A 단계 생성) — 1차 입력
 2. `state/lessons.md` — 원문 (인덱스 항목의 컨텍스트 확인 시 사용)
@@ -62,6 +68,18 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 - 불일치 → 어느 prompt 가 진실의 원천(source of truth)인지 명시
 - **신뢰도 출처 규칙 일관성 점검**: 00/09/12/15/18·주말 prompt 가 모두 "`market_snapshot` 의 `confidence` 를 1순위로 사용하고, 레거시 'fetch 차단/403/data confidence=low/신규 진입 보류' 서술을 이월하지 않으며, stale≠low" 규칙을 담고 있는지 grep 으로 확인. 누락된 prompt 가 있으면 미반영 패치 후보로 등록한다.
 
+### 1-5. 목표가 추정 레이어 채점·뉴스 키워드 보강 (estimate_scorecard — v1.4)
+`state/estimate_scorecard.json`(0-C 단계 생성)을 점검한다:
+- **추정 vs 실현**: 20td/60td 적중률이 2주 연속 하락하거나 `median_realized_minus_expected` 절대값이
+  5%p 를 넘으면 추정식 패치 후보로 상정한다. 단 **모델 파라미터(틸트·게이트·전이계수·가산점 테이블)
+  변경은 백테스트 재실행(backtest_target_model / backtest_sector_global) 근거 필수** — 주간 노이즈로
+  보정하지 않는다(목표가 인플레 재발 방지).
+- **뉴스 키워드 보강 (검토 의무)**: `news_loop.unclassified_samples` 를 훑어 주가 관련 실질 뉴스가
+  버려지고 있으면 ①출처 URL+게재일 확인 후 `config/news_impact.json` manual_news 승격 또는
+  ②`config/news_keywords.json` 키워드 추가. **오분류(방향 반대)** 발견 시 exclude 키워드 추가
+  ('관세 환급'·'Exempts Autos' 패턴). `silent_types` 는 unclassified 와 대조해 구멍/뉴스부재를 구분.
+- 보강·승격 내역은 lessons.md 에 '루틴' 분류로 1줄 기록한다(키워드 레지스트리 변경 이력 추적).
+
 ## 2. 산출물 1: reports/YYYY-MM-DD-policy-review.md
 
 ```markdown
@@ -89,6 +107,11 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 - 권장 패치:
 - 적용 방식: 자동 / 승인 필요
 - 근거 lessons 라인:
+
+## 2-c. 목표가 추정 채점 + 뉴스 키워드 점검
+(estimate_scorecard.json 의 report_section_md 를 그대로 붙이고, 아래를 추가)
+- 키워드 보강/승격 실행 내역: N건 (없으면 '없음')
+- 추정식 패치 후보: (백테스트 근거 필요 여부 명시)
 
 ## 3. 미반영·부분반영 패치 후보 (실행 plan)
 

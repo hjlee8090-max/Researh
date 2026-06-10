@@ -52,14 +52,16 @@
 - **금지**: 묵은 스냅샷 가격으로 먼저 체결하고 다음 회차에 재확인하는 조건부 체결. 검증이 체결을 선행한다 (`new_entry_freshness_rule`).
 
 ## 2. 단계 경보 산정 (모든 보유 종목 의무)
-각 종목마다 **진입가 대비 현재가 변동률**로 단계를 결정한다 (`policy.risk.tiered_alerts` 기준):
+각 종목마다 **진입가 대비 현재가 변동률**로 단계를 결정한다 (`policy.risk.tiered_alerts` 기준).
 
-| 단계 | 조건 | 액션 |
+> **(v2.11 atr_adaptive) 단계 임계는 '유효 임계'로 계산한다**: 유효 임계 = max(-20%, min(고정%, -(배수×ATR%))). ATR% 는 스냅샷 `tickers.<t>.volatility.atr_pct`, 배수는 `tiered_alerts.atr_multiples`(yellow 1.5 / orange 2.0 / red 2.5). 예: ATR 6% → orange 유효 -12% / red 유효 -15% (변동성 장 자동 확대). ATR 2%대 평시엔 고정값(-5/-7/-10%)과 동일. atr_pct 결측 시 고정값 폴백.
+
+| 단계 | 조건 (유효 임계 기준) | 액션 |
 |---|---|---|
-| 🟢 green | 변동률 > -5% | 정상 관찰 |
-| 🟡 **yellow** | -5% ≥ 변동률 > -7% | **원인 3가지 검색·기록 의무**, 함정패턴 cross-check, 비중 유지 |
-| 🟠 **orange** | -7% ≥ 변동률 > -10% | **보유 비중 50% 즉시 가상 부분매도** + lessons.md 즉시 기록 |
-| 🔴 **red** | 변동률 ≤ -10% | **전량 가상 청산** + lessons.md 즉시 기록 |
+| 🟢 green | 변동률 > 유효 yellow | 정상 관찰 |
+| 🟡 **yellow** | 유효 yellow ≥ 변동률 > 유효 orange | **원인 3가지 검색·기록 의무**, 함정패턴 cross-check, 비중 유지 |
+| 🟠 **orange** | 유효 orange ≥ 변동률 > 유효 red | **조건부(orange_action)** — (a)개별·섹터 원인 또는 thesis weakening/invalidated → 50% 가상 부분매도. (b)매크로 단독 + thesis intact → 매도 대신 **타이트 트레일링(고점 -1.0×ATR%) 전환** 기록. 판단 불가 시 (a) 보수 적용. + lessons.md 즉시 기록 |
+| 🔴 **red** | 변동률 ≤ 유효 red | **전량 가상 청산** + lessons.md 즉시 기록 |
 
 > 09시 대비 단순 변동 -3% 이내(green 구간 내)는 정책상 추가 액션 자제 (no_swap_when). 단계 경보는 **진입가 대비**임에 유의.
 

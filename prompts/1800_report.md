@@ -44,11 +44,12 @@
 - 보유 종목 각각의 **오늘자 KOSPI 종가**는 `state/market_snapshot.json` 을 1순위 출처로 사용한다 (0-A 에서 `last_date`=오늘 확인 완료). 종가 미반영(`last_date`≠오늘)일 때만 웹 검색으로 보강하고 다중 출처 교차한다.
 - **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 종가 보강을 위해 웹을 쓸 때, 웹 값을 그대로 채택하지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가/현재가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 셋 다 충족 시만 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '장중 고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**(원인 미확인으로 기록), 가격 변동 단독으로 thesis·목표가 오차 분류를 단정하지 않는다. 후보 종목 평가에도 동일 적용.
 - **(v2.6) 출처 게재일 검증** (`web_verify_guard.source_date_verification`): 종가를 웹으로 보강할 때 출처(뉴스·기사)의 **게재일(published date)을 URL/본문에서 읽어 기록**하고, **오늘이 아니거나 스냅샷 `as_of` 보다 과거이면 종가로 채택 금지**('스냅샷보다 최신' 자기 단정 금지). stale 스냅샷 + 단일출처 대규모 갭(±3% 초과) '예외' 자가면제 금지 — 미검증이면 stale `close` 유지 명시. CI `source_provenance_gate`(`check_trade_log_gate.py`)가 묵은 출처 게재일·재활용 종가(예: '오늘 KOSPI 8,788'=직전 일자 종가)를 하드 차단(2026-06-08 6/1자 MBC 기사를 6/8 시세로 오인 도용한 사고 방지).
+- **(v2.11 atr_adaptive) 단계 임계는 `policy.risk.tiered_alerts` 의 '유효 임계'로 계산한다**: 유효 = max(-20%, min(고정%, -(배수×ATR%))), 배수 yellow 1.5/orange 2.0/red 2.5, ATR% 는 스냅샷 `volatility.atr_pct`(결측 시 고정값 폴백). **ORANGE 종가 확정 시 즉시 50% 매도가 아니라 `orange_action` 조건 분기를 따른다**: (a)개별·섹터 원인 또는 thesis weakening/invalidated → 50% 가상 부분매도, (b)매크로 단독 원인 + thesis intact → 매도 대신 타이트 트레일링(고점 -1.0×ATR%) 전환을 watchlist 에 기록하고 익일 재평가. 판단 불가 시 (a) 보수 적용.
 - 각 종목에 대해:
   - **종가 vs 목표가 괴리(%)** 계산
   - 정책상 허용 오차 `tolerance_band_pct = 5%` 이내인지 판정
   - 초과 시 사유를 4분류 중 1개로 분류: `매크로` / `섹터` / `개별` / `가정오류`
-- 손절가 / 목표가 도달했다면 **종가 기준 가상 청산 체결** 처리
+- 손절가(유효 red 임계) / 목표가 도달했다면 **종가 기준 가상 청산 체결** 처리
   - 매도가 = 종가 × (1 - slippage 0.002 - tax 0.0018 - commission 0.00015)
   - `portfolio.json`의 cash·positions·realized_pnl·win/loss_count 갱신
   - `state/trade_log.jsonl`에 라인 추가. **(v2.3 장중 시간 규칙)** 18시는 장 마감 후이므로 이 청산은 마감 동시호가(15:30)에 일어난 것으로 본다:

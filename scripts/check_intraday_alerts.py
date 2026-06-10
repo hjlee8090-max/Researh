@@ -45,10 +45,19 @@ def load_json(rel_or_path: str | Path, default: Any = None) -> Any:
         return default if default is not None else {}
 
 
-def classify_tier(pct: float, alerts: dict) -> str:
-    red = float(alerts.get("red_pct", -10.0))
-    orange = float(alerts.get("orange_pct", -7.0))
-    yellow = float(alerts.get("yellow_pct", -5.0))
+def effective_threshold(fixed: float, mult: float | None, atr_pct: float | None, hard_floor: float) -> float:
+    """v2.11 atr_adaptive — 유효 임계 = max(hard_floor, min(고정값, -(배수×ATR%))). 결측 시 고정값."""
+    if mult is None or atr_pct is None:
+        return fixed
+    return max(hard_floor, min(fixed, -(float(mult) * float(atr_pct))))
+
+
+def classify_tier(pct: float, alerts: dict, atr_pct: float | None = None) -> str:
+    mults = alerts.get("atr_multiples", {}) if alerts.get("mode") == "atr_adaptive" else {}
+    floor = float(alerts.get("atr_threshold_hard_floor_pct", -20.0))
+    red = effective_threshold(float(alerts.get("red_pct", -10.0)), mults.get("red"), atr_pct, floor)
+    orange = effective_threshold(float(alerts.get("orange_pct", -7.0)), mults.get("orange"), atr_pct, floor)
+    yellow = effective_threshold(float(alerts.get("yellow_pct", -5.0)), mults.get("yellow"), atr_pct, floor)
     if pct <= red:
         return "red"
     if pct <= orange:
@@ -108,7 +117,8 @@ def main() -> int:
 
     for pos in positions:
         ticker = pos.get("ticker")
-        entry = pos.get("entry_price")
+        # v2.11 — portfolio.json 포지션 스키마는 avg_cost 를 쓴다(entry_price 키는 구버전). 폴백 체인으로 silent-skip 방지.
+        entry = pos.get("entry_price") or pos.get("avg_cost") or pos.get("entry_price_web")
         ts = ts_map.get(ticker, {}) if isinstance(ts_map, dict) else {}
         conf = ts.get("confidence")
         cur = current_price(ts) if isinstance(ts, dict) else None
@@ -117,8 +127,9 @@ def main() -> int:
             new_state[ticker] = prev_state.get(ticker, "green")
             evaluated.append({"ticker": ticker, "skipped": True, "confidence": conf})
             continue
+        atr_pct = (ts.get("volatility") or {}).get("atr_pct") if isinstance(ts.get("volatility"), dict) else None
         pct = round((cur - entry) / entry * 100, 2)
-        tier = classify_tier(pct, alerts_cfg)
+        tier = classify_tier(pct, alerts_cfg, atr_pct)
         prev = prev_state.get(ticker, "green")
         new_state[ticker] = tier
         evaluated.append({"ticker": ticker, "pct": pct, "tier": tier, "prev_tier": prev, "current_price": cur})

@@ -248,7 +248,7 @@ def extract_glance_fields(section_text: str) -> list[tuple[str, str]]:
 
 
 NEWS_LABELS = ("매크로", "핵심 인사이트", "인사이트", "KOSPI", "시장 환경", "시황", "뉴스", "지수")
-HEADLINE_LABELS = ("한 줄", "오늘의 액션", "액션", "핵심", "촉매")
+HEADLINE_LABELS = ("한줄평", "한 줄", "오늘의 액션", "액션", "핵심", "촉매")
 
 
 def pick_news_lines(fields: list[tuple[str, str]], max_lines: int = 2) -> list[str]:

@@ -387,6 +387,12 @@ def collect_tickers() -> dict[str, dict[str, str]]:
         if not ticker:
             continue
         out.setdefault(ticker, {"name": c.get("name", ""), "role": "candidate"})
+    # v2.11 — 청산 이력 종목(rule_attribution 의 청산 후 t1/t5/t10 추적 대상)도 수집 유지.
+    # candidates 에서 빠진 뒤에도 스냅샷 종가가 exit_tracking 캐시에 쌓여 전방 추적이 끊기지 않는다.
+    tracking = load_json("state/exit_tracking.json")
+    for ticker in tracking.get("exited_tickers", []) or []:
+        if isinstance(ticker, str) and ticker:
+            out.setdefault(ticker, {"name": "", "role": "exit_tracking"})
     return out
 
 

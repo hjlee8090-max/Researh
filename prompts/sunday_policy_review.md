@@ -47,6 +47,12 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 - 어떤 patch 가 필요한지 (예: 섹터 차단 리스트 추가, 매크로 변수 가중치 조정)
 - 자동 적용 가능한지 / 사용자 승인이 필요한지 분리
 
+### 1-2-b. 룰 손익 채점 (rule_attribution — v2.11)
+`state/rule_attribution.json`(없으면 `python scripts/rule_attribution.py` 실행)의 `by_rule` 를 점검한다:
+- **realized_pnl_sum 이 2주 연속 음(-)이거나 post_exit_t5_forgone_sum 이 큰 양수(조기청산 비용)인 청산 룰은 패치 후보로 자동 상정**한다(임계·배수·조건 조정안 제시).
+- `blocked_day_rate_pct` 가 40% 이상이면 차단 룰 과잉(래칫) 신호 — `lessons_rule_sunset` 만료 대상·완화 후보를 식별한다.
+- lessons 발 즉석 제한 룰의 expiry(`policy.lessons_rule_sunset` 기본 5거래일) 도래 여부를 점검해 만료/승격을 분류한다.
+
 ### 1-3. policy 미사용 필드 점검
 `policy.json` 에 정의됐지만 어느 prompt/script 에서도 참조하지 않는 필드를 찾는다 (dead config).
 - 삭제 후보 / 활성화 후보 중 분류

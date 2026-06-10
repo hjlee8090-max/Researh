@@ -82,6 +82,11 @@
 | 승률 | |
 | 평균 이익 / 평균 손실 | |
 
+## 룰 채점 (rule_attribution — v2.11 의무)
+`python scripts/rule_attribution.py` 를 실행(또는 `state/rule_attribution.json` 적재)해 다음을 **그대로 인용**한다:
+- `by_rule` 표(청산 룰별 n·실현손익·t1/t5 일실·평균보유) + `account`(PF·expectancy·회전대금·마찰비용) + `benchmarks`(KOSPI/단순보유/실제) 3종 비교 + `blocked_day` 비율
+- **post_exit 일실(forgone)이 가장 큰 룰 1개에 대해 개선 가설 1줄 의무 기록** (예: "트레일링 폭이 ATR 대비 좁다 → 정책 X 검토"). 일실 양수 = 조기청산 비용, 음수 = 손실 방어 — 서사가 아니라 이 숫자로 룰을 평가한다.
+
 ## 의사결정 복기
 ### 잘한 결정
 ### 아쉬운 결정

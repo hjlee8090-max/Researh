@@ -154,6 +154,11 @@ def anchor_price(
     if consensus_target:
         values.append(consensus_target)
         parts.append(f"컨센서스 목표가 {consensus_target:,.0f}")
+    # 현재가도 항상 한 표 — 단일 소스(멀티플 적정가)가 기준가를 지배해 ±35~60% 극단값을
+    # 만들던 왜곡 완화(2026-06-11). 시장가는 가장 유동성 높은 가치 추정치다.
+    if values and current:
+        values.append(current)
+        parts.append(f"현재가 {current:,.0f}")
     if values:
         return sum(values) / len(values), " + ".join(parts) + (" 평균" if len(values) > 1 else ""), fair is not None
     if current:

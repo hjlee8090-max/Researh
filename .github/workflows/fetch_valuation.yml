@@ -1,0 +1,46 @@
+name: Fetch Valuation Seed
+
+# 밸류에이션 시드(BPS·선행EPS·PER/PBR 밴드 근사)를 인터넷 되는 러너에서 수집해 커밋한다.
+# 1차 책임은 sunday_strategy 주간 갱신 — 이 워크플로는 시드/백스톱(주 1회 + 수동).
+
+on:
+  schedule:
+    # 매주 일요일 07:00 KST(토 22:00 UTC) — sunday_strategy(일 18시) 전 백스톱 시드
+    - cron: "0 22 * * 6"
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/fetch_valuation.py"
+      - "state/.valuation_request"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-valuation
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Seed valuation config
+        run: python scripts/fetch_valuation.py
+      - name: Commit valuation if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add config/valuation.json
+          if git diff --cached --quiet; then
+            echo "no valuation changes — skip commit"
+          else
+            git commit -m "data(valuation): seed BPS/EPS/band approx $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

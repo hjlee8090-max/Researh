@@ -126,10 +126,16 @@ def anchor_price(
 ) -> tuple[float | None, str, bool]:
     """기준가 산출. (anchor, basis 설명, 밸류 밴드 사용 여부) 반환."""
     fair = None
-    # 근사 밴드(가격분포 퍼센타일 — fetch_valuation 시드)는 기준가로 쓰지 않는다:
-    # 밴드 중앙값이 '과거 평균 가격'으로 퇴화해 추세 종목의 기준가를 -20~60% 끌어내린다.
-    # 천장 캡·가드 verdict 용도로만 유효. 실측 5년 밴드(sunday_strategy, 출처 검증)만 기준가 사용.
-    approx_band = "근사" in (val_cfg.get("method") or "") or val_cfg.get("band_quality") == "approx_price_percentile"
+    # 기준가(anchor)에 쓸 수 있는 밴드 품질 화이트리스트:
+    #   None/verified = 사람·일요일 루틴이 출처 검증 후 시드한 실측 5년 밴드
+    #   dart_quarterly = DART 분기 자본총계 기반 실측 멀티플 시계열(fetch_valuation v1.1)
+    # 그 외(approx_price_percentile·inconsistent)는 천장·가드 전용 — 밴드 중앙값이
+    # '과거 평균 가격'으로 퇴화해 기준가를 왜곡한다(2026-06-11 anchor 사고).
+    band_quality = val_cfg.get("band_quality")
+    approx_band = (
+        band_quality not in (None, "verified", "dart_quarterly")
+        or "근사" in (val_cfg.get("method") or "")
+    )
     metric = (val_cfg.get("preferred_metric") or "PBR").upper()
     if metric == "PBR":
         base, band = _num(val_cfg.get("bps")), val_cfg.get("pbr_band_5y")

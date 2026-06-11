@@ -29,6 +29,8 @@ jobs:
         with:
           python-version: "3.11"
       - name: Seed valuation config
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: python scripts/fetch_valuation.py
       - name: Commit valuation if changed
         run: |

@@ -78,6 +78,11 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
   버려지고 있으면 ①출처 URL+게재일 확인 후 `config/news_impact.json` manual_news 승격 또는
   ②`config/news_keywords.json` 키워드 추가. **오분류(방향 반대)** 발견 시 exclude 키워드 추가
   ('관세 환급'·'Exempts Autos' 패턴). `silent_types` 는 unclassified 와 대조해 구멍/뉴스부재를 구분.
+- **estimate_gate 손익 채점 (v2.12)**: `gate_cost` 를 점검한다 — 게이트가 차단한 종목의
+  이후 20거래일 실현 수익 중앙값 ≥ +3% 또는 양(+)수익 비율 ≥ 60%(n≥5)면 `alpha_block_alert` —
+  **게이트가 알파를 차단 중**이므로 임계(block_if_expected_return_below_pct) 완화를 패치 후보로
+  상정한다(레포 교훈: 차단 룰 래칫이 강세장 미배치의 주범). 반대로 차단 종목이 부진하면 게이트
+  유효 — 현행 유지.
 - 보강·승격 내역은 lessons.md 에 '루틴' 분류로 1줄 기록한다(키워드 레지스트리 변경 이력 추적).
 
 ## 2. 산출물 1: reports/YYYY-MM-DD-policy-review.md

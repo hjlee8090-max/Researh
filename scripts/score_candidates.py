@@ -320,6 +320,11 @@ def main() -> int:
             estimate_map = {
                 e["ticker"]: e for e in te.get("estimates", []) if isinstance(e, dict) and e.get("ticker")
             }
+    # v2.12 probe 면제 — 몰입 충족 섹터(sector_rotation_reentry 경로)는 게이트를 어드바이저리로
+    immersed_tickers: set[str] = set()
+    for g in load_json("state/universe_screen.json", {}).get("sector_rotation", []) or []:
+        if isinstance(g, dict) and g.get("immersion_met"):
+            immersed_tickers.update(g.get("tickers") or [])
 
     regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
     regime_state = regime.get("state", "unknown") if isinstance(regime, dict) else "unknown"
@@ -410,19 +415,26 @@ def main() -> int:
             note = f"시장 레짐 risk_off (KOSPI<200일선 {regime.get('pct_vs_ma')}%)"
             block_reasons.append(note + (" — 신규 진입 차단" if risk_off_blocks else " — 신규 진입 신중(어드바이저리)"))
 
-        # v2.12 — 추정 게이트: A/B 등급 추정의 기대수익이 임계(0%) 미만이면 신규 진입 차단
+        # v2.12 — 추정 게이트: A/B 등급 추정의 기대수익이 임계(0%) 미만이면 신규 진입 차단.
+        # 단 몰입 충족 섹터(sector_rotation_reentry probe 경로)는 어드바이저리 강등(2.8 충돌 방지).
         est = estimate_map.get(ticker, {})
         est_ret = est.get("expected_return_pct")
-        est_blocked = (
+        est_negative = (
             bool(eg_cfg.get("enabled"))
             and est.get("grade") in (eg_cfg.get("allowed_grades") or ["A", "B"])
             and isinstance(est_ret, (int, float))
             and est_ret < float(eg_cfg.get("block_if_expected_return_below_pct", 0.0))
         )
+        est_blocked = est_negative and ticker not in immersed_tickers
         if est_blocked:
             block_reasons.append(
                 f"목표가 추정 기대수익 {est_ret:+.1f}% < 0 (등급 {est.get('grade')}, "
                 f"추정가 {est.get('estimate'):,.0f}) — 신규 진입 보류(estimate_gate v2.12)"
+            )
+        elif est_negative:
+            block_reasons.append(
+                f"[어드바이저리] 추정 기대수익 {est_ret:+.1f}% < 0 이나 섹터 몰입 충족 — "
+                "sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
             )
 
         tradable = (

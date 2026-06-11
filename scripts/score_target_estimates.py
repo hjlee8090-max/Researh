@@ -134,6 +134,60 @@ def score_estimates(by_date: dict[str, dict], dates: list[str], closes: dict) ->
     return {"samples": rows, "by_horizon": {f"{h}td": agg(h) for h in HORIZONS_TD}}
 
 
+def gate_cost(by_date: dict[str, dict], dates: list[str], closes: dict) -> dict:
+    """estimate_gate(v2.12) 손익 채점 — '게이트가 차단한 종목이 그 뒤에 올랐는가'.
+
+    게이트 차단 조건(등급 A/B·기대수익<임계)에 해당했던 추정을 로그에서 재구성해
+    이후 5/20거래일 실현 수익을 추적한다. 차단 종목의 fwd20 중앙값 ≥ +3% 또는
+    양(+)수익 비율 ≥ 60%(n≥5)면 '게이트가 알파를 차단' 경보 → 임계 완화 후보
+    (policy.entry_filters.estimate_gate.weekly_gate_scoring).
+    """
+    eg = load_json("config/policy.json", {}).get("entry_filters", {}).get("estimate_gate", {})
+    thr = float(eg.get("block_if_expected_return_below_pct", 0.0))
+    grades = eg.get("allowed_grades") or ["A", "B"]
+    date_idx = {d: i for i, d in enumerate(dates)}
+    rows: list[dict] = []
+    for d, rec in sorted(by_date.items()):
+        i0 = date_idx.get(d)
+        if i0 is None:
+            later = [x for x in dates if x > d]
+            if not later:
+                continue
+            i0 = date_idx[later[0]]
+        for e in rec.get("estimates", []):
+            cur = e.get("current_price")
+            if not cur or e.get("grade") not in grades:
+                continue
+            exp = e.get("expected_return_pct")
+            if not isinstance(exp, (int, float)) or exp >= thr:
+                continue
+            row = {"date": d, "ticker": e["ticker"], "name": e.get("name"),
+                   "expected_return_pct": exp}
+            tcl = closes.get(e["ticker"], {})
+            for h in (5, 20):
+                j = i0 + h
+                if j < len(dates) and dates[j] in tcl:
+                    row[f"fwd_{h}td_pct"] = round((tcl[dates[j]] / cur - 1) * 100, 2)
+            rows.append(row)
+    f20 = [r["fwd_20td_pct"] for r in rows if r.get("fwd_20td_pct") is not None]
+    out: dict[str, Any] = {"n_blocked_samples": len(rows), "n_scored_20td": len(f20),
+                           "threshold_pct": thr, "samples": rows[-30:]}
+    if len(f20) >= MIN_SAMPLES:
+        med = statistics.median(f20)
+        pos = sum(1 for x in f20 if x > 0) / len(f20)
+        out.update({
+            "fwd20_median_pct": round(med, 2),
+            "fwd20_positive_rate": round(pos, 3),
+            "alpha_block_alert": bool(med >= 3.0 or pos >= 0.6),
+            "verdict": ("⚠️ 게이트가 알파를 차단 중 — 임계 완화 후보 상정"
+                        if (med >= 3.0 or pos >= 0.6)
+                        else "게이트 유효 — 차단 종목이 평균적으로 부진(차단 정당)"),
+        })
+    else:
+        out["status"] = f"표본 부족(<{MIN_SAMPLES}) — 채점 보류"
+    return out
+
+
 def news_loop_review() -> dict:
     feed = load_json("state/news_feed.json", {})
     type_dist: dict[str, int] = {}
@@ -168,7 +222,7 @@ def news_loop_review() -> dict:
     }
 
 
-def build_md(score: dict, news: dict, as_of: str, log_days: int) -> str:
+def build_md(score: dict, news: dict, as_of: str, log_days: int, gate: dict | None = None) -> str:
     lines = ["### 목표가 추정 채점 + 뉴스 키워드 점검 (score_target_estimates)", "",
              f"- 기준: {as_of} · 추정 로그 {log_days}일 / 채점 표본 {len(score['samples'])}건"]
     for h, a in score["by_horizon"].items():
@@ -178,6 +232,14 @@ def build_md(score: dict, news: dict, as_of: str, log_days: int) -> str:
             lines.append(
                 f"- {h}: 적중률 {a['hit_rate']:.0%} · 기대 {a['mean_expected']:+.1f}% vs 실현 "
                 f"{a['mean_realized']:+.1f}% · 중앙오차 {a['median_realized_minus_expected']:+.1f}%p (n={a['n']})"
+            )
+    if gate is not None:
+        if gate.get("status"):
+            lines.append(f"- estimate_gate 손익: 차단표본 {gate['n_blocked_samples']}건 — {gate['status']}")
+        else:
+            lines.append(
+                f"- estimate_gate 손익: 차단표본 {gate['n_scored_20td']}건 · fwd20 중앙값 "
+                f"{gate['fwd20_median_pct']:+.1f}% · 양수율 {gate['fwd20_positive_rate']:.0%} → {gate['verdict']}"
             )
     lines += ["",
               f"- 뉴스 피드: 분류 {news.get('classified_total')}건 / 미분류 {news.get('unclassified_total')}건 / 해외 {news.get('global_total')}건",
@@ -191,14 +253,16 @@ def main() -> int:
     by_date = load_log()
     dates, closes = price_lookup()
     score = score_estimates(by_date, dates, closes)
+    gate = gate_cost(by_date, dates, closes)
     news = news_loop_review()
     as_of = now.isoformat(timespec="seconds")
     out = {
         "as_of": as_of,
         "log_days": sorted(by_date),
         "scoring": score,
+        "gate_cost": gate,
         "news_loop": news,
-        "report_section_md": build_md(score, news, as_of, len(by_date)),
+        "report_section_md": build_md(score, news, as_of, len(by_date), gate),
         "policy_link": "sunday_policy_review §1-5 — 적중률·오차가 2주 연속 악화하거나 무음 유형/오분류가 누적되면 news_impact·news_keywords·estimate 파라미터 패치 후보로 상정한다. 모델 파라미터(틸트·게이트·전이계수) 변경은 backtest 재실행 근거 필수.",
     }
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

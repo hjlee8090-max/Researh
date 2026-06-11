@@ -521,7 +521,9 @@
       ],
       "max_age_hours": 24,
       "purpose": "v2.12 — 목표주가 추정 레이어(state/target_estimate.json)의 기대수익이 음(-)인 종목은 신규 진입 차단. 점수 게이트(추세·신뢰도) 통과해도 밸류·뉴스·섹터 집중도 종합 추정이 하락을 가리키면 한 번 더 거르는 안전핀. 근거: 백테스트(reports/2026-06-10-target-model-backtest.md·2026-06-11-sector-global-research.md) 60일 방향 corr 0.4~0.5·후행주 적중률 70.4%. 등급 C(현재가 폴백)·추정 누락·max_age_hours 초과 stale 은 게이트를 만들지 않는다(결측이 차단 룰이 되는 래칫 방지). '추정 +X% 이상 매수' 공격 트리거는 미채택 — estimate_scorecard 표본 누적 후 sunday_policy_review 에서 임계 재검토.",
-      "applies_to": "scripts/score_candidates.py tradable 판정 (block_reasons 사유 노출 → 리포트 자동 전파)"
+      "applies_to": "scripts/score_candidates.py tradable 판정 (block_reasons 사유 노출 → 리포트 자동 전파)",
+      "probe_reentry_exemption": "sector_rotation_reentry(v2.8) 경로와의 충돌 방지 — 종목의 섹터 그룹이 몰입 충족(universe_screen.sector_rotation[].immersion_met=true)이면 게이트를 차단이 아닌 어드바이저리로 강등한다(침체 섹터 바닥 probe 는 정의상 추정이 음수에 가깝다 — 추세게이트 0.3·섹터값 0). 이때 block_reasons 대신 advisory 사유를 남기고 probe 사이징·타이트 손절은 2.8 규정대로 필수.",
+      "weekly_gate_scoring": "게이트도 자기 손익으로 심판받는다 — score_target_estimates 가 '게이트 차단 조건에 해당했던 종목(등급 A/B·기대수익<0)'의 이후 5/20거래일 실현 수익을 추적해 estimate_scorecard.gate_cost 로 집계한다. 차단 종목의 fwd20 중앙값 ≥ +3% 또는 양(+)수익 비율 ≥ 60%(n≥5)면 '게이트가 알파를 차단' 경보 → sunday_policy_review 가 임계 완화(block_if_expected_return_below_pct 하향) 후보로 자동 상정한다."
     },
     "intraday_breach_contingency": {
       "purpose": "v2.5 codify — lessons.md 2026-05-28·05-29 HD조선 교훈 ③(장중 orange/red 이탈을 하루 4회 routine 사이에 실시간 감지 못해 종가 후에야 확인 — 407K·405K 장중 이탈 미대응). 정기 수집 스냅샷이 있어도 장중 임계 이탈 대응이 늦는 갭의 '비상 대응 절차'를 명문화한다.",

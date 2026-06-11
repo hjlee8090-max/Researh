@@ -115,6 +115,7 @@ def main() -> int:
         v["per_band_5y"] = band_from_history(ticker, eps_fwd) if eps_fwd else None
         v["source_url"] = p["source_url"]
         v["source_date"] = today
+        v["band_quality"] = "approx_price_percentile"  # 천장·가드 전용 — 기준가(anchor) 사용 금지
         v["method"] = (
             "BPS=현재가÷PBR·EPS=현재가÷PER(네이버 종목메인 역산, 관측일=source_date). "
             "밴드=직전 ~2.5년 종가분포 5/95퍼센타일÷현재 BPS(EPS) 근사 — BPS/EPS 히스토리 부재로 "

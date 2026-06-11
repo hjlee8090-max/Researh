@@ -126,6 +126,10 @@ def anchor_price(
 ) -> tuple[float | None, str, bool]:
     """기준가 산출. (anchor, basis 설명, 밸류 밴드 사용 여부) 반환."""
     fair = None
+    # 근사 밴드(가격분포 퍼센타일 — fetch_valuation 시드)는 기준가로 쓰지 않는다:
+    # 밴드 중앙값이 '과거 평균 가격'으로 퇴화해 추세 종목의 기준가를 -20~60% 끌어내린다.
+    # 천장 캡·가드 verdict 용도로만 유효. 실측 5년 밴드(sunday_strategy, 출처 검증)만 기준가 사용.
+    approx_band = "근사" in (val_cfg.get("method") or "") or val_cfg.get("band_quality") == "approx_price_percentile"
     metric = (val_cfg.get("preferred_metric") or "PBR").upper()
     if metric == "PBR":
         base, band = _num(val_cfg.get("bps")), val_cfg.get("pbr_band_5y")
@@ -133,7 +137,7 @@ def anchor_price(
         base, band = _num(val_cfg.get("eps_fwd")), val_cfg.get("per_band_5y")
     lo = _num(band[0]) if isinstance(band, list) and len(band) == 2 else None
     hi = _num(band[1]) if isinstance(band, list) and len(band) == 2 else None
-    if base and lo is not None and hi is not None:
+    if base and lo is not None and hi is not None and not approx_band:
         fair = base * (lo + hi) / 2.0
 
     parts: list[str] = []
@@ -679,8 +683,11 @@ def main() -> int:
         caps: list[tuple[str, float]] = []
         if cons_target:
             caps.append(("컨센서스×1.15", cons_target * 1.15))
+        # 천장이 현재가 이하면 캡 무효 — 랠리 종목에서 근사 밴드(가격분포 퍼센타일)의 상단이
+        # 현재가 아래로 내려와 추정가를 시장가 밑으로 끌어내리는 왜곡 방지. 이때는
+        # 밸류 가드 verdict(overheat_entry)가 별도로 경고를 담당한다.
         ceiling = _num((val_checks.get(ticker) or {}).get("valuation_ceiling_price"))
-        if ceiling:
+        if ceiling and (not current or ceiling > current):
             caps.append(("밸류에이션 천장", ceiling))
         estimate = raw_estimate
         cap_applied = None

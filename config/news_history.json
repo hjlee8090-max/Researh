@@ -1,0 +1,128 @@
+{
+  "version": "1.0",
+  "as_of": "2026-06-10",
+  "purpose": "백테스트(backtest_target_model.py)용 라벨드 뉴스 타임라인. 레포 운용 기록(reports/*, watchlist 코멘트, lessons)에서 날짜·종목·유형을 추출했다. type 은 config/news_impact.json 의 news_type_impact_pct 키와 일치시켜 '유형별 가산점 테이블 vs 실측 반응'을 직접 대조할 수 있게 한다. scope=sector/macro 이벤트는 종목 가산점 검증에서 제외하고 맥락으로만 쓴다.",
+  "caveat": "표본이 2026-05-20~06-10 약 15거래일·이벤트 12건으로 작다 — 이벤트 스터디 결과는 단독 결론이 아니라 2.5년 무라벨 충격-감쇠 연구와 교차 검증해서만 반영한다.",
+  "events": [
+    {
+      "ticker": "005930",
+      "date": "2026-05-20",
+      "type": "labor_dispute",
+      "scope": "stock",
+      "label": "중노위 2차 사후조정 결렬 — 5/21 총파업 예고(48,000명·18일·30조원 규모)",
+      "source": "repo:watchlist 5/20 18:00 + 5/21 00:00 코멘트"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-05-21",
+      "type": "labor_or_litigation_resolved",
+      "scope": "stock",
+      "label": "노사 잠정 합의 체결(5/20 22:30)·파업 유보 — 개장 전 반전 호재",
+      "source": "repo:watchlist 5/21 09:05 코멘트"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-05-21",
+      "type": "analyst_target_upgrade",
+      "scope": "stock",
+      "label": "신한투자증권 목표주가 30만→55만(+83%) 상향",
+      "source": "repo:watchlist 5/21 12:00 코멘트"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-05-27",
+      "type": "labor_or_litigation_resolved",
+      "scope": "stock",
+      "label": "임단협 찬반투표 73.7% 가결(10:30 발표) — 파업 리스크 최종 해소",
+      "source": "repo:watchlist 5/27 12:00 코멘트(머니투데이·뉴스핌 복수 확인)"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-05-28",
+      "type": "policy_support",
+      "scope": "sector",
+      "label": "TSMC 3nm 가격 인상 15% — 반도체 가격결정력 확인(섹터 호재)",
+      "source": "repo:watchlist 5/28 09:00 코멘트"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-05-29",
+      "type": "order_backlog_surprise",
+      "scope": "sector",
+      "label": "5월 반도체 수출 +202% YoY — 수요 서프라이즈(섹터)",
+      "source": "repo:watchlist 5/29 09:05 코멘트"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-06-01",
+      "type": "supply_contract_major",
+      "scope": "stock",
+      "label": "HBM4 양산·AMD 주공급사 확인 + Jensen Huang 방한 예고·SK하이닉스 $1조",
+      "source": "repo:watchlist 6/1 09:10·12:00 코멘트"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-06-04",
+      "type": "supply_contract_major",
+      "scope": "stock",
+      "label": "젠슨황 방한 입국(6/4)·HBM4E 공급 협의 + NVIDIA Vera Rubin HBM4 공급사 지명 재확인(6/5)",
+      "source": "repo:watchlist 6/4 12:10·6/5 09:00 thesis_evidence"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-06-05",
+      "type": "earnings_miss_or_guidance_cut",
+      "scope": "sector",
+      "label": "Broadcom -12% AI guidance shock — 글로벌 반도체 급락(삼성 -6.05%, SK -7.44%)",
+      "source": "repo:watchlist 6/5 15:02 cause_analysis(이투데이)"
+    },
+    {
+      "ticker": "005930",
+      "date": "2026-06-08",
+      "type": "macro_shock",
+      "scope": "macro",
+      "label": "Black Monday — KOSPI 급락(6/9 +8.18% 반등으로 저점 대부분 회복)",
+      "source": "repo:watchlist 6/9 thesis status_comment"
+    },
+    {
+      "ticker": "005380",
+      "date": "2026-05-28",
+      "type": "regulation_or_tariff",
+      "scope": "stock",
+      "label": "미국 자동차 관세 악재 — avoid 15% 비중 상한 등록(구조적 악재 플래그)",
+      "source": "repo:reports 5/28~29 후보 검토(관세 악재 감안 비중 15% 상한)"
+    },
+    {
+      "ticker": "005380",
+      "date": "2026-06-02",
+      "type": "earnings_miss_or_guidance_cut",
+      "scope": "stock",
+      "label": "1Q26 영업이익 전기대비 -30.8%(sharp_decline) 시장 인지 확산 — 6/2 종가 -2.80%(729,000)",
+      "source": "repo:state/fundamentals.json + reports 6/2(관세 완화 기대감 서사는 web_verify 오염으로 기각된 날)"
+    },
+    {
+      "ticker": "009540",
+      "date": "2026-05-29",
+      "type": "policy_support",
+      "scope": "stock",
+      "label": "코리아밸류업지수 편입(HD현대중·HD한국조선해양·HD현대마린솔루션)",
+      "source": "news_feed 2026-06-10 수집(google_rss)"
+    },
+    {
+      "ticker": "009540",
+      "date": "2026-06-08",
+      "type": "supply_contract_major",
+      "scope": "stock",
+      "label": "3,607억 규모 초대형 가스운반선 2척 수주 계약 체결",
+      "source": "news_feed 2026-06-10 수집(2news.co.kr)"
+    },
+    {
+      "ticker": "010140",
+      "date": "2026-06-10",
+      "type": "supply_contract_major",
+      "scope": "stock",
+      "label": "미국 첫 해상 LNG 수출기지 4.3조 본계약 서명 + FLNG 세계 최초 3기 동시 건조",
+      "source": "news_feed 2026-06-10 수집(연합뉴스 외 복수)"
+    }
+  ]
+}

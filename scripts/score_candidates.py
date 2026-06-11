@@ -304,6 +304,23 @@ def main() -> int:
     # v2.11 — 밸류에이션 가드 verdict(없으면 빈 dict → 전 종목 tilt 0, 왜곡 없음).
     valuation_checks = load_json("state/valuation_check.json", {}).get("tickers", {})
 
+    # v2.12 — 목표주가 추정 게이트(policy.entry_filters.estimate_gate): 기대수익 음(-)이면
+    # 신규 진입 차단. 등급 C·추정 누락·stale(max_age_hours 초과)은 게이트 미적용(결측 래칫 방지).
+    eg_cfg = (policy.get("entry_filters", {}) or {}).get("estimate_gate", {})
+    estimate_map: dict[str, dict] = {}
+    if eg_cfg.get("enabled"):
+        te = load_json("state/target_estimate.json", {})
+        try:
+            age_h = (
+                datetime.now(KST) - datetime.fromisoformat(te.get("as_of", ""))
+            ).total_seconds() / 3600
+        except ValueError:
+            age_h = None
+        if age_h is not None and age_h <= float(eg_cfg.get("max_age_hours", 24)):
+            estimate_map = {
+                e["ticker"]: e for e in te.get("estimates", []) if isinstance(e, dict) and e.get("ticker")
+            }
+
     regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
     regime_state = regime.get("state", "unknown") if isinstance(regime, dict) else "unknown"
     # v2.5 — 섹터 로테이션 벤치마크: KOSPI 60일 수익률(없으면 상대강도는 중립 폴백).
@@ -393,11 +410,27 @@ def main() -> int:
             note = f"시장 레짐 risk_off (KOSPI<200일선 {regime.get('pct_vs_ma')}%)"
             block_reasons.append(note + (" — 신규 진입 차단" if risk_off_blocks else " — 신규 진입 신중(어드바이저리)"))
 
+        # v2.12 — 추정 게이트: A/B 등급 추정의 기대수익이 임계(0%) 미만이면 신규 진입 차단
+        est = estimate_map.get(ticker, {})
+        est_ret = est.get("expected_return_pct")
+        est_blocked = (
+            bool(eg_cfg.get("enabled"))
+            and est.get("grade") in (eg_cfg.get("allowed_grades") or ["A", "B"])
+            and isinstance(est_ret, (int, float))
+            and est_ret < float(eg_cfg.get("block_if_expected_return_below_pct", 0.0))
+        )
+        if est_blocked:
+            block_reasons.append(
+                f"목표가 추정 기대수익 {est_ret:+.1f}% < 0 (등급 {est.get('grade')}, "
+                f"추정가 {est.get('estimate'):,.0f}) — 신규 진입 보류(estimate_gate v2.12)"
+            )
+
         tradable = (
             entry_passes
             and conf in ("high", "medium")
             and not bear_flags
             and not (risk_off_blocks and regime_state == "risk_off")
+            and not est_blocked
         )
         adopt_reasons = (
             build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high, t_parts, rs_excess)
@@ -440,6 +473,12 @@ def main() -> int:
                 "entry_filter_passes": entry_passes,
                 "structural_bear_flags": bear_flags,
                 "theme_exposure": c.get("theme_exposure", []),
+                "target_estimate": {
+                    "estimate": est.get("estimate"),
+                    "expected_return_pct": est_ret,
+                    "grade": est.get("grade"),
+                    "gate_blocked": est_blocked,
+                } if est else None,
                 "fundamentals": {
                     "revenue": fund.get("revenue"),
                     "operating_profit": fund.get("operating_profit"),

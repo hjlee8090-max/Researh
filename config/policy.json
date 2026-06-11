@@ -1,7 +1,8 @@
 {
-  "version": "2.11",
+  "version": "2.12",
   "last_updated": "2026-06-10",
   "changelog": [
+    "2.12: 목표주가 추정 게이트(entry_filters.estimate_gate) — estimate_target_price v1.3 의 기대수익이 음(-)인 종목 신규 진입 차단. 점수 게이트 통과해도 밸류·뉴스·섹터 집중도 종합 추정이 하락을 가리키면 한 번 더 거르는 안전핀(백테스트 60일 corr 0.4~0.5·후행주 적중률 70.4% 근거). 등급 C/추정 누락/24h stale 은 게이트 미적용(결측 래칫 방지), 공격 트리거('추정 +X% 매수')는 채점 표본 누적 후 재검토. score_candidates 가 block_reasons 로 사유 노출.",
     "2.11: 손익구조 보강 6종 — ①단계경보·손절 ATR 연동(tiered_alerts.mode=atr_adaptive: 유효임계=max(-20%, min(고정%, -(배수×ATR%))), orange 조건분기(매크로 단독+thesis intact 면 매도 대신 타이트 트레일링), volatility_sizing 의 'red -10% 고정 캡' 역설 제거 — 고변동 종목에 좁은 손절+작은 수량 이중 부과 해소) ②트레일링 2단 구조(risk.trailing_stop: 1차 -max(3,1.0×ATR%) 이탈 시 50% 부분익절 + 잔여 샹들리에 -2.0×ATR% — 고정 -3% 전량청산이 승자를 조기 절단하던 구조 교정, 5/22 +4.84% 익절 후 +20.3% 일실 사례) ③재진입 규율(entry_filters.reentry_discipline: 익절 후 청산가 위 추격 금지·손절 후 2거래일 냉각(저점 -3% 복원 면제)·52주 고점 97%+ probe — 6/4 추격 재진입 -82,480 차단, 6/9 저점 복원 진입은 허용) ④주간 목표 상대화(risk.weekly_target_mode=relative_to_kospi: KOSPI+0.5%p, 절대 하한 +1.0% — 절대 +10%/주가 목표가 인플레(도달 0/6)·추격 압박 유발, target_price_rule 에서 주간 부족분 제거) ⑤차단 룰 래칫 해소(catalysts.alert_rules 이벤트 차단→50% 축소, lessons_rule_sunset 즉석 룰 기본 5거래일 일몰, single_trade_risk_cap.one_share_probe_exception 고가·고ATR 종목 1주 probe — SK하이닉스 영구 매수불가 해소) ⑥valuation_anchor(PER/PBR 밴드 목표가 천장 min(동적목표가, 컨센×1.15, 밸류천장)·과열 probe·deep_value 연계·valuation_tilt ±0.03, 사이클 업종 PBR 우선·결측 skip 무영향, config/valuation.json + check_valuation_guard.py). + 신규 인프라: rule_attribution.py(청산 룰별 손익·t1/t5/t10 일실·PF/expectancy·벤치마크 3종·blocked-day 채점 — saturday_review/sunday_policy_review 의무 인용, 19:30 audit 워크플로 동승) + exit_tracking 전방추적(fetch_market_data.collect_tickers 연동) + KRX 공식 EOD 백스톱(fetch_krx, pykrx — naver·yahoo 동시 403 시 3출처 폴백, KRX_ID/PW 시크릿 없으면 조용히 비활성). 근거: reports/2026-06-10-pipeline-research.md (PF 0.68·마찰 41%·강제청산 6/6·목표도달 0건·평균비중 20.2% vs KOSPI +11.3%).",
     "2.10: 시장 상황 적응형 민감도 — sector_rotation_reentry.sensitivity_mode=auto + sensitivity_by_tier(strong_bull aggressive·bull/neutral medium·bear/deep_bear conservative). 강세장은 섹터 로테이션이 강해 침체 섹터가 강반등하므로 바닥을 일찍(aggressive=몰입 1신호) 잡고, 약세장은 떨어지는 칼날·가짜 바닥이 많아 충분히 확인(conservative=3신호)한 뒤만 잡는다(추세추종·자본보존 ethos 와 정합). screen_universe.py 가 snapshot.regime.tier 로 자동 조회하고(tier unknown·고정모드면 sensitivity 폴백) output 에 sensitivity_basis 기록. 추가 안전: weekly_recovery_plan 단계가 caution/defensive 면 0900 routine 이 한 단계 더 보수적으로 override('더 보수적인 쪽'). probe 사이징·촉매(방아쇠) 필수는 불변.",
     "2.9: '공격' 모드 가격구조 반등 신호 추가 — sector_rotation_reentry.immersion_confirmation.signals.price_reversal 신설(5일선 회복 종가>5일평균 + higher-low 신저점 미갱신)을 4번째 몰입 집계 신호로. 섹터 구성종목 절반 이상 충족 시 섹터 price_reversal 점등. 가장 빠른(early) 바닥 신호라 aggressive(min_signals 1)에서 단독으로 바닥을 일찍 잡고, medium(2)은 가격반등+자금발자국 1개, conservative(3)는 추가 2개와 함께만 — 노이즈는 probe 사이징·타이트 손절로 방어(촉매=방아쇠는 여전히 필수). 데이터: fetch_market_data 가 종목별 structure(ma5·above_ma5·higher_low·price_reversal)를 추가(이미 가진 일봉에서 산출, 네트워크 무관). screen_universe.compute_immersion 에 price_reversal 집계 추가(theme_heat 은 여전히 context 제외).",
@@ -28,7 +29,11 @@
     "market": "KOSPI",
     "size": "대형주 (시총 상위 30위 우선, 상위 100위 이내 허용)",
     "sector_preference": "없음 (매크로/뉴스 기반 자유 선정)",
-    "exclude": ["관리종목", "거래정지", "신규상장 1년 미만"]
+    "exclude": [
+      "관리종목",
+      "거래정지",
+      "신규상장 1년 미만"
+    ]
   },
   "horizon": {
     "style": "중장기 스윙",
@@ -95,7 +100,11 @@
       "yellow_pct": -5.0,
       "orange_pct": -7.0,
       "red_pct": -10.0,
-      "atr_multiples": {"yellow": 1.5, "orange": 2.0, "red": 2.5},
+      "atr_multiples": {
+        "yellow": 1.5,
+        "orange": 2.0,
+        "red": 2.5
+      },
       "atr_threshold_hard_floor_pct": -20.0,
       "effective_threshold_rule": "v2.11 — 유효 임계 = max(atr_threshold_hard_floor_pct, min(고정값, -(atr_multiples[tier] × atr_pct))). atr_pct 는 market_snapshot.tickers.<t>.volatility.atr_pct. min()은 '더 음수인 쪽' 채택: ATR 6% → orange 유효 임계 = min(-7, -12) = -12%(변동성 장 자동 확대), ATR 2% → min(-7, -4) = -7%(평시 현행 동일). atr_pct 결측 시 고정값 폴백. 근거: 2026-05-20~06-09 손실 4건 전부 고정 % 임계의 매크로 노이즈 체결(목표 도달 0건, reports/2026-06-10-pipeline-research.md §1-2).",
       "yellow_action": "원인 3가지 검색·기록 의무, 함정패턴 cross-check, 비중 유지",
@@ -136,36 +145,62 @@
       "tiers": [
         {
           "tier": "strong_bull",
-          "gates": {"price_vs_ma200_min": 0.0, "price_vs_ma60_min": 0.0, "ma200_slope_min": 0.5},
-          "target_equity_pct": [80, 95],
+          "gates": {
+            "price_vs_ma200_min": 0.0,
+            "price_vs_ma60_min": 0.0,
+            "ma200_slope_min": 0.5
+          },
+          "target_equity_pct": [
+            80,
+            95
+          ],
           "entry_mode": "default",
           "narrative": "강세 추세 — 지수 200·60일선 위 + 200일선 상승. 주식 비중 80~95%(현금 5~20%), 기본 진입비중·4종목 풀가동."
         },
         {
           "tier": "bull",
-          "gates": {"price_vs_ma200_min": 0.0, "ma200_slope_min": -0.5},
-          "target_equity_pct": [65, 80],
+          "gates": {
+            "price_vs_ma200_min": 0.0,
+            "ma200_slope_min": -0.5
+          },
+          "target_equity_pct": [
+            65,
+            80
+          ],
           "entry_mode": "default",
           "narrative": "상승 — 200일선 위, 기울기 횡보~상승. 주식 65~80%. 기본 진입비중."
         },
         {
           "tier": "neutral",
-          "gates": {"price_vs_ma200_min": -2.0},
-          "target_equity_pct": [45, 60],
+          "gates": {
+            "price_vs_ma200_min": -2.0
+          },
+          "target_equity_pct": [
+            45,
+            60
+          ],
           "entry_mode": "reduced",
           "narrative": "중립 — 200일선 ±2% 근처. 주식 45~60%. 축소 진입비중·선별적."
         },
         {
           "tier": "bear",
-          "gates": {"price_vs_ma200_min": -8.0},
-          "target_equity_pct": [25, 40],
+          "gates": {
+            "price_vs_ma200_min": -8.0
+          },
+          "target_equity_pct": [
+            25,
+            40
+          ],
           "entry_mode": "reduced",
           "narrative": "약세 — 200일선 하회(-8% 이내). 주식 25~40%로 현금 확보. 축소 진입·R/R 상위만."
         },
         {
           "tier": "deep_bear",
           "gates": {},
-          "target_equity_pct": [0, 25],
+          "target_equity_pct": [
+            0,
+            25
+          ],
           "entry_mode": "block",
           "narrative": "심한 약세 — 200일선 -8% 초과 하회. 주식 0~25%, 신규 진입 중단·현금 방어. 보유는 트레일링스톱·축소."
         }
@@ -198,9 +233,26 @@
       "low": "출처 1개 미만, 시각 불명, 또는 출처 간 괴리 2% 초과"
     },
     "allowed_actions_by_confidence": {
-      "high": ["NEW_ENTRY", "SCALE_IN", "EXIT", "TRAILING_STOP", "EVAL", "HOLD"],
-      "medium": ["NEW_ENTRY", "SCALE_IN", "EXIT", "TRAILING_STOP", "EVAL", "HOLD"],
-      "low": ["EVAL", "HOLD"]
+      "high": [
+        "NEW_ENTRY",
+        "SCALE_IN",
+        "EXIT",
+        "TRAILING_STOP",
+        "EVAL",
+        "HOLD"
+      ],
+      "medium": [
+        "NEW_ENTRY",
+        "SCALE_IN",
+        "EXIT",
+        "TRAILING_STOP",
+        "EVAL",
+        "HOLD"
+      ],
+      "low": [
+        "EVAL",
+        "HOLD"
+      ]
     },
     "medium_new_entry_rule": "v2.0 — medium(단일 출처, 또는 stale 2출처)에서도 NEW_ENTRY/SCALE_IN 을 허용한다. 단 '데이터 불확실 프리미엄'으로 (a)진입비중을 reduced_entry_weight_pct 로 축소하고 (b)R/R 하한을 regime_adaptive_rr 적용값 +0.1 상향한다. 2출처 일치 high 면 default 비중·기본 R/R. 이 규칙의 목적: 직전까지 medium 에서 EXIT(손절)는 집행되는데 NEW_ENTRY 만 high 를 요구해, 데이터 차단(HTTP 403) 구간에 매도만 일어나고 매수는 막혀 현금이 단방향으로 누적되던 구조적 비대칭을 제거한다. 전 종목 신뢰도가 실제 low 일 때만 block_trade_if_confidence_below 로 매수·매도 모두 차단된다.",
     "low_confidence_eval_rule": "신뢰도 low 인 보유 종목은 trade_log 에 EXIT/SCALE_IN 을 기록하지 않는다. EVAL/HOLD 만 허용하며 portfolio.history 의 평가금액은 직전 신뢰 가능 종가를 그대로 사용하고 note 에 'price_confidence=low, valuation carried over from <YYYY-MM-DD>' 를 명시한다.",
@@ -227,10 +279,19 @@
       "purpose": "v2.2 — pre_trade_gate(프롬프트 의존)를 우회해 묵은/미검증 가격으로 체결되는 것을 CI 에서 하드 차단하는 마지막 안전장치. 모든 booking(BUY/SELL 계열) trade_log 항목은 price_source 를 기록해야 하며, scripts/check_trade_log_gate.py 가 위반 시 exit 1 → audit_pipeline(build_and_notify) 빌드 FAIL + auto_merge_routines 병합 차단을 일으킨다(프롬프트가 무시돼도 묵은 가격 체결이 main 에 도달하지 못함).",
       "script": "scripts/check_trade_log_gate.py",
       "price_source_required_since": "2026-06-02",
-      "allowed_price_sources": ["snapshot_fresh", "web_verified"],
-      "require_verify_url_for": ["web_verified"],
+      "allowed_price_sources": [
+        "snapshot_fresh",
+        "web_verified"
+      ],
+      "require_verify_url_for": [
+        "web_verified"
+      ],
       "note": "price_source_required_since 이전 항목은 grandfather(소급 미적용 — 기존 trade_log 보존). web_verified 는 verify_url 동반 필수. EOD_EVAL/OPEN_CHECK/HOLD 등 비체결 액션은 대상 아님(BUY/SELL 계열만). 직접 main push 경로는 build_and_notify 빌드 FAIL 로 가시화되고, 진짜 병합 차단까지 원하면 main 브랜치 보호규칙에 이 체크를 required status 로 등록한다(레포 설정).",
-      "enforced_by": ["scripts/check_trade_log_gate.py", "scripts/audit_pipeline.py(audit_trade_provenance)", ".github/workflows/auto_merge_routines.yml"]
+      "enforced_by": [
+        "scripts/check_trade_log_gate.py",
+        "scripts/audit_pipeline.py(audit_trade_provenance)",
+        ".github/workflows/auto_merge_routines.yml"
+      ]
     },
     "data_freshness": {
       "enabled": true,
@@ -281,16 +342,22 @@
         "index_close_paths": "kospi*close (kospi_close·kospi_prev_close 포함; change/chg/pct 제외)"
       },
       "note": "enforced_since 이전 ts 는 grandfather(소급 미적용). 모든 액션(OPEN_CHECK·EOD_EVAL 포함)을 검사한다 — 2026-06-08 오염은 BUY/SELL 이 아닌 OPEN_CHECK 항목에 있었다.",
-      "enforced_by": ["scripts/check_trade_log_gate.py", "scripts/audit_pipeline.py(audit_trade_provenance)", ".github/workflows/auto_merge_routines.yml"]
+      "enforced_by": [
+        "scripts/check_trade_log_gate.py",
+        "scripts/audit_pipeline.py(audit_trade_provenance)",
+        ".github/workflows/auto_merge_routines.yml"
+      ]
     }
   },
-
   "market_hours": {
     "purpose": "v2.3 — 장중 시간(세션) 정책. 직전까지 영업일(요일/공휴일)만 판정하고 '시각'은 보지 않아, 18시 routine 이 종가 도달 손절을 routine 실행 시각(18:00)으로 체결 기록하는 등 한국장 거래 시간(정규장 09:00~15:30) 밖의 체결이 trade_log 에 남았다(2026-06-01 SELL_ORANGE_STOP ts=18:00). 정규장에서만 실시간 체결을 허용하고, 마감 후 routine 은 종가 기준 청산만 하도록 명문화한다.",
     "timezone": "Asia/Seoul",
     "calendar_sessions_ref": "config/market_calendar.json.sessions (정규장 09:00~15:30·개장/마감 동시호가·시간외·반장)",
     "guard_script": "scripts/check_market_session.py",
-    "regular_session": {"open": "09:00", "close": "15:30"},
+    "regular_session": {
+      "open": "09:00",
+      "close": "15:30"
+    },
     "execution_mode_by_slot": {
       "00:00": "none (글로벌 야간 — 한국장 폐장, 거래 없음)",
       "09:00": "live (정규장 개장)",
@@ -311,14 +378,22 @@
       "purpose": "v2.3 — market_hours.rules 를 CI 에서 하드 강제하는 마지막 안전장치(trade_provenance_gate 와 동일 패턴). 프롬프트가 무시돼도 장중 시간 밖 체결이 main 에 도달하지 못하게 한다.",
       "script": "scripts/check_trade_log_gate.py (audit_pipeline + auto_merge_routines 가 실행)",
       "enforced_since": "2026-06-02",
-      "regular_session": {"open": "09:00", "close": "15:30"},
-      "allowed_eod_venues": ["closing_auction"],
+      "regular_session": {
+        "open": "09:00",
+        "close": "15:30"
+      },
+      "allowed_eod_venues": [
+        "closing_auction"
+      ],
       "rule": "체결(BUY/SELL 계열) ts 의 시각이 정규장(09:00~15:30, 경계 포함) 밖이면 위반. 단 execution_venue ∈ allowed_eod_venues(closing_auction) 인 SELL 계열(EOD 종가 청산)은 예외로 허용하되, 그 ts 시각은 마감 동시호가(15:30)로 기록되어야 한다. BUY(신규/추가매수)는 정규장 밖이면 예외 없이 위반(마감 후 신규진입 금지).",
       "note": "enforced_since 이전 ts 의 booking 은 grandfather(소급 미적용 — 기존 trade_log 보존). 2026-06-01 SELL_ORANGE_STOP(ts=18:00, 종가 기준)은 grandfather 되며, 이후 EOD 청산은 ts=15:30 + execution_venue=closing_auction 규칙을 따른다. EOD_EVAL/OPEN_CHECK/MIDDAY_CHECK/HOLD 등 비체결 액션은 대상 아님(BUY/SELL 계열만 — reconcile_portfolio 분류 재사용).",
-      "enforced_by": ["scripts/check_trade_log_gate.py", "scripts/audit_pipeline.py(audit_trade_provenance)", ".github/workflows/auto_merge_routines.yml"]
+      "enforced_by": [
+        "scripts/check_trade_log_gate.py",
+        "scripts/audit_pipeline.py(audit_trade_provenance)",
+        ".github/workflows/auto_merge_routines.yml"
+      ]
     }
   },
-
   "weekly_recovery_plan": {
     "purpose": "주간 누적 손실 단계에 따라 종목당 비중·후보 검색 범위를 자동 축소해 단발 손실이 누적 손실로 번지지 않도록 한다. (일일 진입 건수 할당은 사용하지 않는다 — 리스크는 비중·R/R·검색범위로 통제)",
     "stages": [
@@ -351,7 +426,6 @@
     "stage_change_logging": "stage 가 직전 routine 대비 변경되면 lessons.md 에 '회복 전략 단계 변경' 항목으로 1줄 기록.",
     "re_entry_after_defensive": "defensive 단계는 누적 수익률이 -3.5% 위로 회복한 18시 종가 평가 후 caution 으로 1단계만 완화한다 (점프 금지)."
   },
-
   "reward_risk_management": {
     "min_reward_risk_ratio_for_new_entry": 1.2,
     "review_holding_if_rr_below": 1.2,
@@ -393,7 +467,11 @@
     "require_pre_mortem_one_liner": true,
     "momentum_factors": {
       "purpose": "5일 누적(급락 회피 게이트)만으로는 약하므로, 후보 점수에 중기 모멘텀과 52주 고점 근접도를 결합한다. score_candidates.py 가 산출.",
-      "blend_weights": {"ret5": 0.34, "ret60": 0.33, "pct_of_52w_high": 0.33},
+      "blend_weights": {
+        "ret5": 0.34,
+        "ret60": 0.33,
+        "pct_of_52w_high": 0.33
+      },
       "ret60_lookback_days": 60,
       "high_52w_lookback_days": 252,
       "reference": "George & Hwang(2004) 52주 고점 효과, time-series momentum 12-1",
@@ -403,7 +481,13 @@
       "purpose": "v2.5 — 섹터 로테이션/상대강도 축. 개별 종목의 절대 모멘텀(ret60)만 보면 '오르는 장'에서 후행 섹터(예: 반도체 주도장의 조선·금융)도 양(+)이라 채택돼 지수를 못 따라간다(2주 운용: 조선 3회·금융 3회 연속 손실, KOSPI +8.8% 인데 -1.77%). KOSPI 대비 '초과수익(excess return)'을 점수화해 지금 자금이 쏠리는 주도 섹터에 가중한다. benchmark=KOSPI 60일 수익률(market_snapshot.regime.ret_60d_pct, fetch_market_data 가 ^KS11 로 산출). 지수 데이터가 없으면(unknown) 0.5 중립 폴백으로 왜곡하지 않는다.",
       "benchmark": "market_snapshot.regime.ret_60d_pct",
       "excess_return_score_bands": "excess = stock.ret_60d_pct − KOSPI.ret_60d_pct. ≥+30%p→1.0 / ≥+10%p→0.85 / ≥0%p→0.65 / ≥−10%p→0.4 / ≥−25%p→0.2 / <−25%p→0.05",
-      "score_blend_weights": {"momentum": 0.30, "relative_strength": 0.20, "thematic": 0.15, "confidence": 0.15, "thesis": 0.20},
+      "score_blend_weights": {
+        "momentum": 0.3,
+        "relative_strength": 0.2,
+        "thematic": 0.15,
+        "confidence": 0.15,
+        "thesis": 0.2
+      },
       "blend_note": "v2.0 의 momentum 0.35·thematic 0.20·confidence 0.20·thesis 0.25 를 재조정해 relative_strength 0.20 을 신설하고 나머지를 비례 축소했다(합 1.0). momentum 은 여전히 급락 회피 게이트로 entry_filter 에서 -7% 누적을 차단한다 — relative_strength 는 '주도 섹터 우대' 가중일 뿐 게이트가 아니다."
     },
     "post_surge_cooldown": {
@@ -428,6 +512,17 @@
         "action": "진입가가 52주 고점의 97% 이상이면 신규/재진입 비중 50% 축소(probe) + ATR 타이트 손절. post_surge_cooldown 의 strong_bull 예외보다 이 가드가 우선한다."
       }
     },
+    "estimate_gate": {
+      "enabled": true,
+      "block_if_expected_return_below_pct": 0.0,
+      "allowed_grades": [
+        "A",
+        "B"
+      ],
+      "max_age_hours": 24,
+      "purpose": "v2.12 — 목표주가 추정 레이어(state/target_estimate.json)의 기대수익이 음(-)인 종목은 신규 진입 차단. 점수 게이트(추세·신뢰도) 통과해도 밸류·뉴스·섹터 집중도 종합 추정이 하락을 가리키면 한 번 더 거르는 안전핀. 근거: 백테스트(reports/2026-06-10-target-model-backtest.md·2026-06-11-sector-global-research.md) 60일 방향 corr 0.4~0.5·후행주 적중률 70.4%. 등급 C(현재가 폴백)·추정 누락·max_age_hours 초과 stale 은 게이트를 만들지 않는다(결측이 차단 룰이 되는 래칫 방지). '추정 +X% 이상 매수' 공격 트리거는 미채택 — estimate_scorecard 표본 누적 후 sunday_policy_review 에서 임계 재검토.",
+      "applies_to": "scripts/score_candidates.py tradable 판정 (block_reasons 사유 노출 → 리포트 자동 전파)"
+    },
     "intraday_breach_contingency": {
       "purpose": "v2.5 codify — lessons.md 2026-05-28·05-29 HD조선 교훈 ③(장중 orange/red 이탈을 하루 4회 routine 사이에 실시간 감지 못해 종가 후에야 확인 — 407K·405K 장중 이탈 미대응). 정기 수집 스냅샷이 있어도 장중 임계 이탈 대응이 늦는 갭의 '비상 대응 절차'를 명문화한다.",
       "covered_by": "보유 종목이 손절선·orange(-7%)·red(-10%) 임계의 ±3% 안이면 price_data_quality.data_freshness.action_on_proximity_when_not_fresh 가 freshness≠fresh 일 때 웹 실시간 1회 교차확인을 의무화한다(묵은 가격에 의한 손절 지연 방지). 12·15시 prompt 0-B 가 이를 적용한다.",
@@ -443,9 +538,23 @@
       "applies_to": "prompts/0000_global.md §2-1 갭다운 예측"
     },
     "structural_bear_keywords": [
-      "관세", "보조금 폐지", "규제", "제재", "감독원", "소송", "리콜",
-      "공급망 단절", "임원 리스크", "회계 이슈", "공정위", "특별검사",
-      "tariff", "sanction", "lawsuit", "recall", "investigation"
+      "관세",
+      "보조금 폐지",
+      "규제",
+      "제재",
+      "감독원",
+      "소송",
+      "리콜",
+      "공급망 단절",
+      "임원 리스크",
+      "회계 이슈",
+      "공정위",
+      "특별검사",
+      "tariff",
+      "sanction",
+      "lawsuit",
+      "recall",
+      "investigation"
     ],
     "on_structural_bear_match": {
       "conviction_adjustment": -1,
@@ -471,12 +580,21 @@
       "required": true,
       "rule": "출처 URL + 게재일(오늘~D-max_age_days) 있는 섹터 단위 호재. price_data_quality.web_verify_guard.source_date_verification + source_provenance_gate 를 그대로 적용한다(촉매 환각 방지 — 2026-06-02 현대차 허구촉매·2026-06-08 묵은기사 도용 이력). 가격 변동 단독·무출처 '○○ 기대감 추정'은 촉매로 인정하지 않는다.",
       "max_age_days": 3,
-      "types": ["수주·계약", "정책·지정학·규제", "업황지표(신조선가지수·운임·수주잔고·가동률 등)", "글로벌 peer/테마 동조 재평가"],
+      "types": [
+        "수주·계약",
+        "정책·지정학·규제",
+        "업황지표(신조선가지수·운임·수주잔고·가동률 등)",
+        "글로벌 peer/테마 동조 재평가"
+      ],
       "logged_to": "config/catalysts.json.manual_events(scope=sector, verify_url 필수) 또는 routine 의 sector_reentry 판단 근거. 촉매가 충분히 크면 sunday_strategy 가 config/themes.json 의 theme strength 상향과 연동."
     },
     "immersion_confirmation": {
       "purpose": "자금이 실제로 섹터로 도는지의 quant 발자국. 섹터 단위 외국인/기관 수급을 직접 수집하지 못하므로 상대강도·거래량·동조로 대체측정한다. 헤드라인이 진짜 몰입을 끌었는지 검증하는 안전핀.",
-      "min_signals_by_sensitivity": {"aggressive": 1, "medium": 2, "conservative": 3},
+      "min_signals_by_sensitivity": {
+        "aggressive": 1,
+        "medium": 2,
+        "conservative": 3
+      },
       "signals": {
         "rs_inflection": "섹터 구성종목의 20일 초과수익(vs KOSPI) 중앙값 > 60일 초과수익 중앙값(상대추세 개선) 그리고 20일 초과수익 중앙값 ≥ rs_inflection_min_pct. '한 달 새 시장을 따라잡기 시작' = 로테이션 초기 신호.",
         "volume_surge": "섹터 구성종목의 절반 이상이 liquidity.vol_ratio_20d ≥ volume_surge_x(거래량 급증 = 관심 유입).",
@@ -564,9 +682,18 @@
     "enabled": true,
     "purpose": "equity-research thesis-tracker 채용(Part B). 종목별 매수 논리(thesis)와 무효화 조건(invalidation)을 watchlist.stocks[].thesis 에 구조화해, 가격 오차와 독립적으로 '논리가 깨졌는가'를 판정한다. 가격이 green 이어도 thesis 가 깨지면 청산 후보.",
     "location": "config/watchlist.json 의 각 stock.thesis = {id, statement, key_drivers[], invalidation[], status, entry_ts, last_review_ts}. invalidation[] = [{id, cond, type, hard, linked_catalyst?}].",
-    "invalidation_type_enum": ["매크로", "섹터", "개별", "가정오류"],
+    "invalidation_type_enum": [
+      "매크로",
+      "섹터",
+      "개별",
+      "가정오류"
+    ],
     "type_alignment": "invalidation.type 은 18시 자기보완 루프의 오차 4분류와 동일 enum 이다. status 변경 시 그 type 으로 lessons.md 에 기록 → build_lessons_index 분류와 자동 정합.",
-    "status_enum": ["intact", "weakening", "invalidated"],
+    "status_enum": [
+      "intact",
+      "weakening",
+      "invalidated"
+    ],
     "hard_action": "hard:true 조건 충족 = status invalidated → 가격 무관 종가 청산·축소 1순위(다음 거래일 종가). 종가청산 정책상 즉시 시장가 청산이 아니라 '다음 종가 청산 후보' 로 처리.",
     "soft_action": "hard:false 조건 충족 = status weakening → 추가매수 금지·트레일링스톱 강화·목표가 상향 보류. 즉시 매도는 아님.",
     "review_cadence": "보유 종목은 매 09시(1차)·18시(확정) 점검. 신규 진입 시 thesis 를 작성해 채운다. 청산 종목의 최종 status·사유는 comments 에 보존.",
@@ -605,8 +732,17 @@
     "spec": "prompts/earnings_preview.md (이벤트 기반 — 0900·1800 routine 이 호출). 상태: state/earnings_preview.json (active 프리뷰 + scorecard).",
     "inputs": "config/catalysts.json(언제) + state/consensus.json(예상치 baseline, EPS 우선) + watchlist.thesis(논리·earnings_miss invalidation) + state/fundamentals.json/웹(발표 후 실제값).",
     "preview_lead_days": 1,
-    "surprise_thresholds": {"beat_pct": 10, "miss_pct": -10, "note": "컨센 대비 실제 실적 괴리 임계. ±10% 안이면 inline."},
-    "price_reaction_heuristic": {"beat": "+3~6%", "inline": "±1~2%", "miss": "-4~8%", "note": "대형주 기본 밴드. ATR 높으면 확대. 휴리스틱이며 scorecard 로 보정."},
+    "surprise_thresholds": {
+      "beat_pct": 10,
+      "miss_pct": -10,
+      "note": "컨센 대비 실제 실적 괴리 임계. ±10% 안이면 inline."
+    },
+    "price_reaction_heuristic": {
+      "beat": "+3~6%",
+      "inline": "±1~2%",
+      "miss": "-4~8%",
+      "note": "대형주 기본 밴드. ATR 높으면 확대. 휴리스틱이며 scorecard 로 보정."
+    },
     "scope": "보유 종목 PREVIEW·SCORE 의무. 후보는 PREVIEW 권고(진입 보류 보조).",
     "thesis_link": "miss 시나리오는 watchlist.thesis 의 earnings_miss(가정오류) invalidation 을 발동 점검 → Part C(촉매→논리) 결합을 닫는다.",
     "meta_review": "sunday_policy_review 가 scorecard 누적 hit-rate 를 점검해 임계·휴리스틱·확률배분 가이드를 조정 제안.",
@@ -652,8 +788,16 @@
       "execution_preference": "Claude cloud routine 또는 Codex worktree",
       "commit_prefix": "policy-review:",
       "purpose": "lessons.md의 반복 교훈이 policy.json/prompt 규칙으로 실제 반영됐는지 검사하고 패치 후보를 제안한다.",
-      "inputs": ["state/lessons.md", "config/policy.json", "prompts/*.md", "reports/YYYY-Www-archive.md"],
-      "outputs": ["reports/YYYY-MM-DD-policy-review.md", "(선택) prompts/*.md or config/policy.json 패치 PR"],
+      "inputs": [
+        "state/lessons.md",
+        "config/policy.json",
+        "prompts/*.md",
+        "reports/YYYY-Www-archive.md"
+      ],
+      "outputs": [
+        "reports/YYYY-MM-DD-policy-review.md",
+        "(선택) prompts/*.md or config/policy.json 패치 PR"
+      ],
       "checklist": [
         "lessons.md 의 '다음 적용 룰' 항목이 policy.json 또는 prompts 에 실제 반영됐는지 grep 으로 확인",
         "최근 2주 내 동일 분류(매크로/섹터/개별/가정오류/루틴)의 반복 누적 카운트 ≥ 3 인 항목 식별",

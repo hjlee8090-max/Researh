@@ -146,6 +146,12 @@ v1.4는 자기보완 루프에 편입됐다: 추정 스냅샷이 `state/target_e
 `state/estimate_scorecard.json` 을 만든다. sunday_policy_review(일 20시)가 0-C 단계에서
 실행해 §1-5 로 점검한다 — 적중률 악화 시 추정식 패치 후보 상정(단 파라미터 변경은 백테스트
 재실행 근거 필수), unclassified/오분류 검토 → manual_news 승격·키워드 보강 의무.
+
+v1.5에서 매수 프로세스에 연결됐다(policy v2.12 `entry_filters.estimate_gate`):
+추정 기대수익이 음(-)인 종목(등급 A/B)은 점수 게이트를 통과해도 **신규 진입 차단** —
+score_candidates 가 block_reasons 로 사유를 노출해 리포트에 자동 전파된다. 등급 C·추정
+누락·24h stale 은 게이트 미적용(결측 래칫 방지), 공격 트리거(추정 +X% 매수)는 채점 표본
+누적 후 재검토.
 - **기준가**: PER/PBR 5년 밴드 중앙값 적정가(valuation.json) + 컨센서스 목표가(consensus.json) 평균. 결측 시 현재가 폴백(등급 하향)
 - **테마P** (≤20%): Σ(테마 strength × 종목 노출) × 호라이즌 할인 — "3~5년 메가트렌드"는 12개월 목표가에 1/3만 반영
 - **뉴스P** (±12%): `config/news_impact.json` 유형별 가산점 — 과거 뉴스는 90일 시간감쇠, 다가오는 촉매(catalysts.json)는 발생확률×D-day 근접가중×방향(DART earnings_signal)으로 할인

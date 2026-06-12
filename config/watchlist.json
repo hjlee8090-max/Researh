@@ -6,10 +6,10 @@
       "ticker": "005930",
       "name": "삼성전자",
       "sector": "IT/반도체",
-      "current_price_approx": 299000,
+      "current_price_approx": 322500,
       "entry_price": 296091,
       "target_price": 370000,
-      "stop_price": 274000,
+      "stop_price": 283000,
       "shares_held": 2,
       "cost_basis_total": 0,
       "conviction": 3,
@@ -49,11 +49,11 @@
             "linked_catalyst": "005930-2026Half-earnings"
           }
         ],
-        "status": "weakening",
+        "status": "intact",
         "entry_ts": "2026-05-28T12:10:00+09:00",
         "seeded": true,
-        "last_review_ts": "2026-06-12T15:00:00+09:00",
-        "status_comment": "6/11 18시 확정(수동 재실행). 종가 299,000(-1.16%) 진입가 +0.98% 🟢. 장중 287,500~306,500 고변동. 이란 협상 [진행형](트럼프 개입·긍정 신호, 타결 미확정) — fx_foreign_sell 계열 매크로 압박 잔존으로 weakening 유지. HBM 구조 수요 훼손 없음. time_stop(목) 발동 이월 — 이란 타결 또는 SOXX 반등 확인 못 하면 익일 09시 50% 축소 검토. R/R 2.84(손절 274,000 유지). 참고: 목표가 추정 레이어 374,000(+25%) — 현 목표 370,000과 정합."
+        "last_review_ts": "2026-06-12T18:00:00+09:00",
+        "status_comment": "6/12 18시 종가 확정. 종가 322,500(+7.86% 일간) 진입가 +8.92% 🟢. SOXX 반등 확인(미국 Nasdaq +2.5%·Intel +11%·Micron +9.87%) + HBM4 양산·HBM4E Nvidia Vera Rubin 샘플링 확인(trendforce 2026-06-09) + KOSPI +4.63%. fx_foreign_sell 압박 완화 신호. time_stop 해소(12시 기여도 초과 확인). weakening→intact 전환. 이란 [진행형] 잔존하나 hard=false — intact 판정. R/R 1.203(손절 283K 상향 완료). in-progress D+3 최종 — 6/15부터 vs_target 정식 평가."
       },
       "bull_case": [
         "HBM4 양산 출하 개시 — AMD·엔비디아향 공급 협의로 SK하이닉스 독점 균열 가능성",
@@ -355,6 +355,40 @@
           ]
         },
         {
+          "ts": "2026-06-12T18:00:00+09:00",
+          "label": "18:00 종가 확정",
+          "action": "HOLD",
+          "tier": "green",
+          "opinion": "🟢 GREEN 홀드 — R/R 재조정 완료, thesis intact 전환, FOMC D-4",
+          "data_confidence": "high",
+          "price_source": "snapshot_fresh(17:55, naver=yahoo=322,500, gap=0%, last_date=2026-06-12)",
+          "close_price": 322500,
+          "pct_from_entry": 8.92,
+          "today_ohlc": {
+            "open": 326000,
+            "high": 339000,
+            "low": 320000,
+            "close": 322500
+          },
+          "stop_price_prev": 274000,
+          "stop_price_new": 283000,
+          "target_price": 370000,
+          "rr_prev": 0.979,
+          "rr_new": 1.203,
+          "thesis_prev": "weakening",
+          "thesis_new": "intact",
+          "trailing_stop_progress_pct": 35.7,
+          "trailing_stop_activated": false,
+          "in_progress_final_day": true,
+          "one_liner": "【6/12 18:00 종가 확정】스냅샷(17:55, HIGH, naver=yahoo=322,500, gap=0%, last_date=2026-06-12). 진입가(296,091) 대비 +8.92% 🟢 GREEN. KOSPI 8,123.62(+4.63%, strong_bull). SOXX 반등(미 Nasdaq +2.5%)·HBM4 양산 확인으로 thesis weakening→intact 전환. time_stop 해소(12시 기여도 기확인). 체결 없음. R/R 재조정: 손절 274,000→283,000원(R/R 0.979→1.203 ✓). 트레일링스톱 미활성(35.7%, 임계 347,827원). equity 4,962,379원(일일 +0.956%, 누적 -0.752%). FOMC D-4(6/16~18) — 주말 신규 확대 자제. in-progress D+3 최종. ※스냅샷 확인값. 학습·시뮬레이션 목적.",
+          "next_action_candidates": [
+            "【6/15 09시 1순위】이란 협상 주말 결과 확인(URL+게재일) → 타결시 intact 최종 확정",
+            "【6/15 09시 2순위】개장가 기준 R/R 재계산(< 283K이면 즉시 청산)",
+            "【6/15 09시 3순위】FOMC D-1 신규 진입 전면 자제 확인 — SCALE_IN FOMC 통과 후 재검토",
+            "【6/15 09시 4순위】avoid_sectors 조선 avoid_reentry 몰입 발자국 점검(촉매 기확인)"
+          ]
+        },
+        {
           "ts": "2026-06-12T15:00:00+09:00",
           "label": "15:00 마감 임박",
           "action": "HOLD",
@@ -424,7 +458,7 @@
       }
     }
   ],
-  "next_day_plan": "[6/12(금) 09시] ①삼성전자 time_stop 분기 집행: 이란 타결 확인 → 홀드+weakening 해소 검토 / 미타결+SOXX -2%↓ → 50% 축소(가상) / 그 외 홀드. ②신규 후보: candidate_scores tradable 4종(SK하이닉스 0.803·삼성전자·HD현대일렉 0.581·한화에어로 0.424) — 단 FOMC D-4 주간·이란 진행형으로 신규 진입은 R/R·web_verify 충족 + 보수 사이즈만. estimate_gate(v2.12) 첫 가동: 조선 2사·현대차는 추정 기대수익 음(-)으로 차단(조선은 몰입 신호 켜지면 probe 면제 자동 해제). ③avoid_sectors 조선: 4.3조 본계약 촉매 확보 — 몰입 발자국(거래대금 회복) 대기 중, 09시 §C-5-1 avoid_reentry 점검. ④FOMC 6/16~18 D-3 진입 임박 — 내주 화요일부터 변동성 경계, 신규 확대 자제.",
+  "next_day_plan": "[6/15(월) 09시 — FOMC D-1 주간 첫날] ①삼성전자 홀드: thesis intact, 손절 283,000원(갱신), R/R 1.203 ✓. in-progress 기간 종료(6/15부터 vs_target ±5% 정식 평가). ②R/R 재확인: 개장가 기준 R/R 재계산 — 개장가 < 283,000이면 즉시 전량 청산. ③FOMC 6/16~18 D-1 진입: 신규 매수·SCALE_IN 전면 자제(FOMC 통과 후 재검토). ④이란 협상 주말 결과 확인(출처 URL+게재일) — 타결 시 thesis intact 확정, 미결 시 [진행형] 유지. ⑤avoid_sectors 조선: HD조선 오늘 +6.0%(398,000, 5d +5.01%) — 09시 screen_universe.py avoid_reentry 몰입 발자국 점검(촉매 4.3조 본계약 기확인, 몰입 신호 대기). ⑥주말 글로벌 뉴스: 미국 연준 발언·금리선물·SOXX 방향 확인.",
   "cross_check_notes": [
     {
       "ts": "2026-05-20T15:00:00+09:00",
@@ -467,5 +501,5 @@
       "note": "15:00 점검 — HD조선 🟠 orange(-7.85%) 이탈 확정. 스냅샷(12:44, HIGH, today) naver 411,000 / yahoo 412,000(orange 경계 414,780 하회). 삼성전자 🟢 green(+9.4%, 스냅샷 347,500, 52주 신고점 349,000) — 섹터 원인(반도체 수혜·조선 소외) 지속 확인. 함정패턴 전이 없음. 매크로 전이 없음 확인. HD조선 orange 확정으로 조선 섹터 추가 진입 금지 유지."
     }
   ],
-  "last_updated": "2026-06-12T16:11:02+09:00"
+  "last_updated": "2026-06-12T18:00:00+09:00"
 }

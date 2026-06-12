@@ -106,6 +106,7 @@ scripts/
 
 | 시각 | 내용 | 생성 파일 |
 |------|------|------------|
+| 매일 00:00 | 글로벌 야간 점검은 **주말에도 발화** — 단 일·월 자정은 미국 현물장 휴장이라 주말 자정 모드(주말 지정학·보유 종목 뉴스 중심, 미국 지수는 "(금요일 종가)" 표기 강제) | `reports/YYYY-MM-DD-00.md` |
 | 토 18:00 | 지난주 사후분석 | `reports/YYYY-MM-DD-saturday-review.md` |
 | 일 18:00 | 다음주 전략·weekly_plan 갱신 | `reports/YYYY-MM-DD-sunday-strategy.md` |
 | **일 21:00** | **지난주 평일 25개 시간대별 파일 → 1개 archive 응축** (콘텍스트 절약) | `reports/YYYY-Www-archive.md` |
@@ -190,7 +191,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 
 | 시각 | Routine ID |
 |---|---|
-| 00:00 | 등록됨 (매일 00:00 KST — `prompts/0000_global.md`) ⚠️ **월요일 미발화 실측 3주 연속**(5/25·6/1·6/8 리포트 부재 — 일→월 자정 트리거 등록 확인 필요. audit 이 당일 00 파일 누락을 WARN 으로 표면화) |
+| 00:00 | 등록됨 — **매일 00:00 KST 발화로 수정 완료(2026-06-12 사용자 등록 변경)**. 이전 등록은 화~토만 발화해 월요일 자정 3주 연속 미실행(5/25·6/1·6/8)이었음. 일·월 자정은 미국 현물장 휴장이라 `prompts/0000_global.md` §0-0 **주말 자정 모드**(금요일 종가 표기 강제·주말 지정학 중심)로 분기. 검증: 다음 일·월 자정 리포트 생성 여부 + 월요일 19:30 audit(00 파일 누락 WARN) |
 | 09:00 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |

@@ -13,6 +13,10 @@ GitHub Actions 에서 09/12/15/18 routine 푸시 후 호출.
   KAKAO_CLIENT_SECRET   (선택) Client Secret 활성 상태인 경우 필수
   PAGES_URL             GitHub Pages 베이스 URL
   COMMIT_MESSAGE        (선택) 커밋 메시지. 분기에 사용
+  CHANGED_FILES_FILE    (선택) 이번 push 가 변경한 파일 목록(줄당 1개) 파일 경로.
+                        주어지면 "리포트 파일을 실제로 변경한 push"만 알림 발송
+                        (동일 routine 의 후속 잡무 커밋이 같은 슬롯 알림을 중복 발송하는 것 방지)
+  KAKAO_DRY_RUN         (선택) truthy 면 발송하지 않고 판정·본문만 출력 (로컬 테스트)
 """
 import json
 import os
@@ -20,15 +24,19 @@ import re
 import sys
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+KST = timezone(timedelta(hours=9))
 
-REST_KEY = os.environ["KAKAO_REST_API_KEY"]
-REFRESH_TOKEN = os.environ["KAKAO_REFRESH_TOKEN"]
+REST_KEY = os.environ.get("KAKAO_REST_API_KEY", "")
+REFRESH_TOKEN = os.environ.get("KAKAO_REFRESH_TOKEN", "")
 CLIENT_SECRET = os.environ.get("KAKAO_CLIENT_SECRET")
 PAGES_URL = os.environ.get("PAGES_URL", "").rstrip("/")
 COMMIT_MESSAGE = os.environ.get("COMMIT_MESSAGE", "")
+CHANGED_FILES_FILE = os.environ.get("CHANGED_FILES_FILE", "")
+DRY_RUN = os.environ.get("KAKAO_DRY_RUN", "").strip().lower() in ("1", "true", "yes", "on")
 
 
 def http_post(url: str, data, headers=None) -> dict:
@@ -116,11 +124,75 @@ WEEKEND_HEADER = "## 한눈에 보기"
 
 
 def detect_slot(commit_msg: str) -> tuple[str, str, str, str] | None:
-    """커밋 메시지에서 routine 슬롯 식별. (emoji, title, section_header, slot_hh) 반환."""
+    """커밋 메시지 **제목 줄**에서 routine 슬롯 식별. (emoji, title, section_header, slot_hh) 반환.
+
+    본문(멀티라인)은 보지 않는다 — 본문의 ISO 타임스탬프(`...T15:00:00+09:00`)에
+    "00:00" 이 부분 문자열로 들어 있어 15:00 커밋이 자정 슬롯으로 오인된 사고 방지
+    (2026-06-12 15:23 오발송). `chore(HH:00` 프리픽스를 1순위로 매칭하고,
+    chore( 인데 슬롯 프리픽스가 아니면(예: chore(context)) routine 커밋이 아니므로 None.
+    """
+    subject = commit_msg.splitlines()[0] if commit_msg else ""
+    m = re.match(r"^chore\((00|09|12|15):00", subject)
+    if m:
+        return SLOT_META[f"{m.group(1)}:00"]
+    if subject.startswith("chore("):
+        return None
     for slot, meta in SLOT_META.items():
-        if slot in commit_msg:
+        if slot in subject:
             return meta
     return None
+
+
+def changed_files() -> set[str] | None:
+    """이번 push 가 변경한 파일 목록. None = 정보 없음(가드 비활성 — dispatch 경유 등)."""
+    if not CHANGED_FILES_FILE:
+        return None
+    path = Path(CHANGED_FILES_FILE)
+    if not path.exists():
+        return None
+    files = {line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()}
+    return files or None
+
+
+def push_modified(report: Path | None) -> bool:
+    """알림 대상 리포트 파일이 이번 push 에서 실제로 변경됐는가.
+
+    같은 routine 이 후속 잡무 커밋(스냅샷 stale 마커 등)을 별도 push 하면 슬롯 프리픽스가
+    같아 동일 알림이 중복 발송되던 문제(2026-06-12 00:18/00:24 중복)의 방지 가드.
+    변경 목록 정보가 없으면(workflow_dispatch 등) 통과.
+    """
+    if report is None:
+        return True
+    files = changed_files()
+    if files is None:
+        return True
+    rel = report.relative_to(ROOT).as_posix()
+    return rel in files
+
+
+def is_dated_today(report: Path | None) -> bool:
+    """리포트 파일명 날짜가 오늘(KST)인가. 날짜 없는 파일(주간 archive 등)은 면제.
+
+    슬롯 미식별 폴백이 '가장 최근' 파일(=전일 리포트)을 집어 어제 일일 종합이
+    오늘 오후에 발송되던 문제(2026-06-12 17:21 — 6/11 일일 종합)의 방지 가드.
+    """
+    if report is None:
+        return True
+    m = re.match(r"(\d{4}-\d{2}-\d{2})", report.name)
+    if not m:
+        return True
+    return m.group(1) == datetime.now(KST).date().isoformat()
+
+
+def guard_or_skip(report: Path | None, what: str) -> bool:
+    """공통 발송 가드 — 통과 못 하면 사유를 남기고 False."""
+    if not is_dated_today(report):
+        print(f"skip notify: {what} 리포트({report.name if report else '?'})가 오늘 날짜가 아님 — 묵은 리포트 재발송 방지", flush=True)
+        return False
+    if not push_modified(report):
+        print(f"skip notify: 이번 push 가 {what} 리포트를 변경하지 않음 — 후속 잡무 커밋 중복 알림 방지", flush=True)
+        return False
+    return True
 
 
 def extract_section(md_text: str, header: str) -> str:
@@ -421,6 +493,116 @@ def send_kakao(access_token: str, title: str, body: str, url: str, button_title:
 
 
 def main():
+    is_report = COMMIT_MESSAGE.startswith("report:")
+    is_weekly = COMMIT_MESSAGE.startswith("weekly:")
+    is_weekly_archive = COMMIT_MESSAGE.startswith("weekly-archive:")
+    is_audit = COMMIT_MESSAGE.startswith("audit:")
+    is_sat_review = COMMIT_MESSAGE.startswith("sat-review:")
+    is_sun_strategy = COMMIT_MESSAGE.startswith("sun-strategy:")
+    is_policy_review = COMMIT_MESSAGE.startswith("policy-review:")
+    base_url = PAGES_URL or "https://github.com/hjlee8090-max/Researh"
+
+    def report_path(stem: str) -> Path:
+        return ROOT / "reports" / f"{stem}.md"
+
+    if is_weekly_archive:
+        msg = build_pattern_report_message("*-archive.md", "🗂️ 주간 archive", "지난주 archive 파일이 갱신되었습니다.")
+        if msg is None:
+            print("no weekly archive reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        if not guard_or_skip(report_path(date), "주간 archive"):
+            return
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "주간 archive 열기"
+    elif is_audit:
+        msg = build_pattern_report_message("*-audit.md", "🧪 파이프라인 감사", "파이프라인 감사 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no audit reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        if not guard_or_skip(report_path(date), "감사"):
+            return
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "감사 리포트 열기"
+    elif is_sat_review:
+        msg = build_pattern_report_message("*-saturday-review.md", "📈 토요일 사후분석", "토요일 사후분석 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no saturday review reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        if not guard_or_skip(report_path(date), "토요일 사후분석"):
+            return
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "사후분석 열기"
+    elif is_sun_strategy:
+        msg = build_pattern_report_message("*-sunday-strategy.md", "🧭 일요일 전략", "일요일 다음주 전략 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no sunday strategy reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        if not guard_or_skip(report_path(date), "일요일 전략"):
+            return
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "전략 리포트 열기"
+    elif is_policy_review:
+        msg = build_pattern_report_message("*-policy-review.md", "⚙️ 정책 패치 리뷰", "lessons 반영 점검·패치 후보 리포트가 갱신되었습니다.")
+        if msg is None:
+            print("no policy-review reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        if not guard_or_skip(report_path(date), "정책 패치 리뷰"):
+            return
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "패치 리뷰 열기"
+    elif is_weekly:
+        msg = build_weekend_message()
+        if msg is None:
+            print("no weekend reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        if not guard_or_skip(report_path(date), "주말"):
+            return
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "전략 리포트 열기"
+    elif is_report:
+        msg = build_report_message()
+        if msg is None:
+            print("no reports found, skip notify", flush=True)
+            return
+        title, body, date = msg
+        if not guard_or_skip(report_path(date), "18시 종합"):
+            return
+        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
+        button = "리포트 열기"
+    else:
+        slot_meta = detect_slot(COMMIT_MESSAGE)
+        if slot_meta is None:
+            # 폴백 발송 금지 — 슬롯 미식별 커밋(chore(context) 등 비-routine)이
+            # '가장 최근'(=전일) 리포트를 발송하던 사고 방지 (2026-06-12 17:21 6/11 일일 종합).
+            print(f"unrecognized commit, skip notify: {COMMIT_MESSAGE.splitlines()[0][:80] if COMMIT_MESSAGE else '(empty)'}", flush=True)
+            return
+        slot_msg = build_slot_message(slot_meta)
+        if slot_msg is None:
+            print("no slot data, skip notify", flush=True)
+            return
+        title, body, source_path = slot_msg
+        if not guard_or_skip(source_path, f"{slot_meta[3]}시 슬롯"):
+            return
+        if source_path is not None and PAGES_URL:
+            url = f"{PAGES_URL}/{source_path.stem}.html"
+        else:
+            url = base_url
+        button = "리포트 열기"
+
+    if DRY_RUN:
+        print(f"[DRY_RUN] would send — title: {title}", flush=True)
+        print(f"[DRY_RUN] url: {url} / button: {button}", flush=True)
+        print(f"[DRY_RUN] body:\n{body}", flush=True)
+        return
+
+    if not REST_KEY or not REFRESH_TOKEN:
+        sys.exit("KAKAO_REST_API_KEY / KAKAO_REFRESH_TOKEN 환경변수 필요")
     token_res = refresh_access_token()
     access_token = token_res.get("access_token")
     if not access_token:
@@ -433,94 +615,6 @@ def main():
         print(f"   Secret name: KAKAO_REFRESH_TOKEN", flush=True)
         print(f"   New value  : {new_refresh}", flush=True)
         print("=" * 60, flush=True)
-
-    is_report = COMMIT_MESSAGE.startswith("report:")
-    is_weekly = COMMIT_MESSAGE.startswith("weekly:")
-    is_weekly_archive = COMMIT_MESSAGE.startswith("weekly-archive:")
-    is_audit = COMMIT_MESSAGE.startswith("audit:")
-    is_sat_review = COMMIT_MESSAGE.startswith("sat-review:")
-    is_sun_strategy = COMMIT_MESSAGE.startswith("sun-strategy:")
-    is_policy_review = COMMIT_MESSAGE.startswith("policy-review:")
-    base_url = PAGES_URL or "https://github.com/hjlee8090-max/Researh"
-
-    if is_weekly_archive:
-        msg = build_pattern_report_message("*-archive.md", "🗂️ 주간 archive", "지난주 archive 파일이 갱신되었습니다.")
-        if msg is None:
-            print("no weekly archive reports found, skip notify", flush=True)
-            return
-        title, body, date = msg
-        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
-        button = "주간 archive 열기"
-    elif is_audit:
-        msg = build_pattern_report_message("*-audit.md", "🧪 파이프라인 감사", "파이프라인 감사 리포트가 갱신되었습니다.")
-        if msg is None:
-            print("no audit reports found, skip notify", flush=True)
-            return
-        title, body, date = msg
-        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
-        button = "감사 리포트 열기"
-    elif is_sat_review:
-        msg = build_pattern_report_message("*-saturday-review.md", "📈 토요일 사후분석", "토요일 사후분석 리포트가 갱신되었습니다.")
-        if msg is None:
-            print("no saturday review reports found, skip notify", flush=True)
-            return
-        title, body, date = msg
-        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
-        button = "사후분석 열기"
-    elif is_sun_strategy:
-        msg = build_pattern_report_message("*-sunday-strategy.md", "🧭 일요일 전략", "일요일 다음주 전략 리포트가 갱신되었습니다.")
-        if msg is None:
-            print("no sunday strategy reports found, skip notify", flush=True)
-            return
-        title, body, date = msg
-        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
-        button = "전략 리포트 열기"
-    elif is_policy_review:
-        msg = build_pattern_report_message("*-policy-review.md", "⚙️ 정책 패치 리뷰", "lessons 반영 점검·패치 후보 리포트가 갱신되었습니다.")
-        if msg is None:
-            print("no policy-review reports found, skip notify", flush=True)
-            return
-        title, body, date = msg
-        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
-        button = "패치 리뷰 열기"
-    elif is_weekly:
-        msg = build_weekend_message()
-        if msg is None:
-            print("no weekend reports found, skip notify", flush=True)
-            return
-        title, body, date = msg
-        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
-        button = "전략 리포트 열기"
-    elif is_report:
-        msg = build_report_message()
-        if msg is None:
-            print("no reports found, skip notify", flush=True)
-            return
-        title, body, date = msg
-        url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
-        button = "리포트 열기"
-    else:
-        slot_meta = detect_slot(COMMIT_MESSAGE)
-        if slot_meta is None:
-            # 시간대 미식별 시 최신 리포트로 폴백
-            msg = build_report_message()
-            if msg is None:
-                print(f"unrecognized commit, skip notify: {COMMIT_MESSAGE[:80]}", flush=True)
-                return
-            title, body, page_stem = msg
-            url = f"{PAGES_URL}/{page_stem}.html" if PAGES_URL else base_url
-            button = "리포트 열기"
-        else:
-            slot_msg = build_slot_message(slot_meta)
-            if slot_msg is None:
-                print("no slot data, skip notify", flush=True)
-                return
-            title, body, source_path = slot_msg
-            if source_path is not None and PAGES_URL:
-                url = f"{PAGES_URL}/{source_path.stem}.html"
-            else:
-                url = base_url
-            button = "리포트 열기"
 
     res = send_kakao(access_token, title, body, url, button)
     print(f"sent: {res}", flush=True)

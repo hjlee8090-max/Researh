@@ -253,6 +253,10 @@
 - 인덱스 페이지는 일일 리포트를 **날짜별로 그룹핑** 해서 5칸 슬롯 카드로 표시 (시간대별 분리 인지)
 
 ### `scripts/send_kakao.py`
+- **발송 가드 3종 (2026-06-12 — 오발송 사고 재발 방지)**:
+  - `detect_slot` 은 커밋 **제목 줄만** 보고 `chore(HH:00` 프리픽스를 1순위 매칭 (본문 ISO 타임스탬프의 "00:00" 오인 차단)
+  - 슬롯 미식별 커밋(`chore(context)` 등)은 **발송 스킵** — '최신 리포트' 폴백 제거 (전일 리포트 오발송 차단)
+  - `is_dated_today`(리포트 파일 날짜=오늘) + `push_modified`(이번 push 가 해당 리포트 파일을 실제 변경 — `CHANGED_FILES_FILE`, build_and_notify notify 잡이 before..after diff 로 생성) 둘 다 통과해야 발송 (중복·묵은 리포트 차단). `KAKAO_DRY_RUN=1` 로 발송 없이 판정 테스트 가능.
 - 읽기: `reports/` 안에서 커밋 메시지 기반 슬롯 매핑
   - `chore(00:00 ...)` → `reports/*-00.md` 우선
   - `chore(09:00 ...)` → `reports/*-09.md` 우선

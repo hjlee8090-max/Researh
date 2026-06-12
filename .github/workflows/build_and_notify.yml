@@ -78,9 +78,25 @@ jobs:
       github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+      # push 가 실제로 변경한 파일 목록 — send_kakao 가 "리포트 파일을 바꾼 push"만 알림 발송
+      # (같은 routine 의 후속 잡무 커밋이 같은 슬롯 알림을 중복 발송하던 문제 방지, 2026-06-12).
+      - name: Compute changed files (push only)
+        if: github.event_name == 'push'
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+        run: |
+          if [ -n "$BEFORE" ] && ! echo "$BEFORE" | grep -q '^0*$' && git cat-file -e "$BEFORE" 2>/dev/null; then
+            git diff --name-only "$BEFORE" "$AFTER" > /tmp/changed_files.txt || : > /tmp/changed_files.txt
+          else
+            git show --name-only --format= "$AFTER" > /tmp/changed_files.txt || : > /tmp/changed_files.txt
+          fi
+          echo "changed files: $(wc -l < /tmp/changed_files.txt)"
       - name: Send Kakao notification
         env:
           KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
@@ -89,4 +105,5 @@ jobs:
           PAGES_URL: ${{ needs.deploy.outputs.page_url }}
           # push 트리거면 head_commit.message, auto_merge 가 dispatch 한 경우 inputs.commit_message 사용.
           COMMIT_MESSAGE: ${{ github.event.inputs.commit_message || github.event.head_commit.message }}
+          CHANGED_FILES_FILE: ${{ github.event_name == 'push' && '/tmp/changed_files.txt' || '' }}
         run: python scripts/send_kakao.py

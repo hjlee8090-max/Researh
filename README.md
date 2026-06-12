@@ -30,9 +30,13 @@ config/
   news_keywords.json       뉴스 자동 분류 키워드 레지스트리(12개 유형과 1:1, 종목 별칭 포함) — fetch_news.py 입력. 키워드 보강=분류 보강
   news_history.json        백테스트용 라벨드 뉴스 타임라인(레포 운용 기록 추출) — backtest_target_model.py 입력
 state/
-  lessons.md               자기보완 학습 노트 (오차 사유 누적)
+  lessons.md               자기보완 학습 노트 (오차 사유 누적 — ✅codify 완료 항목 본문은 lessons_archive.md 로 이관)
+  lessons_archive.md       응축된 lessons 항목의 전문 보존 (routine 은 읽지 않음 — 복기용)
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
   audit_log.jsonl          파이프라인 자동 점검 이력
+  watchlist_archive.json   watchlist 에서 이관된 청산 종목 전체 기록 + 오래된 코멘트 (compact_state.py)
+  watch_items_archive.jsonl weekly_plan.watch_items 만료분 보존 (compact_state.py)
+  portfolio_history.jsonl  일일 equity 스냅샷 전체 이력 (config/portfolio.json 엔 최근 10개만)
   market_snapshot.json     (gitignored) 매 routine마다 fetch_market_data.py가 생성하는 다중출처 가격·5일추세 스냅샷
 reports/
   YYYY-MM-DD-00.md         🌙 자정 글로벌 야간 리포트
@@ -59,12 +63,16 @@ docs/
   file_references.md       파일 참조 구조 점검표 (어느 prompt/script가 어느 파일을 읽는지)
   github_mobile_pipeline.md
   weekend_dryrun_checklist.md  주말 routine 첫 실행 점검표
+prompts/ (추가)
+  earnings_preview.md      Phase 2 — 실적 발표 전 beat/inline/miss 시나리오 + 발표 후 자기채점 (이벤트 기반, 0900·1800 호출)
+docs/ (추가)
+  policy_changelog.md      policy.json changelog 전문 (policy 엔 최근 5건만 — compact_state.py 이관)
+  plan_context_compaction.md  콘텍스트 압축·연결 보강 계획서 (2026-06-12)
 scripts/
   fetch_market_data.py     네이버 + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
   fetch_catalysts.py       종목별 다가오는 촉매 추정 (정기보고서 법정기한 + DART list.json 보정) → config/catalysts.json
   fetch_consensus.py       증권사 컨센서스 수집 (FnGuide — 목표주가·투자의견·추정치) → state/consensus.json (Phase 2 earnings-preview 입력)
-prompts/
-  earnings_preview.md      Phase 2 — 실적 발표 전 beat/inline/miss 시나리오 + 발표 후 자기채점 (이벤트 기반, 0900·1800 호출)
+  compact_state.py         핫패스 콘텍스트 압축 — watchlist 청산종목·코멘트/watch_items/history/changelog 를 archive 로 이관 (일 21시 archive routine + 수동, 멱등·--dry-run)
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
@@ -102,7 +110,7 @@ prompts/
 | 일 18:00 | 다음주 전략·weekly_plan 갱신 | `reports/YYYY-MM-DD-sunday-strategy.md` |
 | **일 21:00** | **지난주 평일 25개 시간대별 파일 → 1개 archive 응축** (콘텍스트 절약) | `reports/YYYY-Www-archive.md` |
 
-> 각 시간대 파일은 **자기 슬롯만 담는다**. 이전 시간대 결론은 "이전 시간대로부터 이어받기" 박스에 1~3줄로만 요약. 이전 파일은 **절대 수정하지 않음** (히스토리·자기보완 학습 재료 보존).
+> 각 시간대 파일은 **자기 슬롯만 담는다**. 이전 시간대 결론은 "📝 오늘의 이야기" 첫 문단에서 산문으로 1~2문장 이어받는다(구버전 "이어받기 박스"는 폐지). 이전 파일은 **절대 수정하지 않음** (히스토리·자기보완 학습 재료 보존).
 
 ## 자기보완 루프
 1. 18시 프롬프트가 watchlist의 **각 종목 실제 종가 vs 목표가** 비교
@@ -113,6 +121,18 @@ prompts/
    - `가정오류` (애널리스트 가정 자체가 틀림)
 3. `state/lessons.md`에 누적
 4. **모든 추천·점검 프롬프트는 동작 직전 lessons.md를 먼저 읽고 동일 실수를 피한다**
+
+## 콘텍스트 예산 (v2.13 — `policy.context_budget`)
+매 routine 이 의무로 읽는 핫패스 파일(watchlist·policy·weekly_plan·portfolio·lessons)이 무한 누적되면
+콘텍스트 오버 → 규칙 누락·판단 열화로 이어진다 (2026-06-12 진단: 의무 적재 ~500KB, watchlist 1,945줄).
+- **원칙**: 학습 재료는 삭제하지 않고 **archive 로 이관** — git + archive 파일에 전문 보존, 핫패스에서만 제거
+- **압축기**: `scripts/compact_state.py` (일요일 21시 archive routine 이 실행, 멱등·`--dry-run`)
+  - watchlist: 청산 종목 → `state/watchlist_archive.json` (재발굴은 universe→screen_universe 경로 — candidates 자동 재등록 금지), 보유 코멘트 최근 12개 유지
+  - weekly_plan.watch_items ≤15개 (18시·일요일 전략이 재작성으로 1차 정리 — 초과분 archive)
+  - portfolio.history 최근 10개 (전체는 `state/portfolio_history.jsonl`)
+  - policy.changelog 최근 5건 (전문은 `docs/policy_changelog.md`)
+- **감시**: `audit_pipeline.audit_context_budget` 가 크기 임계 초과를 매일 WARN (매매 룰 래칫 감시와 동형의 크기 래칫 감시)
+- lessons.md 는 ✅codify 확정 항목만 본문을 `state/lessons_archive.md` 로 이관 (sunday_policy_review §1-6 — 카운터·미반영 항목 불변)
 
 ## 목표주가 추정 레이어 (estimate_target_price.py, v1.1)
 파이프라인의 흩어진 신호를 하나의 식으로 결합해 **12개월 내 도달 가능한 대략적 목표가(원)** 를 산출한다:
@@ -170,7 +190,7 @@ GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상�
 
 | 시각 | Routine ID |
 |---|---|
-| 00:00 | 등록됨 (매일 00:00 KST — `prompts/0000_global.md`) |
+| 00:00 | 등록됨 (매일 00:00 KST — `prompts/0000_global.md`) ⚠️ **월요일 미발화 실측 3주 연속**(5/25·6/1·6/8 리포트 부재 — 일→월 자정 트리거 등록 확인 필요. audit 이 당일 00 파일 누락을 WARN 으로 표면화) |
 | 09:00 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
@@ -221,10 +241,9 @@ powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1
 ```
 
 각 시간대 파일은 다음 공통 섹션을 포함한다 (초보자 친화):
-- **이전 시간대로부터 이어받기**: 1~3줄로 이전 슬롯 결론 요약 → 단일 파일만 봐도 흐름 추적 가능
+- **📝 오늘의 이야기**: 블로그 인트로 산문 — 첫 문단에서 이전 슬롯 결론을 이어받아 단일 파일만 봐도 흐름 추적 가능
 - **⚠️ 위험·매매 시그널 시각화**: 진입가·현재가·목표가·손절가를 1줄 게이지로 표시
-- **🎓 이 시간대 학습 포인트 3개**: 초보자가 챙길 핵심 학습
-- **📖 오늘 등장한 용어 사이드박스**: HBM·NIM·DXY·VIX 등 본문에 나온 용어 풀이
+- **🎓 오늘의 학습 노트**: 초보자가 챙길 핵심 학습 포인트 + 본문 첫 등장 용어 풀이
 
 이전 시간대 파일은 **절대 수정하지 않는다** (히스토리·자기보완 학습 재료 보존).
 

@@ -1,7 +1,17 @@
-# 파일 참조 구조 점검 (2026-05-22 갱신)
+# 파일 참조 구조 점검 (2026-06-12 갱신)
 
 이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
 시간대별 리포트 분리 + 시장 데이터 자동 수집 + 휴장일 가드 작업 이후 갱신.
+
+> **신규 추가 (2026-06-12, v2.13 콘텍스트 예산)**
+> - `scripts/compact_state.py` — 핫패스 누적 필드 압축: watchlist 청산 종목·오래된 코멘트 → `state/watchlist_archive.json`,
+>   watch_items 초과분 → `state/watch_items_archive.jsonl`, portfolio.history → `state/portfolio_history.jsonl`(config 최근 10개),
+>   policy.changelog → `docs/policy_changelog.md`(policy 최근 5건). 일요일 21시 sunday_archive §0-2 + 수동. 멱등·`--dry-run`.
+> - `state/lessons_archive.md` — codify 확정 lessons 항목 전문 보존 (sunday_policy_review §1-6 이 이관, routine 은 읽지 않음)
+> - `audit_pipeline.audit_context_budget` — 핫패스 크기 임계(`policy.context_budget.audit_thresholds`) 초과 WARN
+> - `audit_pipeline.audit_reports` 확장 — 당일 00시 슬롯 누락 WARN(월요일 미발화 표면화) + '한눈에 보기' 운영 용어 노출 WARN
+> - `check_lessons_applied.py` haystack 에 `docs/policy_changelog.md` 포함 (changelog 분리에 따른 오탐 방지)
+> - 보유 R/R 검토 하한 = 진입과 동일 `regime_adaptive_rr.min_rr_by_tier` (1800 §2-2·audit 통일, tier 미확정 1.2 폴백)
 
 > **신규 추가 (2026-06-02, v2.3 장중 시간 정책)**
 > - `config/market_calendar.json.sessions` — KRX 장중 세션(정규장 09:00~15:30·동시호가·시간외·반장)
@@ -226,6 +236,12 @@
 - 읽기: `state/lessons.md`
 - 쓰기: `state/lessons_index.json` (gitignored)
 - 일요일 20시 `sunday_policy_review` routine 의 0-A 단계에서 호출. 분류별 항목·룰·반복 카운트 추출.
+
+### `scripts/compact_state.py` (신규 v2.13 — 콘텍스트 예산)
+- 읽기: `config/watchlist.json`·`config/portfolio.json`·`config/weekly_plan.json`·`config/policy.json` + 기존 archive 파일들
+- 쓰기: 위 4개 config(압축) + `state/watchlist_archive.json`·`state/watch_items_archive.jsonl`·`state/portfolio_history.jsonl`·`docs/policy_changelog.md`(전문 보존)
+- 실행: 일요일 21시 `sunday_archive` §0-2 (commit 범위에 config/state/docs 포함) + 수동. 멱등, `--dry-run` 지원.
+- 원칙: 학습 재료 삭제 없음(이관만) · 청산 종목 candidates 자동 재등록 금지(재발굴은 universe→screen_universe) · 보존 개수는 `policy.context_budget.retention`.
 
 ### `scripts/write_audit_report.py`
 - 읽기: `config/policy.json`, `config/portfolio.json`, `config/weekly_plan.json`, `audit_pipeline.py` stdout

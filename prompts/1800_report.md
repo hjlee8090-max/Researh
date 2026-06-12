@@ -69,16 +69,18 @@
 ## 2-1. 주간 목표 평가 및 weekly_plan 갱신
 종가 기준으로 `config/weekly_plan.json`을 갱신한다.
 - `objective.current_equity`, `gap_to_target`, `required_return_from_now_pct`
+- `objective.kospi_week_start_close` 가 없으면 이번 주 첫 영업일 KOSPI 종가(스냅샷/archive)로 채운다 — §5 표의 "같은 기간 KOSPI" 벤치마크 기준값
 - `capital_plan.cash`, `cash_weight_pct`, `invested_weight_pct`
 - 각 `weekly_thesis`의 오늘 판정: 강화 / 유지 / 약화 / 무효화 후보
-- `watch_items`: 내일 00시/09시가 이어받아야 할 뉴스·가격·수급 트리거
+- `watch_items`: 내일 00시/09시가 이어받아야 할 뉴스·가격·수급 트리거 — **append 가 아니라 재작성(대체)**한다. 지금도 열려 있는 트리거만 남기고(최신이 앞, **최대 15개**), 해소·만료된 항목은 지운다(주간 압축 `scripts/compact_state.py` 가 초과분을 `state/watch_items_archive.jsonl` 로 이관하는 안전망이 있지만, 1차 책임은 18시의 재작성이다 — 묵은 트리거가 쌓이면 다음 routine 이 "내일 볼 것"을 노이즈에서 못 찾는다)
 - `daily_bridge.18:00`에 오늘 요약 1줄 추가 또는 갱신
 
 보유 종목이 기존 목표가에 모두 도달해도 주간 목표에 부족하면, 18시 리포트의 "내일 액션 플랜"에 **현금 활용 후보 / 목표 현실화 / 리스크 축소** 중 하나를 반드시 선택해 적는다.
 
-## 2-2. R/R 1.2 미만 보유 종목 재조정 (의무)
+## 2-2. R/R 하한 미달 보유 종목 재조정 (의무)
 종가 평가 후 보유 종목 각각의 R/R = (target_price - close) / (close - stop_price) 를 계산한다.
-- R/R < `policy.reward_risk_management.min_reward_risk_ratio_for_new_entry` (=1.2) 인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
+- 하한은 **신규 진입과 동일한 레짐 적응 하한**(`policy.reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6, tier 미확정 시 1.2)을 쓴다 — 고정 1.2를 보유에 적용하면 강세 tier 에서 승자를 조기에 자르는 압력이 생긴다(v2.13 통일, audit 동일 기준).
+- R/R < 하한인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
   - (a) 목표가 재조정 — 현재 가격·촉매·저항선 기반 재산정. **재산정 후 컨센 교차검증**(`policy.consensus.target_cross_check`): 새 목표가가 `state/consensus.json` 컨센 목표주가 × 1.15 초과면 정당화 근거를 comments 에 적거나 컨센×1.15 로 상한(컨센 stale/없음/low 면 생략). **(v2.11) 밸류에이션 천장 동시 적용**(`policy.valuation_anchor`): `state/valuation_check.json` 의 verdict=`cap_target` 이면 `valuation_ceiling_price` 로 캡(skip 이면 생략) — 최종 목표가 = min(재산정값, 컨센×1.15, 밸류에이션 천장).
   - (b) 손절가 상향 — 트레일링스톱 활성화 또는 가격 진입. **(v2.11)** 트레일링은 `policy.risk.trailing_stop` 의 2단 구조를 따른다: 1차 트레일 -max(3, 1.0×ATR%) 이탈 시 **50% 부분익절**, 잔여분은 샹들리에 -2.0×ATR%(최고 종가 기준). 활성화 시 `trailing_first_level`·`trailing_residual_level` 두 레벨을 watchlist 코멘트에 기록.
   - (c) 부분 익절 — 50% 가상 체결
@@ -149,6 +151,7 @@
 3. **싣지 않는 것** (state/·trade_log·커밋 로그에만 남긴다): git pull·스크립트 실행 로그, pre_trade_check/reconcile verdict 원문, source_provenance·web_verify 검증 과정 표(검증 **결론**은 머리말 출처 각주 1줄로 끝— "검증 로그" 섹션 금지), 정책 버전 번호(v2.x)·policy 키 이름·규칙 ID, heat·freshness·tier/stage·R/R 재조정 계산 과정 표 등 운영 지표 나열 — 행동을 바꾼 경우에만 해당 의견·액션의 사유 속에 사람 말로 한 줄 녹인다.
 4. **파서 고정 문자열 (변형 금지)**: 슬롯 헤더 `## 📊 18:00 종합·확정 리포트` 와 `### 한눈에 보기` 는 카톡 알림(`scripts/send_kakao.py`)이, `- 오늘의 한줄평: ...` 행은 HTML 빌더(`scripts/build_html.py` og:description)가 파싱한다. 한눈에 보기 불릿은 `- 라벨: 값` 평문으로 쓰고 라벨에 굵게(`**`)를 쓰지 않는다 (특히 한줄평 라벨 뒤에는 반드시 콜론).
 5. **용어는 처음 1회만 풀이**: 본문 첫 등장 시 괄호로 1줄. 같은 설명을 여러 섹션에서 반복하지 않는다.
+6. **미검증 시세 단정·운영 용어 노출 금지**: 당일 미확인(직전 수집본) 지수·시세는 등락률을 사실처럼 단정 표기하지 말고 수치 옆에 "(전일 종가 기준, 당일 미확인)"을 붙인다. '한눈에 보기'에는 영문 운영 용어(stale·live_verify·web_verify·time_stop·mark-to-market·HTTP 403 등)를 쓰지 않는다 — 행동이 바뀐 경우에만 사람 말로 1줄. audit 이 자동 점검한다.
 
 리포트 파일 양식:
 ```markdown
@@ -199,6 +202,7 @@
 | 시작 자본 | 5,000,000원 |
 | 현재 평가금액 (이 중 현금 X,XXX,XXX원) | X,XXX,XXX원 |
 | 누적 수익률 | ±X.XX% |
+| 같은 기간 KOSPI | 오늘 ±X.XX% · 이번 주 ±X.XX% (내 자산 주간 대비 ±X.Xp) |
 | 실현 / 미실현 손익 | ±XXX,XXX원 / ±XXX,XXX원 |
 | 승률 | X/X (XX%) |
 | 이번 주 목표 자산 | X,XXX,XXX원 (부족 X,XXX,XXX원) |
@@ -270,7 +274,7 @@
 ## 7. 규칙
 - **검색 시세는 근사값** — 리포트 머리말 각주 1줄로만 명시하고 본문 수치마다 반복하지 않는다
 - 종가 데이터가 출처별로 다르면 가장 보수적 값 채택
-- lessons.md는 누적될수록 무거워짐 → 6개월 이상 지난 항목은 18시 작업 중 점검만 하고 별도 압축은 향후 사용자 요청 시
+- lessons.md 압축 체계(`policy.context_budget`): ✅codify 완료(policy/prompts/CI 반영) 항목의 본문은 `state/lessons_archive.md` 로 이관하고 lessons.md 에는 헤딩·분류·요약·codify 참조만 남긴다 — 미반영·진행 중 교훈과 누적 패턴 카운터는 절대 건드리지 않는다. 18시는 신규 항목 추가만, 이관은 sunday_policy_review 가 codify 확정 시 수행
 - 모든 의사결정은 trade_log.jsonl에 라인으로 남기 (감사 추적성)
 
 ## 8. 상태 영속화 (git commit & push) — 가장 중요

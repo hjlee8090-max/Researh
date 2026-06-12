@@ -106,11 +106,11 @@
 다음 필드를 다음 주 기준으로 갱신한다.
 - `week_id`
 - `as_of`
-- `objective`
+- `objective` — `kospi_week_start_close` 는 null 로 리셋한다(다음 주 첫 18시 routine 이 첫 영업일 종가로 채워 "같은 기간 KOSPI" 벤치마크 기준이 된다. 직전 금요일 종가를 알면 그 값으로 미리 시드 가능)
 - `capital_plan`
 - `weekly_thesis`
 - `daily_bridge`
-- `watch_items`
+- `watch_items` — **재작성(대체)**: 지난주 항목 중 지금도 열려 있는 트리거만 이월하고 나머지는 지운다(최대 15개, 최신이 앞). 해소된 이슈를 복제·이월하지 않는다
 - `decision_rules`
 - `weekend_review.last_completed`
 - `weekend_review.next_due`

@@ -47,10 +47,30 @@ def audit_json_files(messages: list[str]) -> dict[str, object]:
     return data
 
 
+# 체결(매매) 액션 — ticker 필수. BUY_/SELL_ 변형은 reconcile_portfolio 분류와 동일하게 prefix 로 수용.
 ALLOWED_TRADE_ACTIONS = {
-    "BUY", "SELL", "HOLD", "EVAL", "EOD_EVAL", "OPEN_CHECK",
-    "TRAILING_STOP", "SCALE_IN", "SCALE_OUT", "DEFERRED", "WATCH",
+    "BUY", "SELL", "TRAILING_STOP", "SCALE_IN", "SCALE_OUT",
 }
+# 비매매 기록 액션(점검·평가 마커) — ticker 없어도 정상 (예: HOLIDAY_EVAL 은 계좌 단위 기록).
+ALLOWED_NONTRADE_ACTIONS = {
+    "HOLD", "EVAL", "EOD_EVAL", "OPEN_CHECK", "MIDDAY_CHECK", "CLOSE_CHECK",
+    "HOLIDAY_EVAL", "DEFERRED", "WATCH",
+}
+
+
+def is_known_action(action: str | None) -> bool:
+    if not action:
+        return False
+    if action in ALLOWED_TRADE_ACTIONS or action in ALLOWED_NONTRADE_ACTIONS:
+        return True
+    # SELL_GIVE_BACK_STOP / SELL_ORANGE_STOP / BUY_PROBE 등 체결 변형 수용 (reconcile 과 정합)
+    return action.startswith("BUY_") or action.startswith("SELL_")
+
+
+def is_trade_action(action: str | None) -> bool:
+    if not action:
+        return False
+    return action in ALLOWED_TRADE_ACTIONS or action.startswith("BUY_") or action.startswith("SELL_")
 
 
 def audit_trade_log(messages: list[str]) -> None:
@@ -73,11 +93,12 @@ def audit_trade_log(messages: list[str]) -> None:
         if not isinstance(entry, dict):
             issues.append(f"line {idx}: 객체가 아님")
             continue
-        for field in ("ts", "action", "ticker"):
+        action = entry.get("action")
+        required = ("ts", "action", "ticker") if is_trade_action(action) else ("ts", "action")
+        for field in required:
             if field not in entry:
                 issues.append(f"line {idx}: '{field}' 누락")
-        action = entry.get("action")
-        if action and action not in ALLOWED_TRADE_ACTIONS:
+        if action and not is_known_action(action):
             issues.append(f"line {idx}: 알 수 없는 action='{action}'")
         entries.append(entry)
     if bad:
@@ -100,9 +121,13 @@ def audit_trade_log(messages: list[str]) -> None:
             continue
         if prev_cash is not None:
             delta = cash - prev_cash
-            if action == "BUY" and delta > 0:
+            is_buy = action == "BUY" or (isinstance(action, str) and action.startswith("BUY_"))
+            is_sell = action in {"SELL", "TRAILING_STOP", "SCALE_OUT"} or (
+                isinstance(action, str) and action.startswith("SELL_")
+            )
+            if is_buy and delta > 0:
                 issues.append(f"BUY 인데 cash_after 가 증가 ({prev_cash}→{cash})")
-            if action in {"SELL", "TRAILING_STOP", "SCALE_OUT"} and delta < 0:
+            if is_sell and delta < 0:
                 issues.append(f"{action} 인데 cash_after 가 감소 ({prev_cash}→{cash})")
         prev_cash = float(cash)
 
@@ -182,19 +207,38 @@ def audit_reconciliation(messages: list[str]) -> None:
             messages.append(result("WARN", "reconcile 비정상 종료 (issue 미보고)"))
 
 
+def holding_rr_threshold(policy: dict) -> tuple[float, str]:
+    """보유 R/R 검토 임계 — 레짐 적응 하한(min_rr_by_tier)을 진입과 동일하게 따른다.
+
+    고정 1.2 는 strong_bull 에서 승자 조기 청산 압력(6/10 구조 진단의 '조기청산 비용')을
+    만들어 v2.11 과 모순 — tier 미확정/allocation 부재 시에만 review_holding_if_rr_below 폴백.
+    """
+    rrm = policy.get("reward_risk_management", {}) if isinstance(policy, dict) else {}
+    fallback = rrm.get("review_holding_if_rr_below", 1.2) if isinstance(rrm, dict) else 1.2
+    adaptive = rrm.get("regime_adaptive_rr", {}) if isinstance(rrm, dict) else {}
+    by_tier = adaptive.get("min_rr_by_tier", {}) if isinstance(adaptive, dict) else {}
+    if not (isinstance(adaptive, dict) and adaptive.get("enabled") and isinstance(by_tier, dict)):
+        return float(fallback), "고정"
+    try:
+        allocation = read_json(ROOT / "state" / "allocation.json")
+    except (OSError, json.JSONDecodeError):
+        return float(fallback), "고정(allocation 부재)"
+    tier = allocation.get("effective_tier") or allocation.get("tier")
+    threshold = by_tier.get(tier)
+    if isinstance(threshold, (int, float)):
+        return float(threshold), f"tier={tier}"
+    return float(fallback), "고정(tier 미확정)"
+
+
 def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
-    """보유 종목의 R/R 1.2 미달 여부를 점검 (policy.reward_risk_management 기준)."""
+    """보유 종목의 R/R 하한 미달 여부 점검 — 레짐 적응 하한(진입과 동일 기준)."""
     policy = data.get("config/policy.json") or {}
     portfolio = data.get("config/portfolio.json") or {}
     watchlist = data.get("config/watchlist.json") or {}
     if not isinstance(policy, dict) or not isinstance(portfolio, dict) or not isinstance(watchlist, dict):
         return
-    rrm = policy.get("reward_risk_management", {})
-    threshold = rrm.get("min_reward_risk_ratio_for_new_entry", 1.2) if isinstance(rrm, dict) else 1.2
+    threshold, basis = holding_rr_threshold(policy)
 
-    stocks_by_ticker = {
-        s.get("ticker"): s for s in watchlist.get("stocks", []) if isinstance(s, dict)
-    }
     flagged: list[str] = []
     for pos in portfolio.get("positions", []):
         if not isinstance(pos, dict):
@@ -211,9 +255,12 @@ def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
         if rr < threshold:
             flagged.append(f"{ticker} R/R={rr:.2f}<{threshold}")
     if flagged:
-        messages.append(result("WARN", "R/R 1.2 미만 보유 종목 — 18시에 목표가/손절가 재조정 필요: " + ", ".join(flagged)))
+        messages.append(result(
+            "WARN",
+            f"R/R 하한({threshold}, {basis}) 미만 보유 종목 — 18시에 목표가/손절가 재조정 필요: " + ", ".join(flagged),
+        ))
     else:
-        messages.append(result("OK", "보유 종목 모두 R/R 임계(1.2) 이상"))
+        messages.append(result("OK", f"보유 종목 모두 R/R 하한({threshold}, {basis}) 이상"))
 
 
 def audit_thesis(data: dict[str, object], messages: list[str]) -> None:
@@ -512,6 +559,41 @@ def audit_prompts_and_scripts(messages: list[str]) -> None:
         messages.append(result("WARN", "register_tasks.ps1 may not schedule all slots"))
 
 
+# '한눈에 보기'(카톡 발송부)에 노출되면 안 되는 운영 용어 — 리포트 가독성 원칙 §3 의 기계 점검.
+# 행동을 바꾼 요인은 사람 말로 녹여 쓰는 것이 규칙이며, 게이트/내부 지표 명칭 노출은 WARN.
+GLANCE_BANNED_TOKENS = [
+    "live_verify", "web_verify", "pre_trade", "resync", "HTTP 403",
+    "freshness", "snapshot_age", "tier=", "stale", "mark-to-market", "time_stop", "§",
+]
+
+
+def is_business_day_today() -> bool:
+    """주말 + market_calendar.json 휴장일 판정 (의존성 0 유지 — check_market_open 로직 축약)."""
+    today = datetime.now(KST).date()
+    if today.weekday() >= 5:
+        return False
+    try:
+        calendar = read_json(ROOT / "config" / "market_calendar.json")
+    except (OSError, json.JSONDecodeError):
+        return True
+    holidays = calendar.get("holidays", []) if isinstance(calendar, dict) else []
+    iso = today.isoformat()
+    for h in holidays:
+        if (isinstance(h, str) and h == iso) or (isinstance(h, dict) and h.get("date") == iso):
+            return False
+    return True
+
+
+def extract_glance_block(text: str) -> str:
+    """'### 한눈에 보기' 섹션 본문만 추출 (다음 ###/## 헤더 전까지)."""
+    m = re.search(r"^###\s*한눈에 보기.*?$", text, re.MULTILINE)
+    if not m:
+        return ""
+    rest = text[m.end():]
+    nxt = re.search(r"^#{2,3}\s", rest, re.MULTILINE)
+    return rest[: nxt.start()] if nxt else rest
+
+
 def audit_reports(messages: list[str]) -> None:
     all_reports = sorted((ROOT / "reports").glob("*.md"))
     # 시간대별 분리 파일(YYYY-MM-DD-{00,09,12,15,18}.md) 및 구버전 단일 파일(YYYY-MM-DD.md) 모두 인식
@@ -531,6 +613,91 @@ def audit_reports(messages: list[str]) -> None:
         messages.append(result("WARN", f"{latest.name} still has routine placeholders"))
     if not re.search(r"본 산출물은 학습|실제 투자", text):
         messages.append(result("WARN", f"{latest.name} may be missing disclaimer language"))
+
+    # ---- 오늘자 파일 한정 점검 (과거 리포트는 불변 히스토리 — 소급 경고 금지) ----
+    today_str = datetime.now(KST).date().isoformat()
+    today_files = [p for p in reports if p.name.startswith(today_str)]
+
+    # (1) 00시 슬롯 누락 — 월요일 00시 routine 미발화가 3주 연속 관측됨(2026-05-25·06-01·06-08).
+    #     등록은 레포 밖(claude.ai routines)이라 여기서는 표면화만 한다.
+    if is_business_day_today() and today_files and not (ROOT / "reports" / f"{today_str}-00.md").exists():
+        messages.append(result(
+            "WARN",
+            f"reports/{today_str}-00.md 누락 — 00시(자정 글로벌) routine 등록/실행 확인 필요",
+        ))
+
+    # (2) 카톡 발송부('한눈에 보기') 운영 용어 노출 점검 — 오늘 생성분만.
+    leaked: list[str] = []
+    for p in today_files:
+        glance = extract_glance_block(p.read_text(encoding="utf-8"))
+        if not glance:
+            continue
+        tokens = sorted({tok for tok in GLANCE_BANNED_TOKENS if tok in glance})
+        if tokens:
+            leaked.append(f"{p.name}({', '.join(tokens)})")
+    if leaked:
+        messages.append(result(
+            "WARN",
+            "리포트 '한눈에 보기'에 운영 용어 노출(가독성 원칙 §3 — 사람 말로 풀어쓸 것): " + "; ".join(leaked),
+        ))
+
+
+# 핫패스 파일 크기 상한 — 초과 시 콘텍스트 오버 위험 (docs/plan_context_compaction.md 진단 근거).
+CONTEXT_BUDGET = {
+    "config/watchlist.json": {"max_bytes": 100_000, "max_lines": 1_500},
+    "config/policy.json": {"max_bytes": 95_000},
+    "config/weekly_plan.json": {"max_bytes": 35_000},
+    "state/lessons.md": {"max_bytes": 60_000},
+}
+PROMPT_INFO_BYTES = 35_000   # 참고 표시(성장 추적)
+PROMPT_WARN_BYTES = 60_000   # 경고 — 프롬프트 감량 필요
+
+
+def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
+    """매 routine 이 의무 적재하는 핫패스 파일의 크기 래칫 감시.
+
+    매매 룰 래칫(blocked_day_rate)과 동형의 '콘텍스트 래칫' 안전장치 — 무한 누적 필드가
+    다시 자라면 compact_state.py 실행(또는 정책 검토)을 촉구한다.
+    """
+    over: list[str] = []
+    for rel, limits in CONTEXT_BUDGET.items():
+        path = ROOT / rel
+        if not path.exists():
+            continue
+        size = path.stat().st_size
+        if size > limits.get("max_bytes", float("inf")):
+            over.append(f"{rel} {size:,}B>{limits['max_bytes']:,}B")
+            continue
+        max_lines = limits.get("max_lines")
+        if max_lines:
+            n_lines = path.read_text(encoding="utf-8").count("\n") + 1
+            if n_lines > max_lines:
+                over.append(f"{rel} {n_lines:,}줄>{max_lines:,}줄")
+
+    weekly = data.get("config/weekly_plan.json")
+    if isinstance(weekly, dict) and len(weekly.get("watch_items") or []) > 20:
+        over.append(f"weekly_plan.watch_items {len(weekly['watch_items'])}개>20개")
+    portfolio = data.get("config/portfolio.json")
+    if isinstance(portfolio, dict) and len(portfolio.get("history") or []) > 20:
+        over.append(f"portfolio.history {len(portfolio['history'])}건>20건")
+
+    if over:
+        messages.append(result(
+            "WARN",
+            "핫패스 콘텍스트 예산 초과 — scripts/compact_state.py 실행 필요: " + "; ".join(over),
+        ))
+    else:
+        messages.append(result("OK", "핫패스 콘텍스트 예산(watchlist/policy/weekly_plan/lessons/history) 정상"))
+
+    heavy = []
+    for p in sorted((ROOT / "prompts").glob("*.md")):
+        size = p.stat().st_size
+        if size > PROMPT_WARN_BYTES:
+            messages.append(result("WARN", f"프롬프트 감량 필요: prompts/{p.name} {size:,}B (상한 {PROMPT_WARN_BYTES:,}B)"))
+        elif size > PROMPT_INFO_BYTES:
+            heavy.append(f"{p.name} {size:,}B")
+    if heavy:
+        messages.append(result("INFO", "프롬프트 크기 추적: " + ", ".join(heavy) + f" (참고 기준 {PROMPT_INFO_BYTES:,}B)"))
 
 
 def audit_github_notify(messages: list[str]) -> None:
@@ -630,6 +797,7 @@ def main() -> int:
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)
     audit_reports(messages)
+    audit_context_budget(data, messages)
     audit_github_notify(messages)
 
     print("\n".join(messages))

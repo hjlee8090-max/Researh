@@ -8,6 +8,15 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
+## 0-2. 핫패스 콘텍스트 압축 (의무 — 이 routine 의 목적과 동일)
+- `python scripts/compact_state.py` 를 실행한다 (`--dry-run` 으로 먼저 변경량을 확인해도 좋다).
+  - watchlist 청산 종목 → `state/watchlist_archive.json` 이관, 보유 종목 코멘트 최근 12개 유지
+  - weekly_plan.watch_items 15개 초과분 → `state/watch_items_archive.jsonl`
+  - portfolio.history → `state/portfolio_history.jsonl` merge 후 최근 10개 유지
+  - policy.changelog → `docs/policy_changelog.md` 누적 후 최근 5건 유지
+- 출력 요약(이관 건수)을 archive 리포트 끝에 1줄로 남긴다 (예: "콘텍스트 압축: 청산 2종목·코멘트 8건·watch_items 12건 이관").
+- 학습 재료는 삭제되지 않는다 — git + archive 파일에 전문 보존 (`policy.context_budget`).
+
 ## 0. 컨텍스트 적재
 1. `config/policy.json`, `config/weekly_plan.json`, `config/portfolio.json`, `config/watchlist.json`
 2. `state/lessons.md`
@@ -120,10 +129,11 @@
 - 응축된 원본 파일 개수 / 라인 수
 
 ## 7. 상태 영속화 (git commit & push)
+0-2 압축이 config/state/docs 를 수정하므로 add 범위에 반드시 포함한다:
 ```
-git add reports/
+git add config/ state/ docs/ reports/
 git -c user.name="kospi-autoflow-bot" -c user.email="hjlee8090@gmail.com" \
-    commit -m "weekly-archive: YYYY-Www 주간 리포트 archive 작성" || true
+    commit -m "weekly-archive: YYYY-Www 주간 리포트 archive 작성 + 콘텍스트 압축" || true
 git push origin HEAD:main || git push origin HEAD:master
 ```
 - **커밋 메시지 프리픽스 `weekly-archive:` 는 카톡 알림 트리거 (send_kakao.py 에서 archive 알림으로 분기).**

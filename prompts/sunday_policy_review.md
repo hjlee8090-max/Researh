@@ -30,11 +30,14 @@
   - `news_loop`: 뉴스 자동 분류 현황 — `unclassified_samples`(키워드 구멍 후보)·`silent_types`(무음 유형)·`review_checklist`
 - 이 산출물은 1-5 점검의 1차 입력이다. `report_section_md` 를 산출물 1 의 §2-c 에 그대로 붙인다.
 
-## 0. 컨텍스트 적재 (이 순서)
+## 0. 컨텍스트 적재 (이 순서 — grep 우선, 전문 통읽기 금지)
+> 이 routine 의 입력(전체 prompts ~200KB + policy ~100KB + lessons)은 통째로 읽으면 콘텍스트가
+> 넘친다. **0-A/0-B/0-C 의 스크립트 산출물(인덱스·대조 결과)을 1차 입력**으로 쓰고, 원문은
+> 검증이 필요한 항목에 한해 해당 섹션만 Grep/부분 Read 한다 (§1-1·§1-4 의 반영 확인도 grep 기반이다).
 1. `state/lessons_index.json` (0-A 단계 생성) — 1차 입력
-2. `state/lessons.md` — 원문 (인덱스 항목의 컨텍스트 확인 시 사용)
-3. `config/policy.json` — 현재 정책. 특히 `entry_filters`, `risk`, `weekly_recovery_plan`, `reward_risk_management`, `price_data_quality`, `lessons_logging`, `codex_automation`.
-4. `prompts/*.md` — 모든 routine prompt (00/09/12/15/18/saturday/sunday/archive)
+2. `state/lessons.md` — 원문은 인덱스 항목의 컨텍스트 확인이 필요할 때 해당 섹션만
+3. `config/policy.json` — 점검 대상 키(`entry_filters`, `risk`, `weekly_recovery_plan`, `reward_risk_management`, `price_data_quality`, `lessons_logging`, `codex_automation`, `context_budget`)만 부분 조회. 변경 이력 전문은 `docs/policy_changelog.md`(grep 용)
+4. `prompts/*.md` — **전체 읽기 금지.** §1-1(룰 반영)·§1-4(일관성)는 `check_lessons_applied.py` 결과 + grep 으로 확인하고, 패치가 필요한 prompt 의 해당 섹션만 부분 Read
 5. `reports/YYYY-Www-archive.md` — 가장 최근 주차 archive (지난 주 25개 리포트 응축)
 6. `config/weekly_plan.json` — 다음 주 thesis (일요일 18시 routine 이 생성한 결과)
 7. `reports/YYYY-MM-DD-saturday-review.md`·`YYYY-MM-DD-sunday-strategy.md` — 이번 주말 routine 산출물
@@ -84,6 +87,12 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
   상정한다(레포 교훈: 차단 룰 래칫이 강세장 미배치의 주범). 반대로 차단 종목이 부진하면 게이트
   유효 — 현행 유지.
 - 보강·승격 내역은 lessons.md 에 '루틴' 분류로 1줄 기록한다(키워드 레지스트리 변경 이력 추적).
+
+### 1-6. lessons.md 응축 (콘텍스트 예산 — `policy.context_budget`)
+이번 리뷰에서 **codify 확정**(policy/prompts/CI 반영 완료 + 반영 위치 확인)된 lessons 항목은:
+- 전문(원문 그대로)을 `state/lessons_archive.md` 에 append 하고,
+- lessons.md 본문을 "분류·요약 1~2줄·✅ codify 반영 위치·전문 이관 표기" 4줄로 교체한다.
+- **불변 보존**: `### ` 헤딩 원문, `- 분류:`/`- 원인 분류:` 라인, 누적 패턴 카운터, 미반영·진행 중(in-progress) 항목 전체. 응축 후 `python scripts/build_lessons_index.py` 를 재실행해 entries 수·카운터가 변하지 않았는지 확인한다.
 
 ## 2. 산출물 1: reports/YYYY-MM-DD-policy-review.md
 

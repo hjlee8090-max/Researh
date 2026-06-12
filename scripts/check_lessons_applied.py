@@ -119,12 +119,16 @@ def main() -> int:
         return 1
     text = LESSONS_PATH.read_text(encoding="utf-8")
 
-    # haystack = policy.json + 모든 prompts/*.md (소문자).
+    # haystack = policy.json + changelog 전문(docs 분리분) + 모든 prompts/*.md (소문자).
+    # compact_state.py 가 policy.changelog 를 docs/policy_changelog.md 로 이관하므로,
+    # 과거 changelog 에만 남은 반영 신호가 '미반영' 오탐이 되지 않도록 함께 grep 한다.
     parts: list[str] = []
-    pol = ROOT / "config" / "policy.json"
-    if pol.exists():
-        parts.append(pol.read_text(encoding="utf-8"))
-    haystack_files = ["config/policy.json"]
+    haystack_files: list[str] = []
+    for rel in ("config/policy.json", "docs/policy_changelog.md"):
+        path = ROOT / rel
+        if path.exists():
+            parts.append(path.read_text(encoding="utf-8"))
+            haystack_files.append(rel)
     for p in sorted((ROOT / "prompts").glob("*.md")):
         parts.append(p.read_text(encoding="utf-8"))
         haystack_files.append(f"prompts/{p.name}")

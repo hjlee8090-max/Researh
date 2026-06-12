@@ -24,20 +24,18 @@
 
 ## 0-B. 시장 데이터 스냅샷 수집 (영업일에만)
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
-  - 보유종목(`config/portfolio.json.positions`) + 후보종목(`config/candidates.json.candidates`) 의 네이버·Yahoo 양쪽 가격을 수집한다. (양쪽 종가 gap ≤1% 면 high, 한쪽만 살아 있으면 medium)
-  - 출력 요약(stdout)의 `pass=`(추세필터 통과 후보 수)·`block=`(차단 후보 수)·`low_conf=`(신뢰도 낮음 보유 수) 는 진입 판단에만 쓴다 — 리포트에는 옮기지 않는다 (후보별 채택/차단 사유는 "신규 후보 채택 사유" 섹션이 담는다).
+  - 보유종목+후보종목의 네이버·Yahoo 양쪽 가격을 수집한다 (종가 gap ≤1% high, 한쪽만 medium). stdout 의 pass/block/low_conf 는 진입 판단에만 쓰고 리포트에 옮기지 않는다.
 - `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
-  - 후보 종목을 모멘텀(35%) + 미래 테마 노출(20%) + 신뢰도(20%) + thesis 연결(25%) - 구조적 악재 가중치 로 점수화. (테마 노출 = `config/themes.json` 강도 × 후보 `theme_exposure`; 모멘텀은 급락 회피 게이트로 유지)
-  - `tradable_count >= 1` 이면 진입 가능 후보가 있다는 뜻 — "한눈에 보기"에 1순위 ticker 표기.
-  - **채택 사유 노티**: `candidate_scores.json.report_section_md` (이미 완성된 "### 신규 후보 채택 사유" 마크다운)를 리포트 본문에 **그대로 붙여 넣는다**. 채택 후보가 있으면 각 종목의 점수와 채택 사유(추세·신뢰도·thesis·근거)가, 없으면 "채택 후보 없음"이 들어 있다. 이 섹션이 있어야 send_kakao 가 카톡에 채택 후보를 함께 발송한다.
+  - 모멘텀(35%)+테마 노출(20%)+신뢰도(20%)+thesis(25%)−구조적 악재로 점수화. `tradable_count >= 1` 이면 "한눈에 보기"에 1순위 ticker 표기.
+  - **채택 사유 노티**: `candidate_scores.json.report_section_md`("### 신규 후보 채택 사유" 완성 마크다운)를 리포트 본문에 **그대로 붙여 넣는다** — send_kakao 가 이 섹션으로 채택 후보를 발송한다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
 
-> **스냅샷 출처 주의**: 이 웹 세션은 네트워크가 차단돼 `fetch_market_data.py` 가 직접 시세를 못 가져올 수 있다(네이버/yahoo 403). 그 경우 스크립트는 GitHub Actions(`fetch_prices.yml`)가 정기 수집·커밋해 둔 직전 스냅샷을 보존하고 `stale` 표시만 남긴다. `market_snapshot.json` 에 `stale` 키가 있으면 "데이터가 직전 정기 수집본"임을 리포트에 명시한다. 단, **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결**한다 — 묵은 가격으로 먼저 체결하고 나중에 재확인하는 조건부 체결은 금지.
+> **스냅샷 출처 주의**: 세션 네트워크 차단 시 스크립트는 Actions(`fetch_prices.yml`) 정기 수집본을 보존하고 `stale` 표시만 남긴다 — 리포트 머리말 각주에 명시. **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결** — 묵은 가격 선체결 후 재확인(booking-then-verify) 금지.
 - `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
 - 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
-- `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다 — 사람이 웹검색으로 임의 재판정하지 않는다. 스냅샷이 `high`/`medium` 이면 그대로 쓰고, 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 류 **레거시 서술을 이월·복제하지 않는다** (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). `stale` 키가 있어도 confidence 값은 스냅샷 그대로 — **stale ≠ low.**
+- `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다 — 임의 재판정 금지. 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단/403/low/신규 진입 보류" 류 **레거시 서술을 이월·복제하지 않는다**(5/26 2출처 수집으로 해결 — lessons archive). `stale` 키가 있어도 confidence 는 스냅샷 그대로 — **stale ≠ low.**
 - 스냅샷의 신뢰도(`confidence`)가 **실제로** 모두 `low` 일 때만 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
-- **(v2.0) `medium` 에서도 신규 진입 허용**: `policy.price_data_quality.allowed_actions_by_confidence.medium` 에 `NEW_ENTRY`·`SCALE_IN` 이 포함된다. medium(단일 출처 또는 stale 2출처)이면 진입을 막지 말고 **축소비중(`reduced_entry_weight_pct`)·R/R 하한 +0.1** 의 '불확실 프리미엄'으로 집행한다(`medium_new_entry_rule`). 직전까지 medium 에서 손절(EXIT)만 집행되고 매수만 high 를 요구해 **현금이 단방향으로 쌓이던 비대칭을 제거**한 것이다. `low` 만 매매(매수·매도) 차단.
+- **(v2.0) `medium` 에서도 신규 진입 허용**(`policy.price_data_quality.allowed_actions_by_confidence.medium` ⊇ NEW_ENTRY·SCALE_IN): 진입을 막지 말고 **축소비중(`reduced_entry_weight_pct`)·R/R 하한 +0.1** 의 불확실 프리미엄으로 집행한다(`medium_new_entry_rule`). `low` 만 매매 차단.
 
 ## 0. 컨텍스트 적재 (반드시 이 순서)
 1. `config/policy.json` — 정책 파라미터
@@ -45,11 +43,10 @@
 3. `config/weekly_plan.json` — **이번 주 계좌 목표, thesis, watch_items, invalidation_triggers**
 4. **시간대별 리포트** — 파이프라인 연결의 핵심. **(파일이 시간대별로 분리되어 있다)**
    - **오늘 날짜 자정 리포트** `reports/YYYY-MM-DD-00.md` 가 존재한다면 → `## 🌙 00:00 글로벌 야간 점검` 섹션을 우선 흡수
-     - "한국 개장 갭 예상", "보유 종목별 글로벌 영향 매핑", "09시 우선 점검 종목", "위험선호/회피 시그널" 등
+     - 개장 갭 예상·종목별 글로벌 영향 매핑·09시 우선 점검 종목 등
      - **"개장까지의 갈림길(if-then)" 표 (있으면 의무)**: 각 조건이 05:00 미국장 마감~개장 사이에 충족됐는지 판정하고, 발동한 분기의 행동을 오늘 계획에 반영한다 (직전 18시 if-then 과 함께 §1-0 야간 갭 검증에서 처리)
-   - **직전 영업일 18시 리포트** `reports/YYYY-MM-DD-18.md` (또는 구버전 `reports/YYYY-MM-DD.md`) 의 `## 📊 18:00 종합·확정 리포트` 섹션:
-     - "내일 액션 플랜", "하루 의사결정 복기 (09→12→15→18)" 결론, "오늘 배운 것"
-     - **"내일 액션 플랜"의 if-then 시나리오 표 (있으면 의무)**: 각 조건의 충족 여부를 오늘 아침 데이터(시가·발표 결과·뉴스)로 판정하고, **발동한 분기의 행동을 오늘 계획에 그대로 반영**한다. 어떤 분기가 발동/불발됐는지 09시 리포트 "📝 오늘의 이야기" 1문단에 1줄 포함 (어제 정한 계획대로 움직였다는 기록 — 감정 매매 방지 증빙)
+   - **직전 영업일 18시 리포트** `reports/YYYY-MM-DD-18.md` 의 "내일 액션 플랜"·복기 결론·"오늘 배운 것"
+     - **if-then 시나리오 표 (있으면 의무)**: 각 조건 충족 여부를 오늘 아침 데이터로 판정해 **발동 분기의 행동을 오늘 계획에 그대로 반영**. 발동/불발을 "📝 오늘의 이야기" 1문단에 1줄 포함(감정 매매 방지 증빙)
    - **직전 주말 archive** `reports/YYYY-Www-archive.md` 가 있다면 "지난주 핵심 결론·다음주 우선순위" 부분만 참고
    - 자정/어제 18시 어느 쪽이라도 없다면 그 사실을 명시하고 가능한 범위에서 진행
 5. `config/watchlist.json` — 현재 추천 종목 + `next_day_plan`
@@ -103,15 +100,15 @@
 - **0-3 회복 단계·0-4 레짐·0-5 목표비중 중 가장 보수적인 쪽**을 최종 신규 진입 한도로 적용한다.
 
 ## 0-6. 가격 신선도(age) 점검 (v2.1 — 의무)
-가격 수집(GitHub Actions)은 외부 스케줄러가 routine **5분 전**에 dispatch 로 깨우므로 스냅샷은 **보통 fresh(~5분)**다. 단 외부 트리거가 지연·실패하면 백업 cron 의 수십 분 전 수집본이나 직전 보존본(stale)이 올 수 있다. `confidence`(2출처 일치)와 **`freshness`(나이)는 별개 축**이며 둘 다 본다.
+스냅샷은 보통 fresh(routine 5분 전 dispatch 수집)지만 트리거 지연 시 묵은 수집본일 수 있다. `confidence`(출처 일치)와 **`freshness`(나이)는 별개 축** — 둘 다 본다.
 - `state/allocation.json` 의 `snapshot_age_min`(분)·`freshness`(fresh/acceptable/stale_intraday)를 읽어 판단에 쓰고, 리포트에는 **머리말 출처 각주 1줄(수집 시각·신선도)** 에만 통합 표기한다 — 별도 신선도 표·행을 만들지 않는다(`policy.price_data_quality.data_freshness`).
 - 등급별 행동:
   - `fresh`(≤20분): 스냅샷 가격 그대로 사용.
   - `acceptable`(≤75분): 매매 허용하되 **지연 인지**. 아래 §B-5 의 임계 근접 종목은 웹 실시간 1회 교차확인. 신규 진입 R/R 이 적용 하한 ±0.1 경계면 실시간 가격으로 재확인 후 체결.
   - `stale_intraday`(>75분 또는 전일자): 신규 진입은 웹 실시간 교차확인 필수, 손절은 임계 접근 시 즉시 웹 확인.
 - **age 가 크다고 confidence 를 강등하지 않는다**(별개 축). 단 fresh 가 아닌(묵은) 가격으로 손절·익절을 그대로 체결하지 않도록 §B-5 안전망을 반드시 적용한다.
-- **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): §B-5·§1-1 등에서 웹으로 실시간가를 확인할 때, 웹 값을 그대로 현재가로 채택하지 말고 `market_snapshot.tickers.<t>.today_ohlc`(시가/고가/저가/현재가)와 대조한다. 웹 값이 2출처 스냅샷 `close`(high/medium) 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 **셋 다 충족할 때만** 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '고가 오인'으로 버린다.** **출처 URL 없는 '○○ 기대감 추정' 촉매 서술 금지**, 가격 변동 단독으로 thesis 강화/약화 금지. 보유+후보 동일 적용(2026-06-02 현대차 사고 방지).
-- **(v2.6) 출처 게재일 검증 (필수)** (`policy.price_data_quality.web_verify_guard.source_date_verification`): 웹으로 '오늘 현재가/시황'을 채택할 때 출처(뉴스·기사)의 **게재일(published date)을 URL/본문에서 실제로 읽어 기록**한다(URL path `/YYYY/MM/DD/`·기사 상단 일자). 게재일이 **오늘이 아니거나 스냅샷 `as_of` 보다 과거이면 '현재가'로 채택 금지** — outlier_rule (b)'스냅샷보다 최신'을 **게재일 확인 없이 자기 단정하지 않는다**. 스냅샷이 stale 인데 단일 웹 출처가 ±3% 초과 갭(예: +10%)을 주장하면 **'대규모 갭업 예외' 자가면제 금지** — 동일자(오늘) 복수 출처 + `today_ohlc` 확인 시에만 채택, 아니면 stale `close` 유지하고 리포트에 **'오늘 가격 미검증(stale 유지)'로 명시**한다. CI `source_provenance_gate`(`scripts/check_trade_log_gate.py`)가 묵은 출처 게재일·재활용 종가(예: '오늘 KOSPI 8,788'=직전 일자 종가)를 하드 차단한다. **(2026-06-08 사고: 6/8 routine 이 실제 6/1자 MBC 기사(imnews 6826849, KOSPI 8,788.38·젠슨황 방한)를 '6/8 시세'로 오인 도용 → 삼성전자 ORANGE→GREEN 허구 해소·리포트/lessons/portfolio 오염.)**
+- **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 웹 실시간가는 `market_snapshot.tickers.<t>.today_ohlc` 와 대조한다. 스냅샷 `close` 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 **셋 다 충족할 때만** 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '고가 오인'으로 버린다.** 출처 URL 없는 '기대감 추정' 촉매 서술 금지·가격 변동 단독 thesis 변경 금지. 보유+후보 동일 적용(6/2 현대차 — lessons archive).
+- **(v2.6) 출처 게재일 검증 (필수)** (`policy.price_data_quality.web_verify_guard.source_date_verification`): 웹 출처의 **게재일을 URL/본문에서 실제로 읽어 기록** — 오늘이 아니거나 스냅샷 `as_of` 보다 과거면 '현재가' 채택 금지('스냅샷보다 최신' 자기 단정 금지). stale 스냅샷 + 단일 출처 대규모 갭의 **'예외' 자가면제 금지** — 동일자 복수 출처 + `today_ohlc` 확인 시에만 채택, 아니면 stale `close` 유지·**'오늘 가격 미검증(stale 유지)' 명시**. CI `source_provenance_gate`(`scripts/check_trade_log_gate.py`)가 묵은 게재일·재활용 종가를 하드 차단(6/8 묵은 기사 오인 사고 — lessons archive).
 
 ## 1. 웹 검색 (필수)
 
@@ -165,7 +162,7 @@
   }
   ```
 - `state/candidate_scores.json.ranked` 에서 `tradable=true` 인 1순위 종목을 신규 매수 후보로 우선 검토. `block_reasons` 가 있는 종목은 사유 그대로 watchlist `entry_filter_blocks` 에 복사.
-- **모멘텀 점수**: `candidate_scores` 의 `components.momentum` 은 5일 추세(급락 회피)·60일 모멘텀·52주 고점 근접도(`market_snapshot.tickers.<t>.momentum`)를 블렌드한 값이다. 5일 누적만 보지 말고 이 블렌드와 `pct_of_52w_high`(고점의 몇 %인지)를 함께 채택 사유에 적는다. 52주 고점 70% 미만이면 추세 약함으로 신중.
+- **모멘텀 점수**: `components.momentum`(5일 추세+60일 모멘텀+52주 고점 근접 블렌드)과 `pct_of_52w_high` 를 채택 사유에 함께 적는다. 52주 고점 70% 미만이면 신중.
 - snapshot 의 `entry_filter.passes = false` 또는 `confidence = "low"` → **진입 보류**.
 - snapshot 양쪽 출처가 모두 실패한 경우에 한해 백업으로 웹검색 ("[종목명] 최근 5거래일 주가")으로 보강하되, 사용한 출처를 명시한다.
 
@@ -178,7 +175,7 @@
 
 ## 2. 분기 처리
 
-> **(v2.0) 신규 진입 사이징·R/R 공통 규칙** — A/B/C 어느 경로든 신규 매수는 이 규칙을 따른다. (직전까지 고가주를 '1주(9%)'만 사고 강세장 모멘텀주가 R/R<1.2 로 막히던 문제를 해소):
+> **(v2.0) 신규 진입 사이징·R/R 공통 규칙** — A/B/C 어느 경로든 신규 매수는 이 규칙을 따른다:
 > - **수량 = min(리스크상한, 목표비중, 히트잔여)** — 단일거래 리스크 상한·포트폴리오 히트 예산이 하드 천장 (`policy.position_sizing.sizing_method` = risk_capped_target_weight):
 >   - (a) 리스크상한 = floor((equity × 2.0% =`max_single_trade_risk_pct_of_equity`) ÷ (진입가 − 동적손절가)) — **절대 초과 불가**(`single_trade_risk_cap.is_hard_ceiling`).
 >   - (b) 목표비중 = floor(target_krw ÷ 진입가), `target_krw = min(allocation.recommendation.per_new_position_krw, equity × entry_weight_pct/100)` (entry_weight_pct = default 30%, medium·구조적악재 시 reduced 20%)
@@ -186,8 +183,8 @@
 >   - **최종 수량 = min((a),(b),(c))**, 추가로 종목당 35%·deploy krw·deployable_cash(현금 하한)로 캡. `deploy`(주식 비중 < 목표 하한)에서 현금을 소진하는 방법은 한 종목을 (a)·(c) 위로 키우는 게 아니라 **빈 슬롯에 다른 종목을 추가 진입(breadth)**하는 것이다. 합산 heat 가 예산을 채우거나 통과 후보가 부족하면 현금을 남긴다(자본보존 > 완전배치).
 > - **고가주 floor 보정**: 산출 수량 × 진입가가 target_krw 의 70%(`min_fill_ratio_of_target`) 미만이면 +1주를 검토하되, **+1주 후에도 (a) 리스크 상한·(c) 히트잔여·35% 비중을 모두 지킬 때만** 허용한다(위반 시 +1 안 함).
 > - **R/R 하한은 레짐 적응형**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`): strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6. tier 미확정이면 1.2. **data confidence=medium 이면 +0.1**.
-> - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점). 이미 오른 모멘텀주의 reward 를 확보해 R/R 을 정상화한다(손절가를 느슨하게 풀지는 않음).
-> - **목표가 컨센 교차검증**(`policy.consensus.target_cross_check`, `state/consensus.json` 있고 confidence≠low 일 때): 위에서 산정한 우리 목표가가 **컨센 목표주가(`consensus.tickers.<t>.target_price`) × 1.15 를 초과**하면 ⚠️ 비현실적 목표 경고 → (a)초과를 정당화할 **명시 촉매·근거 1줄을 comments 에 적거나** (b)근거가 없으면 **컨센×1.15 로 상한 적용**한다. 우리 thesis 산정이 1순위이되 외부 컨센으로 과욕을 거른다. 컨센이 없거나 stale/low 면 이 검증은 건너뛰고 우리 목표가를 그대로 쓴다.
+> - **목표가는 강세 tier 에서 상향**(`dynamic_exit_model.target_price_rule`): max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점) — reward 확보로 R/R 정상화(손절가 완화는 금지).
+> - **목표가 컨센 교차검증**(`policy.consensus.target_cross_check`, consensus 있고 ≠low 일 때): 우리 목표가가 **컨센 목표주가 × 1.15 초과**면 (a)정당화 촉매·근거 1줄을 comments 에 적거나 (b)**컨센×1.15 로 상한**. 컨센 부재/stale/low 면 생략.
 > - **(v2.11) 밸류에이션 천장**(`policy.valuation_anchor`, `state/valuation_check.json` 있을 때): 최종 목표가 = **min(동적목표가, 컨센×1.15, `valuation_ceiling_price`)** — verdict=`cap_target` 이면 천장으로 캡하고 사유 1줄을 comments 에 기록. verdict=`overheat_entry`(현재가 멀티플 > 5y 밴드 상단)면 신규/재진입 **비중 50% 축소(probe)**. `deep_value` 는 단독 매수신호 아님(밸류트랩) — sector_rotation_reentry 게이트 통과 시 probe 근거로만. `skip` 이면 아무것도 막지 않는다.
 > - **(v2.11) 재진입 게이트**(`policy.entry_filters.reentry_discipline`): 동일 종목 직전 청산 기록(trade_log 최근 SELL 계열)을 확인해 ①**익절(트레일링/목표) 후** 청산가 위 추격 금지 — 청산가 이하 또는 5거래일 베이스 후 돌파만 기본 비중, 아니면 probe(축소비중의 50%) ②**손절(orange/red) 후** 2거래일 냉각 — 단 재진입가가 손절 체결가 대비 -3% 이상 낮으면 면제(저점 복원 허용), 손절가 +3% 재탈환 종가 확인 시 해제 ③**52주 고점 97% 이상** 추격은 probe 사이즈 + ATR 타이트 손절(post_surge_cooldown 의 strong_bull 예외보다 우선). 위반 진입은 booking 금지.
 > - **(v2.11) 이벤트 룰은 차단이 아니라 축소**: 후보 차단 사유가 '이벤트 캘린더(FOMC/CPI/guidance 윈도우)' 단독이면 전면 보류가 아니라 **비중 50% 축소(probe)**로 처리한다(`policy.catalysts.alert_rules` — confirmed=true 고중요도 D-1 만 보류 의무). lessons 발 즉석 제한 룰은 `policy.lessons_rule_sunset`(기본 5거래일 일몰)을 따른다. 당일 후보 **전원**이 차단되면 리포트 '한눈에 보기'에 `⚠️ blocked-day` 플래그를 명시한다.
@@ -196,13 +193,13 @@
 
 ### 2-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)
 신규/추가 매수·청산을 `state/trade_log.jsonl`·`config/portfolio.json` 에 기록하기 **직전** 다음을 수행하고, 통과 전에는 booking 하지 않는다 (`policy.price_data_quality.pre_trade_gate`):
-1. `git pull --rebase origin main || git pull --rebase origin master` — 스케줄 `fetch_prices.yml` 가 0-1 직후 늦게 도착했을 수 있다(2026-06-01 레이스: 신선본이 routine pull 직후 09:13·10:37 에 커밋됨).
+1. `git pull --rebase origin main || git pull --rebase origin master` — 신선 스냅샷이 0-1 pull 직후 커밋됐을 수 있다(6/1 레이스 — lessons archive).
 2. `python scripts/fetch_market_data.py && python scripts/score_candidates.py && python scripts/compute_allocation.py` 재실행 — 점수·비중을 **현재 스냅샷과 동기화**(snapshot_as_of 일치).
 3. `python scripts/pre_trade_check.py` 의 `verdict`:
    - `block` → 매매 없이 사용자 보고 후 종료. `resync_required` → 2단계 재수행 후 재판정.
    - `live_verify_required` → 신규/추가 매수·임계 근접 청산은 **해당 종목 실시간가를 웹검색으로 1회 교차확인**해 진입가·R/R·사이징을 재계산한 뒤 booking. `trade_log` 에 `price_source:"web_verified"` + 확인 URL·시각 기록.
    - `ok` → 스냅샷 가격으로 booking (`price_source:"snapshot_fresh"`).
-- **금지: 묵은 스냅샷 가격으로 먼저 체결하고 다음 회차에 재확인하는 조건부 체결(booking-then-verify).** 검증이 체결을 선행한다 (`policy.price_data_quality.new_entry_freshness_rule`). (2026-06-01: 5/29 종가 317,634 로 삼성 4주 선체결·12시 재확인 미룸 사례 차단.)
+- **금지: 묵은 스냅샷 가격 선체결 후 재확인(booking-then-verify).** 검증이 체결을 선행한다 (`policy.price_data_quality.new_entry_freshness_rule`).
 
 ### A. watchlist가 비어있는 경우 (첫 가동)
 1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 3~4종목을 선정**한다 (`policy.position_sizing.max_positions`=4 이내).
@@ -210,16 +207,16 @@
    - KOSPI 시총 상위 100위 이내, 관리종목·신규상장 1년 미만 제외
    - 섹터 분산 (여러 종목이 같은 섹터에 몰리지 않도록)
    - 중장기 호재 1개 이상 (실적 모멘텀 / 산업 사이클 / 정책 수혜 등)
-   - **미래 산업 테마 노출 우대** (`config/themes.json`): 같은 섹터라도 메가트렌드 노출이 큰 종목을 우선한다. 예: 자동차 섹터에서 로봇(`humanoid_robotics`) 노출은 현대차(보스턴다이내믹스 지분)가 기아보다 크므로 현대차를 우선. 노출은 뉴스·IR 근거로 판단.
+   - **미래 산업 테마 노출 우대** (`config/themes.json`): 같은 섹터라도 메가트렌드 노출이 큰 종목 우선. 노출은 뉴스·IR 근거로 판단.
    - lessons.md에 반복 손실 패턴 누적된 섹터·종목은 회피
 3. 각 종목에 대해 다음을 산출 (애널리스트 관점, 냉정하게):
    - **티커 / 종목명**
    - **현재가 추정** (검색 기반, 정확하지 않을 수 있음을 명시)
    - **최근 5거래일 누적 수익률 추정** (추세 필터 통과 여부 명시) — §1-1 결과
    - **진입가** (현재가 ±1% 이내)
-   - **목표가** = 동적 산정. 기본 참고값은 진입가 × 1.10 이고, 종목별 촉매, 저항선, R/R 을 함께 반영한다(**v2.11 — `weekly_plan.objective.gap_to_target` 주간 부족분은 목표가에 반영 금지**, 목표가 인플레 차단). **강세 tier(strong_bull/bull)에서는 `dynamic_exit_model.target_price_rule` 대로 max(진입가×1.12, 진입가+2.5×ATR14, 직전 52주 고점)까지 상향**해 reward 를 확보한다(이미 오른 모멘텀주의 R/R 정상화).
-   - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`). 기본값 = **진입가 − 2×ATR14** (`market_snapshot.tickers.<t>.volatility.atr14`). 단, **(v2.11)** 단계경보 **유효 red 임계**(atr_adaptive — max(-20%, min(-10%, -2.5×ATR%)))보다 깊지 않게, 또 단일 거래 예상 손실이 `equity × max_single_trade_risk_pct_of_equity(2.0%)` 를 넘지 않고, 진입 후 전 포지션 합산 손절위험이 `portfolio_heat_budget_pct_of_equity(6.0%)` 를 넘지 않게 조정한다(가장 타이트한 값 채택). ATR 데이터가 없으면 진입가 × 0.90 으로 폴백.
-   - **기대 보상/위험 비율(R/R)** = (목표가-진입가)/(진입가-손절가). **레짐 적응 하한**(`reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6; tier 미확정 1.2; medium confidence +0.1) 미만이면 신규 매수 금지.
+   - **목표가** = §2 공통 규칙으로 동적 산정 (기본 참고 진입가×1.10 + 촉매·저항선, 강세 tier 는 `target_price_rule` 상향. **주간 부족분(`gap_to_target`) 반영 금지** — 목표가 인플레 차단).
+   - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`): 기본 **진입가 − 2×ATR14**, 단 유효 red 임계(atr_adaptive)·단일거래 2.0%·heat 6.0% 중 **가장 타이트한 값** 채택. ATR 결측 시 진입가 × 0.90 폴백.
+   - **R/R** = (목표가-진입가)/(진입가-손절가) — §2 레짐 적응 하한(`min_rr_by_tier`, tier 미확정 1.2, medium +0.1) 미만이면 매수 금지.
    - **단계 경보 가격**: yellow/orange/red 의 **유효 임계**(v2.11 atr_adaptive — max(-20%, min(고정%, -(배수×ATR%))), 배수 1.5/2.0/2.5) 각각 가격 환산 (사용자 가독용)
    - **투자 포인트 3개** (Bull case)
    - **미래 테마 노출**: 해당 종목이 `config/themes.json` 의 어떤 메가트렌드에 얼마나 노출돼 있는지 `[{theme, exposure 0~1, evidence, source(URL)}]` 형태로 기록. 근거 출처(URL)는 필수(환각 방지). 노출 테마가 없으면 빈 배열.
@@ -228,7 +225,7 @@
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
    - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
 4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함). 후보를 `config/candidates.json` 에 추가·갱신할 때 `theme_exposure`(근거 URL 포함)도 함께 기록해 다음 routine 의 `score_candidates.py` thematic 점수에 반영되게 한다.
-5. **가상 매수 체결**: **체결 직전 §2-PRE 게이트(재동기화·검증)를 통과해야 한다.** 수량은 위 **§2 신규 진입 사이징 공통 규칙**(v2.2 — min(리스크상한, 목표비중)·단일거래 리스크 상한 하드 천장·고가주 floor 보정·레짐 적응 R/R·강세 tier 목표가 상향)을 따른다. 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 로 축소. 추세 필터 위배 종목·`risk_off` 차단(`risk_off_blocks_new_entry=true` 시)·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 종목은 신규 진입 보류**(`policy.fundamentals.earnings_blackout` — 바이너리 이벤트 리스크).
+5. **가상 매수 체결**: **체결 직전 §2-PRE 게이트 통과 필수.** 수량은 **§2 공통 사이징**을 따른다. 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 축소. 추세 필터 위배·`risk_off` 차단 설정·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 신규 진입 보류**(`policy.fundamentals.earnings_blackout`).
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정
    - `config/portfolio.json`의 cash, positions, trade_count 갱신
    - `state/trade_log.jsonl`에 라인 추가:
@@ -240,7 +237,7 @@
 ### B. watchlist가 이미 있는 경우 (이후 영업일)
 각 보유/관심 종목에 대해:
 1. **어제 18시 리포트 결론과 대조** — 어제 "익절/손절/홀드/축소 후보" 로 표시된 종목인지 먼저 확인
-2. 밤사이/금일 새벽 뉴스가 진입 논리를 훼손했는지 점검 — 뉴스뿐 아니라 `state/fundamentals.json` 의 해당 보유종목 `earnings_signal` 도 확인한다(`policy.fundamentals.holdings_use`). `sharp_decline`/적자전환/가이던스 컷이면 thesis 훼손 신호로 보고 가격이 🟢green 이어도 **익절·축소 우선순위 상향·트레일링스톱 강화·추가매수 금지**; `strong_growth`/`growth` 면 홀드 컨빅션 강화·목표가 상향 여지(단 분기 실적은 후행이라 손절가를 느슨하게 풀지는 않음). 보유종목이 노출된 테마(`config/themes.json`)의 strength 가 최근 크게 하향됐거나 thesis 가 무효화됐으면 비중 축소 후보로 메모(`themes.json.holdings_use` — 느린 신호, 단발 매도 금지).
+2. 밤사이/새벽 뉴스가 진입 논리를 훼손했는지 + `state/fundamentals.json` 의 `earnings_signal` 점검(`policy.fundamentals.holdings_use`): `sharp_decline`/적자전환/가이던스 컷이면 🟢green 이어도 **익절·축소 우선·트레일링 강화·추가매수 금지**; `strong_growth` 면 홀드 강화·목표 상향 여지(후행 지표 — 손절 완화 금지). 노출 테마 strength 급락·thesis 무효화 시 비중 축소 후보 메모(`themes.json.holdings_use` — 느린 신호, 단발 매도 금지).
 2-1. **thesis 무효화 1차 점검 (thesis-tracker — 보유 종목 의무, `watchlist.stocks[].thesis` 있을 때)**: 각 보유 종목의 `thesis.invalidation[]` 조건을 밤사이/금일 새벽 뉴스·공시·`state/fundamentals.json` 으로 대조한다(`policy.thesis`).
    - `hard:true` 조건 충족 → `thesis.status="invalidated"` 로 보고, 가격이 🟢green 이어도 **종가 청산·축소 1순위**(09시는 신규 청산 가능 — 손절선/목표 도달과 무관하게 thesis 붕괴는 매도 사유). 변경 사유를 `comments` 에 기록.
    - `hard:false` 조건 충족 → `thesis.status="weakening"` → **추가매수 금지·트레일링스톱 강화·목표가 상향 보류**(즉시 매도는 아님).
@@ -249,23 +246,23 @@
 3. **매수 / 매도 / 홀드** 의견 1개 + 1줄 사유 — 어제 결론과 다를 경우 **반드시 사유 명시**
 4. 단기 모멘텀 코멘트 (수급, 차트, 거래량 — 검색 가능 범위에서)
 5. 정책상 손절가·목표가 도달 여부 확인
-   - **(v2.1 손절 안전망)** 보유 종목이 스냅샷 가격 기준 손절선·orange(-7%)·red(-10%) 임계의 ±3%(`data_freshness.stop_loss_proximity_pct`) 안이거나 목표가 ±2% 안인데 `freshness`가 `fresh`가 아니면, **묵은 스냅샷 가격으로 즉시 체결하지 말고 웹검색 실시간 가격을 1회 교차확인**한 뒤 그 가격으로 단계·체결을 판정한다(1시간 전 가격이 -6%였는데 실제 -11% 뚫린 경우의 손절 지연 방지 — 기아 5/20 패턴).
+   - **(v2.1 손절 안전망)** 손절선·orange·red 임계 ±3%(`data_freshness.stop_loss_proximity_pct`) 또는 목표가 ±2% 안인데 `freshness`≠fresh 면 **웹 실시간가 1회 교차확인 후 그 가격으로 단계·체결 판정**(손절 지연 방지 — 기아 5/20, lessons archive).
    - 손절가 하회 또는 목표가 상회 시(위 교차확인 반영) → **즉시 가상 청산 체결**, portfolio·trade_log 갱신
    - 동적 목표가/손절가를 재계산했으면 기존 값과 변경 사유를 comments에 기록한다.
 6. watchlist.json의 `comments` 필드에 09:00 코멘트 추가 (어제 결론과의 연결성 한 줄 포함)
 7. 어제 `next_day_plan.candidate_sectors` 에 메모된 후보 섹터가 있으면 → 신규 진입 후보 발굴 시 우선 검토
 
 ### C. 신규 진입 — 비중 미달 + 빈 슬롯 (v2.0, A/B 경로와 함께 매 영업일 의무 점검)
-보유 여부와 무관하게, **다음 조건이면 신규 진입을 적극 검토**한다 (강세장에 현금만 쌓이는 것을 방지 — 이번 패치의 핵심 목적):
+보유 여부와 무관하게, **다음 조건이면 신규 진입을 적극 검토**한다 (강세장 미배치 방지):
 1. `state/allocation.json.recommendation.action == "deploy"` (주식 비중 < 목표 하한) **그리고** `recommendation.vacant_slots ≥ 1`.
 2. `state/candidate_scores.json.ranked` 에서 `tradable=true` 후보를 점수 내림차순으로 본다 (`tradable` = 추세필터 통과 + confidence **medium 이상** + 구조적 악재 미매칭 — v2.0 에서 medium 도 진입 허용).
 3. 각 tradable 후보에 §2 공통 규칙으로 진입가·동적손절가·목표가(강세 tier 상향)·R/R(레짐 적응 하한) 산출. R/R 통과 시 **목표 수량 = §2 공통 사이징**으로 가상 매수 체결(trade_log + portfolio 갱신, `weekly_thesis_id` 기록).
 4. `vacant_slots` 와 deploy krw 한도가 남는 한 다음 순위 후보로 **반복(복수 종목 진입)**. 종목당 35%·현금 하한 5% 준수.
-5. tradable 후보가 **2건 미만**이면(발굴 부재로 후보 풀이 정체된 신호): (a) `python scripts/screen_universe.py` 를 실행해 `state/universe_screen.json` 의 `promote_suggestions`(모집단에서 상대강도 상위 주도주 — candidates 에 없는 종목)·`rotate_out_suggestions`(만성 후행주)를 확인한다. 승격 제안 종목은 web_verify(가격·뉴스 출처 URL)·구조적악재(bear_case) 점검 후 `config/candidates.json` 에 thesis·`theme_exposure`(근거 URL 포함)와 함께 추가한다(다음 routine 부터 자동 추적; **근거 없는 추가 금지**). 회전아웃 제안된 만성 후행주는 강등·교체 후보로 검토. (b) 그래도 이번 회차 tradable 0건이면 "후보 부족으로 배치 보류 — 다음 routine 재시도" 를 리포트에 명시한다. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
+5. tradable 후보가 **2건 미만**이면: (a) `python scripts/screen_universe.py` 실행 → `promote_suggestions`(상대강도 상위 주도주)·`rotate_out_suggestions`(만성 후행주) 확인. 승격 제안은 web_verify(출처 URL)·구조적악재 점검 후 `config/candidates.json` 에 thesis·`theme_exposure`(근거 URL)와 함께 추가(**근거 없는 추가 금지**). 회전아웃 제안은 강등·교체 후보로 검토. (b) 그래도 tradable 0건이면 "후보 부족으로 배치 보류" 를 리포트에 명시. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
 5-1. **avoid 섹터 재진입 점검 (범용 — 호재+몰입, `policy.sector_rotation_reentry`)**: `screen_universe.py` 산출 `state/universe_screen.json` 의 `avoid_reentry`(avoid 섹터별 몰입)·`sector_rotation`(전 섹터 몰입)을 읽는다. **조선 전용이 아니라 avoid 에 오른 모든 섹터에 동일 적용.**
    - **민감도 자동(v2.10)**: `screen_universe` 가 레짐 tier 로 민감도(요구 몰입 신호 수)를 정한다 — `state/universe_screen.json.sensitivity_basis` 확인(strong_bull=aggressive 1신호 … bull/neutral=medium 2 … bear/deep_bear=conservative 3, `policy.sector_rotation_reentry.sensitivity_by_tier`). **회복 단계가 caution/defensive 면 한 단계 더 보수적으로**(더 보수적인 쪽) 적용해 드로다운 중 바닥낚시를 막는다.
    - 어떤 avoid 섹터의 `immersion_met=true`(자금 유입 발자국 ≥ min_signals: rs_inflection·volume_surge·sector_breadth)이면 → 그 섹터 **호재(촉매)를 web_verify** 한다(출처 URL+게재일 오늘~D-3, `web_verify_guard.source_date_verification`). **촉매 확인 AND 몰입 충족 둘 다**면 `config/watchlist.json.avoid_sectors` 에서 해당 항목 제거(또는 강등)하고, 섹터 최상위 종목을 **probe 진입**(비중 절반·ATR 타이트 손절, R/R·entry_filter·heat 통과)으로 §2 사이징해 체결.
-   - **촉매 없이 몰입만, 또는 몰입 없이 헤드라인만으론 해제 금지**(스토리≠자금 — 조선이 LNG 스토리 갖고도 3회 진 함정). 가격 변동 단독·무출처 '기대감 추정'은 촉매 불인정.
+   - **촉매 없이 몰입만, 또는 몰입 없이 헤드라인만으론 해제 금지**(스토리≠자금 — lessons v2.8). 가격 변동 단독·무출처 '기대감 추정'은 촉매 불인정.
    - 비-avoid 섹터라도 `sector_rotation.immersion_met=true` + 촉매 확인이면 그 섹터 리더를 후보 승격·진입 우선순위로 둔다(범용 로테이션 포착).
    - 해제·probe 근거(촉매 URL+몰입 신호)를 리포트·`lessons.md` 에 1줄 기록. probe 가 이후 손절되면 `avoid_sectors` 재무장(re-arm)+cooldown(`policy.sector_rotation_reentry.on_fail`).
 6. `caution`/`defensive` 회복 단계, `risk_off`(차단 설정 시), `deep_bear`(entry_mode=block) 이면 이 경로보다 보수 단계가 우선(더 보수적인 쪽 적용).

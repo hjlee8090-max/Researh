@@ -10,7 +10,7 @@
 - **가정오류**: 애널리스트의 시나리오·밸류에이션·심리 가정 자체가 틀림
 
 ## 누적 패턴 카운터
-_(최종 갱신: 2026-06-12 18:00 — 종가 확정. 삼성전자 322,500원(+7.86% 일간) GREEN(스냅샷 HIGH, naver=yahoo). KOSPI 8,123.62(+4.63%). in-progress D+3 최종 만료 — 목표가 대비 -12.84% 괴리는 진행 중 처리 종료, 6/15부터 정식 평가. 신규 lessons 항목 없음(오차 해당 없음). R/R=1.203(손절 283K 상향, ≥1.0 ✓). thesis weakening→intact 전환(SOXX반등+HBM4양산). W24 주간 +0.73% vs KOSPI +8.54% — 비중 13% 제약으로 언더퍼폼. FOMC D-4.)_
+_(최종 갱신: 2026-06-14 20:00 — policy-review. news_keywords 키워드 보강 2종(labor_or_litigation_resolved +3·tech_breakthrough +2). 전 routines 정상. FOMC D-2. 삼성전자 322,500원(+7.86% 일간) GREEN(스냅샷 HIGH, naver=yahoo). KOSPI 8,123.62(+4.63%). in-progress D+3 최종 만료 — 목표가 대비 -12.84% 괴리는 진행 중 처리 종료, 6/15부터 정식 평가. 신규 lessons 항목 없음(오차 해당 없음). R/R=1.203(손절 283K 상향, ≥1.0 ✓). thesis weakening→intact 전환(SOXX반등+HBM4양산). W24 주간 +0.73% vs KOSPI +8.54% — 비중 13% 제약으로 언더퍼폼. FOMC D-4.)_
 - 매크로 오차: 4건 (KB금융 5/22, HD조선 5/28, **삼성전자 6/5 Broadcom shock**, **삼성전자 6/8 RED 청산**)
 - 섹터 오차: 5건 (기아 5/20, KB금융 5/26, KB금융 5/27, HD조선 5/29, HD조선 6/1)
 - 개별 오차: 0건

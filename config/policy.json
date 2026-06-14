@@ -29,10 +29,10 @@
     "tolerance_band_pct": 5.0,
     "trailing_stop": {
       "activate_at_target_progress_pct": 70,
-      "first_trail_rule": "트레일 폭 = -max(3.0, 1.0×ATR%) (고점 대비). 이탈 시 전량이 아니라 50% 부분익절.",
+      "first_trail_rule": "트레일 폭 = -max(3.0, 1.5×ATR%) (고점 대비). 이탈 시 전량이 아니라 50% 부분익절.",
       "residual_trail_rule": "잔여 50% 는 샹들리에 트레일 -2.0×ATR%(최고 종가 기준)로 추세 추종. 이탈 시 잔여 전량 청산.",
-      "levels_logging": "트레일링 활성화 시 watchlist 코멘트에 trailing_first_level(고점×(1−max(3,1.0×ATR%)/100))·trailing_residual_level(최고 종가×(1−2.0×ATR%/100)) 두 레벨을 기록한다.",
-      "note": "v2.11 — 고정 -3%(0.5×ATR) 전량 청산이 승자를 조기 절단하던 구조 교정(2026-05-22 삼성전자 +4.84% 익절 후 +20.3% 추가 상승 일실 +236,000원 = 당시 실현손실의 2.6배). 평시 ATR 2~3% 에선 first trail -3% 로 현행과 동일."
+      "levels_logging": "트레일링 활성화 시 watchlist 코멘트에 trailing_first_level(고점×(1−max(3,1.5×ATR%)/100))·trailing_residual_level(최고 종가×(1−2.0×ATR%/100)) 두 레벨을 기록한다.",
+      "note": "v2.14(2026-06-14 sunday_policy_review) — 1.0×ATR%→1.5×ATR% 확대. 근거: W23 삼성전자 354,290원 조기청산 후 t1 +232,186원(ATR 7~8% 구간에서 -max(3%,7%)=-7% 폭이 노이즈 체결 반복). 1.5배 확대 시 동일 구간 -max(3%,10.5%)=-10.5%로 상승 추세 노이즈 체결 횟수 감소 기대. 잔여 2단(-2.0×ATR%) 현행 유지로 tail-risk 방어. 평시 ATR 2~3%에선 first trail -max(3%,3~4.5%)=-3~4.5%로 기존 대비 소폭 확대. 이전: v2.11 — 고정 -3%(0.5×ATR) 전량 청산 교정(+236,000원 일실 근거)."
     },
     "weekly_account_target_return_pct": 1.0,
     "weekly_target_mode": "relative_to_kospi",

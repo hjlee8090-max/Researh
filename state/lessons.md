@@ -237,6 +237,10 @@ _(최종 갱신: 2026-06-19 18:00 — W25 D5(금) 18시 종가 확정. 삼성전
 - ✅ codify(v2.5): 0000 §0-C 게이트 (6/2·6/11 반복 후 명문화 완료 — 6/11 항목이 최신 종합).
 - 전문: state/lessons_archive.md (2026-06-12 이관)
 
+### 2026-06-21 / 시스템 — 뉴스 키워드 리뷰 (루틴)
+- 분류: 루틴
+- 요약: silent_types(buyback_cancellation·earnings_miss_or_guidance_cut·supply_glut_or_price_drop) 3종 — unclassified 표본(651건) 대조 결과 뉴스 부재 확인, 키워드 구멍 아님. 유의미 미분류 없음(SK하이닉스 ADR상장·HD조선 SMR/LNG는 배경기사 수준, manual_news 승격 해당 없음). 키워드 변경 없음.
+
 ### YYYY-MM-DD HH:MM / 종목명(티커) — [TIER 또는 18시 오차]
 - 진입가/목표가/현재가/괴리 ...
 - 원인 분류: [매크로|섹터|개별|가정오류]

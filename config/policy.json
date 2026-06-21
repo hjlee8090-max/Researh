@@ -709,6 +709,7 @@
     "script": "scripts/check_valuation_guard.py → state/valuation_check.json",
     "target_ceiling_rule": "최종 목표가 = min( 동적목표가(max(진입가×1.12, 진입가+2.5×ATR14, 52주고점)), 컨센서스×1.15(consensus.target_cross_check), valuation_ceiling_price ). 초과분은 캡 — 캡 사유를 watchlist 코멘트에 1줄 기록. verdict=skip(데이터 결측/90일 stale)이면 이 항 생략(결측이 차단 룰이 되지 않는다).",
     "overheat_entry_rule": "현재가 멀티플이 5y 밴드 상단 초과(overheat_entry)면 신규/재진입 비중 50% 축소(probe) — entry_filters.reentry_discipline.high_52w_chase_guard 와 중복 시 한 번만 적용.",
+    "non_overheat_candidate_mandate": "v2.15(2026-06-20 saturday_review) — 보유·후보 상위가 overheat_entry(밴드 상단 초과)로 묶이고 현금 비중이 높을 때(allocation.recommendation=deploy 또는 현금>40%), 09시 routine 은 overheat 종목 외 '비과열 후보(valuation verdict=ok/deep_value, 밴드 정상 범위)'를 candidates.json·score_candidates.ranked 에서 **최소 1회 명시적으로 발굴·평가해야 한다(mandatory check)**. 발굴 후보가 0건이면 그 사실과 사유(통과 후보 없음/촉매 부재 등)를 09시 리포트 본문에 1줄 기록한다(자본보존 > 완전배치 — 0건 자체는 정상). 근거: W25(6/15~19) KOSPI +5.93% 랠리에 현금 86%로 +1.27%만 탑승 — overheat 3종(삼성전자·SK하이닉스·현대차)에 후보가 묶여 비과열 대안 발굴→실제 진입 연결이 약했던 만성 미배치. probe 사이징·R/R 하한·max_positions 등 기존 진입 가드는 그대로 적용한다.",
     "deep_value_link": "밴드 하단 미만(deep_value)은 단독 매수 신호가 아니다(밸류트랩) — sector_rotation_reentry 의 촉매+몰입 게이트를 통과할 때 probe 사이징 근거로만 참조.",
     "score_tilt": "score_candidates 의 fundamental_tilt 와 동일 패턴 valuation_tilt: deep_value +0.03 / ok·skip 0 / overheat_entry −0.03 (확신 틸트, 가중 축 아님)."
   },

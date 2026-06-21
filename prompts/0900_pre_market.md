@@ -165,6 +165,7 @@
 - **모멘텀 점수**: `components.momentum`(5일 추세+60일 모멘텀+52주 고점 근접 블렌드)과 `pct_of_52w_high` 를 채택 사유에 함께 적는다. 52주 고점 70% 미만이면 신중.
 - snapshot 의 `entry_filter.passes = false` 또는 `confidence = "low"` → **진입 보류**.
 - snapshot 양쪽 출처가 모두 실패한 경우에 한해 백업으로 웹검색 ("[종목명] 최근 5거래일 주가")으로 보강하되, 사용한 출처를 명시한다.
+- **(v2.15) 비과열 후보 발굴 의무** (`policy.valuation_anchor.non_overheat_candidate_mandate`): 보유·상위 후보가 overheat_entry(밸류에이션 밴드 상단 초과)로 묶이고 `allocation.recommendation=deploy` 이거나 현금 비중 > 40% 이면, overheat 종목 외 **비과열 후보(valuation verdict=ok/deep_value)를 최소 1회 명시적으로 발굴·평가**한다. `state/valuation_check.json`·`candidate_scores.json.ranked` 에서 overheat 가 아닌 tradable 후보를 가려내 R/R·추세필터로 검토하고, 통과 후보가 0건이면 "비과열 후보 0건 — 사유" 1줄을 리포트에 남긴다(0건은 정상 — 자본보존 우선, 추격 진입 금지). 만성 미배치(W25 cash 86% 사례) 방지용 — overheat 3종에만 매달려 랠리를 놓치지 않게 비과열 대안을 매일 한 번은 들여다본다.
 
 ### 1-2. 구조적 악재 키워드 스캔 (신규 매수 전 의무)
 각 후보 종목의 **최근 30일 뉴스**에서 `policy.entry_filters.structural_bear_keywords` 매칭 여부 확인:

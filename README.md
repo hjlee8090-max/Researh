@@ -97,7 +97,7 @@ scripts/
 | 시각 | 내용 | 생성 파일 |
 |------|------|------------|
 | 00:00 | 글로벌 야간 점검 (미국장·유럽장·환율·원자재) → 보유 종목 야간 영향 매핑·한국 개장 갭 예측 | `reports/YYYY-MM-DD-00.md` |
-| 09:00 | 자정 예측 검증 + 미국장 마감(05:00)까지 흐름 + 한국 개장 인사이트 | `reports/YYYY-MM-DD-09.md` |
+| 09:20 | 자정 예측 검증 + 미국장 마감(05:00)까지 흐름 + 한국 개장 인사이트 (발화 09:20, 슬롯·파일명은 `09` 유지) | `reports/YYYY-MM-DD-09.md` |
 | 12:00 | 장중 점검 (단계 경보·함정 패턴 cross-check) | `reports/YYYY-MM-DD-12.md` |
 | 15:00 | 마감 임박 점검, 종가 임박치로 1차 검증, 익일 09시 액션 후보 정리 | `reports/YYYY-MM-DD-15.md` |
 | 18:00 | (마감 후) 종가 확정 → 목표가 오차 판정 → lessons.md 갱신, 포트폴리오 평가, **종가 청산만**(ts=15:30·closing_auction, 신규진입은 09시 이연), 종합 리포트 | `reports/YYYY-MM-DD-18.md` |
@@ -185,14 +185,15 @@ score_candidates 가 block_reasons 로 사유를 노출해 리포트에 자동 �
 GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상태를 이어받아 동작.
 
 ### A. 원격 routine (PC 꺼져있어도 자동 실행) — 기본 모드
-- 평일 09:00 / 12:00 / 15:00 / 18:00 KST에 Anthropic 클라우드에서 자동 발화
+- 평일 09:20 / 12:00 / 15:00 / 18:00 KST에 Anthropic 클라우드에서 자동 발화
+  - 09시 슬롯은 **발화 시각만 09:20**(개장 직후 변동성 진정 + 시세 스냅샷 안착 대기). 슬롯 식별자·파일명(`-09.md`)·파서 고정문자열(`## 🌅 09:00 개장 점검`)은 관례상 `09` 로 유지한다.
 - 각 routine은 이 레포를 git clone → 해당 시각 prompt 파일 읽기 → 실행 → git commit/push
 - 등록·관리: https://claude.ai/code/routines
 
 | 시각 | Routine ID |
 |---|---|
 | 00:00 | 등록됨 — **매일 00:00 KST 발화로 수정 완료(2026-06-12 사용자 등록 변경)**. 이전 등록은 화~토만 발화해 월요일 자정 3주 연속 미실행(5/25·6/1·6/8)이었음. 일·월 자정은 미국 현물장 휴장이라 `prompts/0000_global.md` §0-0 **주말 자정 모드**(금요일 종가 표기 강제·주말 지정학 중심)로 분기. 검증: 다음 일·월 자정 리포트 생성 여부 + 월요일 19:30 audit(00 파일 누락 WARN) |
-| 09:00 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
+| 09:20 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
 | 18:00 | `trig_01TD41NpsamHcveUeokYcyyM` |

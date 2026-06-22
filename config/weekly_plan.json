@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "week_id": "2026-W26",
-  "as_of": "2026-06-21T22:00:00+09:00",
+  "as_of": "2026-06-22T12:05:38+09:00",
   "status": "active",
   "operating_mode": "balanced",
   "objective": {
@@ -14,7 +14,7 @@
     "kospi_week_start_close": null,
     "kospi_week_to_date_pct": null,
     "max_weekly_drawdown_pct": -5.0,
-    "max_single_trade_risk_pct_of_equity": 3.5,
+    "max_single_trade_risk_pct_of_equity": 2.0,
     "rationale": "W26 일요일 전략 기준(2026-06-21). equity 5,025,379원. KOSPI 직전 주간(W25) +5.93% → 상대 목표 KOSPI+0.5%p=6.43% / 절대 하한 +1.0%(5,075,633원). 주간 목표로는 절대 하한(5,075,633원)만 리포트 기재 — 추격 압박 금지(v2.11). 삼성전자 2주(354,000원, +19.56%) 보유·트레일링 활성. 현금 85.91%(4,317,379원). tier=strong_bull(KOSPI MA200 +75.92%). 핵심 과제: ①삼성전자 트레일링 익절 관리 ②SK하이닉스 probe 진입(RS 1위·HBM 서사) ③만성 미배치 일부 해소. kospi_week_start_close는 6/22 첫 영업일 18시 routine이 채운다."
   },
   "capital_plan": {
@@ -26,7 +26,10 @@
     "heat_used_krw": 68000,
     "heat_remaining_krw": 384284,
     "per_trade_risk_krw": 175888,
-    "target_equity_pct_range": [80, 95],
+    "target_equity_pct_range": [
+      80,
+      95
+    ],
     "note": "W26 기준(6/21 일요일). 삼성전자 2주(708,000원, 14.09%), 현금 85.91%(4,317,379원). strong_bull 목표 비중 80~95% 대비 심각한 미배치. 히트 잔여 384,284원으로 2~3 probe 진입 여력. 단, KOSPI ATH권(9,000 돌파) + 밸류에이션 overheat(삼성 PBR 4.92, SK하이닉스 PBR 11.62, 현대차 PBR 1.34) → probe 사이즈(1주) 의무. 6/22 09시 개장 갭 확인 후 SK하이닉스 probe 1주 최우선 검토. 조선(HD조선) 몰입 충족 but 촉매 web_verify 필수. 2차전지·방산·전력기기·자동차 후행주 rotate_out 검토."
   },
   "weekly_thesis": [
@@ -34,7 +37,10 @@
       "id": "ath_continuation_or_correction",
       "title": "KOSPI 9,000 돌파 후 첫 주 — 상승 연속 vs 과열 조정 분기",
       "direction": "bullish_if_confirmed",
-      "linked_tickers": ["005930", "000660"],
+      "linked_tickers": [
+        "005930",
+        "000660"
+      ],
       "confirming_signals": [
         "6/22(월) 개장 갭이 -1% 이내 또는 양(+) — 주말 위험 회피 없음",
         "미국 6/20(금) 마감 SOXX 650 이상 유지(또는 전주 종가 대비 보합 이상)",
@@ -52,7 +58,10 @@
       "id": "hbm_probe_scale",
       "title": "SK하이닉스 probe 진입 — RS 1위 HBM 선두주 비중 추가",
       "direction": "bullish_if_confirmed",
-      "linked_tickers": ["000660", "005930"],
+      "linked_tickers": [
+        "000660",
+        "005930"
+      ],
       "confirming_signals": [
         "SK하이닉스(000660) 5거래일 누적 +28.56% — strong_bull 임계(-13%) 충분히 통과",
         "개장가 web_verify(URL+게재일 확인, today_ohlc 동반) 후 probe 1주 진입",
@@ -70,7 +79,9 @@
       "id": "shipbuilding_avoid_lift_gate",
       "title": "조선 avoid 해제 게이트 — 수주 촉매 web_verify 조건부",
       "direction": "candidate",
-      "linked_tickers": ["009540"],
+      "linked_tickers": [
+        "009540"
+      ],
       "confirming_signals": [
         "sector_rotation.avoid_reentry 조선 몰입 1신호 충족(sector_breadth 확인)",
         "HD조선 대형 수주(5억달러 이상) 공식 발표 web_verify(URL+게재일 필수)",

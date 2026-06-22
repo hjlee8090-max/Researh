@@ -103,22 +103,69 @@ def format_num(n) -> str:
         return str(n)
 
 
+def num(v, default: float = 0.0) -> float:
+    try:
+        if v is None:
+            return default
+        return float(v)
+    except (TypeError, ValueError):
+        return default
+
+
+def _position_eval(p: dict) -> dict:
+    """portfolio.json 의 포지션을 평가현황으로 환산.
+
+    평가가격·평가금액·평가손익은 routine 에 따라 current_price/market_value/
+    unrealized_pnl 또는 *_approx 접미 필드로 기록된다. reconcile_portfolio.py 와
+    동일한 폴백을 적용해 필드명 불일치로 평가금액이 0 으로 떨어지던 인덱스 표시
+    버그를 막는다.
+    """
+    shares = num(p.get("shares"))
+    cur = num(p.get("current_price")) or num(p.get("current_price_approx")) or num(p.get("entry_price"))
+    mv_field = p.get("market_value")
+    if mv_field is None:
+        mv_field = p.get("market_value_approx")
+    mv = num(mv_field) if mv_field is not None else shares * cur
+    cost = p.get("cost_basis")
+    if cost is None:
+        cost = p.get("cost_basis_total")
+    cost = num(cost)
+    pnl_field = p.get("unrealized_pnl")
+    if pnl_field is None:
+        pnl_field = p.get("unrealized_pnl_approx")
+    pnl = num(pnl_field) if pnl_field is not None else (mv - cost if cost else 0.0)
+    avg = num(p.get("avg_cost")) or (cost / shares if shares else 0.0)
+    pnl_pct = (pnl / cost * 100) if cost else 0.0
+    return {"shares": shares, "cur": cur, "mv": mv, "cost": cost, "pnl": pnl, "avg": avg, "pnl_pct": pnl_pct}
+
+
 def build_positions_html(portfolio: dict) -> str:
-    positions = portfolio.get("positions", [])
+    positions = [
+        p for p in portfolio.get("positions", [])
+        if isinstance(p, dict) and num(p.get("shares")) > 0
+    ]
     if not positions:
-        return "<p><em>보유 종목 없음</em></p>"
+        return '<p class="no-pos"><em>보유 종목 없음 — 전량 현금</em></p>'
     items = ['<ul class="positions">']
     for p in positions:
-        pnl = p.get("unrealized_pnl_approx", 0)
-        pnl_cls = "pos" if pnl >= 0 else "neg"
-        pnl_str = f"{pnl:+,}".replace("+-", "-")
-        mv = p.get("market_value_approx", 0)
+        e = _position_eval(p)
+        pnl_cls = "pos" if e["pnl"] >= 0 else "neg"
+        pnl_str = f'{e["pnl"]:+,.0f}원'.replace("+-", "-")
+        pct_str = f'{e["pnl_pct"]:+.1f}%'
+        sub_bits = [f'평단 {format_num(e["avg"])} → 현재 {format_num(e["cur"])}']
+        if p.get("target_price"):
+            sub_bits.append(f'목표 {format_num(p["target_price"])}')
+        if p.get("stop_price"):
+            sub_bits.append(f'손절 {format_num(p["stop_price"])}')
         items.append(
             f'<li>'
-            f'<span><span class="name">{p.get("name", "")}</span>'
-            f'<span class="ticker">{p.get("ticker", "")} · {p.get("shares", 0)}주</span></span>'
-            f'<span><span>{format_num(mv)}원</span> '
-            f'<span class="pnl {pnl_cls}">({pnl_str})</span></span>'
+            f'<div class="pos-row">'
+            f'<span class="pos-id"><span class="name">{html.escape(str(p.get("name", "")))}</span>'
+            f'<span class="ticker">{html.escape(str(p.get("ticker", "")))} · {int(e["shares"])}주</span></span>'
+            f'<span class="pos-num"><span class="mv">{format_num(e["mv"])}원</span>'
+            f'<span class="pnl {pnl_cls}">{pnl_str} ({pct_str})</span></span>'
+            f'</div>'
+            f'<div class="pos-sub">{" · ".join(sub_bits)}</div>'
             f'</li>'
         )
     items.append("</ul>")
@@ -133,69 +180,201 @@ SLOT_LABEL = {
     "18": ("📊", "18시"),
 }
 
-DAILY_REPORT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:-(00|09|12|15|18))?$")
+DAILY_REPORT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:-(\d{2}))?$")
+STD_SLOTS = ("00", "09", "12", "15", "18")
+AUDIT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-audit$")
+WEEKEND_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(saturday-review|sunday-strategy|policy-review)$")
+ARCHIVE_RE = re.compile(r"^(\d{4})-W(\d{2})-archive$")
+
+# 주말 카드 슬롯 — 표시 순서대로 (키, 이모지, 라벨)
+WEEKEND_SLOTS = [
+    ("sat00", "🌙", "토 자정"),
+    ("sat_review", "🔎", "토 사후분석"),
+    ("sun00", "🌙", "일 자정"),
+    ("sun_strategy", "🧭", "일 전략"),
+    ("policy", "📐", "정책 리뷰"),
+    ("archive", "🗂️", "주간 아카이브"),
+    ("audit", "🔍", "감사"),
+]
+WEEKEND_SUFFIX_SLOT = {
+    "saturday-review": "sat_review",
+    "sunday-strategy": "sun_strategy",
+    "policy-review": "policy",
+}
+
+
+def _parse_date(s: str):
+    try:
+        return datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def _iso_key(d) -> tuple[int, int]:
+    iso = d.isocalendar()
+    return (iso[0], iso[1])
+
+
+def _preview_of(path: Path) -> str:
+    try:
+        return extract_oneline(path.read_text(encoding="utf-8"))
+    except OSError:
+        return ""
+
+
+def _chip(path: Path, emoji: str, label: str, cls: str = "present") -> str:
+    return f'<a class="slot {cls}" href="./{path.stem}.html">{emoji} {label}</a>'
+
+
+def _weekday_card(date: str, slots: dict) -> str:
+    """평일 카드 — 00·09·12·15·18 시간대 슬롯(미생성분은 점선) + 비표준 시간대 + 감사 + 구버전 단일 파일."""
+    extras = sorted(k for k in slots if k.isdigit() and k not in STD_SLOTS)
+    preview_path = next(
+        (slots[k] for k in ("18", "15", "12", "09", "00", *extras, "legacy", "audit") if k in slots),
+        None,
+    )
+    preview = _preview_of(preview_path) if preview_path else ""
+    chips = []
+    for hh in STD_SLOTS:
+        emoji, _ = SLOT_LABEL[hh]
+        if hh in slots:
+            chips.append(_chip(slots[hh], emoji, hh))
+        else:
+            chips.append(f'<span class="slot missing">{emoji} {hh}</span>')
+    for hh in extras:
+        chips.append(_chip(slots[hh], "🕐", hh))
+    if "audit" in slots:
+        chips.append(_chip(slots["audit"], "🔍", "감사", cls="present audit"))
+    if "legacy" in slots:
+        chips.append(_chip(slots["legacy"], "📄", "단일 파일 (구버전)", cls="legacy"))
+    return (
+        f'<li class="daily-card">'
+        f'<div class="daily-head"><strong>{date}</strong>'
+        f'<span class="preview">{preview}</span></div>'
+        f'<div class="slots">{"".join(chips)}</div>'
+        f'</li>'
+    )
+
+
+def _weekend_card(key: tuple[int, int], slots: dict, dates: set | None) -> str:
+    """주말 카드 — ISO 주 단위로 토·일 점검/사후분석/전략/정책 + 주간 아카이브를 한 칸에."""
+    preview_path = next(
+        (slots[k] for k in ("sun_strategy", "sat_review", "policy", "sun00", "sat00", "archive")
+         if k in slots),
+        None,
+    )
+    preview = _preview_of(preview_path) if preview_path else ""
+    ds = sorted(dates) if dates else []
+    if len(ds) >= 2:
+        label = f"{ds[0]} ~ {ds[-1][8:]}"
+    elif len(ds) == 1:
+        label = ds[0]
+    else:
+        label = f"{key[0]}-W{key[1]:02d}"
+    known = {k for k, _, _ in WEEKEND_SLOTS}
+    chips = []
+    for k, emoji, lbl in WEEKEND_SLOTS:
+        if k in slots:
+            cls = "present archive" if k == "archive" else "present audit" if k == "audit" else "present"
+            chips.append(_chip(slots[k], emoji, lbl, cls=cls))
+    # 예외적으로 분류 못한 주말 슬롯(예상 밖 시간대)도 링크는 잃지 않도록 노출
+    for k, path in slots.items():
+        if k not in known:
+            chips.append(_chip(path, "📄", k))
+    return (
+        f'<li class="daily-card weekend">'
+        f'<div class="daily-head"><strong>{label}</strong>'
+        f'<span class="badge">주말 · {key[0]}-W{key[1]:02d}</span>'
+        f'<span class="preview">{preview}</span></div>'
+        f'<div class="slots">{"".join(chips)}</div>'
+        f'</li>'
+    )
 
 
 def build_report_list(reports: list[Path]) -> str:
-    """리포트 목록 — 시간대별 분리 파일은 날짜별로 묶어 한 카드에 5칸 슬롯으로 표시."""
+    """리포트 목록 — 평일 / 주말·주간 / 리서치·기타 3개 섹션으로 구분.
+
+    평일: 날짜별 카드(00·09·12·15·18 슬롯 + 감사 + 구버전 단일 파일).
+    주말: ISO 주별 카드(토·일 자정 점검·사후분석·전략·정책 + 주간 아카이브).
+    리서치·기타: 백테스트·리서치 등 비정기 리포트.
+    토요일 -00(주말 자정 점검) 파일이 평일 카드로 섞여 깨진 평일처럼 보이던 문제도
+    실제 요일(weekday) 기준 분류로 해소한다.
+    """
     if not reports:
         return "<p><em>아직 작성된 리포트가 없습니다. routine 실행 후 생성됩니다.</em></p>"
 
-    # 분류: 일일 리포트(시간대 포함 또는 미포함) vs 기타(주말·archive·audit 등)
-    daily_by_date: dict[str, dict[str, Path]] = {}
-    others: list[Path] = []
-    for r in reports:
-        m = DAILY_REPORT_RE.match(r.stem)
-        if not m:
-            others.append(r)
-            continue
-        date, slot = m.group(1), m.group(2) or "legacy"
-        daily_by_date.setdefault(date, {})[slot] = r
+    weekday_cards: dict[str, dict] = {}
+    weekend_cards: dict[tuple, dict] = {}
+    weekend_dates: dict[tuple, set] = {}
+    research: list[Path] = []
 
-    items = ['<ul class="report-list">']
-    # 일일 리포트 (최신 날짜부터)
-    for date in sorted(daily_by_date.keys(), reverse=True):
-        slots = daily_by_date[date]
-        # 카드 헤더: 가장 최근 슬롯의 oneline preview
-        preview_path = (
-            slots.get("18") or slots.get("15") or slots.get("12")
-            or slots.get("09") or slots.get("00") or slots.get("legacy")
-        )
-        preview = extract_oneline(preview_path.read_text(encoding="utf-8")) if preview_path else ""
-        slot_links = []
-        for hh in ("00", "09", "12", "15", "18"):
-            if hh in slots:
-                emoji, _ = SLOT_LABEL[hh]
-                slot_links.append(
-                    f'<a class="slot present" href="./{slots[hh].stem}.html">{emoji} {hh}</a>'
-                )
+    for r in reports:
+        stem = r.stem
+        m = DAILY_REPORT_RE.match(stem)
+        if m:
+            date, slot = m.group(1), m.group(2) or "legacy"
+            d = _parse_date(date)
+            if d and d.weekday() >= 5:  # 토(5)·일(6)
+                key = _iso_key(d)
+                if slot in ("00", "legacy"):
+                    sub = "sun00" if d.weekday() == 6 else "sat00"
+                else:
+                    sub = slot
+                weekend_cards.setdefault(key, {})[sub] = r
+                weekend_dates.setdefault(key, set()).add(date)
             else:
-                emoji, _ = SLOT_LABEL[hh]
-                slot_links.append(f'<span class="slot missing">{emoji} {hh}</span>')
-        legacy_link = ""
-        if "legacy" in slots:
-            legacy_link = (
-                f'<a class="slot legacy" href="./{slots["legacy"].stem}.html">'
-                f'📄 단일 파일 (구버전)</a>'
+                weekday_cards.setdefault(date, {})[slot] = r
+            continue
+        m = AUDIT_RE.match(stem)
+        if m:
+            date = m.group(1)
+            d = _parse_date(date)
+            if d and d.weekday() >= 5:
+                key = _iso_key(d)
+                weekend_cards.setdefault(key, {})["audit"] = r
+                weekend_dates.setdefault(key, set()).add(date)
+            else:
+                weekday_cards.setdefault(date, {})["audit"] = r
+            continue
+        m = WEEKEND_RE.match(stem)
+        if m:
+            date, suffix = m.group(1), m.group(2)
+            d = _parse_date(date)
+            if d:
+                key = _iso_key(d)
+                weekend_cards.setdefault(key, {})[WEEKEND_SUFFIX_SLOT[suffix]] = r
+                weekend_dates.setdefault(key, set()).add(date)
+                continue
+        m = ARCHIVE_RE.match(stem)
+        if m:
+            key = (int(m.group(1)), int(m.group(2)))
+            weekend_cards.setdefault(key, {})["archive"] = r
+            continue
+        research.append(r)
+
+    blocks: list[str] = []
+    if weekday_cards:
+        blocks.append('<h3 class="rl-section">📅 평일 리포트</h3>')
+        blocks.append('<ul class="report-list">')
+        for date in sorted(weekday_cards, reverse=True):
+            blocks.append(_weekday_card(date, weekday_cards[date]))
+        blocks.append("</ul>")
+    if weekend_cards:
+        blocks.append('<h3 class="rl-section">🗓️ 주말 · 주간 리포트</h3>')
+        blocks.append('<ul class="report-list">')
+        for key in sorted(weekend_cards, reverse=True):
+            blocks.append(_weekend_card(key, weekend_cards[key], weekend_dates.get(key)))
+        blocks.append("</ul>")
+    if research:
+        blocks.append('<h3 class="rl-section">🔬 리서치 · 기타</h3>')
+        blocks.append('<ul class="report-list">')
+        for r in sorted(research, key=lambda p: p.stem, reverse=True):
+            blocks.append(
+                f'<li><a href="./{r.stem}.html">{r.stem}'
+                f'<span class="preview">{_preview_of(r)}</span></a></li>'
             )
-        items.append(
-            f'<li class="daily-card">'
-            f'<div class="daily-head"><strong>{date}</strong>'
-            f'<span class="preview">{preview}</span></div>'
-            f'<div class="slots">{"".join(slot_links)}{legacy_link}</div>'
-            f'</li>'
-        )
-    # 기타 리포트
-    for r in sorted(others, reverse=True):
-        oneline = extract_oneline(r.read_text(encoding="utf-8"))
-        items.append(
-            f'<li><a href="./{r.stem}.html">'
-            f'{r.stem}'
-            f'<span class="preview">{oneline}</span>'
-            f'</a></li>'
-        )
-    items.append("</ul>")
-    return "\n".join(items)
+        blocks.append("</ul>")
+    return "\n".join(blocks)
 
 
 def main():
@@ -236,6 +415,11 @@ def main():
     cash = portfolio.get("cash", 0)
     ret = portfolio.get("cumulative_return_pct", 0)
     return_class = "pos" if ret >= 0 else "neg"
+    as_of_raw = portfolio.get("as_of", "")
+    try:
+        portfolio_as_of = datetime.fromisoformat(as_of_raw).strftime("%Y-%m-%d %H:%M")
+    except (TypeError, ValueError):
+        portfolio_as_of = str(as_of_raw).replace("T", " ")[:16] or "—"
 
     index_html = render(
         index_tpl,
@@ -243,6 +427,7 @@ def main():
         cash=format_num(cash),
         cumulative_return=f"{ret:+.2f}",
         return_class=return_class,
+        portfolio_as_of=portfolio_as_of,
         positions_html=build_positions_html(portfolio),
         report_list=build_report_list(reports),
         updated_at=datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),

@@ -136,15 +136,32 @@ blockquote {
 .positions { list-style: none; padding: 0; margin: 0.5rem 0; }
 .positions li {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.25rem;
   padding: 0.7rem 0;
   border-bottom: 1px solid var(--border);
 }
+.pos-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.pos-id { display: flex; flex-direction: column; }
+.pos-num { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.pos-num .mv { font-weight: 600; }
+.pos-sub { color: var(--muted); font-size: 0.82rem; }
 .positions .name { font-weight: 600; }
-.positions .ticker { color: var(--muted); font-size: 0.85rem; margin-left: 0.4rem; }
+.positions .ticker { color: var(--muted); font-size: 0.85rem; }
 .positions .pnl.pos { color: var(--pos); }
 .positions .pnl.neg { color: var(--neg); }
+.no-pos { color: var(--muted); }
+h2 .as-of {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+}
 
 .report-list { list-style: none; padding: 0; margin: 0; }
 .report-list li {
@@ -227,6 +244,40 @@ footer {
   background: transparent;
   color: var(--muted);
   border: 1px dotted var(--border);
+}
+.daily-card .slot.audit { color: var(--muted); }
+.daily-card .slot.archive { color: var(--muted); }
+
+/* 리포트 섹션 헤더 (평일 / 주말 / 리서치) */
+.rl-section {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 1.7rem 0 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+.rl-section:first-of-type { margin-top: 0.5rem; }
+
+/* 주말 카드 — 평일과 시각적으로 구분 (좌측 강조선 + 배지) */
+.daily-card.weekend {
+  border-left: 3px solid var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding: 0.8rem 0.8rem;
+  margin: 0.45rem 0;
+  background: var(--card);
+  border-radius: 0 8px 8px 0;
+}
+.daily-card.weekend .slot.present { background: var(--bg); }
+.daily-card .badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(127,127,127,0.12);
+  border-radius: 999px;
+  padding: 0.05rem 0.55rem;
+  white-space: nowrap;
 }
 
 @media (max-width: 480px) {

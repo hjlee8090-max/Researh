@@ -355,6 +355,18 @@ def main() -> int:
         else:
             active_ids.add(tid)
 
+    # 2026-06-23 — 고가주 비중캡 매수가능성 게이트. 1주 가격이 종목당 비중 상한
+    # (equity × max_position_weight_pct)을 초과하면 현재 자본으로 1주도 매수할 수 없다
+    # (예: SK하이닉스 1주 ~2.9백만 > 35% 캡 ~1.76백만). one_share_probe_exception 도
+    # '종목당 비중 35% 캡 우회 불가'를 명시하므로 이는 진짜 hard 제약이다. 이런 후보를
+    # tradable 에서 내려, deploy 경로가 '못 사는 1순위'에 묶이지 않고 매수 가능한 종목으로
+    # 향하게 한다(2주간 SK하이닉스 고집 → 미배치 재발 방지). 가격/equity 결측 시 미적용(결측 래칫 방지).
+    portfolio_cfg = load_json("config/portfolio.json", {})
+    pos_cfg = policy.get("position_sizing", {}) if isinstance(policy, dict) else {}
+    max_pos_weight_pct = float(pos_cfg.get("max_position_weight_pct", 35.0))
+    equity_krw = float(portfolio_cfg.get("equity") or portfolio_cfg.get("initial_capital") or 5000000)
+    position_cap_krw = equity_krw * max_pos_weight_pct / 100 if equity_krw > 0 else None
+
     ts_map = snapshot.get("tickers", {}) if isinstance(snapshot, dict) else {}
 
     ranked: list[dict] = []
@@ -437,12 +449,28 @@ def main() -> int:
                 "sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
             )
 
+        # 고가주 비중캡: 1주 가격 > 종목당 비중 상한이면 현재 자본으로 1주도 매수 불가(결측 시 미적용).
+        last_close = ts.get("last_close") if isinstance(ts, dict) else None
+        if last_close is None and isinstance(ts, dict):
+            last_close = (ts.get("today_ohlc") or {}).get("close")
+        size_infeasible = (
+            position_cap_krw is not None
+            and isinstance(last_close, (int, float))
+            and last_close > position_cap_krw
+        )
+        if size_infeasible:
+            block_reasons.append(
+                f"1주 가격 {last_close:,.0f}원 > 종목당 비중 상한 {position_cap_krw:,.0f}원"
+                f"(equity {equity_krw:,.0f}×{max_pos_weight_pct:.0f}%) — 현재 자본으로 1주도 매수 불가(고가주 비중캡)"
+            )
+
         tradable = (
             entry_passes
             and conf in ("high", "medium")
             and not bear_flags
             and not (risk_off_blocks and regime_state == "risk_off")
             and not est_blocked
+            and not size_infeasible
         )
         adopt_reasons = (
             build_adopt_reasons(c, ret5, conf, th_score, active_ids, candidate_ids, ret60, pct_high, t_parts, rs_excess)
@@ -484,6 +512,11 @@ def main() -> int:
                 "confidence": conf,
                 "entry_filter_passes": entry_passes,
                 "structural_bear_flags": bear_flags,
+                "buyability": {
+                    "last_close": last_close,
+                    "position_cap_krw": round(position_cap_krw) if position_cap_krw else None,
+                    "size_feasible": not size_infeasible,
+                },
                 "theme_exposure": c.get("theme_exposure", []),
                 "target_estimate": {
                     "estimate": est.get("estimate"),

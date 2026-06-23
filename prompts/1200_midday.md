@@ -14,7 +14,7 @@
 
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 이 웹 세션 네트워크가 차단돼 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
-- `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 갱신한다 (뉴스·촉매 반영 **목표 매도가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 리포트 §6 에 사용).
+- `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 갱신한다 (뉴스·촉매 반영 **목표 매도가 + 적정 매수가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 리포트 §6 에 사용).
 - `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. `recommendation.action`(deploy/trim/hold)·목표 주식 비중 밴드를 장중 신규 진입·축소 판단의 1차 기준으로 쓴다(tier=unknown 이면 정책 default 사이징).
 - **(v2.2) 장중 신규 진입 사이징·R/R·후보 발굴은 `prompts/0900_pre_market.md` §2 공통 규칙·C경로를 동일 적용**한다: medium 신뢰도도 진입 허용(축소비중·R/R+0.1), 수량 = **min(리스크상한, 목표비중, 히트잔여)·단일거래 상한(2.0%)+포트폴리오 히트 예산(6.0%)이 하드 천장**(`single_trade_risk_cap`·`portfolio_heat`, 초과 불가)·고가주 floor 보정(상한 준수 시만 +1), R/R 레짐 적응 하한(strong_bull 1.0…), 강세 tier 목표가 상향. `deploy`·`vacant_slots≥1` 이면 tradable 후보로 복수 종목 진입(breadth)해 현금만 쌓이지 않게 하되, 한 종목을 리스크 상한 위로 키우지 않는다. **신규/추가 매수는 §1-PRE 게이트(재동기화·검증) 통과 후 fresh/웹확인 가격으로만 체결한다.**
 - **가격·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조일 뿐이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
@@ -120,7 +120,7 @@
 ## 6. 출력
 간단 표 + 3~4줄 요약. 초보자가 점심시간에 5분 안에 읽을 분량.
 - 표: 종목명 | 09시 대비 | 진입가 대비 | **단계** | 원인 한 줄 (yellow 이상) | 액션
-- **📰 뉴스 반영 목표 매도가**: `state/target_estimate.json.report_section_md` 의 "### 📰 뉴스 반영 목표 매도가 추정" 마크다운을 **그대로 붙여넣는다** (보유·후보 종목 추정 목표 매도가 + 직전 리포트 대비 변동·원인 뉴스 — watchlist 실제 목표가를 대체하지 않는 참고 레이어). 위 표의 보유 종목 행 옆에는 해당 종목 `news_target_line` 을 병기해도 된다.
+- **📰 뉴스 반영 매매가(목표 매도가·적정 매수가)**: `state/target_estimate.json.report_section_md` 마크다운을 **그대로 붙여넣는다** (보유·후보 종목 추정 목표 매도가 + 적정 매수가·현재가 위치(🟢매수구간/🔴상회) + 직전 리포트 대비 변동·원인 뉴스 — watchlist 실제 매매가를 대체하지 않는 참고 레이어).
 - 매크로 한 줄
 - 주간 목표 한 줄: 현재 equity / 목표 equity / 부족 금액 / 오전장 기여 판단
 - 12시 코멘트를 `config/watchlist.json`의 `comments`에 추가 (단계·원인 포함)

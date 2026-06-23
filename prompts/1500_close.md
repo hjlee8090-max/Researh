@@ -13,7 +13,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 네트워크 차단으로 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
-- `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 갱신한다 (뉴스·촉매 반영 **목표 매도가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 리포트 §3 에 사용).
+- `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 갱신한다 (뉴스·촉매 반영 **목표 매도가 + 적정 매수가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 리포트 §3 에 사용).
 - `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. 마감 전 비중 조정(축소/유지)·익절 우선순위 판단에 목표 주식 비중 밴드와 `recommendation` 을 반영한다(tier=unknown 이면 정책 default).
 - **(v2.2) 마감 직전이라도 `deploy`·`vacant_slots≥1` 이고 tradable 후보가 있으면 신규 진입은 `prompts/0900_pre_market.md` §2 공통 규칙·C경로를 동일 적용**한다(medium 허용·**min(리스크상한,목표비중,히트잔여) 사이징·단일거래 상한 2.0%+포트폴리오 히트 예산 6.0% 하드 천장**·레짐 적응 R/R). 신규/추가 매수는 아래 0-C 게이트 통과 후 fresh/웹확인 가격으로만 체결한다. 단 15:20~15:30 동시호가 변동성·주말 보유 리스크를 감안해 금요일 마감 임박 신규 진입은 신중히 판단한다.
 - **마감 임박치·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**
@@ -65,7 +65,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 
 ## 3. 출력
 - 표: 종목명 | 시가 | 현재가(15시) | 목표가까지 | 손절가까지 | 마감 임박 코멘트
-- **📰 뉴스 반영 목표 매도가**: `state/target_estimate.json.report_section_md` 의 "### 📰 뉴스 반영 목표 매도가 추정" 마크다운을 **그대로 붙여넣는다** (보유·후보 종목 추정 목표 매도가 + 직전 리포트 대비 변동·원인 뉴스 — watchlist 실제 목표가를 대체하지 않는 참고 레이어).
+- **📰 뉴스 반영 매매가(목표 매도가·적정 매수가)**: `state/target_estimate.json.report_section_md` 마크다운을 **그대로 붙여넣는다** (보유·후보 종목 추정 목표 매도가 + 적정 매수가·현재가 위치(🟢매수구간/🔴상회) + 직전 리포트 대비 변동·원인 뉴스 — watchlist 실제 매매가를 대체하지 않는 참고 레이어).
 - KOSPI 지수와 보유 종목들의 동행/차별화 평가 한 줄
 - 15시 코멘트를 `config/watchlist.json`의 `comments`에 추가
 - `config/weekly_plan.json`의 `watch_items`에 내일 09시 확인할 thesis 트리거를 추가 또는 갱신 — 새 항목은 맨 앞에 넣고, 이미 해소·만료된 항목은 지운다(**전체 최대 15개 유지** — 18시가 재작성으로 최종 정리한다. 묵은 트리거가 쌓이면 "내일 볼 것"이 노이즈에 묻힌다)

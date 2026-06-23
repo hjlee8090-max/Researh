@@ -242,6 +242,13 @@ _(최종 갱신: 2026-06-22 18:00 — W26 D1(월) 18시 종가 확정. 삼성전
 - 분류: 루틴
 - 요약: silent_types(buyback_cancellation·earnings_miss_or_guidance_cut·supply_glut_or_price_drop) 3종 — unclassified 표본(651건) 대조 결과 뉴스 부재 확인, 키워드 구멍 아님. 유의미 미분류 없음(SK하이닉스 ADR상장·HD조선 SMR/LNG는 배경기사 수준, manual_news 승격 해당 없음). 키워드 변경 없음.
 
+### 2026-06-23 09:00 / 시스템 — 09시 신규진입 게이트 구조적 블로커 (루틴, 4영업일째)
+- 분류: 루틴 (인프라/가격검증)
+- 요약: SK하이닉스(000660) probe(W26 1순위)가 6/19·6/22에 이어 4영업일째 이연. 원인은 시장 신호가 아니라 **세션 인프라 한계**다 — (1)세션 라이브 fetch 전종목 HTTP 403(naver·yahoo·google 차단), (2)`pre_trade_check` 가 `prices_last_date_today=false`(yahoo가 KST 오전엔 KRX 종가를 전일자로 보고)만으로 `live_verify_required` 발령, (3)웹 교차확인도 6/23 게재일 유효 실시간가 미확보(검색결과=wonforecast 예측치 3,081,830 → today_high 2,943,000 초과 outlier 기각). 결과적으로 09시엔 독립 실시간가가 구조적으로 잡히지 않아 신규 진입이 상시 봉쇄.
+- 데이터 품질 자체는 양호: Actions 09:16 스냅샷이 naver 당일자(6/23, 2,914,000)+yahoo 전일(2,919,000) 0.17% 일치·conf=high·today_ohlc 완비. 즉 '묵은/저신뢰'가 아니라 '독립 2차 검증원 부재'가 병목.
+- 반영 제안(운영자/다음 routine): ①naver 당일자+2출처 일치+fresh 스냅샷은 `pre_trade_check` 에서 `ok`(snapshot_fresh booking 허용)로 처리하도록 게이트 보정 검토 — yahoo 날짜지연을 단독 차단 사유로 쓰지 않기. ②세션에 작동하는 웹 시세원 또는 KRX_ID/PW 제공. ③해소 전까지는 booking-then-verify 금지 원칙대로 이연 유지(규율은 정상 작동). 만성 미배치(cash 86%, 4일째)는 이 인프라 병목의 결과이지 판단 오류 아님.
+- 분류 신뢰도: 높음 (committed Actions 스냅샷=비stale·fresh 확인, 세션 차단·웹 outlier 직접 관측)
+
 ### YYYY-MM-DD HH:MM / 종목명(티커) — [TIER 또는 18시 오차]
 - 진입가/목표가/현재가/괴리 ...
 - 원인 분류: [매크로|섹터|개별|가정오류]

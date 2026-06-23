@@ -54,6 +54,15 @@ def compute_freshness(snapshot_as_of: str | None, fresh_max: float, intraday_max
     return age, "stale_intraday"
 
 
+def ticker_source_dates(ticker_snap: dict) -> list[str]:
+    """종목 스냅샷의 ok 출처별 last_date 목록 (Yahoo 전일자 지연 판정용)."""
+    return [
+        s["last_date"]
+        for s in (ticker_snap.get("sources") or [])
+        if isinstance(s, dict) and s.get("ok") and s.get("last_date")
+    ]
+
+
 def main() -> int:
     policy = load_json("config/policy.json", {})
     snapshot = load_json("state/market_snapshot.json", {})
@@ -75,16 +84,18 @@ def main() -> int:
     scores_in_sync = bool(snap_as_of) and scores_as_of == snap_as_of
     alloc_in_sync = bool(snap_as_of) and alloc_as_of == snap_as_of
 
-    # 스냅샷 가격의 거래일(last_date)이 모두 오늘인지 — 전일자면 신규 진입에 부적합
+    # 스냅샷 가격의 거래일(last_date)이 오늘인지 — 전일자뿐이면 신규 진입에 부적합.
+    # 2026-06-23 — 종목별 '오늘자 출처 ≥1개' 보유로 판정한다(기존: 전 출처가 모두 오늘이어야 통과).
+    # Yahoo 가 KST 오전에 KRX 종가를 전일자로 보고하는 알려진 지연 탓에 naver 당일자·2출처 일치·
+    # fresh 스냅샷인데도 live_verify_required 가 상시 발령돼 '신규 매수만' 비대칭 봉쇄되던 문제 해소
+    # (2026-06-23 lessons — SK하이닉스 4영업일 미배치의 직접 원인). 진짜 묵은 스냅샷(전 출처 전일자·
+    # 주말 carry)은 today 출처가 0이라 그대로 live_verify_required + freshness(age) 게이트가 이중 차단.
     today = datetime.now(KST).date().isoformat()
     ts = snapshot.get("tickers", {}) if isinstance(snapshot, dict) else {}
-    last_dates: list[str] = []
-    for v in ts.values():
-        if isinstance(v, dict):
-            for s in v.get("sources", []) or []:
-                if isinstance(s, dict) and s.get("ok") and s.get("last_date"):
-                    last_dates.append(s["last_date"])
-    prices_last_date_today = bool(last_dates) and all(d == today for d in last_dates)
+    dated_tickers = [v for v in ts.values() if isinstance(v, dict) and ticker_source_dates(v)]
+    prices_last_date_today = bool(dated_tickers) and all(
+        today in ticker_source_dates(v) for v in dated_tickers
+    )
     snapshot_stale = bool(snapshot.get("stale")) if isinstance(snapshot, dict) else False
 
     # 장부 정합성(reconcile) + 평가 산식 (reconcile_portfolio 재사용)

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-06-23T00:34:53+09:00",
+  "as_of": "2026-06-23T22:20:15+09:00",
   "round_trips": [
     {
       "ticker": "000270",
@@ -23,7 +23,11 @@
           "close": 170200.0,
           "forgone_krw": 76941.0
         },
-        "t10": null
+        "t10": {
+          "date": "2026-06-23",
+          "close": 137400.0,
+          "forgone_krw": -119859.0
+        }
       }
     },
     {
@@ -77,7 +81,11 @@
           "close": 172000.0,
           "forgone_krw": 164798.0
         },
-        "t10": null
+        "t10": {
+          "date": "2026-06-23",
+          "close": 153700.0,
+          "forgone_krw": 18398.0
+        }
       }
     },
     {
@@ -102,7 +110,11 @@
           "close": 438500.0,
           "forgone_krw": 35598.0
         },
-        "t10": null
+        "t10": {
+          "date": "2026-06-23",
+          "close": 364500.0,
+          "forgone_krw": -38402.0
+        }
       }
     },
     {
@@ -191,16 +203,26 @@
           "forgone_krw": 41238.0
         }
       }
-    }
-  ],
-  "open_lots": [
+    },
     {
       "ticker": "005930",
-      "date": "2026-06-09",
-      "price": 296091.0,
-      "shares": 2.0
+      "name": "삼성전자",
+      "entry_date": "2026-06-09",
+      "exit_date": "2026-06-23",
+      "entry_cost": 592182.0,
+      "exit_price": 308775.5,
+      "shares": 2.0,
+      "hold_days": 14,
+      "realized_pnl": 25369.0,
+      "exit_rule": "SELL_STOP",
+      "post_exit": {
+        "t1": null,
+        "t5": null,
+        "t10": null
+      }
     }
   ],
+  "open_lots": [],
   "by_rule": {
     "SELL": {
       "n": 1,
@@ -246,21 +268,30 @@
       "post_exit_t5_forgone_sum": 24738.0,
       "t5_n": 1,
       "avg_hold_days": 4.0
+    },
+    "SELL_STOP": {
+      "n": 1,
+      "realized_pnl_sum": 25369.0,
+      "post_exit_t1_forgone_sum": 0.0,
+      "t1_n": 0,
+      "post_exit_t5_forgone_sum": 0.0,
+      "t5_n": 0,
+      "avg_hold_days": 14.0
     }
   },
   "account": {
-    "closed_exits": 7,
-    "wins": 2,
+    "closed_exits": 8,
+    "wins": 3,
     "losses": 5,
-    "win_rate_pct": 28.6,
-    "gross_profit": 192878.0,
+    "win_rate_pct": 37.5,
+    "gross_profit": 218247.0,
     "gross_loss": -283317.0,
-    "net_realized": -90439.0,
-    "profit_factor": 0.68,
-    "expectancy_per_exit": -12920.0,
-    "median_hold_days": 2,
-    "turnover_krw": 11626717.0,
-    "friction_est_krw": 35380.0,
+    "net_realized": -65070.0,
+    "profit_factor": 0.77,
+    "expectancy_per_exit": -8134.0,
+    "median_hold_days": 3.0,
+    "turnover_krw": 12836450.0,
+    "friction_est_krw": 39093.0,
     "friction_note": "추정 — policy.trading_cost 요율 × 회전대금(라운드트립 기준, 미청산 매수 제외)"
   },
   "benchmarks": {
@@ -277,39 +308,39 @@
           "name": "삼성전자",
           "first_entry": "2026-05-20",
           "entry_price": 276600.0,
-          "latest_date": "2026-06-22",
-          "latest_close": 353500.0,
-          "pct": 27.8
+          "latest_date": "2026-06-23",
+          "latest_close": 310000.0,
+          "pct": 12.08
         },
         "000270": {
           "name": "기아",
           "first_entry": "2026-05-20",
           "entry_price": 181400.0,
-          "latest_date": "2026-06-22",
-          "latest_close": 151400.0,
-          "pct": -16.54
+          "latest_date": "2026-06-23",
+          "latest_close": 137400.0,
+          "pct": -24.26
         },
         "105560": {
           "name": "KB금융",
           "first_entry": "2026-05-20",
           "entry_price": 153100.0,
-          "latest_date": "2026-06-22",
-          "latest_close": 157000.0,
-          "pct": 2.55
+          "latest_date": "2026-06-23",
+          "latest_close": 153700.0,
+          "pct": 0.39
         },
         "009540": {
           "name": "HD한국조선해양",
           "first_entry": "2026-05-27",
           "entry_price": 446000.0,
-          "latest_date": "2026-06-22",
-          "latest_close": 397500.0,
-          "pct": -10.87
+          "latest_date": "2026-06-23",
+          "latest_close": 364500.0,
+          "pct": -18.27
         }
       },
-      "equal_weight_pct": 0.74,
+      "equal_weight_pct": -7.52,
       "note": "각 종목 첫 진입가→최신 관측가, no-stop 가정. latest_date 가 오래됐으면 stale."
     },
-    "actual_cumulative_pct": 0.488
+    "actual_cumulative_pct": -1.301
   },
   "blocked_day": {
     "days_with_candidates": 2,

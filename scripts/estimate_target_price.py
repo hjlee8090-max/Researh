@@ -94,6 +94,36 @@ def load_json(rel: str, default: Any) -> Any:
         return default
 
 
+def previous_estimates() -> dict[str, dict]:
+    """직전 리포트(target_estimate_log.jsonl 마지막 행)의 종목별 추정 스냅샷 — 델타 산출용.
+
+    로그에 append 하기 '전' 마지막 행이 곧 직전 routine(리포트)의 추정이다. 종목별로
+    {estimate, expected_return_pct, premium_pct, news 지문, _as_of} 를 돌려준다. 없으면 {}.
+    """
+    path = ROOT / "state" / "target_estimate_log.jsonl"
+    if not path.exists():
+        return {}
+    last = ""
+    try:
+        with path.open(encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    last = line
+    except OSError:
+        return {}
+    if not last:
+        return {}
+    try:
+        rec = json.loads(last)
+    except json.JSONDecodeError:
+        return {}
+    out: dict[str, dict] = {}
+    for e in rec.get("estimates", []) or []:
+        if isinstance(e, dict) and e.get("ticker"):
+            out[e["ticker"]] = {**e, "_as_of": rec.get("as_of"), "_date": rec.get("date")}
+    return out
+
+
 def _num(v: Any) -> float | None:
     return float(v) if isinstance(v, (int, float)) else None
 
@@ -568,29 +598,77 @@ def grade(layers: dict[str, bool]) -> str:
     return "A" if n >= 5 else ("B" if n >= 3 else "C")
 
 
+def build_news_target_line(r: dict) -> str:
+    """리포트 종목 카드에 그대로 넣는 '뉴스 반영 추정 목표 매도가' 한 줄.
+
+    추정 목표가 + 상승여력 + 직전 리포트 대비 델타(▲/▼) + 이번에 새로 반영된 원인 뉴스.
+    """
+    if not r.get("estimate"):
+        return f"뉴스 반영 추정 목표가: — (기준가 산출 불가 — {r.get('anchor_basis', '')})"
+    up = f"{r['expected_return_pct']:+.1f}%" if r.get("expected_return_pct") is not None else "—"
+    p = r.get("premium_pct", {})
+    cap = "(캡)" if abs(_num(p.get("news")) or 0) >= 12.0 else ""
+    parts = [f"뉴스 반영 추정 목표 매도가 **{r['estimate']:,.0f}원**({up}, 등급 {r['grade']})"]
+    d = r.get("delta_vs_prev") or {}
+    dv = d.get("estimate_delta_krw")
+    if dv:
+        parts.append(f"직전 리포트 대비 {'▲' if dv > 0 else '▼'}{abs(dv):,.0f}원")
+    elif d:
+        parts.append("직전 대비 변동 없음")
+    parts.append(
+        f"프리미엄 테마{p.get('theme', 0):+.0f}/뉴스{p.get('news', 0):+.0f}{cap}/"
+        f"섹터{p.get('sector', 0):+.0f}/모멘텀{p.get('momentum', 0):+.0f}%"
+    )
+    nn = r.get("new_news_since_prev") or []
+    if nn:
+        kind_label = {"news_auto": "자동", "news_global": "해외", "catalyst": "촉매"}
+        top = sorted(nn, key=lambda x: abs(_num(x.get("contrib_pct")) or 0), reverse=True)[:2]
+        causes = "; ".join(
+            f"{x.get('type')}{('(' + kind_label[x['kind']] + ')') if x.get('kind') in kind_label else ''} "
+            f"{_num(x.get('contrib_pct')):+.1f}%"
+            for x in top
+        )
+        parts.append(f"📰 원인 뉴스: {causes}")
+    return " · ".join(parts)
+
+
 def build_report_section(rows: list[dict], as_of: str) -> str:
     lines = [
-        "### 목표주가 추정 (estimate_target_price v1.0)",
+        "### 📰 뉴스 반영 목표 매도가 추정 (estimate_target_price v1.4 — 직전 리포트 대비 변동)",
         "",
         f"- 기준 시각: {as_of} · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)",
         "- 식: 기준가(밸류 밴드·컨센) × (1 + 테마 + 뉴스/촉매 + 섹터활발성 + 모멘텀) → 천장 캡(컨센×1.15·밸류천장)",
+        "- ※ 이 추정 목표가는 **참고 레이어**다 — watchlist 의 실제 목표가·매도 트리거를 자동 대체하지 않는다(이중출처 혼란 방지).",
         "",
-        "| 종목 | 현재가 | 추정 목표가 | 상승여력 | 프리미엄(테마/뉴스/섹터/모멘텀) | 섹터 활성화 예상 | 등급 |",
+        "| 종목 | 현재가 | 추정 목표 매도가 | 상승여력 | Δ직전 | 프리미엄(테마/뉴스/섹터/모멘텀) | 등급 |",
         "|---|---|---|---|---|---|---|",
     ]
     for r in rows:
         cur = f"{r['current_price']:,.0f}" if r.get("current_price") else "—"
         est = f"{r['estimate']:,.0f}" if r.get("estimate") else "—"
         up = f"{r['expected_return_pct']:+.1f}%" if r.get("expected_return_pct") is not None else "—"
+        d = r.get("delta_vs_prev") or {}
+        dv = d.get("estimate_delta_krw")
+        delta_cell = f"{'▲' if dv > 0 else '▼'}{abs(dv):,.0f}" if dv else ("0" if d else "신규")
         p = r.get("premium_pct", {})
         prem = f"{p.get('theme', 0):+.1f}/{p.get('news', 0):+.1f}/{p.get('sector', 0):+.1f}/{p.get('momentum', 0):+.1f}"
         lines.append(
-            f"| {r['name']}({r['ticker']}) | {cur} | {est} | {up} | {prem} | {r.get('sector_activation', '—')} | {r['grade']} |"
+            f"| {r['name']}({r['ticker']}) | {cur} | {est} | {up} | {delta_cell} | {prem} | {r['grade']} |"
         )
+    # 직전 리포트 대비 '새 뉴스가 목표가를 움직인' 종목만 원인과 함께 풀어 노출(없으면 생략).
+    changed = [
+        r for r in rows
+        if (r.get("new_news_since_prev") or (r.get("delta_vs_prev") or {}).get("estimate_delta_krw"))
+    ]
+    if changed:
+        lines += ["", "**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**"]
+        for r in changed:
+            lines.append(f"- {build_news_target_line(r)}")
     lines += [
         "",
         "> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라",
         "> '현재가 + 프리미엄' 수준의 거친 추정 — 밸류 밴드·컨센서스 시드 후 재산출 필요.",
+        "> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.",
     ]
     return "\n".join(lines)
 
@@ -754,6 +832,45 @@ def main() -> int:
         })
 
     results.sort(key=lambda r: (r["expected_return_pct"] is None, -(r["expected_return_pct"] or 0)))
+
+    # v1.4 델타 — 직전 리포트(로그 마지막 행) 대비 추정목표가·뉴스 프리미엄 변동 + '직전 이후 새/변경 뉴스'.
+    # 같은 날 여러 routine 이 돌면 직전 행=직전 슬롯이므로 '리포트마다 변경값'이 자연히 산출된다.
+    prev_map = previous_estimates()
+    for r in results:
+        prev = prev_map.get(r["ticker"])
+        np_now = r["detail"]["news_parts"] or []
+        prev_news = {
+            (n.get("kind"), n.get("type"), n.get("date")): n.get("contrib_pct")
+            for n in (prev.get("news") or [])
+        } if prev else {}
+        new_news = [
+            n for n in np_now
+            if abs(_num(n.get("contrib_pct")) or 0) >= 0.01
+            and (not prev or prev_news.get((n.get("kind"), n.get("type"), n.get("date"))) != n.get("contrib_pct"))
+        ]
+        delta = None
+        if prev:
+            de = (
+                r["estimate"] - prev["estimate"]
+                if r.get("estimate") is not None and prev.get("estimate") is not None else None
+            )
+            pn_now, pn_prev = _num(r["premium_pct"].get("news")), _num((prev.get("premium_pct") or {}).get("news"))
+            er_now, er_prev = _num(r.get("expected_return_pct")), _num(prev.get("expected_return_pct"))
+            delta = {
+                "prev_estimate": prev.get("estimate"),
+                "prev_as_of": prev.get("_as_of"),
+                "estimate_delta_krw": round(de, -2) if de is not None else None,
+                "news_pct_delta": round(pn_now - pn_prev, 2) if pn_now is not None and pn_prev is not None else None,
+                "expected_return_delta_pct": round(er_now - er_prev, 1) if er_now is not None and er_prev is not None else None,
+            }
+        r["delta_vs_prev"] = delta
+        r["new_news_since_prev"] = [
+            {"kind": n.get("kind"), "type": n.get("type"), "date": n.get("date"),
+             "contrib_pct": n.get("contrib_pct"), "note": n.get("note"), "source_url": n.get("source_url")}
+            for n in new_news
+        ]
+        r["news_target_line"] = build_news_target_line(r)
+
     as_of = now.isoformat(timespec="seconds")
     out = {
         "as_of": as_of,
@@ -781,6 +898,12 @@ def main() -> int:
                 "expected_return_pct": r["expected_return_pct"],
                 "premium_pct": r["premium_pct"], "grade": r["grade"],
                 "trend_gate": (r.get("trend_gate") or {}).get("factor"),
+                # v1.4 — 뉴스 지문(다음 실행이 '새/변경 뉴스'를 정확히 diff 하는 근거).
+                "news": [
+                    {"kind": n.get("kind"), "type": n.get("type"),
+                     "date": n.get("date"), "contrib_pct": n.get("contrib_pct")}
+                    for n in (r["detail"]["news_parts"] or [])
+                ],
             }
             for r in results
         ],

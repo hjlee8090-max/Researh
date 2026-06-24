@@ -63,8 +63,17 @@ jobs:
           restore-keys: |
             intraday-state-${{ steps.date.outputs.d }}-
 
+      - name: Install deps (krx EOD backstop)
+        if: steps.session.outputs.mode == 'live'
+        run: pip install --quiet pykrx || true
+
       - name: Fetch fresh prices
         if: steps.session.outputs.mode == 'live'
+        env:
+          # naver·yahoo 동시 403 시에만 쓰는 KRX EOD 백스톱(pykrx) — fetch_prices.yml 과 동일 시크릿.
+          # 장중 경로(pending_orders 트리거 평가)에도 백스톱을 열어 둔다(2026-06-24).
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
         run: python scripts/fetch_market_data.py
 
       - name: Check intraday tier breaches & alert

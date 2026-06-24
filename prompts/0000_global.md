@@ -56,6 +56,7 @@
 6. `config/portfolio.json`
 7. `config/candidates.json` — 추적 중인 신규 진입 후보
 8. `state/market_snapshot.json` — 0-A 단계에서 생성된 가격·5거래일 추세 스냅샷
+9. `state/inference_checklist.md` — **선제 추론 직전 입력**(과거 빗나간 요인). 아래 §2-4 예측 기록 전 먼저 읽는다.
 
 > **연결 규칙**: 자정 routine 은 어제 18시 결론의 **검증·갱신** 단계다. 글로벌 흐름이 어제 결론을 강화하는지/뒤집는지 명시적으로 답한다.
 > **주간 연결 규칙**: 모든 글로벌 뉴스는 `weekly_plan.json`의 `weekly_thesis` 중 어느 항목을 강화/약화/무효화하는지 분류한다. 해당되지 않는 뉴스는 "주간 thesis 외 신규 변수" 로 표시한다.
@@ -117,6 +118,15 @@
 - 근거 뉴스 1~2개
 - 09시 routine이 확인해야 할 가격·뉴스·수급 트리거
 - `invalidation_triggers`에 매칭되는 뉴스가 있으면 09시 우선순위 🔴 로 승격
+
+## 2-4. 선제 추론 기록 (proactive inference loop — `policy.proactive_inference`)
+> 자정은 예측 슬롯이다(`inference_logging.predict_slots`). 개장 갭 예측을 **구조화해 원장에 적재**한다 — 자기보완 루프가 종가 오차를 사후 기록하듯, 이 루프는 **사전 예측을 기록해 09시가 채점**한다. Phase 1 은 관측 전용(새 매매 없음).
+1. **체크리스트 먼저**: `state/inference_checklist.md` 의 '다음 추론 시 고려할 요인'을 읽고, 이번 예측의 `factors_considered`/`assumptions` 에 반영했음을 `checklist_refs` 로 증빙한다(자기보완 루프의 "lessons 먼저 읽기"와 대칭).
+2. **예측 적재**: §2-1 개장 갭 예측을 `state/inference_log.jsonl` 에 1줄 append. **검증 가능 수치+horizon 필수**(모호 예측 금지 — `falsifiable_rule`):
+   `{"ts":"YYYY-MM-DDT00:00:00+09:00","slot":"00:00","id":"inf-YYYYMMDD-0000-1","subject":"KOSPI_open_gap","prediction":"개장 -1.0~-2.5% 갭다운","horizon":"09:00","confidence":0.55,"factors_considered":["미장 -1.2%","원달러 1553"],"assumptions":["PCE 부합"],"key_uncertainty":"지정학 [진행형] 05:00 역전 가능","preemptive_action":{"tier":1,"what":"보유 손절 이격 재확인 메모","trade_logged":false},"checklist_refs":["갭다운 버퍼 룰"]}`
+   - 보유 종목 야간 영향(§2-1)이 뚜렷하면 종목 예측(`"subject":"ticker:XXXXXX"`)도 추가(최대 3건).
+   - 자정은 장 마감 → 선제 액션은 **Tier 0~1 만**(코멘트·경보·손절 이격 메모). 신규 매매 금지.
+3. horizon="09:00" 예측은 09시 routine §1-0 이 채점한다.
 
 ## 3. 리포트 작성 (시간대별 분리 파일)
 **오늘 날짜의 자정 리포트 `reports/YYYY-MM-DD-00.md` 를 새로 생성** 한다 (이미 존재하면 덮어쓰기 — 자정이 그날의 첫 routine).

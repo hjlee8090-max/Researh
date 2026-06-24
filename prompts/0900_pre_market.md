@@ -56,6 +56,7 @@
 8. `state/market_snapshot.json` — 0-B 단계에서 방금 만든 가격·5거래일 추세 스냅샷
 9. `state/candidate_scores.json` — 0-B 단계의 후보 점수·진입 가능 여부 랭킹
 10. `config/catalysts.json` — **다가오는 촉매(실적발표·배당·매크로) 캘린더** (있으면). `generated_events`(법정기한 추정)+`manual_events`(웹검색 확정)를 합쳐 D-day 임박 이벤트를 1-4 에서 경보로 쓴다. 파일이 없으면 이 단계는 건너뛴다(옵셔널).
+11. `state/inference_checklist.md` — **선제 추론 직전 입력**(과거 빗나간 요인). 아래 §1-0 채점·예측 기록에 쓴다.
 
 > **파이프라인 연결 규칙** (핵심):
 > - 09시는 "어제 18시 (한국 마감) → 오늘 00시 (글로벌 야간) → 야간~새벽 추가 흐름 → 09시 (한국 개장)" 의 **종합 마디**다.
@@ -118,6 +119,10 @@
 - 실제 KOSPI 시가·코스피200 선물 시가 확인
 - 예측 적중 여부: 적중 / 빗나감 (방향) / 폭만 빗나감
 - 이 시그널을 09시 종목별 판단에 우선 가중
+- **선제 추론 채점 (proactive inference loop — `policy.proactive_inference`)**: 자정 routine 이 `state/inference_log.jsonl` 에 적재한 `horizon="09:00"` 예측 각각에 대해 **결과 줄을 append** 한다(원장은 라인 편집 대신 결과 줄 추가로 병합):
+  `{"id":"<예측 id>","outcome":"hit|partial|miss","miss_attribution":"(miss 면 무엇을 안 봤나 1줄)"}`
+  miss 는 18시 §3-1 에서 lessons `선제추론오차` 로 승격된다(여기선 결과 줄만).
+- **당일 예측 적재(INFER)**: `state/inference_checklist.md` 를 먼저 읽고, 오늘 장중~종가 방향 예측을 1~2건 `inference_log.jsonl` 에 append(검증 가능 수치+horizon, 보통 `"horizon":"18:00"`, `checklist_refs` 증빙). 선제 액션은 §2 게이트를 통과한 Tier 0~1(준비·리스크감소)만 — Tier 2(probe 신규매수)는 Phase 1 에서 **paper(그림자)로만** 기록(`"preemptive_action":{"tier":2,"paper":true}`).
 
 ### 1-1. 야간~새벽 추가 흐름 (자정 이후 미국장 마감까지)
 자정 routine 은 미국장 개장 직후만 봤다. 09시 routine 은 **미국장 마감(05:00 KST) 까지의 최종 결과** 를 확인:

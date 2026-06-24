@@ -43,11 +43,18 @@ def load_json(rel: str, default: Any) -> Any:
         return default
 
 
-def load_predictions() -> list[dict]:
-    """원장에서 예측 레코드만 추출(_meta 줄·빈 줄 제외)."""
-    preds: list[dict] = []
+def load_records() -> list[dict]:
+    """원장에서 예측·결과 레코드를 읽어 id 로 병합한다(append-only 친화).
+
+    예측 줄: "prediction" 필드 보유. 결과 줄: "id"+"outcome"(또는 "realized")만 보유 —
+    나중에 append 돼 같은 id 의 예측에 outcome/miss_attribution/realized 를 덧씌운다.
+    (jsonl 은 라인 편집이 어려워 routine 이 결과를 새 줄로 append 하는 방식을 허용.)
+    """
+    preds: dict[str, dict] = {}
+    order: list[str] = []
+    results: list[dict] = []
     if not LOG_PATH.exists():
-        return preds
+        return []
     for line in LOG_PATH.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line:
@@ -56,10 +63,24 @@ def load_predictions() -> list[dict]:
             rec = json.loads(line)
         except json.JSONDecodeError:
             continue
-        if rec.get("_meta") or "prediction" not in rec:
+        if rec.get("_meta"):
             continue
-        preds.append(rec)
-    return preds
+        if "prediction" in rec:
+            pid = rec.get("id") or f"_auto{len(order)}"
+            rec.setdefault("id", pid)
+            preds[pid] = rec
+            order.append(pid)
+        elif rec.get("id") and ("outcome" in rec or "realized" in rec):
+            results.append(rec)
+    # 결과 줄을 예측에 덧씌움(최신 결과 우선).
+    for r in results:
+        p = preds.get(r["id"])
+        if not p:
+            continue
+        for k in ("outcome", "miss_attribution", "realized"):
+            if k in r:
+                p[k] = r[k]
+    return [preds[pid] for pid in order]
 
 
 def min_samples() -> int:
@@ -208,7 +229,7 @@ def build_md(s: dict, as_of: str) -> str:
 def main() -> int:
     now = datetime.now(KST)
     ms = min_samples()
-    preds = load_predictions()
+    preds = load_records()
     ra = load_json("state/rule_attribution.json", {})
     s = score(preds, ra, ms)
     as_of = now.isoformat(timespec="seconds")

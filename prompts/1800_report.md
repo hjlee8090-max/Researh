@@ -29,6 +29,7 @@
 
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`
+1-1. `state/inference_checklist.md` — 선제 추론 직전 입력(§4 내일 예측 적재에 쓴다)
 2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 3. `state/trade_log.jsonl` (최근 30라인)
 3-1. `config/catalysts.json` (있으면 — §4 다음 거래일 액션의 임박 촉매 반영용, 옵셔널)
@@ -131,6 +132,15 @@
 - 동일 섹터 반복 손실 (반도체/2차전지/금융/바이오 등): {섹터명: 횟수}
 ```
 
+## 3-1. 선제 추론 채점·학습 (proactive inference loop — `policy.proactive_inference`)
+하루 중 예측이 한 바퀴 도는 마디다(자기보완 루프의 종가 오차 채점과 **대칭**). 순서대로:
+1. **예측 채점**: `state/inference_log.jsonl` 에서 오늘까지 `horizon` 이 도래한(아직 결과 줄 없는) 예측을 실측 종가·지수와 대조해 **결과 줄을 append**:
+   `{"id":"<예측 id>","outcome":"hit|partial|miss","miss_attribution":"(miss 면 무엇을 안 봤나)"}`
+   - 09시가 이미 채점한 `horizon="09:00"` 예측은 건너뛴다(중복 금지).
+   - 미배치(보류·blocked) 그림자 예측은 `{"id":"<id>","realized":{"forgone_krw":<샀더라면 손익>,"regime":"risk_on|risk_off"}}` — forgone 은 실제 관측 종가로만, `risk_off` 면 채점기가 감점 면제.
+2. **학습 기록**: miss 1건당 `state/lessons.md` 에 `선제추론오차` 항목 추가(분류·예측/실제·미흡했던 부분·**다음 추론 시 고려**·선제 액션 결과·분류 신뢰도). 미배치로 놓친 수익이 컸으면 `기회비용오차`. 누적 카운터(`선제추론오차`/`기회비용오차`)도 갱신.
+3. **당일 환류**: `python scripts/score_inferences.py` → `python scripts/build_inference_checklist.py` 실행 — 오늘 miss 가 `inference_checklist.md` 에 즉시 반영돼 **내일 00시/09시 추론이 어제 교훈을 이미 읽는다**(학습 지연 제거). 채점 산출(`inference_scorecard.json`)의 적중률·결합손익은 리포트에 나열하지 않고 일요일 리뷰·state 에만 둔다.
+
 ## 4. 다음 거래일 액션 결정
 - 손절·목표 도달로 청산된 종목 자리 → **다음 09시 신규 추천 후보** 선정 메모를 watchlist.json의 `next_day_plan` 필드에 기록
 - 청산 없이 유지되는 종목은 그대로 watchlist에 둠
@@ -138,6 +148,7 @@
 - lessons.md의 누적 패턴 카운터가 동일 섹터 손실 3회 이상이면 → 해당 섹터 회피 룰을 watchlist.json의 `avoid_sectors`에 추가 (구조화 `re_entry` 포함)
 - **avoid 해제는 추가와 대칭(v2.8)**: `avoid_sectors` 는 영구 블랙리스트가 아니다. 해제는 `policy.sector_rotation_reentry`(호재 촉매 + 몰입 발자국)로 풀린다 — 매 09시 §C-5-1 이 `screen_universe.py` 의 `avoid_reentry` 를 읽어 `immersion_met` + 촉매 web_verify 충족 시 해제·probe 재진입한다. 18시는 avoid 항목들의 `re_entry.lift_when` 진행상황을 `next_day_plan` 에 1줄로 남긴다.
 - **내일 시나리오(if-then) 도출**: 내일 가장 가능성 높은 갈림길 2~3개를 "조건 → 행동" 쌍으로 정해 §5 리포트 '내일 액션 플랜'의 if-then 표에 기록한다. 조건은 다음날 09시가 기계적으로 판정할 수 있게 **검증 가능한 수치·이벤트**(지수 레벨, 발표 결과, 가격 임계)로 쓴다 — "시장이 안 좋으면" 같은 모호한 조건 금지. 09시 routine 이 각 조건의 충족 여부를 판정해 그대로 실행·검증한다(개장 직후 감정 개입 차단). 15시 리포트에 "익일 시나리오 초안"이 있으면 새로 만들지 말고 **종가·마감 후 뉴스로 검증해 수정·확정**한다.
+- **선제 추론 적재(INFER)**: 위 if-then 갈림길을 `state/inference_log.jsonl` 에 예측으로 1~3건 append(`state/inference_checklist.md` 먼저 읽고 `checklist_refs` 증빙, 검증 가능 수치+`horizon` 필수). 보통 `"slot":"18:00"`·`"horizon":"09:00"`. 내일 09시 routine 이 채점한다. 선제 액션은 §3-1·action_ladder Tier 0(준비)만(마감 후 신규매매 금지).
 
 ## 5. 18시 종합 리포트 작성 (시간대별 분리 — 종합 파일 생성)
 **오늘 날짜의 18시 리포트 `reports/YYYY-MM-DD-18.md` 를 새로 생성** 한다 (이미 존재하면 덮어쓰기).

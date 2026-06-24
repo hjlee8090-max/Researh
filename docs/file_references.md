@@ -237,6 +237,17 @@
 - 쓰기: `state/lessons_index.json` (gitignored)
 - 일요일 20시 `sunday_policy_review` routine 의 0-A 단계에서 호출. 분류별 항목·룰·반복 카운트 추출.
 
+### `scripts/score_inferences.py` (신규 — 선제적 추론 루프 Phase 1)
+- 읽기: `state/inference_log.jsonl`(예측 원장), `state/rule_attribution.json`(inference_id 결합 손익), `config/policy.json`(min_samples)
+- 쓰기: `state/inference_scorecard.json` (슬롯·subject 종류·confidence 구간별 적중률 + 결합 실현손익/PF + 미배치 forgone)
+- 실행: 18시 routine 당일 즉시 채점 + 일 20시 `sunday_policy_review` §0-D. 표본<min_samples(5) 채점 보류. 의존성 0.
+
+### `scripts/build_inference_checklist.py` (신규 — 선제적 추론 루프 Phase 1)
+- 읽기: `state/lessons.md`(선제추론오차/기회비용오차 항목의 `다음 추론 시 고려`), `state/inference_scorecard.json`(반복 miss 요인), `config/policy.json`(체크리스트 줄 상한)
+- 쓰기: `state/inference_checklist.md` (**핫패스** — 추론 직전 먼저 읽음, 상한 40줄·`context_budget.audit_thresholds.inference_checklist_max_lines`)
+- 실행: 18시 routine 직후(당일 환류) + 일 20시. `build_lessons_index.NEXT_RULE_RE` 의 `다음 추론 시 고려` 캡처 계약에 의존.
+- 근거: `docs/plan_proactive_inference.md` (선제 추론 루프 ①INFER→②ACT→③SCORE→④LEARN→체크리스트 환류).
+
 ### `scripts/compact_state.py` (신규 v2.13 — 콘텍스트 예산)
 - 읽기: `config/watchlist.json`·`config/portfolio.json`·`config/weekly_plan.json`·`config/policy.json` + 기존 archive 파일들
 - 쓰기: 위 4개 config(압축) + `state/watchlist_archive.json`·`state/watch_items_archive.jsonl`·`state/portfolio_history.jsonl`·`docs/policy_changelog.md`(전문 보존)

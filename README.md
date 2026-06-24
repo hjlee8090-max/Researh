@@ -32,6 +32,9 @@ config/
 state/
   lessons.md               자기보완 학습 노트 (오차 사유 누적 — ✅codify 완료 항목 본문은 lessons_archive.md 로 이관)
   lessons_archive.md       응축된 lessons 항목의 전문 보존 (routine 은 읽지 않음 — 복기용)
+  inference_log.jsonl      (선제적 추론 루프 Phase 1) 예측 원장 — 라인당 1예측(상황추론·예측·확신·선제액션·사후 채점결과). 핫패스 아님
+  inference_scorecard.json score_inferences.py 채점 산출 — 슬롯·subject·확신구간별 적중률 + 결합 실현손익/PF + 미배치 forgone
+  inference_checklist.md   추론 직전 먼저 읽는 응축 체크리스트(핫패스, 상한 40줄) — build_inference_checklist.py 가 lessons+scorecard 에서 파생
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
   audit_log.jsonl          파이프라인 자동 점검 이력
   watchlist_archive.json   watchlist 에서 이관된 청산 종목 전체 기록 + 오래된 코멘트 (compact_state.py)
@@ -83,7 +86,9 @@ scripts/
   backtest_target_model.py 목표주가 추정식 백테스트 — 충격-감쇠·이벤트 스터디·워크포워드 검증, v1.0 vs v1.1 비교 → state/backtest_target_model.json
   screen_universe.py       (v2.7/2.8) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 + 섹터별 몰입(sector_rotation·avoid_reentry) → state/universe_screen.json
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
-  build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력
+  build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력 (선제 추론 루프 위해 '다음 추론 시 고려' 라벨도 캡처)
+  score_inferences.py      (선제 추론 루프) 예측 vs 실측 채점 — rule_attribution 손익 결합 → state/inference_scorecard.json (18시·일 20시)
+  build_inference_checklist.py (선제 추론 루프) lessons+scorecard → state/inference_checklist.md 응축(상한 40줄) — 다음 추론 직전 입력
   audit_pipeline.py        파이프라인 무결성 점검 (의존성 0)
   write_audit_report.py    audit 결과 + 자동 수정 → 사람 친화 리포트
   build_html.py            reports/*.md → _site/*.html (GitHub Pages)
@@ -122,6 +127,15 @@ scripts/
    - `가정오류` (애널리스트 가정 자체가 틀림)
 3. `state/lessons.md`에 누적
 4. **모든 추천·점검 프롬프트는 동작 직전 lessons.md를 먼저 읽고 동일 실수를 피한다**
+
+## 선제적 추론 루프 (Proactive Inference Loop — Phase 1 관측 중)
+자기보완 루프(결과→반응)와 **대칭**으로, 종합 상황을 추론해 **결과를 미리 예측하고 (보수적으로) 먼저 액션**하는 루프.
+빗나간 예측은 "다음엔 무엇까지 볼지"를 구조화해 다음 추론에 환류한다. 설계 전문: `docs/plan_proactive_inference.md`.
+1. **추론(INFER)**: 각 슬롯이 `inference_checklist.md`(과거 빗나간 요인)를 먼저 읽고 검증 가능한 예측을 `inference_log.jsonl`에 적재
+2. **선제 액션(ACT)**: 확신·데이터품질에 따라 액션 사다리(`policy.proactive_inference.action_ladder`) Tier 0(준비)~1(리스크감소)~2(probe). **"먼저 액션"은 추측 베팅이 아니라 기존 게이트를 전부 통과하는 probe·리스크감소로 제한**
+3. **채점(SCORE)**: `score_inferences.py`가 예측 vs 실측을 채점하되 **적중률이 아닌 실현 손익·기회비용(rule_attribution forgone)** 중심. 보류(미배치)도 그림자 예측으로 채점 — false negative 를 1급 오차로 본다
+4. **학습(LEARN)**: miss → lessons `선제추론오차`/`기회비용오차` + `다음 추론 시 고려` → `build_inference_checklist.py`가 응축 → 다음 추론이 읽음
+> **Phase 1 은 관측 전용(행동 변화 0)**. 채점 적중률·손익이 입증돼야 Tier 2(공격)를 개방한다(`action_ladder.tier2_probe.open_when`).
 
 ## 콘텍스트 예산 (v2.13 — `policy.context_budget`)
 매 routine 이 의무로 읽는 핫패스 파일(watchlist·policy·weekly_plan·portfolio·lessons)이 무한 누적되면

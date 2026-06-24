@@ -823,7 +823,32 @@
       "watch_items_max": 20,
       "history_max": 20,
       "prompt_info_bytes": 35000,
-      "prompt_warn_bytes": 60000
+      "prompt_warn_bytes": 60000,
+      "inference_checklist_max_lines": 40,
+      "inference_checklist_max_bytes": 4000
+    }
+  },
+  "proactive_inference": {
+    "enabled": true,
+    "phase": 1,
+    "note": "설계 전문: docs/plan_proactive_inference.md. Phase 1=관측 전용. '먼저 액션'=기존 게이트 통과 probe·리스크감소로 제한, 채점 손익이 공격성 자격 통제.",
+    "min_samples": 5,
+    "checklist_sunset_trading_days": 5,
+    "inference_logging": {
+      "predict_slots": ["00:00", "09:00", "12:00", "15:00", "18:00"],
+      "score_slots": ["09:00", "12:00", "15:00", "18:00"],
+      "required_fields": ["subject", "prediction", "horizon", "confidence", "factors_considered"],
+      "falsifiable_rule": "검증 가능 수치+horizon 필수 — 모호 예측 금지(sandbagging 방지)."
+    },
+    "action_ladder": {
+      "tier0_prepare": {"allowed_always": true, "what": "if-then 트리거·후보 스테이징·추론 기록"},
+      "tier1_derisk": {"min_confidence": 0.5, "what": "악재 예측 앞 손절 타이트닝·트레일링·부분익절·보류(리스크 감소만, pre_trade_gate 통과)"},
+      "tier2_probe": {"min_confidence": 0.65, "enabled": false, "open_when": "paper expectancy>0 AND PF>1 (min_samples) — Phase 3", "what": "호재 예측 앞 probe(축소비중 50%·ATR 타이트), 전 게이트 통과", "semi_auto": "입증 전 실매수는 카톡 승인 후"},
+      "forbidden": "미검증·묵은 가격 선체결, 전액 추측 베팅, 게이트 우회"
+    },
+    "opportunity_cost_scoring": {
+      "enabled": true,
+      "note": "보류/HOLD/blocked 도 shadow 로 채점 — 미배치(false negative) 1급 오차. forgone 실측 종가만·레짐 보정(risk_off 면제). 입력: candidate_scores.ranked block_reasons 자동 shadow."
     }
   }
 }

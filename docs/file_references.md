@@ -248,6 +248,16 @@
 - 실행: 18시 routine 직후(당일 환류) + 일 20시. `build_lessons_index.NEXT_RULE_RE` 의 `다음 추론 시 고려` 캡처 계약에 의존.
 - 근거: `docs/plan_proactive_inference.md` (선제 추론 루프 ①INFER→②ACT→③SCORE→④LEARN→체크리스트 환류).
 
+### `scripts/check_intraday_alerts.py` (확장 — 선제 커밋 Phase 3)
+- 읽기: `state/market_snapshot.json`·`config/portfolio.json`·`config/policy.json`·`state/pending_orders.json`
+- 쓰기: `state/intraday_alert.json`(escalations + **pending_signals**)·`state/intraday_alert_state.json`(캐시 dedup — 단계 + `__pending_fired__`)
+- 기존 보유 종목 단계 경보에 더해 **조건부 사전주문 트리거 평가**(수치 price_above/below) → **카톡 신호만, 체결 안 함**(워크플로 contents:read). 체결은 09시 routine 이 게이트 통과 후. `proactive_inference.kill_switch`/`enabled=false` 면 pending 평가 끔.
+- `intraday_monitor.yml`(평일 09:03~15:33 30분 간격)이 실행. yml 변경 없음(스크립트 확장만).
+
+### `state/pending_orders.json` (신규 — 선제 커밋 Phase 3)
+- 작성: 18시 routine §4(내일 if-then 의 수치 트리거 분기). 소비: 09시 routine §1-PO(게이트 통과 후 집행·status 갱신) + `check_intraday_alerts.py`(장중 트리거 신호).
+- 스키마: 파일 상단 `schema` 키. status active→triggered/expired/cancelled. Tier 2 는 카톡 승인 후 반자동.
+
 ### `scripts/compact_state.py` (신규 v2.13 — 콘텍스트 예산)
 - 읽기: `config/watchlist.json`·`config/portfolio.json`·`config/weekly_plan.json`·`config/policy.json` + 기존 archive 파일들
 - 쓰기: 위 4개 config(압축) + `state/watchlist_archive.json`·`state/watch_items_archive.jsonl`·`state/portfolio_history.jsonl`·`docs/policy_changelog.md`(전문 보존)

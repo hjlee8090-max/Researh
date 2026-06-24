@@ -35,6 +35,7 @@ state/
   inference_log.jsonl      (선제적 추론 루프 Phase 1) 예측 원장 — 라인당 1예측(상황추론·예측·확신·선제액션·사후 채점결과). 핫패스 아님
   inference_scorecard.json score_inferences.py 채점 산출 — 슬롯·subject·확신구간별 적중률 + 결합 실현손익/PF + 미배치 forgone
   inference_checklist.md   추론 직전 먼저 읽는 응축 체크리스트(핫패스, 상한 40줄) — build_inference_checklist.py 가 lessons+scorecard 에서 파생
+  pending_orders.json      (Phase 3) 조건부 사전주문(선제 커밋) — 18시가 작성, check_intraday_alerts 가 장중 트리거 평가·카톡 신호만, 체결은 09시 routine 이 게이트 통과 후·Tier2 승인
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
   audit_log.jsonl          파이프라인 자동 점검 이력
   watchlist_archive.json   watchlist 에서 이관된 청산 종목 전체 기록 + 오래된 코멘트 (compact_state.py)
@@ -136,6 +137,8 @@ scripts/
 3. **채점(SCORE)**: `score_inferences.py`가 예측 vs 실측을 채점하되 **적중률이 아닌 실현 손익·기회비용(rule_attribution forgone)** 중심. 보류(미배치)도 그림자 예측으로 채점 — false negative 를 1급 오차로 본다
 4. **학습(LEARN)**: miss → lessons `선제추론오차`/`기회비용오차` + `다음 추론 시 고려` → `build_inference_checklist.py`가 응축 → 다음 추론이 읽음
 > **Phase 1 은 관측 전용(행동 변화 0)**. 채점 적중률·손익이 입증돼야 Tier 2(공격)를 개방한다(`action_ladder.tier2_probe.open_when`).
+
+**선제 커밋(Phase 3 — 속도 엣지의 본체)**: 18시가 내일 if-then 을 `pending_orders.json` 에 **검증 가능한 수치 트리거**로 적재 → 장중 `check_intraday_alerts.py`(평일 30분 간격)가 트리거를 평가해 **카톡 신호만** 보냄 → **체결은 다음 routine 이 `pre_trade_gate` 통과 후**(묵은 가격 선체결 금지 불변). 결정을 밤에 앞당기되 실행 안전은 그대로 — "18시→09시 이연 구멍"을 닫는다. **안전 못**: 장중은 신호만(체결 X)·Tier 2 신규매수는 카톡 승인 후 반자동·`policy.proactive_inference.kill_switch=true` 로 즉시 전체 정지.
 
 ## 콘텍스트 예산 (v2.13 — `policy.context_budget`)
 매 routine 이 의무로 읽는 핫패스 파일(watchlist·policy·weekly_plan·portfolio·lessons)이 무한 누적되면

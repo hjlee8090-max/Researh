@@ -1,0 +1,5 @@
+{
+  "_meta": "조건부 사전주문(선제 커밋) — 15/18시 routine 이 작성, check_intraday_alerts 가 장중 트리거 평가·카톡 신호만, 체결은 다음 09/12/15/18 routine 이 pre_trade_gate 통과 후. Tier2(공격)는 카톡 승인 후 반자동. 근거: docs/plan_proactive_inference.md §10-B.",
+  "schema": {"id": "po-YYYYMMDD-N", "created_slot": "15:00", "ticker": "XXXXXX", "name": "종목명", "action": "BUY|SELL", "trigger": {"type": "price_above|price_below", "value": 0}, "condition_note": "수치 외 사람 검증 조건(예: PCE 부합)", "size_hint": "probe|full", "tier": 1, "price_source_required": "web_verified", "valid_until": "YYYY-MM-DDTHH:MM:00+09:00", "inference_id": "inf-...", "status": "active|triggered|expired|cancelled"},
+  "orders": []
+}

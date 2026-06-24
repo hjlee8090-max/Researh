@@ -124,6 +124,13 @@
   miss 는 18시 §3-1 에서 lessons `선제추론오차` 로 승격된다(여기선 결과 줄만).
 - **당일 예측 적재(INFER)**: `state/inference_checklist.md` 를 먼저 읽고, 오늘 장중~종가 방향 예측을 1~2건 `inference_log.jsonl` 에 append(검증 가능 수치+horizon, 보통 `"horizon":"18:00"`, `checklist_refs` 증빙). 선제 액션은 §2 게이트를 통과한 Tier 0~1(준비·리스크감소)만 — Tier 2(probe 신규매수)는 Phase 1 에서 **paper(그림자)로만** 기록(`"preemptive_action":{"tier":2,"paper":true}`).
 
+### 1-PO. 선제 커밋(pending_orders) 점검·집행 (proactive inference loop — `policy.proactive_inference`)
+`state/pending_orders.json` 의 `active` 주문과 `state/intraday_alert.json.pending_signals`(장중 트리거 충족분)를 읽는다(kill_switch=true 면 전체 건너뜀):
+- **트리거 충족 + 미체결 주문**: §2-PRE 게이트(`pre_trade_check.py`) 통과 후 집행한다 — 가격 fresh 또는 web_verified 만, 묵은 가격 선체결 금지(기존 원칙 그대로). 체결 시 `trade_log` 에 평소 필드 + `inference_id`·`preemption_tier` 를 함께 기록하고, 해당 주문 status=`triggered` 로 갱신.
+- **Tier 2(공격·신규매수)**: `action_ladder.tier2_probe.enabled=false` 인 동안 **자동 체결 금지** — 대화창/카톡으로 사용자 승인을 요청하고, 승인 전이면 status 유지·"승인 대기" 메모만(반자동).
+- **만료**: `valid_until` 지난 주문은 status=`expired` 로 정리(미체결 사유 1줄).
+- 트리거 미충족 주문은 그대로 둔다(장중 모니터가 계속 평가). 집행/만료 내역은 "📝 오늘의 이야기" 1줄로 사람 말로 남긴다(운영 로그 나열 금지).
+
 ### 1-1. 야간~새벽 추가 흐름 (자정 이후 미국장 마감까지)
 자정 routine 은 미국장 개장 직후만 봤다. 09시 routine 은 **미국장 마감(05:00 KST) 까지의 최종 결과** 를 확인:
 - "미국 증시 마감 오늘" / "S&P 500 close" / "Nasdaq close" / "Dow Jones close"

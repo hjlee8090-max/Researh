@@ -30,6 +30,8 @@ ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 STATE_PATH = ROOT / "state" / "intraday_alert_state.json"
 OUT_PATH = ROOT / "state" / "intraday_alert.json"
+PENDING_PATH = ROOT / "state" / "pending_orders.json"
+PENDING_FIRED_KEY = "__pending_fired__"  # dedup 캐시 키(intraday_alert_state 에 함께 보존)
 
 RANK = {"green": 0, "yellow": 1, "orange": 2, "red": 3}
 EMOJI = {"green": "🟢", "yellow": "🟡", "orange": "🟠", "red": "🔴"}
@@ -74,6 +76,77 @@ def current_price(ts: dict) -> float | None:
         return float(ohlc["close"])
     lc = ts.get("last_close")
     return float(lc) if isinstance(lc, (int, float)) else None
+
+
+def _order_triggered(order: dict, ts: dict) -> tuple[bool, str]:
+    """조건부 사전주문의 수치 트리거를 스냅샷 가격으로 평가(장중 고가/저가 터치 포함).
+
+    수치 트리거(price_above/below)만 자동 판정한다. condition_note(예: 'PCE 부합') 같은
+    사람 검증 조건은 자동 평가 불가 — 신호에 '수동 확인 필요'로 표기해 routine 이 판단한다.
+    """
+    trig = order.get("trigger") or {}
+    typ, val = trig.get("type"), trig.get("value")
+    if not isinstance(val, (int, float)):
+        return False, "수치 트리거 아님"
+    cur = current_price(ts) if isinstance(ts, dict) else None
+    if cur is None:
+        return False, "가격 없음"
+    ohlc = ts.get("today_ohlc") if isinstance(ts, dict) else None
+    hi = ohlc.get("high") if isinstance(ohlc, dict) else None
+    lo = ohlc.get("low") if isinstance(ohlc, dict) else None
+    if typ in ("price_above", "gap_above"):
+        return (cur >= val or (isinstance(hi, (int, float)) and hi >= val)), ""
+    if typ in ("price_below", "gap_below"):
+        return (cur <= val or (isinstance(lo, (int, float)) and lo <= val)), ""
+    return False, f"알 수 없는 트리거 type={typ}"
+
+
+def evaluate_pending_orders(snapshot: dict, policy: dict, prev_fired: list) -> tuple[list, list, str]:
+    """조건부 사전주문(선제 커밋) 트리거 평가 — **신호만, 체결 안 함**(Phase 3).
+
+    intraday 워크플로는 contents:read 라 trade_log/portfolio 를 쓰지 않는다. 트리거 충족은
+    카톡 '예약 신호'로만 알리고, 실제 체결은 다음 09/12/15/18 routine 이 pre_trade_gate 통과
+    후 수행한다. kill_switch 또는 proactive_inference 비활성이면 즉시 끈다(긴급 정지).
+    """
+    pi = policy.get("proactive_inference") if isinstance(policy.get("proactive_inference"), dict) else {}
+    if not pi.get("enabled") or pi.get("kill_switch"):
+        return [], list(prev_fired), "off"
+    pend = load_json("state/pending_orders.json", {})
+    orders = pend.get("orders") or []
+    ts_map = snapshot.get("tickers", {}) if isinstance(snapshot, dict) else {}
+    now = datetime.now(KST)
+    fired = set(prev_fired)
+    signals: list[dict] = []
+    for o in orders:
+        if not isinstance(o, dict) or o.get("status") not in (None, "active"):
+            continue
+        oid = o.get("id")
+        if not oid or oid in fired:
+            continue
+        vu = o.get("valid_until")
+        if vu:
+            try:
+                if datetime.fromisoformat(vu) < now:
+                    continue  # 만료 — 신호 안 냄(routine 이 status=expired 정리)
+            except ValueError:
+                pass
+        ts = ts_map.get(o.get("ticker"), {}) if isinstance(ts_map, dict) else {}
+        if isinstance(ts, dict) and ts.get("confidence") == "low":
+            continue  # 저신뢰 가격으로 트리거 판정 금지
+        hit, _ = _order_triggered(o, ts)
+        if not hit:
+            continue
+        fired.add(oid)
+        tier = o.get("tier", 1)
+        approval = " (반자동: Tier2 — 카톡 승인 후 체결)" if tier == 2 else ""
+        manual = f" · 수동확인: {o['condition_note']}" if o.get("condition_note") else ""
+        signals.append({
+            "id": oid, "ticker": o.get("ticker"), "name": o.get("name") or o.get("ticker"),
+            "action": o.get("action"), "tier": tier,
+            "trigger": o.get("trigger"), "current_price": current_price(ts),
+            "note": f"예약 트리거 충족 — 다음 routine 이 게이트 통과 후 체결 검토{approval}{manual}",
+        })
+    return signals, sorted(fired), "on"
 
 
 def maybe_send_kakao(title: str, body: str) -> bool:
@@ -146,20 +219,31 @@ def main() -> int:
                 "action": red_action if tier == "red" else orange_action,
             })
 
-    should_notify = bool(escalations)
+    # 조건부 사전주문(선제 커밋) 트리거 평가 — 신호만(체결 안 함). dedup 은 캐시(prev_state)에 보존.
+    prev_fired = prev_state.get(PENDING_FIRED_KEY, []) if isinstance(prev_state, dict) else []
+    pending_signals, fired_after, pi_mode = evaluate_pending_orders(snapshot, policy, prev_fired)
+    new_state[PENDING_FIRED_KEY] = fired_after
+
+    lines: list[str] = []
+    for e in escalations:
+        lines.append(
+            f"{EMOJI[e['tier']]} {e['name']} {e['pct']:+.1f}% "
+            f"(진입 {int(e['entry_price']):,}→현재 {int(e['current_price']):,}) → {e['action']}"
+        )
+    for s in pending_signals:
+        cp = f"현재 {int(s['current_price']):,}" if s.get("current_price") else ""
+        lines.append(f"📌 [예약] {s['name']} {s.get('action','')} {cp} — {s['note']}")
+
+    should_notify = bool(escalations) or bool(pending_signals)
     title = ""
-    body = ""
     if should_notify:
-        worst = "red" if any(e["tier"] == "red" for e in escalations) else "orange"
-        title = f"{EMOJI[worst]} 장중 단계 경보 — 보유 종목 {worst.upper()} 이탈"
-        lines = []
-        for e in escalations:
-            lines.append(
-                f"{EMOJI[e['tier']]} {e['name']} {e['pct']:+.1f}% "
-                f"(진입 {int(e['entry_price']):,}→현재 {int(e['current_price']):,}) → {e['action']}"
-            )
-        as_of = snapshot.get("as_of", "")
-        body = "\n".join(lines) + (f"\n⏱ {as_of}" if as_of else "")
+        if escalations:
+            worst = "red" if any(e["tier"] == "red" for e in escalations) else "orange"
+            title = f"{EMOJI[worst]} 장중 단계 경보 — 보유 종목 {worst.upper()} 이탈"
+        else:
+            title = "📌 장중 예약 트리거 충족 — 체결 검토"
+    as_of = snapshot.get("as_of", "")
+    body = ("\n".join(lines) + (f"\n⏱ {as_of}" if as_of else "")) if should_notify else ""
 
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
@@ -168,21 +252,25 @@ def main() -> int:
         "title": title,
         "body": body,
         "escalations": escalations,
+        "pending_signals": pending_signals,
+        "pending_mode": pi_mode,
         "evaluated": evaluated,
     }
     OUT_PATH.parent.mkdir(exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     STATE_PATH.write_text(json.dumps(new_state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    if not positions:
-        print("보유 종목 없음 — 장중 모니터 no-op")
+    if not positions and not pending_signals:
+        print(f"보유 0·예약신호 0 — 장중 모니터 no-op (pending_mode={pi_mode})")
         return 0
     print(
         f"intraday_alerts: positions={len(positions)} escalations={len(escalations)} "
-        f"should_notify={should_notify}"
+        f"pending_signals={len(pending_signals)}({pi_mode}) should_notify={should_notify}"
     )
     for e in escalations:
         print(f"  [{e['tier'].upper()}] {e['name']} {e['pct']:+.1f}% (prev={e['prev_tier']})")
+    for s in pending_signals:
+        print(f"  [예약] {s['name']} {s.get('action','')} tier{s['tier']} — {s['id']}")
 
     if should_notify:
         maybe_send_kakao(title, body)

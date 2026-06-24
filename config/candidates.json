@@ -1,7 +1,7 @@
 {
-  "version": "1.1",
-  "last_updated": "2026-05-29",
-  "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
+  "version": "1.2",
+  "last_updated": "2026-06-24",
+  "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
   "candidates": [
     {
       "ticker": "005930",
@@ -100,6 +100,26 @@
       ],
       "structural_bear_flags": [],
       "first_added": "2026-05-29"
+    },
+    {
+      "ticker": "035420",
+      "name": "NAVER",
+      "sector": "인터넷/AI",
+      "thesis_id": "internet_ai_platform",
+      "rationale": "사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-24"
+    },
+    {
+      "ticker": "035720",
+      "name": "카카오",
+      "sector": "인터넷/AI",
+      "thesis_id": "internet_ai_platform",
+      "rationale": "사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-24"
     }
   ],
   "evaluation_rules": {

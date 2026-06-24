@@ -30,6 +30,13 @@
   - `news_loop`: 뉴스 자동 분류 현황 — `unclassified_samples`(키워드 구멍 후보)·`silent_types`(무음 유형)·`review_checklist`
 - 이 산출물은 1-5 점검의 1차 입력이다. `report_section_md` 를 산출물 1 의 §2-c 에 그대로 붙인다.
 
+## 0-D. 선제 추론 루프 채점 + 체크리스트 주간 응축 (proactive inference loop — `policy.proactive_inference`)
+- `python scripts/score_inferences.py` 를 실행하여 `state/inference_scorecard.json` 을 만든다.
+  - `scoring.overall`/`by_confidence_band`/`by_subject_kind`: 적중률 + **결합 실현손익·PF**(rule_attribution 결합). 표본 <min_samples(5) 면 '채점 보류'.
+  - `scoring.miss_factors`: 반복 빗나감 요인(→ 체크리스트). `scoring.opportunity_cost`: 미배치 그림자 forgone(레짐 보정).
+- `python scripts/build_inference_checklist.py` 를 실행하여 `state/inference_checklist.md` 를 주간 응축한다(만료·중복 정리, 상한 40줄).
+- 이 산출물은 1-7 점검의 1차 입력이다.
+
 ## 0. 컨텍스트 적재 (이 순서 — grep 우선, 전문 통읽기 금지)
 > 이 routine 의 입력(전체 prompts ~200KB + policy ~100KB + lessons)은 통째로 읽으면 콘텍스트가
 > 넘친다. **0-A/0-B/0-C 의 스크립트 산출물(인덱스·대조 결과)을 1차 입력**으로 쓰고, 원문은
@@ -93,6 +100,14 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 - 전문(원문 그대로)을 `state/lessons_archive.md` 에 append 하고,
 - lessons.md 본문을 "분류·요약 1~2줄·✅ codify 반영 위치·전문 이관 표기" 4줄로 교체한다.
 - **불변 보존**: `### ` 헤딩 원문, `- 분류:`/`- 원인 분류:` 라인, 누적 패턴 카운터, 미반영·진행 중(in-progress) 항목 전체. 응축 후 `python scripts/build_lessons_index.py` 를 재실행해 entries 수·카운터가 변하지 않았는지 확인한다.
+
+### 1-7. 선제 추론 루프 채점·자격 심사 (inference_scorecard — Phase 1→2)
+`state/inference_scorecard.json`(0-D 생성)을 점검한다(자기보완 루프의 estimate 채점 §1-5 와 대칭):
+- **적중률·손익**: `by_confidence_band.high` 의 적중률·결합손익·PF 를 본다. high 구간이 동전던지기(적중률 ≈50%) 수준이거나 결합 expectancy<0 면 **선제 액션 권한 동결 유지**(공격 개방 보류).
+- **Tier 2(공격) 개방 게이트**: paper(그림자) probe 의 **실현 expectancy>0 AND profit_factor>1** 이 표본 ≥min_samples 로 충족되면 → `policy.proactive_inference.action_ladder.tier2_probe.enabled=true` 를 **사용자 승인 필요 패치**로 상정(자동 적용 금지 — 실자본 매매 권한 변경). 미달이면 현행(paper-only) 유지.
+- **체크리스트 위생**: `miss_factors` 가 `inference_checklist.md` 에 반영됐는지, `checklist_sunset_trading_days`(5) 만료 항목이 정리됐는지 확인. 검증 안 된 즉석 선제 룰의 영구 적체 금지.
+- **기회비용**: `opportunity_cost.verdict` 가 '미배치로 놓친 수익 누적'이면 진입 적극성(entry_filters·사이징) 완화 후보로 §1-2-b 와 함께 검토(단 risk_off 미배치는 감점 면제 — 과잉교정 금지).
+- **예측 품질**: 원장에 모호 예측(검증 가능 수치·horizon 누락 = `falsifiable_rule` 위반)이 보이면 해당 슬롯 프롬프트 보강 후보로 등록(sandbagging 차단).
 
 ## 2. 산출물 1: reports/YYYY-MM-DD-policy-review.md
 

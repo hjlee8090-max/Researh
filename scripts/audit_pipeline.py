@@ -28,6 +28,17 @@ def result(level: str, message: str) -> str:
     return f"[{level}] {message}"
 
 
+def load_json(rel: str):
+    """레포 루트 상대경로 JSON 을 안전 로드(없거나 깨지면 None)."""
+    p = ROOT / rel
+    if not p.exists():
+        return None
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
 def audit_json_files(messages: list[str]) -> dict[str, object]:
     data: dict[str, object] = {}
     for rel in [
@@ -648,6 +659,7 @@ CONTEXT_BUDGET = {
     "config/policy.json": {"max_bytes": 95_000},
     "config/weekly_plan.json": {"max_bytes": 35_000},
     "state/lessons.md": {"max_bytes": 60_000},
+    "state/inference_checklist.md": {"max_bytes": 4_000, "max_lines": 40},
 }
 PROMPT_INFO_BYTES = 35_000   # 참고 표시(성장 추적)
 PROMPT_WARN_BYTES = 60_000   # 경고 — 프롬프트 감량 필요
@@ -698,6 +710,53 @@ def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
             heavy.append(f"{p.name} {size:,}B")
     if heavy:
         messages.append(result("INFO", "프롬프트 크기 추적: " + ", ".join(heavy) + f" (참고 기준 {PROMPT_INFO_BYTES:,}B)"))
+
+
+def audit_inference_loop(messages: list[str]) -> None:
+    """선제적 추론 루프(proactive_inference) 가동·채점 무결성 감시 (Phase 2).
+
+    체크리스트 크기 래칫은 audit_context_budget 가 담당하고, 여기서는
+    ①루프 가동(예측 적재) 여부 ②미채점 누적 ③high-confidence 적중률을 표면화한다.
+    Phase 1(관측 시작 직후)의 0건은 정상 — INFO 로만 알린다(오탐 방지).
+    """
+    pol = load_json("config/policy.json")
+    pi = (pol or {}).get("proactive_inference") if isinstance(pol, dict) else None
+    if not isinstance(pi, dict) or not pi.get("enabled"):
+        return  # 루프 비활성 — 감시 대상 아님
+
+    log = ROOT / "state" / "inference_log.jsonl"
+    n_pred = 0
+    if log.exists():
+        for line in log.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if not rec.get("_meta") and "prediction" in rec:
+                n_pred += 1
+
+    sc = load_json("state/inference_scorecard.json")
+    scoring = (sc or {}).get("scoring") if isinstance(sc, dict) else None
+    if n_pred == 0:
+        messages.append(result("INFO", f"선제 추론 루프 Phase {pi.get('phase', '?')} — 예측 적재 대기(원장 0건, 다음 routine 부터 누적)"))
+    elif isinstance(scoring, dict):
+        n_scored = scoring.get("n_scored", 0)
+        unscored = n_pred - n_scored
+        if unscored >= 5:
+            messages.append(result("WARN", f"선제 추론 미채점 누적 {unscored}건(예측 {n_pred}/채점 {n_scored}) — 18시·09시 채점 단계 점검"))
+        else:
+            messages.append(result("OK", f"선제 추론 루프 가동 — 예측 {n_pred}건/채점 {n_scored}건"))
+        # high-confidence 적중률 — 공격(Tier2) 개방 자격 신호
+        hi = (scoring.get("by_confidence_band") or {}).get("high")
+        if isinstance(hi, dict) and not hi.get("status") and hi.get("hit_rate") is not None:
+            hr = hi["hit_rate"]
+            if hr < 0.5:
+                messages.append(result("INFO", f"high-confidence 적중률 {hr:.0%}(<50%) — Tier2 공격 개방 보류 권고(action_ladder)"))
+    else:
+        messages.append(result("OK", f"선제 추론 루프 가동 — 예측 {n_pred}건"))
 
 
 def audit_github_notify(messages: list[str]) -> None:
@@ -798,6 +857,7 @@ def main() -> int:
     audit_prompts_and_scripts(messages)
     audit_reports(messages)
     audit_context_budget(data, messages)
+    audit_inference_loop(messages)
     audit_github_notify(messages)
 
     print("\n".join(messages))

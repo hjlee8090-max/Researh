@@ -349,8 +349,9 @@ Tier 2(공격) 를 "적중률 입증까지 봉인" 하면 돈 버는 구조가 �
 | 4 | **CI `check_trade_log_gate`**: 선제 체결 trade_log 의 신규 필드 | `inference_id`·`preemption_tier` 는 **Phase 3 까지 옵션**(누락 허용) → 검증 후 required 승격. price_source/venue 게이트는 불변 |
 | 5 | **`auto_merge_routines` 커밋 프리픽스**: 장중 신호/체결 커밋이 main 자동머지·카톡에 걸림 | 신호 전용 프리픽스 추가(예: `signal(`) — **카톡 미발송 목록에 등록**(노이즈 차단), 실체결은 기존 routine 커밋에 포함 |
 | 6 | **그림자/미배치 채점 입력**: 보류 결정을 일일이 수기 적재하면 누락 | 09시 `candidate_scores.json.ranked` 의 `block_reasons` 보유 항목을 **자동으로 shadow 예측화**(수기 0) |
+| 7 | **장중 30분 감시 타이밍 신뢰성**: GitHub schedule cron 은 정시 보장 없음(관측 30~50분 지연·누락 — `fetch_prices.yml` 주석) | **감시 환경은 신규 아님** — `intraday_monitor.yml`(`cron 3,33 0-6 * * 1-5` = 평일 09:03~15:33 KST 30분 간격)이 이미 가동 중(현재 '경보 전용'). **정밀 트리거가 필요하면** 4대 routine 과 동일하게 외부 스케줄러(cron-job.org)의 `workflow_dispatch`(큐 지연 없음·수초 내 시작)로 전환. 시세 수집은 인터넷 되는 Actions 러너가 수행(세션 403 무관). 비용은 무료 한도 내 |
 
-→ 6개 모두 **기존 메커니즘 재사용 또는 단계적 옵션화**로 풀린다. 새 인프라가 필요한 곳은 #1 의 경량 execute 스텝 하나뿐.
+→ 7개 모두 **기존 메커니즘 재사용 또는 단계적 옵션화**로 풀린다. **장중 30분 감시 환경(#7)은 이미 존재**하므로 신규 인프라가 필요한 곳은 #1 의 경량 execute 스텝 하나뿐 — 그 위에 `pending_orders` 평가만 얹으면 된다. **정확도가 중요한 예약은 외부 dispatch 로 정시화**(경보 수준이면 기존 schedule 로 충분).
 
 ## 11-D. 페르소나 리뷰
 

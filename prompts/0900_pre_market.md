@@ -28,7 +28,7 @@
 - `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
   - 모멘텀(35%)+테마 노출(20%)+신뢰도(20%)+thesis(25%)−구조적 악재로 점수화. `tradable_count >= 1` 이면 "한눈에 보기"에 1순위 ticker 표기.
   - **채택 사유 노티**: `candidate_scores.json.report_section_md`("### 신규 후보 채택 사유" 완성 마크다운)를 리포트 본문에 **그대로 붙여 넣는다** — send_kakao 가 이 섹션으로 채택 후보를 발송한다.
-- `python scripts/estimate_target_price.py` 를 실행하여 `state/target_estimate.json` 을 만든다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 적정 매수가**(목표가/(1+레짐 R/R하한×손절%)) 추정 + 직전 리포트 대비 변동·원인 뉴스 — `report_section_md` 와 종목별 `news_target_line`·`news_buy_line` 생성). 매 routine 실행이 `target_estimate_log.jsonl` 에 1행을 쌓아 '리포트마다 변경값' 델타가 산출된다.
+- `python scripts/estimate_target_price.py` 를 실행하여 `state/target_estimate.json` 을 만든다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가**(목표가/(1+레짐 R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한) 추정 + 직전 리포트 대비 변동·원인 뉴스 — `report_section_md` 와 종목별 `news_target_line`·`entry_cap_line` 생성). 매 routine 실행이 `target_estimate_log.jsonl` 에 1행을 쌓아 '리포트마다 변경값' 델타가 산출된다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
 
 > **스냅샷 출처 주의**: 세션 네트워크 차단 시 스크립트는 Actions(`fetch_prices.yml`) 정기 수집본을 보존하고 `stale` 표시만 남긴다 — 리포트 머리말 각주에 명시. **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결** — 묵은 가격 선체결 후 재확인(booking-then-verify) 금지.
@@ -346,8 +346,8 @@ KOSPI 갭과 보유 종목 시초가 움직임을 **원인 → 메커니즘 → 
 ### 신규 후보 채택 사유
 (`state/candidate_scores.json.report_section_md` 의 "### 신규 후보 채택 사유" 마크다운을 **그대로 붙여넣는다** — 채택 후보가 없으면 "채택 후보 없음"이 들어 있다. 별도의 후보 차단 사유 표를 추가로 만들지 않는다.)
 
-### 📰 뉴스 반영 매매가 (목표 매도가·적정 매수가, 참고 추정)
-(`state/target_estimate.json.report_section_md` 의 "### 📰 뉴스 반영 매매가" 마크다운을 **그대로 붙여넣는다** — 보유·후보 종목의 뉴스 반영 추정 **목표 매도가 + 적정 매수가(신규 진입 기준 진입 상한)·현재가 위치(🟢매수구간/🔴상회)** + **직전 리포트 대비 변동(Δ)·원인 뉴스**가 들어 있다. 이 추정가는 watchlist 의 실제 목표가·매매 트리거를 **대체하지 않는 참고 레이어**다(이중출처 혼란 방지 — 적정 매수가는 신규 진입 기준, 보유 평단은 불변). 위 '종목별 09시 점검' 카드의 보유 종목엔 `estimates[].news_target_line`(목표 매도가)을 병기하고, 신규 진입 검토 후보엔 `estimates[].news_buy_line`(적정 매수가·현재가 위치)을 함께 노출한다.)
+### 📰 뉴스 반영 매매가 (목표 매도가·신규진입 상한가, 참고 추정)
+(`state/target_estimate.json.report_section_md` 의 "### 📰 뉴스 반영 매매가" 마크다운을 **그대로 붙여넣는다** — 보유·후보 종목의 뉴스 반영 추정 **목표 매도가 + 신규진입 상한가(R/R 진입 상한)·현재가 위치(🟢진입가능/🔴상회)** + **직전 리포트 대비 변동(Δ)·원인 뉴스**가 들어 있다. 이 추정가는 watchlist 의 실제 목표가·매매 트리거를 **대체하지 않는 참고 레이어**다(이중출처 혼란 방지 — 신규진입 상한가는 신규 진입 기준이며 적정가치가 아니라 R/R 진입 상한, 보유 평단은 불변. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호이지 고평가 판정이 아니다). 위 '종목별 09시 점검' 카드의 보유 종목엔 `estimates[].news_target_line`(목표 매도가)을 병기하고, 신규 진입 검토 후보엔 `estimates[].entry_cap_line`(신규진입 상한가·현재가 위치)을 함께 노출한다.)
 
 ### 신규 진입·청산 체결 (있다면)
 | 시각 | 종목 | 매수/매도 | 가격(근사) | 수량 | 사유 |

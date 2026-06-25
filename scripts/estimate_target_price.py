@@ -664,7 +664,7 @@ def entry_cap_price(estimate: float | None, min_rr: float, stop_frac: float) -> 
     나오는 최대 진입가'다. R/R = (목표−진입)/(진입−손절), 손절 = 진입×(1−stop_frac) →
     진입 = 목표 / (1 + min_rr×stop_frac). 진입을 이 값 이하로 잡으면 R/R 하한이 충족된다
     (목표가가 뉴스로 오르면 상한가도 따라 오른다). 현재가보다 낮게 나오면 '상승여력 <
-    R/R하한×손절폭' = 신규 진입엔 업사이드가 얇다는 신호(되돌림 대기), 고평가 판정이 아니다.
+    R/R하한×손절폭' = 신규 진입엔 업사이드가 얇다는 신호(R/R 부족)일 뿐, 고평가 판정이 아니다.
     """
     if not estimate or stop_frac <= 0:
         return None
@@ -676,7 +676,8 @@ def build_entry_cap_line(r: dict) -> str:
     fb = r.get("entry_cap_price")
     cur = r.get("current_price")
     if not fb:
-        return "뉴스 반영 신규진입 상한가: — (목표가 추정 불가)"
+        note = r.get("entry_cap_note")
+        return f"뉴스 반영 신규진입 상한가: — ({note})" if note else "뉴스 반영 신규진입 상한가: — (목표가 추정 불가)"
     basis = r.get("entry_cap_basis") or {}
     parts = [f"뉴스 반영 신규진입 상한가 **{fb:,.0f}원**(R/R≥{basis.get('min_rr')}·{basis.get('stop_basis', '')} 기준)"]
     if cur:
@@ -684,7 +685,7 @@ def build_entry_cap_line(r: dict) -> str:
         if cur <= fb:
             parts.append(f"현재가 {cur:,.0f}원 🟢진입 가능(현재가가 상한가보다 {gap:.1f}% 낮음)")
         else:
-            parts.append(f"현재가 {cur:,.0f}원 🔴상한가 {-gap:.1f}% 상회 — 되돌림 대기")
+            parts.append(f"현재가 {cur:,.0f}원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 {-gap:.1f}% 상회)")
     fbd = (r.get("delta_vs_prev") or {}).get("entry_cap_delta_krw")
     if fbd:
         parts.append(f"직전 리포트 대비 {'▲' if fbd > 0 else '▼'}{abs(fbd):,.0f}원")
@@ -741,7 +742,7 @@ def build_report_section(rows: list[dict], as_of: str) -> str:
         "",
         "> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.",
         "> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.",
-        "> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(되돌림 대기)이지 고평가 판정이 아니다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+        "> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 앵커가 현재가 폴백인 종목은 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
     ]
     return "\n".join(lines)
 
@@ -867,7 +868,15 @@ def main() -> int:
         atr_pct = _num((ts.get("volatility") or {}).get("atr_pct"))
         stop_frac, stop_basis = stop_pct_fraction(atr_pct, policy)
         min_rr, rr_tier = regime_min_rr(regime_tier, policy)
-        entry_cap = entry_cap_price(estimate, min_rr, stop_frac)
+        # v1.6 — 앵커가 현재가 폴백(밸류밴드·컨센 둘 다 결측)이면 상한가 = 현재가×(1+프리미엄)/(1+R/R×손절)
+        # 로 퇴화해 '현재가에서 손절폭만 깎은 값'이 된다(정보량 0인데 현재가 대비 −10~−17% 표시가
+        # 고평가로 오해됨). 이런 종목은 상한가를 보류한다 — 목표 매도가는 프리미엄 신호가 있어 유지.
+        entry_cap_note = None
+        if not anchor_uses_band and not cons_target:
+            entry_cap = None
+            entry_cap_note = "밸류·컨센 미시드(앵커=현재가 폴백) — R/R 상한가 보류, sunday_strategy 시드 필요"
+        else:
+            entry_cap = entry_cap_price(estimate, min_rr, stop_frac)
         in_buy_zone = current is not None and entry_cap is not None and current <= entry_cap
         entry_cap_gap_pct = round((entry_cap / current - 1.0) * 100.0, 1) if entry_cap and current else None
 
@@ -909,6 +918,7 @@ def main() -> int:
             },
             "in_buy_zone": in_buy_zone,
             "entry_cap_gap_pct": entry_cap_gap_pct,
+            "entry_cap_note": entry_cap_note,
             "sector_activation": sector_eta,
             "sector_signals": sector_summary,
             "grade": grade(layers),

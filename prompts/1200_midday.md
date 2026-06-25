@@ -48,7 +48,7 @@
 2. `python scripts/fetch_market_data.py && python scripts/score_candidates.py && python scripts/compute_allocation.py` 재실행 — 점수·비중을 현재 스냅샷과 동기화.
 3. `python scripts/pre_trade_check.py` 의 `verdict`:
    - `block` → 매매 없이 사용자 보고·종료. `resync_required` → 2단계 재수행 후 재판정.
-   - `live_verify_required` → 신규/추가 매수·**임계 근접 청산(orange/red 경계 ±3%)**은 해당 종목 실시간가를 웹으로 1회 교차확인해 단계·진입가·R/R·사이징을 재계산한 뒤 booking(`trade_log` 에 `price_source:"web_verified"`+URL).
+   - `live_verify_required` → 신규/추가 매수·**임계 근접 청산(orange/red 경계 ±3%)**은 해당 종목 실시간가를 웹으로 1회 교차확인해 단계·진입가·R/R·사이징을 재계산한 뒤 booking(`trade_log` 에 `price_source:"web_verified"`+URL). **(v2.17)** 세션 웹 검증 차단(이그레스 403, `web_egress=blocked`)+권위 스냅샷(`authoritative_same_day_snapshot=true`)이면 게이트가 자동 `ok`(폴백)로 전환 → 신규 매수는 `price_source:"snapshot_fresh"` booking, **임계 근접 청산은 폴백 대상이 아님**(보수 즉시판정) (`web_verify_unavailable_fallback`).
    - `ok` → 스냅샷 가격으로 booking.
 - **금지**: 묵은 스냅샷 가격으로 먼저 체결하고 다음 회차에 재확인하는 조건부 체결. 검증이 체결을 선행한다 (`new_entry_freshness_rule`).
 

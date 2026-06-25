@@ -213,7 +213,8 @@
    - `block` → 매매 없이 사용자 보고 후 종료. `resync_required` → 2단계 재수행 후 재판정.
    - `live_verify_required` → 신규/추가 매수·임계 근접 청산은 **해당 종목 실시간가를 웹검색으로 1회 교차확인**해 진입가·R/R·사이징을 재계산한 뒤 booking. `trade_log` 에 `price_source:"web_verified"` + 확인 URL·시각 기록.
    - `ok` → 스냅샷 가격으로 booking (`price_source:"snapshot_fresh"`).
-- **금지: 묵은 스냅샷 가격 선체결 후 재확인(booking-then-verify).** 검증이 체결을 선행한다 (`policy.price_data_quality.new_entry_freshness_rule`).
+   - **(v2.17) 세션 웹 검증 차단(이그레스 403) 시**: `pre_trade_check` 가 `web_egress=blocked` + 권위 스냅샷(`authoritative_same_day_snapshot=true`)을 감지하면 `live_verify_required` 를 자동으로 `ok`(`web_verify_unavailable_fallback_applied=true`)로 전환 → 웹 교차확인 없이 **`price_source:"snapshot_fresh"`** 로 booking 한다(불가능한 웹 재검증을 흉내낸 `web_verified` 기록 금지). 스냅샷이 단일출처·medium·전일자면 폴백 미적용 → `medium_new_entry_rule`(축소비중) 집행 또는 보류 (`policy.price_data_quality.web_verify_unavailable_fallback`).
+- **금지: 묵은 스냅샷 가격 선체결 후 재확인(booking-then-verify).** 검증이 체결을 선행한다 (`policy.price_data_quality.new_entry_freshness_rule`). 단 위 v2.17 폴백은 '묵은 가격 선체결'이 아니라 '오늘자 2출처 권위 가격을 검증 불능 상황에서 채택'이라 원칙과 충돌하지 않는다.
 
 ### A. watchlist가 비어있는 경우 (첫 가동)
 1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 3~4종목을 선정**한다 (`policy.position_sizing.max_positions`=4 이내).

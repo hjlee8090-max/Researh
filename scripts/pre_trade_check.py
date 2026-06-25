@@ -12,12 +12,17 @@ verdict:
                         신규/추가 매수·임계 근접 청산은 웹 실시간 교차확인가로 재계산 후 booking.
 - ok                  : 스냅샷 가격으로 booking 가능.
 
-정책: policy.price_data_quality.pre_trade_gate / new_entry_freshness_rule / data_freshness.
+정책: policy.price_data_quality.pre_trade_gate / new_entry_freshness_rule / data_freshness
+      / web_verify_unavailable_fallback.
 표준 라이브러리만 사용. 출력: stdout(JSON + 1줄 verdict). exit code: 0=ok/live_verify, 1=block/resync.
 """
 from __future__ import annotations
 
+import argparse
 import json
+import os
+import urllib.error
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -26,6 +31,11 @@ import reconcile_portfolio as rp  # 같은 scripts/ 디렉토리 — 장부·평
 
 ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
+# 세션 웹 검증(live_verify) 가능 여부 자동 판정용 — 이그레스 정책이 막혔는지 한 번 찔러본다.
+EGRESS_PROBE_URL = (
+    "https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?range=1d&interval=1d"
+)
+EGRESS_PROBE_TIMEOUT = 3.0
 
 
 def load_json(rel: str, default: Any = None) -> Any:
@@ -63,7 +73,73 @@ def ticker_source_dates(ticker_snap: dict) -> list[str]:
     ]
 
 
+def probe_web_egress(url: str = EGRESS_PROBE_URL, timeout: float = EGRESS_PROBE_TIMEOUT) -> str:
+    """세션의 라이브 웹 검증(live_verify) 통로가 살아 있는지 한 번 찔러본다.
+
+    리모트 세션은 정책 집행 이그레스 프록시를 거치며, 조직 정책이 금융 호스트를
+    허용하지 않으면 프록시가 CONNECT 터널을 403 으로 거부한다(2026-06-23~). 그 경우
+    세션은 어떤 종목도 웹으로 교차확인할 수 없어 live_verify_required 가 영구 미충족이 된다.
+
+    반환:
+      "open"    — 상류에서 HTTP 응답을 받음(프록시 통과). 검증 가능 → 폴백 불필요.
+      "blocked" — 프록시가 403/터널 거부. 세션 웹 검증 불가 → 폴백 후보.
+      "unknown" — 타임아웃·기타 일시 오류. 보수적으로 현 게이트 유지(폴백 미적용).
+    예외를 절대 밖으로 던지지 않는다(게이트는 네트워크 상태와 무관하게 항상 verdict 를 내야 한다).
+    """
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        urllib.request.urlopen(req, timeout=timeout)
+        return "open"
+    except urllib.error.HTTPError:
+        # 상류(야후)가 4xx/5xx 를 돌려줬다 = 프록시는 통과 = 이그레스 열림.
+        return "open"
+    except Exception as exc:  # noqa: BLE001 — URLError/OSError/타임아웃 전부 무해 분류
+        reason = str(getattr(exc, "reason", exc)).lower()
+        if "403" in reason or "tunnel" in reason or "forbidden" in reason:
+            return "blocked"
+        return "unknown"
+
+
+def resolve_web_egress(explicit: str | None) -> str:
+    """웹 이그레스 상태를 결정한다 — 명시값(플래그/env) > 자동 프로브.
+
+    explicit: "blocked"|"open"|None. None 이면 env SESSION_WEB_EGRESS 를 보고,
+    그래도 없으면 auto 프로브. 명시 신호가 자동 판정보다 항상 우선한다(운영자 오버라이드).
+    """
+    val = (explicit or os.environ.get("SESSION_WEB_EGRESS") or "").strip().lower()
+    if val in ("blocked", "open"):
+        return val
+    return probe_web_egress()
+
+
+def authoritative_same_day(ticker_snap: dict, today: str) -> bool:
+    """이 종목 스냅샷이 '오늘자·복수출처 일치·high 신뢰도'인 권위 가격인지.
+
+    web_verify_unavailable_fallback 의 핵심 가드: 세션 웹 검증이 막혔을 때 묵은/단일출처
+    가격으로 체결되는 것은 막되, 정기 수집(GitHub Actions)이 산출한 '오늘자 ≥2출처 일치
+    high' 스냅샷은 snapshot_fresh 권위 가격으로 인정한다(2026-06-08 단일출처 갭업 도용류는
+    여전히 차단 — 오늘자 출처가 2개 미만이거나 high 미만이면 False).
+    """
+    if not isinstance(ticker_snap, dict):
+        return False
+    today_sources = [
+        s
+        for s in (ticker_snap.get("sources") or [])
+        if isinstance(s, dict) and s.get("ok") and s.get("last_date") == today
+    ]
+    return len(today_sources) >= 2 and ticker_snap.get("confidence") == "high"
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description="매매 직전 게이트 — 스냅샷 신선도·동기화·정합성 점검")
+    parser.add_argument(
+        "--egress",
+        choices=["auto", "blocked", "open"],
+        default="auto",
+        help="세션 웹 검증 통로 상태. auto=env SESSION_WEB_EGRESS 또는 자동 프로브(기본).",
+    )
+    args = parser.parse_args()
+
     policy = load_json("config/policy.json", {})
     snapshot = load_json("state/market_snapshot.json", {})
     scores = load_json("state/candidate_scores.json", {})
@@ -98,6 +174,15 @@ def main() -> int:
     )
     snapshot_stale = bool(snapshot.get("stale")) if isinstance(snapshot, dict) else False
 
+    # web_verify_unavailable_fallback — 세션 웹 검증이 막혔는지(이그레스 정책 403) + 스냅샷이
+    # '오늘자 ≥2출처 일치 high' 권위 가격인지를 함께 판정한다. 둘 다 충족이면 live_verify_required
+    # 의 '웹 1회 교차확인' 요구를 snapshot_fresh 권위 가격으로 대체(불가능한 검증 요구 → 교착 해소).
+    explicit_egress = None if args.egress == "auto" else args.egress
+    web_egress = resolve_web_egress(explicit_egress)
+    authoritative = bool(dated_tickers) and all(
+        authoritative_same_day(v, today) for v in dated_tickers
+    )
+
     # 장부 정합성(reconcile) + 평가 산식 (reconcile_portfolio 재사용)
     trade_log = rp.load_trade_log()
     initial_capital = rp.num(portfolio.get("initial_capital", 5000000))
@@ -116,6 +201,15 @@ def main() -> int:
     else:
         verdict = "ok"
 
+    # web_verify_unavailable_fallback — live_verify_required 인데 (a)세션 웹 검증이 막혀
+    # 있고(blocked) (b)스냅샷이 오늘자 ≥2출처 일치 high 권위 가격이면, 불가능한 '웹 1회
+    # 교차확인' 요구를 snapshot_fresh 권위 가격으로 대체한다. block/resync 는 데이터·정합성
+    # 문제라 폴백 대상이 아니다(여전히 차단). open/unknown 이면 기존 보수 동작 유지.
+    fallback_applied = False
+    if verdict == "live_verify_required" and web_egress == "blocked" and authoritative:
+        verdict = "ok"
+        fallback_applied = True
+
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "verdict": verdict,
@@ -124,6 +218,10 @@ def main() -> int:
         "freshness": freshness,
         "snapshot_stale": snapshot_stale,
         "prices_last_date_today": prices_last_date_today,
+        "web_egress": web_egress,
+        "authoritative_same_day_snapshot": authoritative,
+        "web_verify_unavailable_fallback_applied": fallback_applied,
+        "recommended_price_source": "snapshot_fresh" if verdict == "ok" else None,
         "scores_in_sync": scores_in_sync,
         "alloc_in_sync": alloc_in_sync,
         "scores_snapshot_as_of": scores_as_of,
@@ -133,18 +231,27 @@ def main() -> int:
         "valuation_issues": val_issues,
         "warnings": val_warnings,
         "new_entry_without_verify_allowed": verdict == "ok",
-        "guidance": _guidance(verdict),
+        "guidance": _guidance(verdict, fallback_applied),
     }
     print(json.dumps(out, ensure_ascii=False, indent=2))
     print(
         f"\nPRE_TRADE_VERDICT={verdict} freshness={freshness}(age={age_min}m) "
+        f"egress={web_egress} authoritative={authoritative} fallback={fallback_applied} "
         f"sync(scores={scores_in_sync},alloc={alloc_in_sync}) "
         f"issues={len(issues)} warnings={len(val_warnings)}"
     )
     return 1 if verdict in ("block", "resync_required") else 0
 
 
-def _guidance(verdict: str) -> str:
+def _guidance(verdict: str, fallback_applied: bool = False) -> str:
+    if verdict == "ok" and fallback_applied:
+        return (
+            "freshness≠fresh 이나 세션 웹 검증 통로가 막혀(이그레스 403) 라이브 교차확인이 "
+            "구조적으로 불가능하고, 스냅샷이 오늘자 ≥2출처 일치 high 권위 가격이라 "
+            "web_verify_unavailable_fallback 적용 — snapshot_fresh 가격으로 booking 가능. "
+            "trade_log 에 price_source=snapshot_fresh 로 기록(web_verified 아님). "
+            "손절·목표 임계 근접(±3%/±2%) 보유 종목은 이 폴백 대상이 아니다(보수적 즉시 판정)."
+        )
     return {
         "block": "장부/평가 정합성 불일치 — 매매 금지. 원인 수정·사용자 보고 후 재실행.",
         "resync_required": "candidate_scores/allocation 이 현재 스냅샷과 불일치 — "
@@ -152,7 +259,10 @@ def _guidance(verdict: str) -> str:
         "live_verify_required": "freshness≠fresh 또는 가격 last_date≠오늘(또는 stale 보존본) — "
         "신규/추가 매수·임계 근접 청산은 해당 종목 실시간가를 웹으로 1회 교차확인해 "
         "진입가·R/R·사이징을 재계산한 뒤 booking(trade_log 에 price_source=web_verified + URL 기록). "
-        "묵은 스냅샷 가격으로 먼저 체결하는 조건부 체결 금지.",
+        "묵은 스냅샷 가격으로 먼저 체결하는 조건부 체결 금지. (세션 웹 검증이 막힌(이그레스 403) "
+        "상태이고 스냅샷이 오늘자 ≥2출처 high 면 web_verify_unavailable_fallback 으로 snapshot_fresh "
+        "체결 가능 — pre_trade_check 가 자동 판정하나, 단일출처·stale·전일자면 medium_new_entry_rule "
+        "축소비중으로 집행하거나 보류한다.)",
         "ok": "fresh·동기화·정합성 충족 — 스냅샷 가격으로 booking 가능.",
     }.get(verdict, "")
 

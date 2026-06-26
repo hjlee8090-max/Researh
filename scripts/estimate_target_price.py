@@ -657,32 +657,39 @@ def regime_min_rr(tier: str | None, policy: dict) -> tuple[float, str]:
     return float(rr.get("fallback_min_rr", 1.2)), f"{tier or 'unknown'}→fallback"
 
 
-def fair_buy_price(estimate: float | None, min_rr: float, stop_frac: float) -> float | None:
-    """뉴스 반영 목표가에서 R/R≥min_rr 를 확보하는 진입 상한(적정 매수가).
+def entry_cap_price(estimate: float | None, min_rr: float, stop_frac: float) -> float | None:
+    """뉴스 반영 목표가에서 R/R≥min_rr 를 확보하는 신규진입 상한가.
 
-    R/R = (목표−진입)/(진입−손절), 손절 = 진입×(1−stop_frac) →  진입 = 목표 / (1 + min_rr×stop_frac).
-    진입을 이 값 이하로 잡으면 R/R 하한이 충족된다(목표가가 뉴스로 오르면 적정 매수가도 따라 오른다).
+    적정가치(intrinsic value)가 아니라 리스크관리 산물 — '지금 새로 들어가도 손익비 하한이
+    나오는 최대 진입가'다. R/R = (목표−진입)/(진입−손절), 손절 = 진입×(1−stop_frac) →
+    진입 = 목표 / (1 + min_rr×stop_frac). 진입을 이 값 이하로 잡으면 R/R 하한이 충족된다
+    (목표가가 뉴스로 오르면 상한가도 따라 오른다). 현재가보다 낮게 나오면 '상승여력 <
+    R/R하한×손절폭' = 신규 진입엔 업사이드가 얇다는 신호(R/R 부족)일 뿐, 고평가 판정이 아니다.
     """
     if not estimate or stop_frac <= 0:
         return None
     return round(estimate / (1.0 + min_rr * stop_frac), -2)
 
 
-def build_news_buy_line(r: dict) -> str:
-    """리포트에 넣는 '뉴스 반영 적정 매수가' 한 줄 — 신규 진입 기준 진입 상한 + 현재가 위치 + 직전 델타."""
-    fb = r.get("fair_buy_price")
+def build_entry_cap_line(r: dict) -> str:
+    """리포트에 넣는 '뉴스 반영 신규진입 상한가' 한 줄 — R/R 진입 상한 + 현재가 위치 + 직전 델타."""
+    fb = r.get("entry_cap_price")
     cur = r.get("current_price")
     if not fb:
-        return "뉴스 반영 적정 매수가: — (목표가 추정 불가)"
-    basis = r.get("fair_buy_basis") or {}
-    parts = [f"뉴스 반영 적정 매수가 **{fb:,.0f}원**(R/R≥{basis.get('min_rr')}·{basis.get('stop_basis', '')} 기준)"]
+        note = r.get("entry_cap_note")
+        return f"뉴스 반영 신규진입 상한가: — ({note})" if note else "뉴스 반영 신규진입 상한가: — (목표가 추정 불가)"
+    basis = r.get("entry_cap_basis") or {}
+    parts = [f"뉴스 반영 신규진입 상한가 **{fb:,.0f}원**(R/R≥{basis.get('min_rr')}·{basis.get('stop_basis', '')} 기준)"]
     if cur:
-        gap = (fb / cur - 1.0) * 100.0  # +면 적정가가 현재가보다 높음 = 현재가가 쌈(매수 구간)
-        if cur <= fb:
-            parts.append(f"현재가 {cur:,.0f}원 🟢매수 구간(현재가가 적정가보다 {gap:.1f}% 낮음)")
+        gap = (fb / cur - 1.0) * 100.0  # +면 상한가가 현재가보다 높음 = 현재가가 진입 가능 구간
+        caution = r.get("entry_cap_caution")
+        if cur <= fb and caution:
+            parts.append(f"현재가 {cur:,.0f}원 🟡진입 가능 구간이나 {caution}(상한가보다 {gap:.1f}% 낮음)")
+        elif cur <= fb:
+            parts.append(f"현재가 {cur:,.0f}원 🟢진입 가능(현재가가 상한가보다 {gap:.1f}% 낮음)")
         else:
-            parts.append(f"현재가 {cur:,.0f}원 🔴적정가 {-gap:.1f}% 상회 — 되돌림 대기")
-    fbd = (r.get("delta_vs_prev") or {}).get("fair_buy_delta_krw")
+            parts.append(f"현재가 {cur:,.0f}원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 {-gap:.1f}% 상회)")
+    fbd = (r.get("delta_vs_prev") or {}).get("entry_cap_delta_krw")
     if fbd:
         parts.append(f"직전 리포트 대비 {'▲' if fbd > 0 else '▼'}{abs(fbd):,.0f}원")
     return " · ".join(parts)
@@ -690,19 +697,19 @@ def build_news_buy_line(r: dict) -> str:
 
 def build_report_section(rows: list[dict], as_of: str) -> str:
     lines = [
-        "### 📰 뉴스 반영 매매가(목표 매도가·적정 매수가) 추정 (estimate_target_price v1.5 — 직전 리포트 대비 변동)",
+        "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (estimate_target_price v1.5 — 직전 리포트 대비 변동)",
         "",
         f"- 기준 시각: {as_of} · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)",
-        "- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 적정 매수가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).",
-        "- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 적정 매수가는 신규 진입 기준(보유분 평단은 고정).",
+        "- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).",
+        "- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.",
         "",
-        "| 종목 | 현재가 | 적정 매수가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |",
+        "| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |",
         "|---|---|---|---|---|---|---|---|",
     ]
     for r in rows:
         cur_v = r.get("current_price")
         cur = f"{cur_v:,.0f}" if cur_v else "—"
-        fb = r.get("fair_buy_price")
+        fb = r.get("entry_cap_price")
         buy = f"{fb:,.0f}" if fb else "—"
         est = f"{r['estimate']:,.0f}" if r.get("estimate") else "—"
         up = f"{r['expected_return_pct']:+.1f}%" if r.get("expected_return_pct") is not None else "—"
@@ -710,7 +717,10 @@ def build_report_section(rows: list[dict], as_of: str) -> str:
         dv = d.get("estimate_delta_krw")
         delta_cell = f"{'▲' if dv > 0 else '▼'}{abs(dv):,.0f}" if dv else ("0" if d else "신규")
         if fb and cur_v:
-            pos = "🟢매수구간" if cur_v <= fb else f"🔴+{(cur_v / fb - 1) * 100:.0f}% 상회"
+            if cur_v <= fb:
+                pos = "🟡진입주의" if r.get("entry_cap_caution") else "🟢진입가능"
+            else:
+                pos = f"🔴+{(cur_v / fb - 1) * 100:.0f}% 상회"
         else:
             pos = "—"
         lines.append(
@@ -725,20 +735,20 @@ def build_report_section(rows: list[dict], as_of: str) -> str:
         lines += ["", "**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**"]
         for r in changed:
             lines.append(f"- {build_news_target_line(r)}")
-    # 신규 진입 매수 구간 — 현재가 ≤ 적정 매수가(매수 구간)이거나 적정 매수가가 직전 대비 변한 종목.
+    # 신규진입 상한가 — 현재가 ≤ 상한가(진입 가능)이거나 상한가가 직전 대비 변한 종목.
     buy_rows = [
         r for r in rows
-        if r.get("fair_buy_price") and (r.get("in_buy_zone") or (r.get("delta_vs_prev") or {}).get("fair_buy_delta_krw"))
+        if r.get("entry_cap_price") and (r.get("in_buy_zone") or (r.get("delta_vs_prev") or {}).get("entry_cap_delta_krw"))
     ]
     if buy_rows:
-        lines += ["", "**신규 진입 적정 매수가(현재가 위치):**"]
+        lines += ["", "**신규진입 상한가(현재가 위치):**"]
         for r in buy_rows:
-            lines.append(f"- {r['name']}({r['ticker']}) — {build_news_buy_line(r)}")
+            lines.append(f"- {r['name']}({r['ticker']}) — {build_entry_cap_line(r)}")
     lines += [
         "",
         "> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.",
         "> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.",
-        "> 적정 매수가 = 목표가/(1+R/R하한×손절%) — 목표가가 뉴스로 오르면 적정 매수가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+        "> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
     ]
     return "\n".join(lines)
 
@@ -765,7 +775,7 @@ def main() -> int:
     snapshot = load_json("state/market_snapshot.json", {})
     snap_tickers = snapshot.get("tickers", {}) if isinstance(snapshot, dict) else {}
     kospi_ret60 = (snapshot.get("regime") or {}).get("ret_60d_pct")
-    regime_tier = (snapshot.get("regime") or {}).get("tier")  # v1.5 적정 매수가 R/R 하한 조회용
+    regime_tier = (snapshot.get("regime") or {}).get("tier")  # v1.5 신규진입 상한가 R/R 하한 조회용
     policy = load_json("config/policy.json", {})
     consensus = load_json("state/consensus.json", {}).get("tickers", {})
     fundamentals = load_json("state/fundamentals.json", {}).get("tickers", {})
@@ -860,13 +870,29 @@ def main() -> int:
 
         expected_return = round((estimate / current - 1.0) * 100.0, 1) if estimate and current else None
 
-        # v1.5 — 적정 매수가: 뉴스 반영 목표가에서 레짐 R/R 하한을 확보하는 진입 상한(신규 진입 기준).
+        # v1.5 — 신규진입 상한가: 뉴스 반영 목표가에서 레짐 R/R 하한을 확보하는 진입 상한(신규 진입 기준).
         atr_pct = _num((ts.get("volatility") or {}).get("atr_pct"))
         stop_frac, stop_basis = stop_pct_fraction(atr_pct, policy)
         min_rr, rr_tier = regime_min_rr(regime_tier, policy)
-        fair_buy = fair_buy_price(estimate, min_rr, stop_frac)
-        in_buy_zone = current is not None and fair_buy is not None and current <= fair_buy
-        buy_discount_pct = round((fair_buy / current - 1.0) * 100.0, 1) if fair_buy and current else None
+        # v1.6 — 폴백 앵커(앵커=현재가) 상한가는 '현재가에서 손절폭만 깎은 값'으로 퇴화한다. 단 catalyst
+        # 프리미엄이 충분히 크면(기대수익 ≥ 임계) 상한가가 '현재가 위로도 진입 가능'을 가리켜 유의미하다
+        # (삼성 +25.6%·SK +17.8%). 프리미엄이 0 근처·음수일 때만 노이즈라 보류한다. 밴드/컨센 앵커는
+        # 실측 밸류 기준이라 음수여도 유지(현대차 −19.6% = '큰 폭 하락 필요'라는 유의미한 신호).
+        entry_cap_note = None
+        fallback_min = float(params.get("entry_cap_fallback_min_return_pct", 5.0))
+        if (not anchor_uses_band and not cons_target) and (expected_return is None or expected_return < fallback_min):
+            entry_cap = None
+            entry_cap_note = f"밸류·컨센 미시드 + 프리미엄 약함(기대수익<{fallback_min:.0f}%) — R/R 상한가 보류, sunday_strategy 시드 필요"
+        else:
+            entry_cap = entry_cap_price(estimate, min_rr, stop_frac)
+        in_buy_zone = current is not None and entry_cap is not None and current <= entry_cap
+        entry_cap_gap_pct = round((entry_cap / current - 1.0) * 100.0, 1) if entry_cap and current else None
+        # v1.6 — falling-knife 가드: 밴드 앵커가 폭락을 안 따라가 🟢(진입 가능)이 거짓 매수신호가 되는
+        # 경우(한화에어로 60일 −20% 폭락인데 PER 밴드는 높아 🟢). 60일 수익률이 깊은 음수면 🟢을
+        # 🟡(추격 금지)로 강등한다 — 추세 인지 없는 상한가의 한계 보완(estimate_gate·trend_gate 와 별개 표시 가드).
+        knife_thr = float(params.get("entry_cap_falling_knife_ret60_pct", -15.0))
+        falling_knife = bool(in_buy_zone and ret60 is not None and ret60 <= knife_thr)
+        entry_cap_caution = f"falling knife(60일 {ret60:+.0f}%) — 추격 금지(추세 약세)" if falling_knife else None
 
         layers = {
             "valuation_band": anchor_uses_band,
@@ -898,14 +924,16 @@ def main() -> int:
             "cap_applied": cap_applied,
             "estimate": estimate,
             "expected_return_pct": expected_return,
-            "fair_buy_price": fair_buy,
-            "fair_buy_basis": {
+            "entry_cap_price": entry_cap,
+            "entry_cap_basis": {
                 "min_rr": min_rr, "min_rr_tier": rr_tier,
                 "stop_frac_pct": round(stop_frac * 100, 1), "stop_basis": stop_basis,
                 "formula": "목표가 / (1 + min_rr × 손절%)",
             },
             "in_buy_zone": in_buy_zone,
-            "buy_discount_pct": buy_discount_pct,
+            "entry_cap_gap_pct": entry_cap_gap_pct,
+            "entry_cap_note": entry_cap_note,
+            "entry_cap_caution": entry_cap_caution,
             "sector_activation": sector_eta,
             "sector_signals": sector_summary,
             "grade": grade(layers),
@@ -944,12 +972,14 @@ def main() -> int:
             )
             pn_now, pn_prev = _num(r["premium_pct"].get("news")), _num((prev.get("premium_pct") or {}).get("news"))
             er_now, er_prev = _num(r.get("expected_return_pct")), _num(prev.get("expected_return_pct"))
-            fb_now, fb_prev = _num(r.get("fair_buy_price")), _num(prev.get("fair_buy_price"))
+            # prev 는 직전 로그행 — rename 이전 행은 fair_buy_price 키라 둘 다 조회(1회 전환 호환).
+            fb_now = _num(r.get("entry_cap_price"))
+            fb_prev = _num(prev.get("entry_cap_price")) or _num(prev.get("fair_buy_price"))
             delta = {
                 "prev_estimate": prev.get("estimate"),
                 "prev_as_of": prev.get("_as_of"),
                 "estimate_delta_krw": round(de, -2) if de is not None else None,
-                "fair_buy_delta_krw": round(fb_now - fb_prev, -2) if fb_now is not None and fb_prev is not None else None,
+                "entry_cap_delta_krw": round(fb_now - fb_prev, -2) if fb_now is not None and fb_prev is not None else None,
                 "news_pct_delta": round(pn_now - pn_prev, 2) if pn_now is not None and pn_prev is not None else None,
                 "expected_return_delta_pct": round(er_now - er_prev, 1) if er_now is not None and er_prev is not None else None,
             }
@@ -960,7 +990,7 @@ def main() -> int:
             for n in new_news
         ]
         r["news_target_line"] = build_news_target_line(r)
-        r["news_buy_line"] = build_news_buy_line(r)
+        r["entry_cap_line"] = build_entry_cap_line(r)
 
     as_of = now.isoformat(timespec="seconds")
     out = {
@@ -986,7 +1016,7 @@ def main() -> int:
             {
                 "ticker": r["ticker"], "name": r["name"],
                 "current_price": r["current_price"], "estimate": r["estimate"],
-                "fair_buy_price": r["fair_buy_price"],
+                "entry_cap_price": r["entry_cap_price"],
                 "expected_return_pct": r["expected_return_pct"],
                 "premium_pct": r["premium_pct"], "grade": r["grade"],
                 "trend_gate": (r.get("trend_gate") or {}).get("factor"),

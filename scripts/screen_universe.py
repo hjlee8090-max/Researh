@@ -66,9 +66,14 @@ def fetch_returns(ticker: str) -> dict[str, Any]:
     """모집단 종목 1개의 5/20/60일 수익률·거래량비·신뢰도·종가 수집(스냅샷에 없을 때만)."""
     naver_hist = fetch_naver(ticker)
     yahoo_hist = fetch_yahoo(f"{ticker}.KS")
-    naver_last = naver_hist[-1]["close"] if naver_hist else None
-    yahoo_last = yahoo_hist[-1]["close"] if yahoo_hist else None
-    confidence, _gap = compute_confidence(naver_last, yahoo_last)
+    # v2.18 — compute_confidence 는 동일 거래일 출처끼리만 교차검증(날짜 정렬). 출처별 마지막
+    # 봉을 {name,close,date} 로 넘긴다(전일자 yahoo 를 당일 naver 와 비교해 low 로 강등하던 버그 제거).
+    source_bars: list[dict[str, Any]] = []
+    if naver_hist:
+        source_bars.append({"name": "naver", "close": naver_hist[-1]["close"], "date": naver_hist[-1]["date"]})
+    if yahoo_hist:
+        source_bars.append({"name": "yahoo", "close": yahoo_hist[-1]["close"], "date": yahoo_hist[-1]["date"]})
+    confidence, _gap = compute_confidence(source_bars)
     primary = naver_hist or yahoo_hist
     return {
         "ret5": five_day_return(primary) if primary else None,

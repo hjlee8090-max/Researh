@@ -24,7 +24,7 @@
 
 ## 0-B. 시장 데이터 스냅샷 수집 (영업일에만)
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
-  - 보유종목+후보종목의 네이버·Yahoo 양쪽 가격을 수집한다 (종가 gap ≤1% high, 한쪽만 medium). stdout 의 pass/block/low_conf 는 진입 판단에만 쓰고 리포트에 옮기지 않는다.
+  - 보유종목+후보종목의 네이버·Yahoo 양쪽 가격을 수집한다. 신뢰도는 **동일 거래일(date) 출처끼리만** 교차검증한다(v2.18): 같은 날짜 2출처 괴리 ≤1% high·≤2% medium, 당일치 단일 출처(또는 날짜가 서로 다름)면 medium, 데이터 없음 low. 개장 직후 Yahoo 일봉 지연은 `meta.regularMarketPrice`(당일 실시간가)로 보강돼 더 이상 naver 당일가와 '불일치 low' 로 충돌하지 않는다. stdout 의 pass/block/low_conf 는 진입 판단에만 쓰고 리포트에 옮기지 않는다.
 - `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
   - 모멘텀(35%)+테마 노출(20%)+신뢰도(20%)+thesis(25%)−구조적 악재로 점수화. `tradable_count >= 1` 이면 "한눈에 보기"에 1순위 ticker 표기.
   - **채택 사유 노티**: `candidate_scores.json.report_section_md`("### 신규 후보 채택 사유" 완성 마크다운)를 리포트 본문에 **그대로 붙여 넣는다** — send_kakao 가 이 섹션으로 채택 후보를 발송한다.

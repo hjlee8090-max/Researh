@@ -16,7 +16,7 @@ import logging
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, time as dt_time, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -110,8 +110,50 @@ def fetch_naver(ticker: str) -> list[dict[str, Any]]:
     return out[-260:]
 
 
+def _yahoo_today_bar_from_meta(meta: dict[str, Any]) -> dict[str, Any] | None:
+    """Yahoo chart 응답 `meta` 에서 '당일 현재가' 봉을 만든다(없으면 None).
+
+    일봉(interval=1d) 응답은 개장 직후 당일 봉을 아직 만들지 않아 마지막 캔들이 전일자로
+    들어오는 알려진 지연이 있다(KST 오전 — Yahoo 가 KRX 종가를 전일자로 보고). 그러나
+    `meta.regularMarketPrice`/`regularMarketTime` 에는 당일 장중 실시간 체결가가 담긴다.
+    이를 읽어 당일 봉을 보강하면, naver(당일) vs yahoo(전일) 의 거래일 불일치가 사라져
+    동일 거래일 2출처 교차검증이 가능해진다(09시 개장 점검에서 매일 low 로 깔리던 원인 제거).
+    """
+    price = meta.get("regularMarketPrice")
+    ts = meta.get("regularMarketTime")
+    if price in (None, "", 0) or ts in (None, ""):
+        return None
+    try:
+        price = float(price)
+        # regularMarketTime 은 UTC epoch — KRX 거래일(KST)로 환산해야 naver 날짜와 정렬된다.
+        bar_date = datetime.fromtimestamp(int(ts), tz=KST).strftime("%Y-%m-%d")
+    except (ValueError, TypeError, OSError, OverflowError):
+        return None
+
+    def _f(key: str) -> float | None:
+        v = meta.get(key)
+        try:
+            return float(v) if v not in (None, "") else None
+        except (ValueError, TypeError):
+            return None
+
+    high, low = _f("regularMarketDayHigh"), _f("regularMarketDayLow")
+    return {
+        "date": bar_date,
+        "open": _f("regularMarketOpen") or price,
+        "high": high if high is not None else price,
+        "low": low if low is not None else price,
+        "close": price,
+        "volume": _f("regularMarketVolume"),
+    }
+
+
 def fetch_yahoo(symbol: str) -> list[dict[str, Any]]:
-    """Yahoo v8 chart 일봉을 수집한다. `symbol` 은 `005930.KS` 또는 지수 `^KS11` 처럼 완전한 심볼."""
+    """Yahoo v8 chart 일봉 + 당일 현재가(meta)를 수집한다. `symbol` 은 `005930.KS`·지수 `^KS11` 등 완전한 심볼.
+
+    일봉 시계열에 더해, 개장 직후 일봉 지연을 메우려 `meta.regularMarketPrice`(당일 실시간가)로
+    마지막 봉을 보강한다(`_yahoo_today_bar_from_meta`).
+    """
     url = (
         f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
         "?range=1y&interval=1d"
@@ -146,6 +188,18 @@ def fetch_yahoo(symbol: str) -> list[dict[str, Any]]:
             "close": float(c),
             "volume": float(v) if v is not None else None,
         })
+    # 당일 현재가(meta)로 마지막 봉 보강 — 일봉 지연일에도 yahoo 가 당일 거래일을 갖게 한다.
+    meta_bar = _yahoo_today_bar_from_meta(result.get("meta") or {})
+    if meta_bar:
+        if out and out[-1]["date"] == meta_bar["date"]:
+            last = out[-1]  # 같은 거래일 — 실시간 체결가로 종가를 갱신, 일중 고저는 확장
+            last["close"] = meta_bar["close"]
+            last["high"] = max(last.get("high") or meta_bar["high"], meta_bar["high"])
+            last["low"] = min(last.get("low") or meta_bar["low"], meta_bar["low"])
+            if meta_bar.get("volume") is not None:
+                last["volume"] = meta_bar["volume"]
+        elif not out or meta_bar["date"] > out[-1]["date"]:
+            out.append(meta_bar)  # 일봉이 아직 전일자 — 당일 봉을 새로 붙인다
     return out[-260:]
 
 
@@ -185,17 +239,37 @@ def fetch_krx(ticker: str) -> list[dict[str, Any]]:
         return []
 
 
-def compute_confidence(naver_last: float | None, yahoo_last: float | None) -> tuple[str, float | None]:
-    if naver_last and yahoo_last:
-        gap = abs(naver_last - yahoo_last) / max(naver_last, yahoo_last) * 100
+def compute_confidence(source_bars: list[dict[str, Any]]) -> tuple[str, float | None]:
+    """동일 거래일(date)을 공유하는 출처끼리만 교차검증해 신뢰도를 산출한다.
+
+    핵심(v2.18): 서로 다른 거래일의 가격 — 예: naver 당일 현재가 vs yahoo 전일 종가 — 을
+    '출처 불일치'로 오판하지 않는다. 가장 신선한 거래일을 기준으로, 그 날짜를 공유하는
+    출처만 cohort 로 묶어 가격 괴리를 본다(policy.price_data_quality.confidence_levels
+    '동일 시각대 2개 이상 출처' 정의를 코드가 실제로 준수).
+      - cohort ≥2 & 괴리 ≤1% → high / ≤2% → medium / 그 외 → low
+      - cohort == 1 (당일치 단일 출처) → medium
+      - 데이터 없음 → low
+    freshness(나이)는 별개 축 — pre_trade_check·data_freshness 가 담당. 여기서는 '출처 일치'만 본다.
+
+    `source_bars`: 출처별 마지막 봉 [{"name","close","date"}, ...] (실패한 출처는 제외).
+    """
+    valid = [
+        b for b in source_bars
+        if b and b.get("close") not in (None, 0) and b.get("date")
+    ]
+    if not valid:
+        return "low", None
+    freshest = max(b["date"] for b in valid)
+    cohort = [float(b["close"]) for b in valid if b["date"] == freshest]
+    if len(cohort) >= 2:
+        hi, lo = max(cohort), min(cohort)
+        gap = (hi - lo) / hi * 100 if hi else 0.0
         if gap <= 1.0:
             return "high", round(gap, 3)
         if gap <= 2.0:
             return "medium", round(gap, 3)
         return "low", round(gap, 3)
-    if naver_last or yahoo_last:
-        return "medium", None
-    return "low", None
+    return "medium", None  # 당일치 단일 신선 출처
 
 
 def five_day_return(history: list[dict[str, Any]]) -> float | None:
@@ -438,15 +512,33 @@ def build_ticker_snapshot(
 ) -> dict[str, Any]:
     naver_hist = fetch_naver(ticker)
     yahoo_hist = fetch_yahoo(f"{ticker}.KS")
+    today_kst = datetime.now(KST).date().isoformat()
+    naver_today = bool(naver_hist) and naver_hist[-1]["date"] == today_kst
+    yahoo_today = bool(yahoo_hist) and yahoo_hist[-1]["date"] == today_kst
+    # v2.18 — KRX 공식 EOD 백스톱 호출 조건 확장(기존 'naver·yahoo 동시 실패' → 둘 중 하나라도
+    # 빈손, 또는 장 마감 후 당일치 교차확인 출처 < 2). KRX(pykrx)는 EOD 전용이라 개장 직후
+    # 장중엔 당일치가 없어, '마감 후 보강'은 15:30 이후에만 의미가 있다(장중 호출 비용 회피).
     krx_hist: list[dict[str, Any]] = []
-    if not naver_hist and not yahoo_hist:
-        # v2.11 — naver·yahoo 동시 실패 시 KRX 공식 EOD 백스톱('EOD 확정치는 항상 있는' 상태).
+    after_close = datetime.now(KST).time() >= dt_time(15, 30)
+    need_krx = (
+        (not naver_hist)
+        or (not yahoo_hist)
+        or (after_close and (naver_today + yahoo_today) < 2)
+    )
+    if need_krx:
         krx_hist = fetch_krx(ticker)
     naver_last = naver_hist[-1]["close"] if naver_hist else None
     yahoo_last = yahoo_hist[-1]["close"] if yahoo_hist else None
-    confidence, gap_pct = compute_confidence(naver_last, yahoo_last)
+    # v2.18 — 동일 거래일 출처끼리만 교차검증(날짜 정렬). 묵은 yahoo 전일 종가를 naver 당일
+    # 현재가와 비교해 '불일치 low' 로 강등하던 버그 제거 → 09시 개장에서도 medium 이상 확보.
+    source_bars: list[dict[str, Any]] = []
+    if naver_hist:
+        source_bars.append({"name": "naver", "close": naver_last, "date": naver_hist[-1]["date"]})
+    if yahoo_hist:
+        source_bars.append({"name": "yahoo", "close": yahoo_last, "date": yahoo_hist[-1]["date"]})
     if krx_hist:
-        confidence, gap_pct = "medium", None  # 단일 공식출처(KRX) EOD — policy 'medium=1개 신뢰 출처'
+        source_bars.append({"name": "krx", "close": krx_hist[-1]["close"], "date": krx_hist[-1]["date"]})
+    confidence, gap_pct = compute_confidence(source_bars)
     primary_hist = naver_hist or yahoo_hist or krx_hist
     ret5 = five_day_return(primary_hist) if primary_hist else None
     # entry_filter(추세필터)는 레짐 tier·상대강도에 따라 임계가 달라지므로(v2.7 레짐 적응형),
@@ -470,7 +562,6 @@ def build_ticker_snapshot(
     structure = price_structure(primary_hist) if primary_hist else {"price_reversal": None}
     # 오늘자 OHLC(시가/고가/저가/현재가) — 웹 교차확인이 '개장/장중 고가'를 '현재가'로 오인하는 것을
     # 막기 위한 범위 맥락(policy.price_data_quality.web_verify_guard). 마지막 캔들 날짜가 오늘일 때만 채운다.
-    today_kst = datetime.now(KST).date().isoformat()
     last_bar = primary_hist[-1] if primary_hist else None
     today_ohlc = (
         {

@@ -15,6 +15,9 @@
     "probability_unconfirmed": 0.6,
     "auto_news_confidence_factor": 0.6,
     "auto_news_max_age_days": 14,
+    "entry_cap_fallback_min_return_pct": 5.0,
+    "entry_cap_falling_knife_ret60_pct": -15.0,
+    "entry_cap_note": "신규진입 상한가(entry_cap_price) 게이트. 폴백 앵커(밸류밴드·컨센 결측)는 상한가가 '현재가−손절폭'으로 퇴화하나, 기대수익 ≥ entry_cap_fallback_min_return_pct 면 프리미엄이 충분히 커 유의미하므로 표시한다(미만이면 보류=—). 밴드/컨센 앵커는 실측 밸류라 음수여도 유지. falling-knife 가드: 🟢(진입 가능)이라도 60일 수익률 ≤ entry_cap_falling_knife_ret60_pct 면 추세 약세라 🟡(추격 금지)로 강등 — 밴드 앵커가 폭락을 안 따라가 생기는 거짓 매수신호 방지.",
     "auto_news_note": "state/news_feed.json(fetch_news.py 키워드 자동 분류)의 항목은 factor 할인으로 반영한다 — 자동은 후보, 확정은 검증(manual_news). 같은 유형의 manual 기록이 ±5일 내 있으면 manual 우선. 유형당 최신 1건만(같은 기사 도배 방지)."
   },
   "event_type_impact_pct": {

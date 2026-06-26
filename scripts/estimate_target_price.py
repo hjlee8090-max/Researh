@@ -682,7 +682,10 @@ def build_entry_cap_line(r: dict) -> str:
     parts = [f"뉴스 반영 신규진입 상한가 **{fb:,.0f}원**(R/R≥{basis.get('min_rr')}·{basis.get('stop_basis', '')} 기준)"]
     if cur:
         gap = (fb / cur - 1.0) * 100.0  # +면 상한가가 현재가보다 높음 = 현재가가 진입 가능 구간
-        if cur <= fb:
+        caution = r.get("entry_cap_caution")
+        if cur <= fb and caution:
+            parts.append(f"현재가 {cur:,.0f}원 🟡진입 가능 구간이나 {caution}(상한가보다 {gap:.1f}% 낮음)")
+        elif cur <= fb:
             parts.append(f"현재가 {cur:,.0f}원 🟢진입 가능(현재가가 상한가보다 {gap:.1f}% 낮음)")
         else:
             parts.append(f"현재가 {cur:,.0f}원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 {-gap:.1f}% 상회)")
@@ -714,7 +717,10 @@ def build_report_section(rows: list[dict], as_of: str) -> str:
         dv = d.get("estimate_delta_krw")
         delta_cell = f"{'▲' if dv > 0 else '▼'}{abs(dv):,.0f}" if dv else ("0" if d else "신규")
         if fb and cur_v:
-            pos = "🟢진입가능" if cur_v <= fb else f"🔴+{(cur_v / fb - 1) * 100:.0f}% 상회"
+            if cur_v <= fb:
+                pos = "🟡진입주의" if r.get("entry_cap_caution") else "🟢진입가능"
+            else:
+                pos = f"🔴+{(cur_v / fb - 1) * 100:.0f}% 상회"
         else:
             pos = "—"
         lines.append(
@@ -742,7 +748,7 @@ def build_report_section(rows: list[dict], as_of: str) -> str:
         "",
         "> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.",
         "> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.",
-        "> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 앵커가 현재가 폴백인 종목은 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+        "> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
     ]
     return "\n".join(lines)
 
@@ -868,17 +874,25 @@ def main() -> int:
         atr_pct = _num((ts.get("volatility") or {}).get("atr_pct"))
         stop_frac, stop_basis = stop_pct_fraction(atr_pct, policy)
         min_rr, rr_tier = regime_min_rr(regime_tier, policy)
-        # v1.6 — 앵커가 현재가 폴백(밸류밴드·컨센 둘 다 결측)이면 상한가 = 현재가×(1+프리미엄)/(1+R/R×손절)
-        # 로 퇴화해 '현재가에서 손절폭만 깎은 값'이 된다(정보량 0인데 현재가 대비 −10~−17% 표시가
-        # 고평가로 오해됨). 이런 종목은 상한가를 보류한다 — 목표 매도가는 프리미엄 신호가 있어 유지.
+        # v1.6 — 폴백 앵커(앵커=현재가) 상한가는 '현재가에서 손절폭만 깎은 값'으로 퇴화한다. 단 catalyst
+        # 프리미엄이 충분히 크면(기대수익 ≥ 임계) 상한가가 '현재가 위로도 진입 가능'을 가리켜 유의미하다
+        # (삼성 +25.6%·SK +17.8%). 프리미엄이 0 근처·음수일 때만 노이즈라 보류한다. 밴드/컨센 앵커는
+        # 실측 밸류 기준이라 음수여도 유지(현대차 −19.6% = '큰 폭 하락 필요'라는 유의미한 신호).
         entry_cap_note = None
-        if not anchor_uses_band and not cons_target:
+        fallback_min = float(params.get("entry_cap_fallback_min_return_pct", 5.0))
+        if (not anchor_uses_band and not cons_target) and (expected_return is None or expected_return < fallback_min):
             entry_cap = None
-            entry_cap_note = "밸류·컨센 미시드(앵커=현재가 폴백) — R/R 상한가 보류, sunday_strategy 시드 필요"
+            entry_cap_note = f"밸류·컨센 미시드 + 프리미엄 약함(기대수익<{fallback_min:.0f}%) — R/R 상한가 보류, sunday_strategy 시드 필요"
         else:
             entry_cap = entry_cap_price(estimate, min_rr, stop_frac)
         in_buy_zone = current is not None and entry_cap is not None and current <= entry_cap
         entry_cap_gap_pct = round((entry_cap / current - 1.0) * 100.0, 1) if entry_cap and current else None
+        # v1.6 — falling-knife 가드: 밴드 앵커가 폭락을 안 따라가 🟢(진입 가능)이 거짓 매수신호가 되는
+        # 경우(한화에어로 60일 −20% 폭락인데 PER 밴드는 높아 🟢). 60일 수익률이 깊은 음수면 🟢을
+        # 🟡(추격 금지)로 강등한다 — 추세 인지 없는 상한가의 한계 보완(estimate_gate·trend_gate 와 별개 표시 가드).
+        knife_thr = float(params.get("entry_cap_falling_knife_ret60_pct", -15.0))
+        falling_knife = bool(in_buy_zone and ret60 is not None and ret60 <= knife_thr)
+        entry_cap_caution = f"falling knife(60일 {ret60:+.0f}%) — 추격 금지(추세 약세)" if falling_knife else None
 
         layers = {
             "valuation_band": anchor_uses_band,
@@ -919,6 +933,7 @@ def main() -> int:
             "in_buy_zone": in_buy_zone,
             "entry_cap_gap_pct": entry_cap_gap_pct,
             "entry_cap_note": entry_cap_note,
+            "entry_cap_caution": entry_cap_caution,
             "sector_activation": sector_eta,
             "sector_signals": sector_summary,
             "grade": grade(layers),

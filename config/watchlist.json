@@ -93,7 +93,7 @@
       "note": "보유 0종목 — 단계경보 미발생, 함정패턴 cross-check 의무 미발동. 재진입 후보(삼성·한화에어로·HD현대일렉)는 동일 매크로(마이크론 beat 반도체 반등)에 순방향 연동이나, 세션 실시간 검증 차단으로 일괄 booking 보류. 매크로 악재 전이 없음."
     }
   ],
-  "last_updated": "2026-06-25T18:05:00+09:00",
+  "last_updated": "2026-06-26T09:25:00+09:00",
   "comments": [
     {
       "ts": "2026-06-25T18:05:00+09:00",
@@ -185,6 +185,12 @@
       "ts": "2026-06-25T15:08:00+09:00",
       "slot": "15:00",
       "note": "[6/25 15:00 마감 임박] 보유 0종목·현금 100%(4,934,930원) 유지, 신규 0건. 스냅샷(14:55 수집·age 10분·2출처 일치 high·당일자) 기준 KOSPI 약 9,016(전일 종가 8,471.02 대비 +6.4% 근사, 종가 18시 확정)·삼성전자 359,000원(시359,500/고362,500/저352,000)·SK하이닉스 2,950,000·한화에어로 1,064,000·HD현대일렉 959,000. 데이터 신뢰도 high이나 이 세션 실시간 재수집/웹 실거래가 교차확인 차단 지속(403, 웹은 forecast 사이트만 반환→게재일 유효 실거래가 미확보) → pre_trade_check verdict=live_verify_required로 신규 probe booking 미발동(booking-then-verify 금지 원칙). 단계경보 산정 대상 없음(🟢0/🟡0/🟠0/🔴0). 마이크론 Q3 대폭 beat(EPS $25.11·매출 $41.46B·시간외 +13.1%)로 hbm_probe_scale 서사 강화·유지하나 자본/검증 제약으로 미발동. 익일 09시: 실시간가/웹 교차 복구 시 삼성전자(🟢적정매수 393,600 대비 -8.8%)·한화에어로 probe 재판정. 6/25 밤 미 PCE 결과 6/26 개장 반영. 학습·시뮬레이션."
+    },
+    {
+      "ts": "2026-06-26T09:25:00+09:00",
+      "slot": "09:00",
+      "note": "[6/26 09:00 개장] 보유 0종목·현금 100%(4,934,930원) 유지, 신규 0건. W26 0순위 삼성전자(005930) probe 1주 — 자정 setup(마이크론 FY26 Q3 대폭 beat·PCE MoM 컨센 하회)으로 촉매·매크로 조건은 충족됐으나, 09시 web_verify 통로 차단(세션 라이브 fetch 전종목 HTTP 403)으로 미발동·재이연(5영업일째). 09:18 보존 스냅샷은 close=None(가격 없음)·confidence low/medium → pre_trade_check verdict=live_verify_required, v2.17 fallback 미적용(authoritative_same_day_snapshot=false). candidate_scores tradable=0(10종목 전원 차단: 가격신뢰도 low + 6/23 폭락 여파 5거래일 누적 -13% 미만 다수). 실제 KOSPI 시가는 egress 403 + 스냅샷 가격 부재로 이 세션 독립 검증 불가 — 자정 예상 갭(+1.0~2.5% 갭업)은 미확인 처리. regime=strong_bull·deploy(현금 100% < 목표 하한 80%)·vacant_slots 5의 만성 미배치이나 원인은 판단오류가 아니라 6/23부터 지속된 세션 가격검증 인프라 차단(6/23 lessons codified). 보유 0 → 단계경보 N/A·함정패턴 미발동. 회복 단계 normal(누적 -1.301% > -3.5%). 조선·자동차 avoid 유지(해제 게이트 미충족). 다음: 12·15시 정기수집본이 close 가격 복구 + web_verify 통로 동시 개방 시에만 삼성전자 probe(overheat 사이즈 신중) 재판정. 권유 아님·학습 시뮬레이션.",
+      "slot_close_source": "09:18 Actions 보존 스냅샷(close=None·confidence low/medium, stale 마커) — 09:21 세션 라이브 재수집 전종목 403. 웹 교차확인 통로 차단으로 실시간가 미확보. stale≠low 원칙이나 이번 보존본은 가격 자체 부재로 신규 booking 불가."
     }
   ],
   "next_action_candidates": [

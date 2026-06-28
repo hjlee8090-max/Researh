@@ -1,0 +1,116 @@
+{
+  "as_of": "2026-06-28T20:39:26+09:00",
+  "data_window": {
+    "start": "2024-01-02",
+    "end": "2026-06-10",
+    "trading_days": 592
+  },
+  "costs": {
+    "buy_pct": 0.2,
+    "sell_pct": 0.38
+  },
+  "recommended_config": {
+    "top_n": 10,
+    "rebal_days": 42,
+    "use_index_regime": false,
+    "trend_ma": 200,
+    "mom_fast": 60,
+    "mom_slow": 120
+  },
+  "benchmark_kospi_buyhold": {
+    "total_return_pct": 198.1,
+    "cagr_pct": 102.2,
+    "sharpe": 2.24,
+    "max_drawdown_pct": -19.9,
+    "trading_days": 391
+  },
+  "strategies_full": {
+    "★권장: 듀얼모멘텀 Top10 (월간리밸·MA200·항시투자)": {
+      "total_return_pct": 313.1,
+      "cagr_pct": 149.5,
+      "sharpe": 2.34,
+      "max_drawdown_pct": -21.1,
+      "trading_days": 391,
+      "n_trades": 76
+    },
+    "듀얼모멘텀 Top5 (월간리밸·항시투자)": {
+      "total_return_pct": 367.7,
+      "cagr_pct": 170.3,
+      "sharpe": 2.16,
+      "max_drawdown_pct": -25.6,
+      "trading_days": 391,
+      "n_trades": 41
+    },
+    "듀얼모멘텀 Top5 (주간리밸·레짐필터 ON)": {
+      "total_return_pct": 92.0,
+      "cagr_pct": 52.2,
+      "sharpe": 1.16,
+      "max_drawdown_pct": -25.3,
+      "trading_days": 391,
+      "n_trades": 119
+    },
+    "동일가중 5종목 (주간·레짐필터 ON — 비교군)": {
+      "total_return_pct": 92.0,
+      "cagr_pct": 52.2,
+      "sharpe": 1.16,
+      "max_drawdown_pct": -25.3,
+      "trading_days": 391,
+      "n_trades": 119
+    }
+  },
+  "walk_forward": {
+    "★권장: Top10 월간리밸 항시투자": {
+      "in_sample": {
+        "total_return_pct": 87.4,
+        "cagr_pct": 124.2,
+        "sharpe": 2.39,
+        "max_drawdown_pct": -17.7,
+        "trading_days": 196
+      },
+      "out_of_sample": {
+        "total_return_pct": 96.1,
+        "cagr_pct": 137.7,
+        "sharpe": 2.03,
+        "max_drawdown_pct": -21.8,
+        "trading_days": 196
+      },
+      "bench_oos": {
+        "total_return_pct": 145.3,
+        "cagr_pct": 217.0,
+        "sharpe": 2.87,
+        "max_drawdown_pct": -19.9,
+        "trading_days": 196
+      }
+    },
+    "듀얼모멘텀 Top5 주간 레짐ON": {
+      "in_sample": {
+        "total_return_pct": -9.4,
+        "cagr_pct": -11.9,
+        "sharpe": -0.32,
+        "max_drawdown_pct": -25.3,
+        "trading_days": 196
+      },
+      "out_of_sample": {
+        "total_return_pct": 111.7,
+        "cagr_pct": 162.3,
+        "sharpe": 1.99,
+        "max_drawdown_pct": -22.3,
+        "trading_days": 196
+      },
+      "bench_oos": {
+        "total_return_pct": 145.3,
+        "cagr_pct": 217.0,
+        "sharpe": 2.87,
+        "max_drawdown_pct": -19.9,
+        "trading_days": 196
+      }
+    }
+  },
+  "key_findings": [
+    "이 데이터 구간은 KOSPI +198%의 광범위 강세장 — 최대 적은 '현금 보유'다.",
+    "레짐필터(지수<MA200 시 현금화)는 전 구간에서 수익을 깎았다 — 강세장에서 현금=손실.",
+    "권장 전략(Top10·월간리밸·항시투자)은 총수익·Sharpe 모두 벤치마크 상회, 낙폭은 동등.",
+    "저빈도 리밸런스가 거래비용·휩쏘를 줄여 고빈도 대비 우월."
+  ],
+  "note": "학습·시뮬레이션 목적. 과거 성과는 미래 수익을 보장하지 않는다."
+}

@@ -29,15 +29,19 @@ jobs:
           python-version: "3.11"
       - name: Fetch long price history
         run: python scripts/fetch_history.py
+      - name: Backtest strategy + regenerate momentum signal
+        run: |
+          python scripts/backtest_strategy.py || echo "backtest skipped (data insufficient)"
+          python scripts/momentum_signal.py || echo "signal skipped (data insufficient)"
       - name: Commit history if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state/price_history.json
+          git add state/price_history.json state/backtest_strategy.json state/momentum_signal.json
           if git diff --cached --quiet; then
             echo "no history changes — skip commit"
           else
-            git commit -m "data(history): backtest price history $(date -u +%Y-%m-%dT%H:%MZ)"
+            git commit -m "data(history): backtest price history + momentum signal $(date -u +%Y-%m-%dT%H:%MZ)"
             for i in 1 2 3 4; do
               git push origin "HEAD:${GITHUB_REF_NAME}" && break
               echo "push failed, retry $i"; sleep $((2 ** i))

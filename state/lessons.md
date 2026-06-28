@@ -257,6 +257,10 @@ _(최종 갱신: 2026-06-23 18:00 — W26 D2(화) 18시 종가 확정. **'검은
 - ✅ codify(v2.5): 0000 §0-C 게이트 (6/2·6/11 반복 후 명문화 완료 — 6/11 항목이 최신 종합).
 - 전문: state/lessons_archive.md (2026-06-12 이관)
 
+### 2026-06-28 / 시스템 — 뉴스 키워드 리뷰 (루틴)
+- 분류: 루틴
+- 요약: silent_type(earnings_miss_or_guidance_cut) 1종 — unclassified 표본(925건) 대조 결과 뉴스 부재 확인(Q2 실적발표 전 시즌). "SK하이닉스 목표주가 400만원대로 줄상향" analyst_target_upgrade 키워드 구멍("줄상향" 부분일치 미매칭) 확인 → `news_keywords.json` analyst_target_upgrade.any에 "줄상향" 추가(자동 패치 완료, 2026-06-28).
+
 ### 2026-06-21 / 시스템 — 뉴스 키워드 리뷰 (루틴)
 - 분류: 루틴
 - 요약: silent_types(buyback_cancellation·earnings_miss_or_guidance_cut·supply_glut_or_price_drop) 3종 — unclassified 표본(651건) 대조 결과 뉴스 부재 확인, 키워드 구멍 아님. 유의미 미분류 없음(SK하이닉스 ADR상장·HD조선 SMR/LNG는 배경기사 수준, manual_news 승격 해당 없음). 키워드 변경 없음.

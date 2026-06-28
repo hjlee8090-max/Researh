@@ -66,6 +66,43 @@ def score_ticker(closes):
     }
 
 
+def executable_allocation(eligible, equity, min_cash_pct=10.0, per_name_cap_pct=30.0):
+    """백테스트 바스켓을 '이 계좌 크기'의 정수주 매수 주문으로 변환한다.
+
+    제약: 종목당 비중 ≤ per_name_cap_pct(1주가 상한 초과면 제외 — 예: 초고가주),
+    현금 최소 min_cash_pct 확보, 점수 상위부터 ~동일가중으로 정수주 배분.
+    """
+    deployable = equity * (1 - min_cash_pct / 100.0)
+    cap_krw = equity * per_name_cap_pct / 100.0
+    # 1주조차 종목당 상한을 넘는 초고가주는 제외(분산·상한 준수)
+    cand = [r for r in eligible if r["close"] <= cap_krw]
+    n = min(TOP_N, len(cand))
+    if n == 0:
+        return [], equity, 0.0
+    per_name = deployable / n
+    orders, spent = [], 0.0
+    for r in cand[:n]:
+        shares = round(per_name / r["close"])
+        # 종목당 상한 준수
+        while shares * r["close"] > cap_krw and shares > 0:
+            shares -= 1
+        # 잔여 예산 준수
+        while shares * r["close"] > (deployable - spent) and shares > 0:
+            shares -= 1
+        # 점수 통과 종목은 최소 1주는 담되, 예산·상한 둘 다 허용할 때만
+        if shares == 0 and r["close"] <= (deployable - spent) and r["close"] <= cap_krw:
+            shares = 1
+        if shares <= 0:
+            continue
+        cost = shares * r["close"]
+        spent += cost
+        orders.append({"ticker": r["ticker"], "name": r["name"], "shares": shares,
+                       "price": r["close"], "cost": round(cost),
+                       "weight_pct": round(cost / equity * 100, 1), "score": r["score"]})
+    cash_left = equity - spent
+    return orders, round(cash_left), round(cash_left / equity * 100, 1)
+
+
 def main():
     tickers, data_as_of = load()
     ranked = []
@@ -94,11 +131,29 @@ def main():
     enters = [t for t in target_tickers if t not in prev_target]
     exits = [t for t in prev_target if t not in target_tickers]
 
+    # 실거래 정수주 배분 — portfolio.json 의 현재 equity 기준
+    equity = 5_000_000.0
+    try:
+        equity = float(json.load(open(ROOT / "config" / "portfolio.json")).get("equity", equity))
+    except Exception:
+        pass
+    exec_orders, cash_left, cash_left_pct = executable_allocation(eligible, equity)
+
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "data_as_of": data_as_of,
         "strategy": "dual-momentum rotation Top10, monthly rebalance, MA200 trend filter, always-invested",
         "config": {"top_n": TOP_N, "mom_fast": MOM_FAST, "mom_slow": MOM_SLOW, "trend_ma": TREND_MA},
+        "executable_allocation": {
+            "equity": round(equity),
+            "constraints": {"min_cash_pct": 10.0, "per_name_cap_pct": 30.0,
+                            "excluded_too_expensive": [r["ticker"] for r in eligible
+                                                       if r["close"] > equity * 0.30][:TOP_N]},
+            "orders": exec_orders,
+            "cash_left": cash_left,
+            "cash_left_pct": cash_left_pct,
+            "note": "data_as_of 가격 기준 지시적 수량 — 실제 체결 routine 이 개장 fresh 가격으로 종목당 상한 내 재산정.",
+        },
         "equal_weight_pct": round(weight * 100, 2),
         "cash_weight_pct": round(cash_weight * 100, 2),
         "n_eligible": len(eligible),
@@ -126,6 +181,11 @@ def main():
               f"60d {r['mom60_pct']:+6.1f}% 120d {r['mom120_pct']:+6.1f}% | vsMA200 {r['pct_vs_ma200']:+.1f}%")
     if enters or exits:
         print(f"\n변경분 — 신규진입: {enters or '없음'} / 이탈: {exits or '없음'}")
+    print(f"\n=== 실행 가능 정수주 배분 (equity {equity:,.0f}원) ===")
+    for o in exec_orders:
+        print(f"  {o['name']:<12}({o['ticker']}) {o['shares']:>2}주 × {o['price']:>10,.0f} = "
+              f"{o['cost']:>11,.0f}원 ({o['weight_pct']:.1f}%)")
+    print(f"  현금잔여: {cash_left:,.0f}원 ({cash_left_pct:.1f}%)")
     print(f"\n저장: state/momentum_signal.json")
 
 

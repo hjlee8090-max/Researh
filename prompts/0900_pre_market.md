@@ -30,6 +30,7 @@
   - **채택 사유 노티**: `candidate_scores.json.report_section_md`("### 신규 후보 채택 사유" 완성 마크다운)를 리포트 본문에 **그대로 붙여 넣는다** — send_kakao 가 이 섹션으로 채택 후보를 발송한다.
 - `python scripts/estimate_target_price.py` 를 실행하여 `state/target_estimate.json` 을 만든다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가**(목표가/(1+레짐 R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한) 추정 + 직전 리포트 대비 변동·원인 뉴스 — `report_section_md` 와 종목별 `news_target_line`·`entry_cap_line` 생성). 매 routine 실행이 `target_estimate_log.jsonl` 에 1행을 쌓아 '리포트마다 변경값' 델타가 산출된다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
+- `python scripts/momentum_signal.py` 를 실행하여 `state/momentum_signal.json` 을 갱신한다 (**수익형 전략 1순위 진입 엔진** — `policy.momentum_strategy`). `executable_allocation.orders` 가 오늘 목표 정수주 바스켓이고, `rebalance_changes.enter/exit` 가 변경분이다. 백테스트 근거: `docs/strategy_momentum.md`.
 
 > **스냅샷 출처 주의**: 세션 네트워크 차단 시 스크립트는 Actions(`fetch_prices.yml`) 정기 수집본을 보존하고 `stale` 표시만 남긴다 — 리포트 머리말 각주에 명시. **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결** — 묵은 가격 선체결 후 재확인(booking-then-verify) 금지.
 - `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
@@ -57,6 +58,14 @@
 9. `state/candidate_scores.json` — 0-B 단계의 후보 점수·진입 가능 여부 랭킹
 10. `config/catalysts.json` — **다가오는 촉매(실적발표·배당·매크로) 캘린더** (있으면). `generated_events`(법정기한 추정)+`manual_events`(웹검색 확정)를 합쳐 D-day 임박 이벤트를 1-4 에서 경보로 쓴다. 파일이 없으면 이 단계는 건너뛴다(옵셔널).
 11. `state/inference_checklist.md` — **선제 추론 직전 입력**(과거 빗나간 요인). 아래 §1-0 채점·예측 기록에 쓴다.
+12. `state/momentum_signal.json` — **수익형 전략 1순위 진입 엔진**(`policy.momentum_strategy`). `executable_allocation.orders` = 오늘 목표 바스켓. `state/pending_orders.json` 의 `strategy:"dual_momentum_w27"` 주문이 이 바스켓의 사전 체결 지시다.
+
+### §0-M. 모멘텀 바스켓 집행 (수익형 전략 — 현금 마비 탈출)
+- **원칙**: 강세장에서 현금 보유가 최대 적이다(진단: 직전 +198% 강세장에 계좌 -1.3%). `policy.momentum_strategy` 의 검증 바스켓을 1순위 진입 후보로 삼는다.
+- `pending_orders.json` 의 `strategy:"dual_momentum_w27"` 주문을 §2-PRE 게이트(가격신뢰도·heat·R/R) 통과 후 체결한다 — 현재가 ≤ `trigger.value`(진입상한 +5%) 면 `size_shares` 매수, 개장 fresh 가격으로 **종목당 30% 상한 내 수량 재산정**.
+- **cash_trap_fix**(`policy.momentum_strategy.cash_trap_fix`): web_verify(403) 차단 시에도 사전 계산 바스켓 체결은 '묵은 가격 추격'이 아니므로, 커밋된 `momentum_signal.json`+최신 committed snapshot 을 **medium 신뢰 출처로 인정**해 배치를 진행한다. **`low`(전 출처 결측)만 매매 차단.**
+- 체결분은 `portfolio.json`·`trade_log.jsonl`(`BUY_MOMENTUM_BASKET_*`)에 반영하고 watchlist `status`를 `held`로 전환, 해당 `pending_orders` 항목 `status:"triggered"`로 갱신한다.
+- 보유 종목이 추세필터(가격>MA200) 이탈하거나 -2×ATR 손절 도달 시 청산. 월간 리밸런스(약 21거래일) 도래 시 `rebalance_changes` 의 enter/exit 만 회전.
 
 > **파이프라인 연결 규칙** (핵심):
 > - 09시는 "어제 18시 (한국 마감) → 오늘 00시 (글로벌 야간) → 야간~새벽 추가 흐름 → 09시 (한국 개장)" 의 **종합 마디**다.

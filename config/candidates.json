@@ -1,6 +1,6 @@
 {
-  "version": "1.2",
-  "last_updated": "2026-06-24",
+  "version": "1.3",
+  "last_updated": "2026-06-29",
   "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
   "candidates": [
     {
@@ -124,6 +124,76 @@
       ],
       "structural_bear_flags": [],
       "first_added": "2026-06-24"
+    },
+    {
+      "ticker": "010120",
+      "name": "LS ELECTRIC",
+      "sector": "전력기기",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-29"
+    },
+    {
+      "ticker": "079550",
+      "name": "LIG넥스원",
+      "sector": "방산",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-29"
+    },
+    {
+      "ticker": "042700",
+      "name": "한미반도체",
+      "sector": "IT/반도체장비",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-29"
+    },
+    {
+      "ticker": "028260",
+      "name": "삼성물산",
+      "sector": "지주/건설",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-29"
+    },
+    {
+      "ticker": "006400",
+      "name": "삼성SDI",
+      "sector": "2차전지",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-29"
+    },
+    {
+      "ticker": "055550",
+      "name": "신한지주",
+      "sector": "금융",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 16.06). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-29"
+    },
+    {
+      "ticker": "086790",
+      "name": "하나금융지주",
+      "sector": "금융",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 15.79). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "theme_exposure": [],
+      "structural_bear_flags": [],
+      "first_added": "2026-06-29"
     }
   ],
   "evaluation_rules": {

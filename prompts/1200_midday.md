@@ -15,6 +15,7 @@
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 이 웹 세션 네트워크가 차단돼 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
 - `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 갱신한다 (뉴스·촉매 반영 **목표 매도가 + 신규진입 상한가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 리포트 §6 에 사용).
+- **(Phase 2 검증)** `python scripts/execute_pending_orders.py --dry-run` 을 실행한다 — 지정가 매칭 엔진이 fresh 가격으로 '어떤 BUY 가 기계 게이트(터치·신뢰도·현금·비중상한·미만료·kill switch)를 통과해 체결될 것인가'를 `state/pending_fills.json.would_fill` 에 남긴다. **DRY-RUN 이라 trade_log/portfolio 를 바꾸지 않는다 — 실제 체결은 이 routine 이 §1-PRE 게이트 통과 후 한다.** 엔진의 would_fill 과 이번 routine 의 실제 체결 결정이 어긋나면(엔진은 체결인데 routine 은 보류, 또는 반대) 사유를 §체결 또는 lessons 에 한 줄 남긴다(Phase 3 자동체결 전 매칭 로직 검증).
 - `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. `recommendation.action`(deploy/trim/hold)·목표 주식 비중 밴드를 장중 신규 진입·축소 판단의 1차 기준으로 쓴다(tier=unknown 이면 정책 default 사이징).
 - **(v2.2) 장중 신규 진입 사이징·R/R·후보 발굴은 `prompts/0900_pre_market.md` §2 공통 규칙·C경로를 동일 적용**한다: medium 신뢰도도 진입 허용(축소비중·R/R+0.1), 수량 = **min(리스크상한, 목표비중, 히트잔여)·단일거래 상한(2.0%)+포트폴리오 히트 예산(6.0%)이 하드 천장**(`single_trade_risk_cap`·`portfolio_heat`, 초과 불가)·고가주 floor 보정(상한 준수 시만 +1), R/R 레짐 적응 하한(strong_bull 1.0…), 강세 tier 목표가 상향. `deploy`·`vacant_slots≥1` 이면 tradable 후보로 복수 종목 진입(breadth)해 현금만 쌓이지 않게 하되, 한 종목을 리스크 상한 위로 키우지 않는다. **신규/추가 매수는 §1-PRE 게이트(재동기화·검증) 통과 후 fresh/웹확인 가격으로만 체결한다.**
 - **가격·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조일 뿐이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**

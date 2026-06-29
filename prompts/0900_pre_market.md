@@ -29,6 +29,7 @@
   - 모멘텀(35%)+테마 노출(20%)+신뢰도(20%)+thesis(25%)−구조적 악재로 점수화. `tradable_count >= 1` 이면 "한눈에 보기"에 1순위 ticker 표기.
   - **채택 사유 노티**: `candidate_scores.json.report_section_md`("### 신규 후보 채택 사유" 완성 마크다운)를 리포트 본문에 **그대로 붙여 넣는다** — send_kakao 가 이 섹션으로 채택 후보를 발송한다.
 - `python scripts/estimate_target_price.py` 를 실행하여 `state/target_estimate.json` 을 만든다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가**(목표가/(1+레짐 R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한) 추정 + 직전 리포트 대비 변동·원인 뉴스 — `report_section_md` 와 종목별 `news_target_line`·`entry_cap_line` 생성). 매 routine 실행이 `target_estimate_log.jsonl` 에 1행을 쌓아 '리포트마다 변경값' 델타가 산출된다.
+- **(Phase 2 검증)** `python scripts/execute_pending_orders.py --dry-run` 을 실행한다 — 지정가 매칭 엔진이 개장 fresh 가격으로 '어떤 BUY 가 기계 게이트(터치·신뢰도·현금·비중상한·미만료·kill switch)를 통과해 체결될 것인가'를 `state/pending_fills.json.would_fill` 에 남긴다. **DRY-RUN 이라 trade_log/portfolio 를 바꾸지 않는다 — 실제 체결은 이 routine 이 §1-PRE·§2 게이트 통과 후 한다.** 엔진의 would_fill 과 이번 routine 의 실제 체결 결정이 어긋나면(엔진은 체결인데 routine 은 보류, 또는 반대) 사유를 §체결 또는 lessons 에 한 줄 남긴다(Phase 3 자동체결 전 매칭 로직 검증).
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
 - `python scripts/momentum_signal.py` 를 실행하여 `state/momentum_signal.json` 을 갱신한다 (**수익형 전략 1순위 진입 엔진** — `policy.momentum_strategy`). `executable_allocation.orders` 가 오늘 목표 정수주 바스켓이고, `rebalance_changes.enter/exit` 가 변경분이다. 백테스트 근거: `docs/strategy_momentum.md`.
 

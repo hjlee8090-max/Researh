@@ -272,8 +272,13 @@ def main() -> int:
     if pending_signals:
         # 매수 후보는 종목당 1줄(매력도 기호+계획대비)로 압축하고, 다음 체결 검토 시점을 머리에 박는다.
         # 카톡 200자 한도 — 매력 순(좋은 자리 먼저)으로 정렬해 상위 N건만 보이고 나머지는 '외 N건'.
+        # Phase 2 — DRY-RUN 매칭 엔진(execute_pending_orders)이 직전에 남긴 '체결예상' 건수를 머리에 병기.
+        fills = load_json("state/pending_fills.json", {})
+        fill_txt = ""
+        if isinstance(fills, dict) and fills.get("mode") == "dry_run" and "would_fill_count" in fills:
+            fill_txt = f" · 체결예상 {fills['would_fill_count']}건"
         lines.append(
-            f"🛒 매수 후보 {len(pending_signals)}건 · 다음 체결검토 {next_routine_label(datetime.now(KST))}"
+            f"🛒 매수 후보 {len(pending_signals)}건{fill_txt} · 다음 {next_routine_label(datetime.now(KST))}"
         )
         ranked = sorted(
             pending_signals,

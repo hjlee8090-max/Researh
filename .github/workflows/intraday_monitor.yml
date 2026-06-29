@@ -76,6 +76,13 @@ jobs:
           KRX_PW: ${{ secrets.KRX_PW }}
         run: python scripts/fetch_market_data.py
 
+      # Phase 2 — 지정가 매칭 엔진 DRY-RUN(체결 안 함). 'fresh 가격이면 어떤 BUY 가 체결될 것인가'를
+      # 기계 게이트로만 판정해 state/pending_fills.json 에 남긴다(Actions 로그에 상세 출력).
+      # 실제 체결은 하지 않으므로 read-only 워크플로에서 안전 — 검증 데이터는 Actions 로그·카톡 건수로 본다.
+      - name: Match pending limit orders (DRY-RUN — no execution)
+        if: steps.session.outputs.mode == 'live'
+        run: python scripts/execute_pending_orders.py --dry-run
+
       - name: Check intraday tier breaches & alert
         if: steps.session.outputs.mode == 'live'
         env:

@@ -100,7 +100,7 @@ def build(pending: dict | None = None, snapshot: dict | None = None) -> list[dic
         rows.append({
             "ticker": o.get("ticker"), "name": o.get("name") or o.get("ticker"),
             "current": cur, "indicative": indicative, "limit": limit,
-            "shares": o.get("shares"), "priority": o.get("momentum_score"),
+            "shares": o.get("size_shares"), "priority": o.get("momentum_score"),
             "touched_today": touched, "confidence": conf, **info,
         })
     rows.sort(key=lambda r: (TIER_RANK.get(r["tier"], 9),

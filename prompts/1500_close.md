@@ -14,6 +14,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 ## 0-B. 시장 데이터 스냅샷 (가격·신뢰도 1순위 출처 — 의무)
 - `python scripts/fetch_market_data.py` 를 실행해 `state/market_snapshot.json` 을 갱신한다. 네트워크 차단으로 직접 수집이 실패하면 스크립트가 GitHub Actions 정기 수집본을 보존하고 `stale` 표시만 남긴다.
 - `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 갱신한다 (뉴스·촉매 반영 **목표 매도가 + 신규진입 상한가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 리포트 §3 에 사용).
+- **(Phase 2 검증)** `python scripts/execute_pending_orders.py --dry-run` 을 실행한다 — 지정가 매칭 엔진이 fresh 가격으로 '어떤 BUY 가 기계 게이트(터치·신뢰도·현금·비중상한·미만료·kill switch)를 통과해 체결될 것인가'를 `state/pending_fills.json.would_fill` 에 남긴다. **DRY-RUN 이라 trade_log/portfolio 를 바꾸지 않는다 — 실제 체결은 이 routine 이 §1-PRE 게이트 통과 후 한다.** 엔진의 would_fill 과 이번 routine 의 실제 체결 결정이 어긋나면 사유를 §체결 또는 lessons 에 한 줄 남긴다(Phase 3 자동체결 전 매칭 로직 검증).
 - `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. 마감 전 비중 조정(축소/유지)·익절 우선순위 판단에 목표 주식 비중 밴드와 `recommendation` 을 반영한다(tier=unknown 이면 정책 default).
 - **(v2.2) 마감 직전이라도 `deploy`·`vacant_slots≥1` 이고 tradable 후보가 있으면 신규 진입은 `prompts/0900_pre_market.md` §2 공통 규칙·C경로를 동일 적용**한다(medium 허용·**min(리스크상한,목표비중,히트잔여) 사이징·단일거래 상한 2.0%+포트폴리오 히트 예산 6.0% 하드 천장**·레짐 적응 R/R). 신규/추가 매수는 아래 0-C 게이트 통과 후 fresh/웹확인 가격으로만 체결한다. 단 15:20~15:30 동시호가 변동성·주말 보유 리스크를 감안해 금요일 마감 임박 신규 진입은 신중히 판단한다.
 - **마감 임박치·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**

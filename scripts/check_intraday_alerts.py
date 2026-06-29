@@ -36,6 +36,33 @@ PENDING_FIRED_KEY = "__pending_fired__"  # dedup 캐시 키(intraday_alert_state
 RANK = {"green": 0, "yellow": 1, "orange": 2, "red": 3}
 EMOJI = {"green": "🟢", "yellow": "🟡", "orange": "🟠", "red": "🔴"}
 
+# 매수 매력도 지표(Phase 1·A) — scripts/ 형제 모듈. 단독 실행 시 sys.path[0]=scripts 라 직접 import 가능.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import buy_attractiveness as ba  # noqa: E402
+
+# 체결(판단) routine 시각 — 장중 알림이 '다음 체결 검토 시점'을 안내하는 데 쓴다.
+ROUTINE_HOURS = (9, 12, 15, 18)
+
+# 매수 후보 매력도 정렬 우선순위(낮을수록 위) + 카톡 200자 한도 내 표시 상한.
+RANK_ATT = {"green": 0, "yellow": 1, "red": 2, "unknown": 3}
+PENDING_SHOW_MAX = 4
+
+
+def short_time(as_of: str) -> str:
+    """스냅샷 ISO 시각을 HH:MM 으로 축약(카톡 200자 절약). 파싱 실패 시 원문 앞부분."""
+    try:
+        return datetime.fromisoformat(as_of).astimezone(KST).strftime("%H:%M")
+    except (ValueError, TypeError):
+        return (as_of or "")[:16]
+
+
+def next_routine_label(now: datetime) -> str:
+    """현재(KST) 기준 다음 체결 검토 routine 시각을 사람이 읽는 문구로."""
+    for h in ROUTINE_HOURS:
+        if (now.hour, now.minute) < (h, 0):
+            return f"오늘 {h:02d}:00"
+    return "내일 09:00"
+
 
 def load_json(rel_or_path: str | Path, default: Any = None) -> Any:
     path = rel_or_path if isinstance(rel_or_path, Path) else ROOT / rel_or_path
@@ -140,10 +167,16 @@ def evaluate_pending_orders(snapshot: dict, policy: dict, prev_fired: list) -> t
         tier = o.get("tier", 1)
         approval = " (반자동: Tier2 — 카톡 승인 후 체결)" if tier == 2 else ""
         manual = f" · 수동확인: {o['condition_note']}" if o.get("condition_note") else ""
+        cur = current_price(ts)
+        limit = (o.get("trigger") or {}).get("value")
+        att = ba.classify(cur, limit, o.get("indicative_price"),
+                          ts.get("confidence") if isinstance(ts, dict) else None)
         signals.append({
             "id": oid, "ticker": o.get("ticker"), "name": o.get("name") or o.get("ticker"),
             "action": o.get("action"), "tier": tier,
-            "trigger": o.get("trigger"), "current_price": current_price(ts),
+            "trigger": o.get("trigger"), "current_price": cur,
+            "indicative": o.get("indicative_price"), "limit": limit,
+            "attractiveness": att,
             "note": f"예약 트리거 충족 — 다음 routine 이 게이트 통과 후 체결 검토{approval}{manual}",
         })
     return signals, sorted(fired), "on"
@@ -224,15 +257,41 @@ def main() -> int:
     pending_signals, fired_after, pi_mode = evaluate_pending_orders(snapshot, policy, prev_fired)
     new_state[PENDING_FIRED_KEY] = fired_after
 
+    # 매수 매력도 지표 갱신(Phase 1·A) — 알림·리포트가 동일 수치를 쓰도록 state 에 기록(지표 전용).
+    try:
+        ba.write_state(ba.build(snapshot=snapshot))
+    except Exception as exc:  # 지표 실패가 경보 본류를 막지 않게 격리
+        print(f"buy_attractiveness 갱신 실패(무시): {exc}")
+
     lines: list[str] = []
     for e in escalations:
         lines.append(
             f"{EMOJI[e['tier']]} {e['name']} {e['pct']:+.1f}% "
             f"(진입 {int(e['entry_price']):,}→현재 {int(e['current_price']):,}) → {e['action']}"
         )
-    for s in pending_signals:
-        cp = f"현재 {int(s['current_price']):,}" if s.get("current_price") else ""
-        lines.append(f"📌 [예약] {s['name']} {s.get('action','')} {cp} — {s['note']}")
+    if pending_signals:
+        # 매수 후보는 종목당 1줄(매력도 기호+계획대비)로 압축하고, 다음 체결 검토 시점을 머리에 박는다.
+        # 카톡 200자 한도 — 매력 순(좋은 자리 먼저)으로 정렬해 상위 N건만 보이고 나머지는 '외 N건'.
+        lines.append(
+            f"🛒 매수 후보 {len(pending_signals)}건 · 다음 체결검토 {next_routine_label(datetime.now(KST))}"
+        )
+        ranked = sorted(
+            pending_signals,
+            key=lambda s: (
+                RANK_ATT.get((s.get("attractiveness") or {}).get("tier"), 9),
+                (s.get("attractiveness") or {}).get("vs_plan_pct")
+                if isinstance((s.get("attractiveness") or {}).get("vs_plan_pct"), (int, float)) else 999,
+            ),
+        )
+        for s in ranked[:PENDING_SHOW_MAX]:
+            att = s.get("attractiveness") or {}
+            emoji = att.get("emoji") or "📌"
+            cp = f"{int(s['current_price']):,}" if s.get("current_price") else "?"
+            vs = att.get("vs_plan_pct")
+            tail = f"계획 {vs:+.0f}%" if isinstance(vs, (int, float)) else (att.get("label") or "")
+            lines.append(f"{emoji} {s['name']} {cp} ({tail})")
+        if len(ranked) > PENDING_SHOW_MAX:
+            lines.append(f"…외 {len(ranked) - PENDING_SHOW_MAX}건 (전체는 리포트)")
 
     should_notify = bool(escalations) or bool(pending_signals)
     title = ""
@@ -243,7 +302,7 @@ def main() -> int:
         else:
             title = "📌 장중 예약 트리거 충족 — 체결 검토"
     as_of = snapshot.get("as_of", "")
-    body = ("\n".join(lines) + (f"\n⏱ {as_of}" if as_of else "")) if should_notify else ""
+    body = ("\n".join(lines) + (f"\n⏱ {short_time(as_of)}" if as_of else "")) if should_notify else ""
 
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),

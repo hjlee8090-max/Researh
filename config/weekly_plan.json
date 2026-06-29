@@ -26,7 +26,10 @@
     "heat_used_krw": 0,
     "heat_remaining_krw": 444144,
     "per_trade_risk_krw": 172723,
-    "target_equity_pct_range": [85, 95],
+    "target_equity_pct_range": [
+      85,
+      95
+    ],
     "note": "전략 전환(W27): 백테스트 검증된 듀얼모멘텀 로테이션을 채택해 현금 마비에서 탈출한다. 진단 — 직전 구간 KOSPI +198% 강세장 내내 현금 보유가 -1.3% 패배의 단일 원인(docs/strategy_momentum.md). 6/30 09시 개장에 state/momentum_signal.json 의 검증 바스켓(추세 상위 9종목 정수주, SK하이닉스는 초고가로 30% 상한 초과→제외)을 일괄 배치, 현금 ~12% 잔여. 종목별 -2×ATR 손절·월간 리밸런스. 추격 아님 — 사전 계산된 바스켓의 게이트 통과 체결."
   },
   "weekly_thesis": [
@@ -34,7 +37,17 @@
       "id": "momentum_rotation_deploy_w27",
       "title": "듀얼모멘텀 로테이션 배치 — 현금 탈출, 추세 상위주 일괄 진입",
       "direction": "bullish_systematic",
-      "linked_tickers": ["005930", "010120", "005380", "079550", "042700", "028260", "006400", "055550", "086790"],
+      "linked_tickers": [
+        "005930",
+        "010120",
+        "005380",
+        "079550",
+        "042700",
+        "028260",
+        "006400",
+        "055550",
+        "086790"
+      ],
       "primary": true,
       "engine": "state/momentum_signal.json (scripts/momentum_signal.py — 백테스트: docs/strategy_momentum.md)",
       "confirming_signals": [
@@ -53,7 +66,10 @@
       "id": "samsung_1000t_catalyst_recovery",
       "title": "삼성·SK하이닉스 1,000조 투자 발표 — KOSPI 8,471 안착선 회복 촉매",
       "direction": "bullish_if_confirmed",
-      "linked_tickers": ["005930", "000660"],
+      "linked_tickers": [
+        "005930",
+        "000660"
+      ],
       "confirming_signals": [
         "6/29 대통령실 브리핑 삼성+SK하이닉스 1,000조 투자 계획 공식 발표 web_verify(URL+게재일)",
         "6/30 KOSPI 종가 8,471 이상 — 안착선 회복 확정",
@@ -71,7 +87,10 @@
       "id": "hbm_ai_supercycle_q3_intact",
       "title": "HBM4 AI 수퍼사이클 Q3 intact — Micron beat + SK하이닉스 ADR D-13",
       "direction": "bullish_if_confirmed",
-      "linked_tickers": ["000660", "005930"],
+      "linked_tickers": [
+        "000660",
+        "005930"
+      ],
       "confirming_signals": [
         "SK하이닉스 Nasdaq ADR(HXSL) D-13(7/10 상장) 수급 기대 — 차주 중 언론 보도 확인",
         "Micron FY26 Q3 EPS $25.11(컨센 +22.6% 대폭 beat) 서사가 국내 HBM 수요에 이월",
@@ -112,6 +131,7 @@
     "18:00": "결과를 weekly_plan에 반영하고 watch_items 갱신. kospi_week_start_close는 6/30 18시 routine이 첫 영업일 종가(8,471 회복 여부)로 채운다. 주간 외국인 수급 누적·thesis 상태 기록."
   },
   "watch_items": [
+    "【W27 0순위·6/30 09시 듀얼모멘텀 바스켓 일괄 배치】momentum_signal.json 검증 바스켓 9종목(005930·010120·005380·079550·042700·028260·006400·055550·086790, 약 88% 투입·현금 약 12%)을 6/30 09시 개장에 booking. 게이트: ①당일가 수집·web_verify 통로 정상화(차단 지속 시 권위 스냅샷=당일자 ≥2출처 high면 v2.17 폴백 판정) ②각 종목 정수주·추세필터(가격>MA200) 통과 ③현대차 avoid_reentry 정합성 재판정. KOSPI 추가 급락(개별 -2×ATR·주간 계좌 -5% 접근) 시 배치 규모 축소·분할. 6/29 마감 임박 KOSPI 약 8,236(-2.08%)·삼성 약 330,500·외국인 7거래일 순매도.",
     "【W27 0순위·삼성전자 probe 재개 조건】6/29(월) 대통령실 삼성+SK하이닉스 1,000조 투자 발표 web_verify(URL+게재일) → 6/30 KOSPI 종가 8,471 이상 + web_verify 통로 개방 동시 충족 시에만 삼성전자(005930) probe 1주(종가 339,500·overheat PBR 4.72>3.14 → probe 의무). 조건 미충족 시 현금 100% 유지.",
     "【W27 1순위·KOSPI 안착선 판정】8,471(6/24 종가 기준 안착선) 회복 여부가 W27 핵심 분기. 회복(+종가 안착)=재상승 추세 재확인·배치 재개. 미회복=조정 지속·신규 보류 연장. 6/26 종가 8,411.21(-5.81%)로 안착선 하회 중.",
     "【W27 2순위·삼성·SK하이닉스 1,000조 발표 확인】6/29 대통령실 브리핑 예정. 내용 실망(소규모·기존 계획 재탕) 시 셀더뉴스 리스크. 공식 발표 web_verify 필수(URL+게재일).",

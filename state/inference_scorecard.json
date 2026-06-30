@@ -1,49 +1,66 @@
 {
-  "as_of": "2026-06-29T18:04:12+09:00",
+  "as_of": "2026-06-30T18:06:51+09:00",
   "min_samples": 5,
   "scoring": {
-    "n_predictions": 11,
-    "n_scored": 7,
+    "n_predictions": 15,
+    "n_scored": 15,
     "overall": {
-      "n": 7,
-      "hit_rate": 0.429,
-      "partial_rate": 0.571,
+      "n": 15,
+      "hit_rate": 0.333,
+      "partial_rate": 0.533,
       "pnl_linked_n": 0,
       "note_pnl": "결합된 체결손익 없음(Phase 1 관측 — inference_id 매칭 trade 부재)"
     },
     "by_slot": {
       "00:00": {
-        "n": 4,
-        "status": "표본 부족(<5) — 채점 보류"
+        "n": 8,
+        "hit_rate": 0.0,
+        "partial_rate": 0.875,
+        "pnl_linked_n": 0,
+        "note_pnl": "결합된 체결손익 없음(Phase 1 관측 — inference_id 매칭 trade 부재)"
       },
       "09:00": {
         "n": 2,
         "status": "표본 부족(<5) — 채점 보류"
       },
       "18:00": {
-        "n": 1,
+        "n": 4,
+        "status": "표본 부족(<5) — 채점 보류"
+      },
+      "?": {
+        "n": 0,
         "status": "표본 부족(<5) — 채점 보류"
       }
     },
     "by_subject_kind": {
       "KOSPI_open_gap": {
-        "n": 2,
-        "status": "표본 부족(<5) — 채점 보류"
+        "n": 6,
+        "hit_rate": 0.0,
+        "partial_rate": 0.833,
+        "pnl_linked_n": 0,
+        "note_pnl": "결합된 체결손익 없음(Phase 1 관측 — inference_id 매칭 trade 부재)"
       },
       "ticker": {
         "n": 1,
         "status": "표본 부족(<5) — 채점 보류"
       },
       "기타": {
-        "n": 4,
-        "status": "표본 부족(<5) — 채점 보류"
+        "n": 8,
+        "hit_rate": 0.625,
+        "partial_rate": 0.25,
+        "pnl_linked_n": 0,
+        "note_pnl": "결합된 체결손익 없음(Phase 1 관측 — inference_id 매칭 trade 부재)"
       }
     },
     "by_confidence_band": {
+      "low": {
+        "n": 4,
+        "status": "표본 부족(<5) — 채점 보류"
+      },
       "mid": {
-        "n": 5,
-        "hit_rate": 0.4,
-        "partial_rate": 0.6,
+        "n": 8,
+        "hit_rate": 0.5,
+        "partial_rate": 0.5,
         "pnl_linked_n": 0,
         "note_pnl": "결합된 체결손익 없음(Phase 1 관측 — inference_id 매칭 trade 부재)"
       },
@@ -52,13 +69,16 @@
         "status": "표본 부족(<5) — 채점 보류"
       }
     },
-    "miss_factors": {},
+    "miss_factors": {
+      "지수 미확정이나 대형주 시가 보합권 — -1~-2% 갭다운 방향 빗나감(이란 리스크 진정)": 1,
+      "배치 첫날 6종목 중 1종목(LS ELECTRIC +3.26%)만 진입가 대비 플러스 마감 — 나머지 5종목(LIG -2.65%·한미 -0.99%·삼성SDI -3.00%·신한 -1.85%·하나 -1.84%) 마이너스. '미국 반도체 강세(Nasdaq +2%) 동행으로 ≥4종목 플러스' 가정이 빗나감 — KOSPI 장중 +2.14%서 종가 +0.97%로 상승폭 절반 반납, 보유주는 마감 동시호가 되돌림에 동행.": 1
+    },
     "opportunity_cost": {
       "n_shadow": 0,
       "n_scored": 0,
       "status": "표본 부족(<5) — 채점 보류"
     }
   },
-  "report_section_md": "### 선제 추론 채점 (score_inferences)\n\n- 기준: 2026-06-29T18:04:12+09:00 · 예측 11건 / 채점 7건\n- 전체: 적중률 43% (부분 57%, n=7)\n- 미배치 그림자: 0건 — 표본 부족(<5) — 채점 보류",
+  "report_section_md": "### 선제 추론 채점 (score_inferences)\n\n- 기준: 2026-06-30T18:06:51+09:00 · 예측 15건 / 채점 15건\n- 전체: 적중률 33% (부분 53%, n=15)\n- 반복 미흡 요인(→ 체크리스트): 지수 미확정이나 대형주 시가 보합권 — -1~-2% 갭다운 방향 빗나감(이란 리스크 진정)(1), 배치 첫날 6종목 중 1종목(LS ELECTRIC +3.26%)만 진입가 대비 플러스 마감 — 나머지 5종목(LIG -2.65%·한미 -0.99%·삼성SDI -3.00%·신한 -1.85%·하나 -1.84%) 마이너스. '미국 반도체 강세(Nasdaq +2%) 동행으로 ≥4종목 플러스' 가정이 빗나감 — KOSPI 장중 +2.14%서 종가 +0.97%로 상승폭 절반 반납, 보유주는 마감 동시호가 되돌림에 동행.(1)\n- 미배치 그림자: 0건 — 표본 부족(<5) — 채점 보류",
   "policy_link": "sunday_policy_review §0-D — confidence high 구간 적중률·결합손익(PF)·미배치 forgone 이 자격 기준. Tier2 개방은 paper expectancy>0 AND PF>1 충족 시(action_ladder). 반복 miss_factors 는 build_inference_checklist 가 다음 추론 체크리스트로 응축."
 }

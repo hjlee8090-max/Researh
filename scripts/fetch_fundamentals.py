@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""DART 전자공시 OpenAPI 로 보유·후보 종목의 최신 분기 실적(주요계정)을 수집한다.
+"""DART 전자공시 OpenAPI 로 보유·후보·유니버스 풀 종목의 최신 분기 실적(주요계정)을 수집한다.
 
 IR/펀더멘털 레이어 — 분기 단위로만 갱신되므로 주간(sunday_strategy)에 실행하고,
 데일리 routine 은 산출물 state/fundamentals.json 을 '확신·검증 레이어'로 소비한다.
@@ -67,14 +67,25 @@ def load_json(rel: str, default: Any = None) -> Any:
 
 
 def collect_tickers() -> dict[str, str]:
-    """{ticker: name} — 보유 + 후보."""
+    """{ticker: name} — 보유 + 후보 + 유니버스 풀(screen_universe 동적임계용).
+
+    screen_universe.py 의 동적 승격임계(dynamic_excess_min)가 풀 30종목 전체의
+    기업가치 점수를 쓰므로, 후보뿐 아니라 universe.json.pool 도 포함해 커버리지를
+    풀 전체로 맞춘다(미커버 종목은 fund_score=0 으로 완화 0 이 되던 공백 해소).
+    """
     out: dict[str, str] = {}
+    # 보유 포지션 — 보유 종목은 최우선(이름도 보유 기준 사용)
     for pos in load_json("config/portfolio.json").get("positions", []):
         if pos.get("ticker"):
             out[pos["ticker"]] = pos.get("name", "")
+    # 진입 후보
     for c in load_json("config/candidates.json").get("candidates", []):
         if c.get("ticker"):
             out.setdefault(c["ticker"], c.get("name", ""))
+    # 유니버스 모집단(탐색·동적임계 평가 대상 전체)
+    for p in load_json("config/universe.json").get("pool", []):
+        if isinstance(p, dict) and p.get("ticker"):
+            out.setdefault(p["ticker"], p.get("name", ""))
     return out
 
 

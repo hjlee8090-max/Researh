@@ -62,6 +62,80 @@ def _median(xs: list[Any]) -> float | None:
     return vals[mid] if n % 2 else (vals[mid - 1] + vals[mid]) / 2
 
 
+def _clamp(x: float, lo: float, hi: float) -> float:
+    return max(lo, min(hi, x))
+
+
+def fundamentals_score(tk: str, funds: dict[str, Any], dir_map: dict[str, float], fcfg: dict[str, Any]) -> float | None:
+    """기업가치 점수 ∈ [0,1] — 실적 방향(earnings_signal)+영업이익률+성장률. 미커버 None."""
+    v = funds.get(tk)
+    if not isinstance(v, dict):
+        return None
+    direction = float(dir_map.get(v.get("earnings_signal", "unknown"), 0.0))
+    dir_comp = max(0.0, direction)  # 역성장은 완화 0(품질 가점 없음)
+    margin_norm = float(fcfg.get("margin_norm_pct", 30.0)) or 30.0
+    growth_norm = float(fcfg.get("growth_norm_pct", 100.0)) or 100.0
+    margin = v.get("op_margin_pct")
+    growth = v.get("op_growth_pop_pct")
+    margin_comp = _clamp((margin / margin_norm) if isinstance(margin, (int, float)) else 0.0, 0.0, 1.0)
+    growth_comp = _clamp((growth / growth_norm) if isinstance(growth, (int, float)) else 0.0, 0.0, 1.0)
+    score = (
+        float(fcfg.get("dir_weight", 0.6)) * dir_comp
+        + float(fcfg.get("margin_weight", 0.25)) * margin_comp
+        + float(fcfg.get("growth_weight", 0.15)) * growth_comp
+    )
+    return round(_clamp(score, 0.0, 1.0), 3)
+
+
+def news_score(tk: str, news_tickers: dict[str, Any], type_impact: dict[str, Any],
+               now: datetime, decay_days: int, max_premium: float) -> float | None:
+    """호재뉴스 점수 ∈ [0,1] — classified 양(+)뉴스 impact_pct × 시간감쇠, max_premium 캡. 미커버 None."""
+    v = news_tickers.get(tk)
+    if not isinstance(v, dict):
+        return None
+    classified = v.get("classified") or []
+    if not classified:
+        return 0.0  # 커버되나 분류뉴스 없음 → 0(완화 없음)
+    premium = 0.0
+    for c in classified:
+        if not isinstance(c, dict):
+            continue
+        imp = type_impact.get(c.get("type"), {}).get("impact_pct", 0.0)
+        if not isinstance(imp, (int, float)) or imp <= 0:
+            continue  # 호재(양)만 가산
+        pub = c.get("published")
+        decay = 1.0
+        if isinstance(pub, str) and decay_days > 0:
+            try:
+                d0 = datetime.strptime(pub[:10], "%Y-%m-%d").replace(tzinfo=KST)
+                days = (now - d0).days
+                decay = max(0.0, 1.0 - days / decay_days)
+            except Exception:
+                decay = 1.0
+        premium += imp * decay
+    premium = min(premium, float(max_premium))
+    return round(_clamp(premium / float(max_premium or 12.0), 0.0, 1.0), 3)
+
+
+def effective_excess_min(excess_60d: float | None, base_min: float, quality: float,
+                         dcfg: dict[str, Any], regime_tier: str | None) -> tuple[float, float]:
+    """종목별 동적 초과수익 하한 산출. 반환 (effective_min, applied_relax).
+
+    strong_bull(설정 tier) 에서만 품질(기업가치+호재)로 음수 허용폭을 동적 부여한다.
+    그 외 tier 는 base_min 엄격 적용(완화 0).
+    """
+    if not dcfg.get("enabled", False):
+        return base_min, 0.0
+    tiers = dcfg.get("applies_in_tiers", ["strong_bull"])
+    if regime_tier not in tiers:
+        return base_min, 0.0
+    max_relax = float(dcfg.get("max_relax_pct", 50.0))
+    abs_floor = float(dcfg.get("abs_floor_pct", -45.0))
+    relax = max_relax * _clamp(quality, 0.0, 1.0)
+    eff = max(base_min - relax, abs_floor)
+    return round(eff, 2), round(relax, 2)
+
+
 def fetch_returns(ticker: str) -> dict[str, Any]:
     """모집단 종목 1개의 5/20/60일 수익률·거래량비·신뢰도·종가 수집(스냅샷에 없을 때만)."""
     naver_hist = fetch_naver(ticker)
@@ -171,6 +245,10 @@ def main() -> int:
     policy = load_json("config/policy.json", {})
     snapshot = load_json("state/market_snapshot.json", {"tickers": {}})
     watchlist = load_json("config/watchlist.json", {})
+    fundamentals = load_json("state/fundamentals.json", {}).get("tickers", {})
+    news_feed = load_json("state/news_feed.json", {}).get("tickers", {})
+    news_impact = load_json("config/news_impact.json", {})
+    now = datetime.now(KST)
 
     theme_strength: dict[str, float] = {
         t.get("id"): float(t.get("strength", 0.0))
@@ -184,6 +262,19 @@ def main() -> int:
     rsw = ef_cfg.get("relative_strength_leader_widening", {}) if isinstance(ef_cfg.get("relative_strength_leader_widening"), dict) else {}
     excess_min = float(rsw.get("excess_min_pct", 10.0))
     hard_floor = float(ef_cfg.get("entry_filter_hard_floor_pct", -22.0))
+
+    # 동적 승격 임계(강세장: 기업가치+호재로 음수 초과수익 허용폭 산출)
+    dcfg = rsw.get("dynamic_excess_min", {}) if isinstance(rsw.get("dynamic_excess_min"), dict) else {}
+    base_excess_min = float(dcfg.get("base_excess_min_pct", excess_min))
+    qweights = dcfg.get("quality_weights", {}) if isinstance(dcfg.get("quality_weights"), dict) else {}
+    w_fund = float(qweights.get("fundamentals", 0.55))
+    w_news = float(qweights.get("news", 0.45))
+    fund_cfg = dcfg.get("fundamentals_score", {}) if isinstance(dcfg.get("fundamentals_score"), dict) else {}
+    news_cfg = dcfg.get("news_score", {}) if isinstance(dcfg.get("news_score"), dict) else {}
+    dir_map = news_impact.get("earnings_signal_direction", {}) if isinstance(news_impact.get("earnings_signal_direction"), dict) else {}
+    type_impact = news_impact.get("news_type_impact_pct", {}) if isinstance(news_impact.get("news_type_impact_pct"), dict) else {}
+    news_decay = int(news_cfg.get("decay_days", (news_impact.get("params", {}) or {}).get("news_decay_days", 90)))
+    news_max_prem = float(news_cfg.get("max_premium_pct", (news_impact.get("params", {}) or {}).get("max_news_premium_pct", 12.0)))
 
     # v2.8 — 섹터 로테이션 재진입 설정(몰입 신호 임계·민감도).
     srr = policy.get("sector_rotation_reentry", {}) if isinstance(policy.get("sector_rotation_reentry"), dict) else {}
@@ -211,6 +302,7 @@ def main() -> int:
     regime = snapshot.get("regime", {}) if isinstance(snapshot, dict) else {}
     kospi_ret60 = regime.get("ret_60d_pct") if isinstance(regime, dict) else None
     kospi_ret20 = regime.get("ret_20d_pct") if isinstance(regime, dict) else None
+    regime_tier = regime.get("tier") if isinstance(regime, dict) else None
     snap_tickers = snapshot.get("tickers", {}) if isinstance(snapshot, dict) else {}
 
     pool = [p for p in universe.get("pool", []) if isinstance(p, dict) and p.get("ticker")]
@@ -240,11 +332,22 @@ def main() -> int:
         strength = theme_strength.get(theme, 0.0) if theme else 0.0
         thematic = round(min(1.0, strength * exposure), 3)
         screen_score = round(w_rs * rs_score + w_th * thematic, 3)
+        # 기업가치+호재 품질 → 동적 초과수익 하한(강세장 음수 허용폭)
+        f_sc = fundamentals_score(tk, fundamentals, dir_map, fund_cfg)
+        n_sc = news_score(tk, news_feed, type_impact, now, news_decay, news_max_prem)
+        has_q = f_sc is not None or n_sc is not None
+        quality = round(_clamp(w_fund * (f_sc or 0.0) + w_news * (n_sc or 0.0), 0.0, 1.0), 3) if has_q else 0.0
+        eff_min, relax = effective_excess_min(excess60, base_excess_min, quality, dcfg, regime_tier)
         entry = {
             "ticker": tk,
             "name": p.get("name", ""),
             "sector": p.get("sector"),
             "theme": theme,
+            "fund_score": f_sc,
+            "news_score": n_sc,
+            "quality": quality,
+            "effective_excess_min": eff_min,
+            "excess_relax_applied": relax,
             "ret5": ret5,
             "ret20": ret20,
             "ret60": ret60,
@@ -265,21 +368,27 @@ def main() -> int:
 
     ranked.sort(key=lambda r: r["screen_score"], reverse=True)
 
-    # --- v2.7 종목 탐색: 승격/회전아웃 제안 ---
+    # --- v2.7 종목 탐색: 승격/회전아웃 제안 (v2.9 동적 임계: 강세장 기업가치+호재로 음수 허용) ---
     promote: list[dict[str, Any]] = []
     for r in ranked:
         if r["in_candidates"] or not r["data_ok"]:
             continue
-        if r["excess_60d"] is None or r["excess_60d"] < excess_min:
+        # 종목별 동적 하한: 무뉴스·부실은 base(+10) 엄격, 좋은회사+촉매는 음수까지 허용
+        threshold = r.get("effective_excess_min", excess_min)
+        if r["excess_60d"] is None or r["excess_60d"] < threshold:
             continue
         if r["ret5"] is not None and r["ret5"] < hard_floor:
             continue
         promote.append(r)
         if len(promote) >= promote_max:
             break
+    # 회전아웃도 동적임계로 보호: 기업가치+호재 품질이 부여한 허용하한(effective_excess_min)보다
+    # 위에 있으면 만성 후행으로 보지 않는다(강세장에서 좋은 회사를 KOSPI 추월 실패만으로 내치지 않음).
     rotate_out = [
         r for r in ranked
-        if r["in_candidates"] and r["excess_60d"] is not None and r["excess_60d"] <= rotate_excess
+        if r["in_candidates"] and r["excess_60d"] is not None
+        and r["excess_60d"] <= rotate_excess
+        and r["excess_60d"] < r.get("effective_excess_min", rotate_excess)
     ]
 
     # --- v2.8 섹터 로테이션: theme(없으면 sector)로 그룹핑해 '몰입' 신호 산출(전 섹터 범용) ---
@@ -343,6 +452,16 @@ def main() -> int:
         "sensitivity_basis": sensitivity_basis,
         "immersion_min_signals": min_signals,
         "rank_blend": {"relative_strength": w_rs, "thematic": w_th},
+        "promote_threshold": {
+            "base_excess_min_pct": base_excess_min,
+            "dynamic_enabled": bool(dcfg.get("enabled", False)),
+            "applies_in_tiers": dcfg.get("applies_in_tiers", []),
+            "active_now": bool(dcfg.get("enabled", False)) and regime_tier in dcfg.get("applies_in_tiers", []),
+            "max_relax_pct": dcfg.get("max_relax_pct"),
+            "abs_floor_pct": dcfg.get("abs_floor_pct"),
+            "quality_weights": {"fundamentals": w_fund, "news": w_news},
+            "note": "강세장 promote 0 문제 해소 — 종목별 기업가치(실적)+호재뉴스 품질로 음수 초과수익 허용폭 동적 산출. 종목별 effective_excess_min 은 ranked[].effective_excess_min 참조.",
+        },
         "ranked": ranked,
         "promote_suggestions": promote,
         "rotate_out_suggestions": rotate_out,
@@ -380,11 +499,16 @@ def _report_md(
     lines.append(f"- 벤치마크: KOSPI 60일 {kospi_ret60}% / tier {tier} / 몰입 신호 {min_signals}개 요구")
     lines.append("")
     if promote:
-        lines.append("**승격 제안 (주도주·상대강도 상위):**")
+        lines.append("**승격 제안 (상대강도 또는 기업가치+호재 동적임계 통과):**")
         for r in promote:
-            lines.append(f"- {r['name']}({r['ticker']}) · {r['sector']} — 초과수익 {r['excess_60d']:+.1f}%p, 5일 {r['ret5']}%")
+            q = r.get("quality", 0.0)
+            relax = r.get("excess_relax_applied", 0.0)
+            eff = r.get("effective_excess_min")
+            qnote = (f" · 품질 {q:.2f}(실적 {r.get('fund_score')}/뉴스 {r.get('news_score')}) → 허용하한 {eff:+.0f}%p"
+                     if relax else "")
+            lines.append(f"- {r['name']}({r['ticker']}) · {r['sector']} — 초과수익 {r['excess_60d']:+.1f}%p, 5일 {r['ret5']}%{qnote}")
     else:
-        lines.append("**승격 제안: 없음** (상대강도 상위 신규 주도주 미발견 — 데이터 차단 시 다음 주 재시도)")
+        lines.append("**승격 제안: 없음** (상대강도·동적임계 통과 신규 주도주 미발견 — 데이터 차단 시 다음 주 재시도)")
     if rotate_out:
         lines.append("")
         lines.append("**회전아웃 제안 (만성 후행주):**")

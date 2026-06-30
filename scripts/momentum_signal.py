@@ -68,6 +68,62 @@ def tracked_tickers():
     return tracked
 
 
+def _date10(s):
+    """ISO/날짜 문자열의 앞 10자(YYYY-MM-DD)만 — 비교용. 실패 시 빈 문자열."""
+    return s[:10] if isinstance(s, str) and len(s) >= 10 else ""
+
+
+def fresh_overlay(tickers, history_as_of):
+    """price_history(주간 Actions 갱신, stale 가능)에 fresh snapshot 의 당일 종가를 덧입힌다.
+
+    momentum_signal 의 1순위 입력인 price_history.json 이 묵으면(Actions 미실행 등) 60·120일
+    모멘텀이 묵은 '현재가'로 계산돼 추세 신호가 지연된다. market_snapshot 이 더 신선하면 종목별
+    last_close 를 최신 봉으로 덧입혀 '오늘 가격 대비 모멘텀'을 회복한다(numerator 보정).
+
+    한계: 스냅샷은 당일 1점만 주므로 history 와의 거래일 공백(누락 봉)은 못 메운다 — 룩백
+    구간이 공백만큼 어긋날 수 있다(메타에 기록). 신뢰도 low 출처는 덧입히지 않는다.
+    반환: overlay 메타(dict).
+    """
+    meta = {"applied": False, "history_as_of": history_as_of, "snapshot_as_of": None,
+            "overlaid": [], "skipped_low_conf": [], "stale_history": False, "warning": None}
+    try:
+        snap = json.load(open(ROOT / "state" / "market_snapshot.json"))
+    except Exception:
+        meta["warning"] = "snapshot 없음 — price_history 그대로 사용"
+        return meta
+    snap_as_of = snap.get("as_of")
+    meta["snapshot_as_of"] = snap_as_of
+    h10, s10 = _date10(history_as_of), _date10(snap_as_of)
+    meta["stale_history"] = bool(h10 and s10 and s10 > h10)
+    snap_tk = snap.get("tickers", {}) if isinstance(snap, dict) else {}
+    # 스냅샷이 history 보다 신선할 때만 덧입힌다(같거나 더 묵으면 보정 의미 없음).
+    if not (meta["stale_history"] and snap_tk):
+        if h10 and s10 and s10 == h10:
+            meta["warning"] = "price_history 와 snapshot 동일 기준일 — 보정 불필요"
+        elif not meta["stale_history"]:
+            meta["warning"] = "price_history 가 snapshot 보다 신선하거나 비교불가 — 보정 안 함"
+        return meta
+    for tk, t in tickers.items():
+        st = snap_tk.get(tk)
+        if not isinstance(st, dict):
+            continue
+        close = st.get("last_close")
+        if not isinstance(close, (int, float)) or close <= 0:
+            continue
+        if st.get("confidence") == "low":  # 저신뢰 출처는 추격 금지(가격 신뢰 게이트 일관)
+            meta["skipped_low_conf"].append(tk)
+            continue
+        # 당일 종가를 새 봉으로 추가(history 마지막 봉은 보존, MA200 은 최신 포함). 같은 날이면 교체.
+        if _date10(t["dates"][-1]) == s10:
+            t["closes"][-1] = float(close)
+        else:
+            t["dates"].append(s10)
+            t["closes"].append(float(close))
+        meta["overlaid"].append(tk)
+    meta["applied"] = bool(meta["overlaid"])
+    return meta
+
+
 def load():
     d = json.load(open(ROOT / "state" / "price_history.json"))
     tickers = {}
@@ -143,6 +199,9 @@ def main():
     load_config()
     tracked = tracked_tickers() if TRACKED_ONLY else None
     tickers, data_as_of = load()
+    # 1순위 신선도 가드: price_history 가 묵었으면 fresh snapshot 종가로 최신 봉 보정
+    overlay = fresh_overlay(tickers, data_as_of)
+    effective_as_of = overlay["snapshot_as_of"] if overlay["applied"] else data_as_of
     ranked = []
     for tk, v in tickers.items():
         s = score_ticker(v["closes"])
@@ -198,6 +257,18 @@ def main():
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "data_as_of": data_as_of,
+        "effective_as_of": effective_as_of,
+        "price_freshness": {
+            "history_as_of": overlay["history_as_of"],
+            "snapshot_as_of": overlay["snapshot_as_of"],
+            "stale_history": overlay["stale_history"],
+            "overlay_applied": overlay["applied"],
+            "overlaid_count": len(overlay["overlaid"]),
+            "overlaid_tickers": overlay["overlaid"],
+            "skipped_low_conf": overlay["skipped_low_conf"],
+            "warning": overlay["warning"],
+            "note": "price_history(주간 Actions) 가 묵으면 fresh snapshot 종가로 최신 봉 보정 — 묵은 현재가로 모멘텀 계산되던 지연 해소. 룩백 공백(누락 거래일)은 못 메움(스냅샷 1점).",
+        },
         "strategy": f"dual-momentum rotation Top{TOP_N}, score_floor≥{MIN_SCORE:g}, tracked_only={TRACKED_ONLY}, MA200 trend filter",
         "config": {"top_n": TOP_N, "min_score": MIN_SCORE, "tracked_only": TRACKED_ONLY,
                    "mom_fast": MOM_FAST, "mom_slow": MOM_SLOW, "trend_ma": TREND_MA},
@@ -237,9 +308,19 @@ def main():
             "학습·시뮬레이션 목적. 미래 수익 보장 아님.",
         ],
     }
+    # fail-loud: history 가 묵었는데 보정도 못 했으면(스냅샷 결측) 신호 신뢰 경고
+    if overlay["stale_history"] and not overlay["applied"]:
+        out["caveats"].insert(0, "⚠️ price_history stale + fresh snapshot 보정 실패 — 모멘텀이 묵은 현재가 기반. 신규 진입 신중(fresh 가격 재확인 필수).")
+    elif overlay["applied"]:
+        out["caveats"].insert(0, f"price_history({_date10(overlay['history_as_of'])}) stale → snapshot({_date10(overlay['snapshot_as_of'])}) 종가로 {len(overlay['overlaid'])}종목 최신 봉 보정 적용. 룩백 공백 주의.")
     prev_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print(f"데이터 기준일: {data_as_of}")
+    pf = out["price_freshness"]
+    if pf["overlay_applied"]:
+        print(f"🔄 신선도 보정: history {_date10(pf['history_as_of'])} → snapshot {_date10(pf['snapshot_as_of'])} 종가로 {pf['overlaid_count']}종목 최신 봉 적용")
+    elif pf["stale_history"]:
+        print(f"⚠️ history stale({_date10(pf['history_as_of'])}) + 보정 실패 — {pf['warning']}")
+    print(f"데이터 기준일: {data_as_of} (effective {_date10(effective_as_of)})")
     print(f"게이트: 점수하한≥{MIN_SCORE:g} · 추적전용={TRACKED_ONLY}")
     print(f"적격(추세+모멘텀): {len(eligible)}개 → 매수대상(게이트 통과): {len(buyable)}개 / 전체 {len(ranked)}개")
     if skipped_below_floor:

@@ -66,4 +66,8 @@ A의 80%는 **①가격 신선도 + ②약세장 검증** 두 개에 들어 있�
 
 ---
 ### 진행 로그
-- [2026-06-30] 리포트 작성. **1순위(가격 신선도 가드) 구현 착수** → `scripts/momentum_signal.py`.
+- [2026-06-30] 리포트 작성. **1순위(가격 신선도 가드)** 구현 → `momentum_signal.py` fresh_overlay + fail-loud.
+- [2026-06-30] **근본 치료**: `fetch_history.yml` 거래일 cron 추가 → price_history 자동 신선화.
+- [2026-06-30] **2순위(약세장 백테스트)** 완료 → `scripts/backtest_bear.py` + `state/backtest_bear.json`.
+  - 하방 회피 엣지 **실재 확인**(전 시나리오 낙폭개선 +). 단 `regime_filter=false` 가 V자/휩쏘 약세장엔
+    위험 → **히스테리시스 동적 레짐(지수 MA200 지속이탈 시 ON)** 이 다음 과제로 식별됨.

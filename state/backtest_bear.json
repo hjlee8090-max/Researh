@@ -1,0 +1,192 @@
+{
+  "as_of": "2026-06-30T22:07:28+09:00",
+  "method": "실데이터 일간 로그수익률에 시장 드리프트 δ 합성(상대강도·변동성 보존). 합성 스트레스 — 실제 약세장 아님.",
+  "data_window": {
+    "start": "2024-01-02",
+    "end": "2026-06-10",
+    "trading_days": 592
+  },
+  "config": {
+    "top_n": 6,
+    "rebal_days": 42,
+    "trend_ma": 200,
+    "mom_fast": 60,
+    "mom_slow": 120,
+    "compared": "regime_filter ON vs OFF(현 권장값)"
+  },
+  "scenarios": {
+    "bear_40": {
+      "label": "지속 약세 -40%",
+      "benchmark_kospi": {
+        "total_return_pct": 5.5,
+        "cagr_pct": 3.5,
+        "sharpe": 0.27,
+        "max_drawdown_pct": -33.5,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 17.7,
+        "cagr_pct": 11.1,
+        "sharpe": 0.46,
+        "max_drawdown_pct": -34.4,
+        "trading_days": 391,
+        "n_trades": 50
+      },
+      "strategy_regime_on": {
+        "total_return_pct": 32.9,
+        "cagr_pct": 20.1,
+        "sharpe": 0.69,
+        "max_drawdown_pct": -24.1,
+        "trading_days": 391,
+        "n_trades": 18
+      }
+    },
+    "mild_bear_20": {
+      "label": "완만 약세 -20%",
+      "benchmark_kospi": {
+        "total_return_pct": 27.5,
+        "cagr_pct": 17.0,
+        "sharpe": 0.63,
+        "max_drawdown_pct": -29.9,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 39.5,
+        "cagr_pct": 23.9,
+        "sharpe": 0.69,
+        "max_drawdown_pct": -30.5,
+        "trading_days": 391,
+        "n_trades": 52
+      },
+      "strategy_regime_on": {
+        "total_return_pct": 42.2,
+        "cagr_pct": 25.5,
+        "sharpe": 0.8,
+        "max_drawdown_pct": -23.4,
+        "trading_days": 391,
+        "n_trades": 18
+      }
+    },
+    "crash": {
+      "label": "중반 급락 -35%(30일)",
+      "benchmark_kospi": {
+        "total_return_pct": 93.7,
+        "cagr_pct": 53.1,
+        "sharpe": 1.39,
+        "max_drawdown_pct": -42.6,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 134.2,
+        "cagr_pct": 73.1,
+        "sharpe": 1.36,
+        "max_drawdown_pct": -43.8,
+        "trading_days": 391,
+        "n_trades": 56
+      },
+      "strategy_regime_on": {
+        "total_return_pct": 92.0,
+        "cagr_pct": 52.3,
+        "sharpe": 1.33,
+        "max_drawdown_pct": -21.5,
+        "trading_days": 391,
+        "n_trades": 18
+      }
+    },
+    "sideways": {
+      "label": "횡보+휩쏘(드리프트0·변동성×1.4)",
+      "benchmark_kospi": {
+        "total_return_pct": 72.8,
+        "cagr_pct": 42.2,
+        "sharpe": 0.98,
+        "max_drawdown_pct": -35.7,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 74.3,
+        "cagr_pct": 43.0,
+        "sharpe": 0.88,
+        "max_drawdown_pct": -39.0,
+        "trading_days": 391,
+        "n_trades": 52
+      },
+      "strategy_regime_on": {
+        "total_return_pct": 66.9,
+        "cagr_pct": 39.1,
+        "sharpe": 0.87,
+        "max_drawdown_pct": -30.7,
+        "trading_days": 391,
+        "n_trades": 32
+      }
+    },
+    "reverse": {
+      "label": "시계열 역전(강세장 거울상)",
+      "benchmark_kospi": {
+        "total_return_pct": -16.8,
+        "cagr_pct": -11.2,
+        "sharpe": -0.49,
+        "max_drawdown_pct": -29.5,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": -4.2,
+        "cagr_pct": -2.7,
+        "sharpe": 0.02,
+        "max_drawdown_pct": -25.6,
+        "trading_days": 391,
+        "n_trades": 38
+      },
+      "strategy_regime_on": {
+        "total_return_pct": -20.0,
+        "cagr_pct": -13.4,
+        "sharpe": -0.59,
+        "max_drawdown_pct": -25.6,
+        "trading_days": 391,
+        "n_trades": 26
+      }
+    }
+  },
+  "findings": [
+    {
+      "scenario": "bear_40",
+      "label": "지속 약세 -40%",
+      "mdd_improvement_vs_bench_pp": 9.4,
+      "return_edge_vs_bench_pp": 27.4,
+      "regime_filter_value_on_minus_off_pp": 15.2
+    },
+    {
+      "scenario": "mild_bear_20",
+      "label": "완만 약세 -20%",
+      "mdd_improvement_vs_bench_pp": 6.5,
+      "return_edge_vs_bench_pp": 14.7,
+      "regime_filter_value_on_minus_off_pp": 2.7
+    },
+    {
+      "scenario": "crash",
+      "label": "중반 급락 -35%(30일)",
+      "mdd_improvement_vs_bench_pp": 21.1,
+      "return_edge_vs_bench_pp": -1.7,
+      "regime_filter_value_on_minus_off_pp": -42.2
+    },
+    {
+      "scenario": "sideways",
+      "label": "횡보+휩쏘(드리프트0·변동성×1.4)",
+      "mdd_improvement_vs_bench_pp": 5.0,
+      "return_edge_vs_bench_pp": -5.9,
+      "regime_filter_value_on_minus_off_pp": -7.4
+    },
+    {
+      "scenario": "reverse",
+      "label": "시계열 역전(강세장 거울상)",
+      "mdd_improvement_vs_bench_pp": 3.9,
+      "return_edge_vs_bench_pp": -3.2,
+      "regime_filter_value_on_minus_off_pp": -15.8
+    }
+  ],
+  "interpretation": [
+    "regime_filter_value(ON-OFF) 가 약세장에서 (+)면 → 강세장에서 수익을 깎던 레짐필터가 약세장에선 자본을 지킴 → '레짐 상태에 따라 필터 ON/OFF' 동적 전환이 정답.",
+    "mdd_improvement_vs_bench 가 (+)면 추세필터(가격>MA200)가 buy&hold 대비 낙폭을 줄임 = '하방 회피' 엣지 실재.",
+    "sideways(휩쏘)에서 전략이 벤치보다 나쁘면 → 모멘텀의 알려진 약점(저변동·무추세 구간) 재확인 → 횡보장 진입 억제 룰 필요."
+  ],
+  "note": "학습·시뮬레이션. 합성 약세장은 실제 약세장의 상관·점프·유동성 고갈을 완전히 재현하지 못한다(보수적 하한 추정)."
+}

@@ -14,18 +14,22 @@
     "doc": "docs/strategy_momentum.md",
     "generator": "scripts/momentum_signal.py",
     "config": {
-      "top_n": 10,
+      "top_n": 6,
       "mom_fast_days": 60,
       "mom_slow_days": 120,
       "trend_ma": 200,
       "rebalance_days": 21,
-      "regime_filter": false
+      "regime_filter": false,
+      "min_score": 30.0,
+      "tracked_only": true
     },
     "rules": [
       "진입 1순위 후보 = momentum_signal.json.executable_allocation.orders (계좌 정수주 바스켓).",
       "종목 자격 = 가격 > MA200(추세) AND 0.5×60일+0.5×120일 모멘텀 > 0. 미달 종목은 보유 회전아웃.",
-      "리밸런스 주기 약 21거래일 — 매일 강제 회전 금지(거래비용·휩쏘). 변경분(enter/exit)만 반영.",
-      "강세장 현금화 금지: regime_filter=false. 적격 종목 < 5개일 때만 잔여 현금(추세 부재 시).",
+      "매수 게이트(v2): 자격 통과분 중 ① 점수 ≥ config.min_score(기본 30) AND ② 추적대상(candidates ∪ 현재보유)만 매수. 저모멘텀 충전재(은행 등)·미추적 종목 자동 배제 — gate.skipped_below_floor / skipped_untracked 에 기록.",
+      "미추적 트렌드주는 바스켓이 스스로 candidates 에 역등록하지 않는다(순환 차단). screen_universe.py 의 promote_suggestions → routine 이 thesis·근거 URL 과 함께 candidates 승격 후에만 매수 대상.",
+      "보유: 매수대상(buyable) 점수 상위 Top6 동일가중. 리밸런스 주기 약 21거래일 — 매일 강제 회전 금지(거래비용·휩쏘). 변경분(enter/exit)만 반영.",
+      "강세장 현금화 금지: regime_filter=false. 매수대상 < 5개일 때만 잔여 현금(추세·추적 부재 시).",
       "종목당 비중 ≤ max_position_weight_pct, 현금 ≥ 최소현금. 1주가 상한 초과인 초고가주는 바스켓 제외."
     ],
     "cash_trap_fix": {
@@ -37,7 +41,8 @@
         "주간 -5% 손실 한도·종목별 -2×ATR 손절 불변"
       ]
     },
-    "note": "학습·시뮬레이션 목적. 과거 백테스트 성과는 미래 수익을 보장하지 않는다. 약세장 검증 부족 → regime_filter 는 제거가 아닌 OFF 기본값, 실제 약세 신호 누적 시 재평가."
+    "note": "학습·시뮬레이션 목적. 과거 백테스트 성과는 미래 수익을 보장하지 않는다. 약세장 검증 부족 → regime_filter 는 제거가 아닌 OFF 기본값, 실제 약세 신호 누적 시 재평가.",
+    "config_note": "top_n/min_score/tracked_only 는 momentum_signal.py 가 이 블록에서 읽어 적용(코드 수정 없이 튜닝). 백테스트 검증범위: top_n 5~10, MA 100~200 (Sharpe 2.0~2.34 군집). min_score·tracked_only 는 충전재·미추적 종목 배제용 신규 게이트(2026-06-30)."
   },
   "universe": {
     "market": "KOSPI",

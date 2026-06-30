@@ -26,10 +26,46 @@ ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 
 # 검증된 권장 파라미터(backtest_strategy.json.recommended_config 와 일치)
-TOP_N = 10
+# top_n / min_score 는 config/policy.json.momentum_strategy.config 로 오버라이드 가능(아래 load_config).
+TOP_N = 6          # Top10 → Top6 축소: 강한 추세주 집중(후행주 충전재 배제). 백테스트 Top5~6 Sharpe 2.16~2.34.
+MIN_SCORE = 30.0   # 모멘텀 점수 하한 — 이 값 미만은 바스켓 제외(은행 등 저모멘텀 충전재 자동 탈락).
+TRACKED_ONLY = True  # 추적 대상(candidates ∪ 보유) 종목만 매수. 미추적 트렌드주는 screen_universe→candidates 승격 후에만.
 MOM_FAST = 60
 MOM_SLOW = 120
 TREND_MA = 200
+
+
+def load_config():
+    """policy.json.momentum_strategy.config 로 파라미터 오버라이드(코드 수정 없이 튜닝)."""
+    global TOP_N, MIN_SCORE, TRACKED_ONLY
+    try:
+        cfg = json.load(open(ROOT / "config" / "policy.json"))["momentum_strategy"]["config"]
+        TOP_N = int(cfg.get("top_n", TOP_N))
+        MIN_SCORE = float(cfg.get("min_score", MIN_SCORE))
+        TRACKED_ONLY = bool(cfg.get("tracked_only", TRACKED_ONLY))
+    except Exception:
+        pass
+
+
+def tracked_tickers():
+    """매수 허용 추적 집합 = candidates.json 후보 ∪ 현재 보유 종목.
+
+    momentum 바스켓이 30종목 가격풀에서 자유롭게 뽑던 것을 '추적 중인 종목'으로 제한한다.
+    신규 트렌드주는 screen_universe.py 가 candidates 승격을 '제안'하고 routine 이 thesis 와 함께
+    승격해야 매수 대상이 된다(바스켓이 스스로 추적목록에 역등록하던 순환 차단).
+    """
+    tracked: set[str] = set()
+    try:
+        cand = json.load(open(ROOT / "config" / "candidates.json")).get("candidates", [])
+        tracked |= {c.get("ticker") for c in cand if isinstance(c, dict) and c.get("ticker")}
+    except Exception:
+        pass
+    try:
+        pos = json.load(open(ROOT / "config" / "portfolio.json")).get("positions", [])
+        tracked |= {p.get("ticker") for p in pos if isinstance(p, dict) and p.get("ticker")}
+    except Exception:
+        pass
+    return tracked
 
 
 def load():
@@ -104,18 +140,37 @@ def executable_allocation(eligible, equity, min_cash_pct=10.0, per_name_cap_pct=
 
 
 def main():
+    load_config()
+    tracked = tracked_tickers() if TRACKED_ONLY else None
     tickers, data_as_of = load()
     ranked = []
     for tk, v in tickers.items():
         s = score_ticker(v["closes"])
         s["ticker"] = tk
         s["name"] = v["name"]
+        # 기본 자격: 추세(가격>MA200) AND 절대모멘텀>0
         s["pass_filter"] = bool(s["in_uptrend"] and s["score"] > 0)
+        # 추가 게이트: 모멘텀 점수 하한 + 추적 대상 여부
+        s["above_floor"] = bool(s["score"] >= MIN_SCORE)
+        s["tracked"] = (tracked is None) or (tk in tracked)
+        s["buyable"] = bool(s["pass_filter"] and s["above_floor"] and s["tracked"])
         ranked.append(s)
 
+    # 자격(추세+모멘텀) 통과분 — 랭킹·진단 표시용(게이트 적용 전 전체 모습)
     eligible = sorted([r for r in ranked if r["pass_filter"]],
                       key=lambda r: -r["score"])
-    target = eligible[:TOP_N]
+    # 실제 매수 대상 = 자격 + 점수하한 + 추적 게이트 모두 통과
+    buyable = sorted([r for r in ranked if r["buyable"]], key=lambda r: -r["score"])
+    # 게이트에 걸려 제외된 종목(투명성 — routine 이 승격/재평가 판단에 사용)
+    skipped_below_floor = [
+        {"ticker": r["ticker"], "name": r["name"], "score": r["score"]}
+        for r in eligible if not r["above_floor"]
+    ]
+    skipped_untracked = [
+        {"ticker": r["ticker"], "name": r["name"], "score": r["score"]}
+        for r in eligible if r["above_floor"] and not r["tracked"]
+    ]
+    target = buyable[:TOP_N]
     target_tickers = [r["ticker"] for r in target]
     weight = round(1.0 / TOP_N, 4)
     cash_weight = round(1.0 - weight * len(target), 4)
@@ -137,17 +192,19 @@ def main():
         equity = float(json.load(open(ROOT / "config" / "portfolio.json")).get("equity", equity))
     except Exception:
         pass
-    exec_orders, cash_left, cash_left_pct = executable_allocation(eligible, equity)
+    # 매수 대상(buyable)만 정수주 배분 — 점수하한·추적 게이트 통과분으로 제한
+    exec_orders, cash_left, cash_left_pct = executable_allocation(buyable, equity)
 
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "data_as_of": data_as_of,
-        "strategy": "dual-momentum rotation Top10, monthly rebalance, MA200 trend filter, always-invested",
-        "config": {"top_n": TOP_N, "mom_fast": MOM_FAST, "mom_slow": MOM_SLOW, "trend_ma": TREND_MA},
+        "strategy": f"dual-momentum rotation Top{TOP_N}, score_floor≥{MIN_SCORE:g}, tracked_only={TRACKED_ONLY}, MA200 trend filter",
+        "config": {"top_n": TOP_N, "min_score": MIN_SCORE, "tracked_only": TRACKED_ONLY,
+                   "mom_fast": MOM_FAST, "mom_slow": MOM_SLOW, "trend_ma": TREND_MA},
         "executable_allocation": {
             "equity": round(equity),
             "constraints": {"min_cash_pct": 10.0, "per_name_cap_pct": 30.0,
-                            "excluded_too_expensive": [r["ticker"] for r in eligible
+                            "excluded_too_expensive": [r["ticker"] for r in buyable
                                                        if r["close"] > equity * 0.30][:TOP_N]},
             "orders": exec_orders,
             "cash_left": cash_left,
@@ -157,6 +214,14 @@ def main():
         "equal_weight_pct": round(weight * 100, 2),
         "cash_weight_pct": round(cash_weight * 100, 2),
         "n_eligible": len(eligible),
+        "n_buyable": len(buyable),
+        "gate": {
+            "min_score": MIN_SCORE,
+            "tracked_only": TRACKED_ONLY,
+            "skipped_below_floor": skipped_below_floor,
+            "skipped_untracked": skipped_untracked,
+            "note": "skipped_untracked 는 트렌드는 강하나 추적목록(candidates)에 없는 종목 — screen_universe.py 가 candidates 승격을 제안하고 routine 이 thesis 와 함께 승격해야 매수 대상이 된다(바스켓 자기역등록 순환 차단).",
+        },
         "target_basket": [
             {"ticker": r["ticker"], "name": r["name"], "weight_pct": round(weight * 100, 2),
              "score": r["score"], "mom60_pct": r["mom60_pct"], "mom120_pct": r["mom120_pct"],
@@ -168,13 +233,19 @@ def main():
         "caveats": [
             "data_as_of 가 오래됐으면(주말/공휴일/Actions 미실행) stale — 18시·09시 routine 은 fresh 가격 확인 후 적용.",
             "리밸런스 주기는 약 21거래일. 매일 강제 회전 금지(거래비용·휩쏘).",
+            f"매수 게이트: 점수≥{MIN_SCORE:g} AND 추적대상(candidates∪보유). 미통과분은 gate.skipped_* 에 기록.",
             "학습·시뮬레이션 목적. 미래 수익 보장 아님.",
         ],
     }
     prev_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"데이터 기준일: {data_as_of}")
-    print(f"적격(추세+모멘텀 통과) 종목: {len(eligible)}개 / 전체 {len(ranked)}개")
+    print(f"게이트: 점수하한≥{MIN_SCORE:g} · 추적전용={TRACKED_ONLY}")
+    print(f"적격(추세+모멘텀): {len(eligible)}개 → 매수대상(게이트 통과): {len(buyable)}개 / 전체 {len(ranked)}개")
+    if skipped_below_floor:
+        print(f"  ↓점수하한 미달 제외: " + ", ".join(f"{r['name']}({r['score']:.1f})" for r in skipped_below_floor))
+    if skipped_untracked:
+        print(f"  ↓미추적 제외(승격 필요): " + ", ".join(f"{r['name']}({r['score']:.1f})" for r in skipped_untracked))
     print(f"목표 바스켓 Top{TOP_N} (각 {weight*100:.1f}%, 현금 {cash_weight*100:.1f}%):")
     for r in target:
         print(f"  {r['name']:<12}({r['ticker']}) score {r['score']:+7.1f} | "

@@ -47,6 +47,54 @@ def load_config():
         pass
 
 
+def regime_circuit_breaker():
+    """동적 레짐 서킷브레이커(opt-in, 기본 OFF). 지수 MA200 히스테리시스로 방어 여부 판정.
+
+    backtest_bear.py 검증 결과 지수-MA200 레짐 타이밍은 강세장 수익을 크게 반납하는
+    트레이드오프라 policy 에서 enabled=False 가 기본. 거시 약세 증거 누적 시 운영자가 ON.
+    반환: {enabled, defensive, ...} — enabled False 면 항상 defensive False.
+    """
+    out = {"enabled": False, "defensive": False, "below_run": 0, "above_run": 0, "note": None}
+    try:
+        cfg = json.load(open(ROOT / "config" / "policy.json"))["momentum_strategy"]["regime_circuit_breaker"]
+    except Exception:
+        return out
+    if not cfg.get("enabled", False):
+        return out
+    out["enabled"] = True
+    ma_win = int(cfg.get("index_ma", 200))
+    enter_days = int(cfg.get("enter_days", 5))
+    exit_days = int(cfg.get("exit_days", 15))
+    try:
+        idx = json.load(open(ROOT / "state" / "price_history.json")).get("index", {})
+        bars = sorted((b for b in idx.get("bars", []) if b.get("close")), key=lambda b: b["date"])
+        closes = [float(b["close"]) for b in bars]
+    except Exception:
+        out["note"] = "index 시계열 없음 — 방어 미발동(보수적으로 invested 유지)"
+        return out
+    if len(closes) < ma_win + 1:
+        out["note"] = "index 데이터 부족 — 방어 미발동"
+        return out
+    defensive = False
+    below_run = above_run = 0
+    for i in range(ma_win - 1, len(closes)):
+        ma = sum(closes[i - ma_win + 1:i + 1]) / ma_win
+        cur = closes[i]
+        if cur < ma:
+            below_run += 1
+            above_run = 0
+        else:
+            above_run += 1
+            below_run = 0
+        if not defensive and below_run >= enter_days:
+            defensive = True
+        elif defensive and above_run >= exit_days:
+            defensive = False
+    out.update({"defensive": defensive, "below_run": below_run, "above_run": above_run,
+                "index_ma": ma_win, "enter_days": enter_days, "exit_days": exit_days})
+    return out
+
+
 def tracked_tickers():
     """매수 허용 추적 집합 = candidates.json 후보 ∪ 현재 보유 종목.
 
@@ -251,8 +299,13 @@ def main():
         equity = float(json.load(open(ROOT / "config" / "portfolio.json")).get("equity", equity))
     except Exception:
         pass
-    # 매수 대상(buyable)만 정수주 배분 — 점수하한·추적 게이트 통과분으로 제한
-    exec_orders, cash_left, cash_left_pct = executable_allocation(buyable, equity)
+    # 동적 레짐 서킷브레이커(opt-in, 기본 OFF): 방어 시 신규 진입 차단(현금화)
+    regime = regime_circuit_breaker()
+    if regime["enabled"] and regime["defensive"]:
+        exec_orders, cash_left, cash_left_pct = [], round(equity), 100.0
+    else:
+        # 매수 대상(buyable)만 정수주 배분 — 점수하한·추적 게이트 통과분으로 제한
+        exec_orders, cash_left, cash_left_pct = executable_allocation(buyable, equity)
 
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
@@ -268,6 +321,15 @@ def main():
             "skipped_low_conf": overlay["skipped_low_conf"],
             "warning": overlay["warning"],
             "note": "price_history(주간 Actions) 가 묵으면 fresh snapshot 종가로 최신 봉 보정 — 묵은 현재가로 모멘텀 계산되던 지연 해소. 룩백 공백(누락 거래일)은 못 메움(스냅샷 1점).",
+        },
+        "regime_circuit_breaker": {
+            "enabled": regime["enabled"],
+            "defensive": regime["defensive"],
+            "below_run": regime.get("below_run"),
+            "above_run": regime.get("above_run"),
+            "note": regime.get("note") or ("방어 발동 — 신규 진입 차단(현금)" if regime["defensive"]
+                    else ("감시 중(invested)" if regime["enabled"] else "비활성(기본 OFF) — 항시투자")),
+            "backtest_ref": "state/backtest_bear.json (강세장 비용 vs 약세장 방어 트레이드오프)",
         },
         "strategy": f"dual-momentum rotation Top{TOP_N}, score_floor≥{MIN_SCORE:g}, tracked_only={TRACKED_ONLY}, MA200 trend filter",
         "config": {"top_n": TOP_N, "min_score": MIN_SCORE, "tracked_only": TRACKED_ONLY,
@@ -322,6 +384,9 @@ def main():
         print(f"⚠️ history stale({_date10(pf['history_as_of'])}) + 보정 실패 — {pf['warning']}")
     print(f"데이터 기준일: {data_as_of} (effective {_date10(effective_as_of)})")
     print(f"게이트: 점수하한≥{MIN_SCORE:g} · 추적전용={TRACKED_ONLY}")
+    if regime["enabled"]:
+        print(f"레짐 서킷브레이커: {'🛑 방어(현금화)' if regime['defensive'] else '👀 감시(invested)'} "
+              f"(MA200 below_run={regime.get('below_run')}/{regime.get('enter_days')})")
     print(f"적격(추세+모멘텀): {len(eligible)}개 → 매수대상(게이트 통과): {len(buyable)}개 / 전체 {len(ranked)}개")
     if skipped_below_floor:
         print(f"  ↓점수하한 미달 제외: " + ", ".join(f"{r['name']}({r['score']:.1f})" for r in skipped_below_floor))

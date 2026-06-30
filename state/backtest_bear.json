@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-06-30T22:07:28+09:00",
+  "as_of": "2026-06-30T22:16:40+09:00",
   "method": "실데이터 일간 로그수익률에 시장 드리프트 δ 합성(상대강도·변동성 보존). 합성 스트레스 — 실제 약세장 아님.",
   "data_window": {
     "start": "2024-01-02",
@@ -14,7 +14,47 @@
     "mom_slow": 120,
     "compared": "regime_filter ON vs OFF(현 권장값)"
   },
+  "regime_hysteresis": {
+    "enter_days": 5,
+    "exit_days": 15,
+    "index_ma": 200,
+    "rule": "지수 MA200 5일 연속 이탈 시 방어(현금), 15일 연속 회복 시 복귀"
+  },
   "scenarios": {
+    "bull": {
+      "label": "강세장(원본·트레이드오프 기준)",
+      "benchmark_kospi": {
+        "total_return_pct": 198.1,
+        "cagr_pct": 102.2,
+        "sharpe": 2.24,
+        "max_drawdown_pct": -19.9,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 272.1,
+        "cagr_pct": 133.2,
+        "sharpe": 1.97,
+        "max_drawdown_pct": -22.4,
+        "trading_days": 391,
+        "n_trades": 56
+      },
+      "strategy_regime_on": {
+        "total_return_pct": 157.2,
+        "cagr_pct": 83.8,
+        "sharpe": 1.65,
+        "max_drawdown_pct": -21.5,
+        "trading_days": 391,
+        "n_trades": 40
+      },
+      "strategy_regime_hysteresis": {
+        "total_return_pct": 96.5,
+        "cagr_pct": 54.5,
+        "sharpe": 1.25,
+        "max_drawdown_pct": -22.4,
+        "trading_days": 391,
+        "n_trades": 46
+      }
+    },
     "bear_40": {
       "label": "지속 약세 -40%",
       "benchmark_kospi": {
@@ -39,6 +79,14 @@
         "max_drawdown_pct": -24.1,
         "trading_days": 391,
         "n_trades": 18
+      },
+      "strategy_regime_hysteresis": {
+        "total_return_pct": 16.1,
+        "cagr_pct": 10.1,
+        "sharpe": 0.44,
+        "max_drawdown_pct": -29.8,
+        "trading_days": 391,
+        "n_trades": 24
       }
     },
     "mild_bear_20": {
@@ -65,6 +113,14 @@
         "max_drawdown_pct": -23.4,
         "trading_days": 391,
         "n_trades": 18
+      },
+      "strategy_regime_hysteresis": {
+        "total_return_pct": 25.9,
+        "cagr_pct": 16.0,
+        "sharpe": 0.58,
+        "max_drawdown_pct": -29.2,
+        "trading_days": 391,
+        "n_trades": 26
       }
     },
     "crash": {
@@ -91,6 +147,14 @@
         "max_drawdown_pct": -21.5,
         "trading_days": 391,
         "n_trades": 18
+      },
+      "strategy_regime_hysteresis": {
+        "total_return_pct": 72.1,
+        "cagr_pct": 41.9,
+        "sharpe": 1.09,
+        "max_drawdown_pct": -25.7,
+        "trading_days": 391,
+        "n_trades": 30
       }
     },
     "sideways": {
@@ -117,6 +181,14 @@
         "max_drawdown_pct": -30.7,
         "trading_days": 391,
         "n_trades": 32
+      },
+      "strategy_regime_hysteresis": {
+        "total_return_pct": 33.0,
+        "cagr_pct": 20.2,
+        "sharpe": 0.61,
+        "max_drawdown_pct": -37.9,
+        "trading_days": 391,
+        "n_trades": 26
       }
     },
     "reverse": {
@@ -143,50 +215,78 @@
         "max_drawdown_pct": -25.6,
         "trading_days": 391,
         "n_trades": 26
+      },
+      "strategy_regime_hysteresis": {
+        "total_return_pct": -20.0,
+        "cagr_pct": -13.4,
+        "sharpe": -0.85,
+        "max_drawdown_pct": -25.6,
+        "trading_days": 391,
+        "n_trades": 24
       }
     }
   },
   "findings": [
     {
+      "scenario": "bull",
+      "label": "강세장(원본·트레이드오프 기준)",
+      "hysteresis_return_pct": 96.5,
+      "hysteresis_mdd_pct": -22.4,
+      "hy_vs_off_pp": -175.6,
+      "hy_vs_on_pp": -60.7,
+      "hy_mdd_improvement_vs_bench_pp": -2.5
+    },
+    {
       "scenario": "bear_40",
       "label": "지속 약세 -40%",
-      "mdd_improvement_vs_bench_pp": 9.4,
-      "return_edge_vs_bench_pp": 27.4,
-      "regime_filter_value_on_minus_off_pp": 15.2
+      "hysteresis_return_pct": 16.1,
+      "hysteresis_mdd_pct": -29.8,
+      "hy_vs_off_pp": -1.6,
+      "hy_vs_on_pp": -16.8,
+      "hy_mdd_improvement_vs_bench_pp": 3.7
     },
     {
       "scenario": "mild_bear_20",
       "label": "완만 약세 -20%",
-      "mdd_improvement_vs_bench_pp": 6.5,
-      "return_edge_vs_bench_pp": 14.7,
-      "regime_filter_value_on_minus_off_pp": 2.7
+      "hysteresis_return_pct": 25.9,
+      "hysteresis_mdd_pct": -29.2,
+      "hy_vs_off_pp": -13.6,
+      "hy_vs_on_pp": -16.3,
+      "hy_mdd_improvement_vs_bench_pp": 0.7
     },
     {
       "scenario": "crash",
       "label": "중반 급락 -35%(30일)",
-      "mdd_improvement_vs_bench_pp": 21.1,
-      "return_edge_vs_bench_pp": -1.7,
-      "regime_filter_value_on_minus_off_pp": -42.2
+      "hysteresis_return_pct": 72.1,
+      "hysteresis_mdd_pct": -25.7,
+      "hy_vs_off_pp": -62.1,
+      "hy_vs_on_pp": -19.9,
+      "hy_mdd_improvement_vs_bench_pp": 16.9
     },
     {
       "scenario": "sideways",
       "label": "횡보+휩쏘(드리프트0·변동성×1.4)",
-      "mdd_improvement_vs_bench_pp": 5.0,
-      "return_edge_vs_bench_pp": -5.9,
-      "regime_filter_value_on_minus_off_pp": -7.4
+      "hysteresis_return_pct": 33.0,
+      "hysteresis_mdd_pct": -37.9,
+      "hy_vs_off_pp": -41.3,
+      "hy_vs_on_pp": -33.9,
+      "hy_mdd_improvement_vs_bench_pp": -2.2
     },
     {
       "scenario": "reverse",
       "label": "시계열 역전(강세장 거울상)",
-      "mdd_improvement_vs_bench_pp": 3.9,
-      "return_edge_vs_bench_pp": -3.2,
-      "regime_filter_value_on_minus_off_pp": -15.8
+      "hysteresis_return_pct": -20.0,
+      "hysteresis_mdd_pct": -25.6,
+      "hy_vs_off_pp": -15.8,
+      "hy_vs_on_pp": 0.0,
+      "hy_mdd_improvement_vs_bench_pp": 3.9
     }
   ],
+  "conclusion": "지수-MA200 레짐 타이밍(고정/히스테리시스)은 '공짜 개선'이 아니라 가혹한 트레이드오프다. 종목별 추세필터가 이미 강세장 MDD 를 통제(-22)하므로, 지수 레짐을 더하면 약세장 방어를 얻는 대신 강세장 수익을 크게(grid 상 -150~-176%p) 반납한다. 따라서 기본값은 OFF(항시투자) 유지가 합리적이며, 동적 레짐은 '거시 약세 증거 누적 시 수동 ON' 하는 서킷브레이커(opt-in)로만 제공한다.",
   "interpretation": [
-    "regime_filter_value(ON-OFF) 가 약세장에서 (+)면 → 강세장에서 수익을 깎던 레짐필터가 약세장에선 자본을 지킴 → '레짐 상태에 따라 필터 ON/OFF' 동적 전환이 정답.",
-    "mdd_improvement_vs_bench 가 (+)면 추세필터(가격>MA200)가 buy&hold 대비 낙폭을 줄임 = '하방 회피' 엣지 실재.",
-    "sideways(휩쏘)에서 전략이 벤치보다 나쁘면 → 모멘텀의 알려진 약점(저변동·무추세 구간) 재확인 → 횡보장 진입 억제 룰 필요."
+    "bull 행의 HYST 수익이 OFF 대비 크게 낮으면 → 레짐 타이밍의 강세장 비용이 큼(채택은 약세 확신 시에만).",
+    "hy_mdd_improvement_vs_bench (+) = 동적 레짐이 buy&hold 대비 낙폭은 줄임(트레이드오프의 이득 쪽).",
+    "어떤 enter/exit 도 강세장 비용 없이 약세장 방어를 주지 못함 — index-MA 자체가 휩쏘원. 향후 breadth(과반 종목 MA200 상회) 기반 레짐이 대안."
   ],
   "note": "학습·시뮬레이션. 합성 약세장은 실제 약세장의 상관·점프·유동성 고갈을 완전히 재현하지 못한다(보수적 하한 추정)."
 }

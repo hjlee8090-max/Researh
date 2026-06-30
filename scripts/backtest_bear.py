@@ -36,6 +36,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from backtest_strategy import (  # noqa: E402
     backtest,
     benchmark_curve,
+    compute_regime_hysteresis,
     load_history,
     metrics,
 )
@@ -118,6 +119,8 @@ def transform(tickers: dict, index_series: dict, dates: list[str], mode: str) ->
         crash_delta = math.log(1 - 0.35) / max(1, len(win))
     elif mode == "reverse":
         reverse = True
+    elif mode == "bull":
+        return tickers, index_series  # 원본 강세장 그대로(트레이드오프 비교 기준)
     else:
         raise ValueError(f"unknown mode {mode}")
 
@@ -158,14 +161,16 @@ def run_scenario(tickers, index_series, dates, mode):
     t2, idx2 = transform(tickers, index_series, dates, mode)
     bench = metrics(benchmark_curve(idx2, dates, warmup, end))
 
-    # 현 권장값(레짐 OFF) vs 레짐 ON — 약세장에서 필터의 가치 검증
-    cfg_off = dict(top_n=6, rebal_days=42, use_index_regime=False, trend_ma=200, mom_fast=60, mom_slow=120)
-    cfg_on = dict(top_n=6, rebal_days=42, use_index_regime=True, trend_ma=200, mom_fast=60, mom_slow=120)
-    c_off, _, tr_off = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, **cfg_off)
-    c_on, _, tr_on = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, **cfg_on)
-    m_off, m_on = metrics(c_off), metrics(c_on)
-    m_off["n_trades"], m_on["n_trades"] = tr_off, tr_on
-    return {"benchmark_kospi": bench, "strategy_regime_off": m_off, "strategy_regime_on": m_on}
+    # 레짐 OFF(현 권장) vs ON(고정) vs HYSTERESIS(동적) — 셋 비교로 동적전환의 우월성 검증
+    base = dict(top_n=6, rebal_days=42, trend_ma=200, mom_fast=60, mom_slow=120)
+    hflags = compute_regime_hysteresis(idx2, dates, index_ma=200, enter_days=5, exit_days=15)
+    c_off, _, tr_off = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, use_index_regime=False, **base)
+    c_on, _, tr_on = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, use_index_regime=True, **base)
+    c_hy, _, tr_hy = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, regime_flags=hflags, **base)
+    m_off, m_on, m_hy = metrics(c_off), metrics(c_on), metrics(c_hy)
+    m_off["n_trades"], m_on["n_trades"], m_hy["n_trades"] = tr_off, tr_on, tr_hy
+    return {"benchmark_kospi": bench, "strategy_regime_off": m_off,
+            "strategy_regime_on": m_on, "strategy_regime_hysteresis": m_hy}
 
 
 def main():
@@ -174,6 +179,7 @@ def main():
     print("약세장은 실데이터에 시장 드리프트만 음(-)으로 합성 — 상대강도·변동성 구조 보존.\n")
 
     scenarios = {
+        "bull": "강세장(원본·트레이드오프 기준)",
         "bear_40": "지속 약세 -40%",
         "mild_bear_20": "완만 약세 -20%",
         "crash": "중반 급락 -35%(30일)",
@@ -181,31 +187,33 @@ def main():
         "reverse": "시계열 역전(강세장 거울상)",
     }
     out_scen = {}
-    print(f"{'시나리오':<22}{'벤치(B&H)':>14}{'전략 레짐OFF':>20}{'전략 레짐ON':>20}")
-    print("-" * 78)
+    print(f"{'시나리오':<22}{'벤치(B&H)':>13}{'레짐OFF':>13}{'레짐ON':>13}{'히스테리시스':>15}")
+    print("-" * 82)
     for mode, label in scenarios.items():
         r = run_scenario(tickers, index_series, dates, mode)
         out_scen[mode] = {"label": label, **r}
-        b, off, on = r["benchmark_kospi"], r["strategy_regime_off"], r["strategy_regime_on"]
+        b, off, on, hy = (r["benchmark_kospi"], r["strategy_regime_off"],
+                          r["strategy_regime_on"], r["strategy_regime_hysteresis"])
         print(f"{label:<22}"
-              f"{b['total_return_pct']:>7.0f}%/MDD{b['max_drawdown_pct']:>5.0f}"
-              f"{off['total_return_pct']:>9.0f}%/MDD{off['max_drawdown_pct']:>5.0f}"
-              f"{on['total_return_pct']:>9.0f}%/MDD{on['max_drawdown_pct']:>5.0f}")
+              f"{b['total_return_pct']:>6.0f}%/{b['max_drawdown_pct']:>4.0f}"
+              f"{off['total_return_pct']:>7.0f}%/{off['max_drawdown_pct']:>4.0f}"
+              f"{on['total_return_pct']:>7.0f}%/{on['max_drawdown_pct']:>4.0f}"
+              f"{hy['total_return_pct']:>8.0f}%/{hy['max_drawdown_pct']:>4.0f}")
 
-    # 핵심 판정: 약세장에서 전략(레짐ON)이 buy&hold 대비 MDD 를 얼마나 줄였나
+    # 핵심 판정: 동적 히스테리시스가 OFF/ON 의 약점을 모두 피하는가
     findings = []
     for mode, label in scenarios.items():
         b = out_scen[mode]["benchmark_kospi"]
         on = out_scen[mode]["strategy_regime_on"]
         off = out_scen[mode]["strategy_regime_off"]
-        mdd_cut = round(on["max_drawdown_pct"] - b["max_drawdown_pct"], 1)  # 양수면 낙폭 더 작음(개선)
-        ret_edge = round(on["total_return_pct"] - b["total_return_pct"], 1)
-        regime_value = round(on["total_return_pct"] - off["total_return_pct"], 1)  # ON-OFF: 약세장 필터 가치
+        hy = out_scen[mode]["strategy_regime_hysteresis"]
         findings.append({
             "scenario": mode, "label": label,
-            "mdd_improvement_vs_bench_pp": mdd_cut,
-            "return_edge_vs_bench_pp": ret_edge,
-            "regime_filter_value_on_minus_off_pp": regime_value,
+            "hysteresis_return_pct": hy["total_return_pct"],
+            "hysteresis_mdd_pct": hy["max_drawdown_pct"],
+            "hy_vs_off_pp": round(hy["total_return_pct"] - off["total_return_pct"], 1),
+            "hy_vs_on_pp": round(hy["total_return_pct"] - on["total_return_pct"], 1),
+            "hy_mdd_improvement_vs_bench_pp": round(hy["max_drawdown_pct"] - b["max_drawdown_pct"], 1),
         })
 
     out = {
@@ -214,22 +222,25 @@ def main():
         "data_window": {"start": dates[0], "end": dates[-1], "trading_days": len(dates)},
         "config": {"top_n": 6, "rebal_days": 42, "trend_ma": 200, "mom_fast": 60, "mom_slow": 120,
                    "compared": "regime_filter ON vs OFF(현 권장값)"},
+        "regime_hysteresis": {"enter_days": 5, "exit_days": 15, "index_ma": 200,
+                              "rule": "지수 MA200 5일 연속 이탈 시 방어(현금), 15일 연속 회복 시 복귀"},
         "scenarios": out_scen,
         "findings": findings,
+        "conclusion": "지수-MA200 레짐 타이밍(고정/히스테리시스)은 '공짜 개선'이 아니라 가혹한 트레이드오프다. 종목별 추세필터가 이미 강세장 MDD 를 통제(-22)하므로, 지수 레짐을 더하면 약세장 방어를 얻는 대신 강세장 수익을 크게(grid 상 -150~-176%p) 반납한다. 따라서 기본값은 OFF(항시투자) 유지가 합리적이며, 동적 레짐은 '거시 약세 증거 누적 시 수동 ON' 하는 서킷브레이커(opt-in)로만 제공한다.",
         "interpretation": [
-            "regime_filter_value(ON-OFF) 가 약세장에서 (+)면 → 강세장에서 수익을 깎던 레짐필터가 약세장에선 자본을 지킴 → '레짐 상태에 따라 필터 ON/OFF' 동적 전환이 정답.",
-            "mdd_improvement_vs_bench 가 (+)면 추세필터(가격>MA200)가 buy&hold 대비 낙폭을 줄임 = '하방 회피' 엣지 실재.",
-            "sideways(휩쏘)에서 전략이 벤치보다 나쁘면 → 모멘텀의 알려진 약점(저변동·무추세 구간) 재확인 → 횡보장 진입 억제 룰 필요.",
+            "bull 행의 HYST 수익이 OFF 대비 크게 낮으면 → 레짐 타이밍의 강세장 비용이 큼(채택은 약세 확신 시에만).",
+            "hy_mdd_improvement_vs_bench (+) = 동적 레짐이 buy&hold 대비 낙폭은 줄임(트레이드오프의 이득 쪽).",
+            "어떤 enter/exit 도 강세장 비용 없이 약세장 방어를 주지 못함 — index-MA 자체가 휩쏘원. 향후 breadth(과반 종목 MA200 상회) 기반 레짐이 대안.",
         ],
         "note": "학습·시뮬레이션. 합성 약세장은 실제 약세장의 상관·점프·유동성 고갈을 완전히 재현하지 못한다(보수적 하한 추정).",
     }
     (ROOT / "state" / "backtest_bear.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print("\n=== 핵심 판정 (낙폭개선·초과수익·레짐필터가치, 모두 %p) ===")
+    print("\n=== 핵심 판정: 히스테리시스 vs 고정 OFF/ON (모두 %p) ===")
     for f in findings:
-        print(f"  {f['label']:<22} 낙폭개선 {f['mdd_improvement_vs_bench_pp']:+5.1f} | "
-              f"초과수익 {f['return_edge_vs_bench_pp']:+6.1f} | 레짐필터가치(ON-OFF) {f['regime_filter_value_on_minus_off_pp']:+6.1f}")
+        print(f"  {f['label']:<22} 히스 vs OFF {f['hy_vs_off_pp']:+6.1f} | "
+              f"히스 vs ON {f['hy_vs_on_pp']:+6.1f} | 히스 낙폭개선 {f['hy_mdd_improvement_vs_bench_pp']:+5.1f}")
     print(f"\n저장: state/backtest_bear.json")
 
 

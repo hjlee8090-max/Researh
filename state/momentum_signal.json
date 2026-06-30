@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-06-30T18:36:58+09:00",
+  "as_of": "2026-06-30T22:17:51+09:00",
   "data_as_of": "2026-06-11T00:33:37+09:00",
   "effective_as_of": "2026-06-30T09:13:54+09:00",
   "price_freshness": {
@@ -32,6 +32,14 @@
     "skipped_low_conf": [],
     "warning": null,
     "note": "price_history(주간 Actions) 가 묵으면 fresh snapshot 종가로 최신 봉 보정 — 묵은 현재가로 모멘텀 계산되던 지연 해소. 룩백 공백(누락 거래일)은 못 메움(스냅샷 1점)."
+  },
+  "regime_circuit_breaker": {
+    "enabled": false,
+    "defensive": false,
+    "below_run": 0,
+    "above_run": 0,
+    "note": "비활성(기본 OFF) — 항시투자",
+    "backtest_ref": "state/backtest_bear.json (강세장 비용 vs 약세장 방어 트레이드오프)"
   },
   "strategy": "dual-momentum rotation Top6, score_floor≥30, tracked_only=True, MA200 trend filter",
   "config": {
@@ -221,12 +229,8 @@
     }
   ],
   "rebalance_changes": {
-    "enter": [
-      "028260"
-    ],
-    "exit": [
-      "005380"
-    ]
+    "enter": [],
+    "exit": []
   },
   "full_ranking": [
     {

@@ -69,5 +69,10 @@ A의 80%는 **①가격 신선도 + ②약세장 검증** 두 개에 들어 있�
 - [2026-06-30] 리포트 작성. **1순위(가격 신선도 가드)** 구현 → `momentum_signal.py` fresh_overlay + fail-loud.
 - [2026-06-30] **근본 치료**: `fetch_history.yml` 거래일 cron 추가 → price_history 자동 신선화.
 - [2026-06-30] **2순위(약세장 백테스트)** 완료 → `scripts/backtest_bear.py` + `state/backtest_bear.json`.
-  - 하방 회피 엣지 **실재 확인**(전 시나리오 낙폭개선 +). 단 `regime_filter=false` 가 V자/휩쏘 약세장엔
-    위험 → **히스테리시스 동적 레짐(지수 MA200 지속이탈 시 ON)** 이 다음 과제로 식별됨.
+  - 하방 회피 엣지 **실재 확인**(전 시나리오 낙폭개선 +).
+- [2026-06-30] **동적 레짐(1번)** 완료 — 히스테리시스 그리드 탐색. **정직한 발견**: 지수-MA200 레짐은
+  강세장 수익을 −150~−176%p 반납하는 트레이드오프(공짜 개선 아님). → 기본 OFF 유지 + opt-in
+  서킷브레이커(`policy.momentum_strategy.regime_circuit_breaker`, 기본 false)로 제공. 향후 breadth 레짐 권고.
+- [2026-06-30] **뉴스 하이브리드 분류(3순위)** 완료 — 키워드 사전 보강(동의어 +7유형, capex 신설) +
+  LLM 리뷰 큐(`fetch_news` → `llm_review_queue`) 2단계. 측정: 미분류 170건 중 **+18건(10.6%p) 회수, 오탐 0**.
+  잔여는 routine LLM 이 큐로 분류·승격.

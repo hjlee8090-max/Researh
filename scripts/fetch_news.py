@@ -301,16 +301,36 @@ def main() -> int:
     print("해외뉴스 수집:")
     global_items = collect_global(kw_cfg, max_age, prev_feed.get("global", []))
 
+    # 하이브리드 분류 2단계: 키워드(1차) 미매칭 잔여를 routine LLM(2차)이 분류·승격하도록 큐 제공.
+    # 키워드는 재현율이 한정적(신조어·문장형 헤드라인). LLM 이 큐를 읽어 news_type 으로 분류하면
+    # manual_news 승격(즉시 반영) 또는 news_keywords 보강(sunday_policy_review) 으로 환류한다.
+    llm_queue = []
+    for tk, tv in out_tickers.items():
+        for u in (tv.get("unclassified") or []):
+            if u.get("title"):
+                llm_queue.append({"ticker": tk, "name": tv.get("name"), "title": u.get("title"),
+                                  "url": u.get("url"), "published": u.get("published")})
+    llm_queue = llm_queue[:80]  # 컨텍스트 보호 상한(초과분은 다음 회차)
+    denom = total_classified + total_uncls
+
     out = {
         "as_of": now.isoformat(timespec="seconds"),
         "source": "Google News RSS(국문+영문) + 네이버 종목뉴스 (fetch_news.yml — Actions 러너)",
         "keyword_registry": "config/news_keywords.json (news_impact.news_type_impact_pct 와 1:1)",
-        "usage_note": "estimate_target_price v1.2 가 classified 를 auto_news_confidence_factor 할인으로 반영. unclassified 는 라우틴 검토용(manual_news 승격 또는 키워드 보강 → sunday_policy_review).",
+        "usage_note": "하이브리드 분류: ①키워드(fetch_news) 1차 → ②LLM 2차(routine 이 llm_review_queue 를 news_type 으로 분류해 manual_news 승격=즉시반영 또는 키워드 보강=sunday_policy_review). estimate_target_price 가 classified 를 가산점으로 반영.",
+        "classification_summary": {
+            "classified": total_classified,
+            "unclassified": total_uncls,
+            "classified_rate_pct": round(total_classified / denom * 100, 1) if denom else None,
+            "llm_review_pending": len(llm_queue),
+            "note": "classified_rate 가 낮으면 llm_review_queue 를 routine 이 처리해야 함. 키워드 보강분은 차주 재현율로 회수.",
+        },
         "ticker_count": len(tickers),
         "fetched_ok": fetched_ok,
         "classified_total": total_classified,
         "unclassified_total": total_uncls,
         "global_total": len(global_items),
+        "llm_review_queue": llm_queue,
         "tickers": out_tickers,
         "global": global_items,
     }

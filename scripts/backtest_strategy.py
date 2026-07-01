@@ -93,6 +93,52 @@ def compute_regime_hysteresis(index_series, dates, index_ma=200, enter_days=5, e
     return flags
 
 
+def compute_breadth(tickers, dates, ma=200):
+    """각 날짜별 '자기 MA200 위에 있는 종목 비율'(시장 폭). 지수 레벨보다 부드러운 레짐 신호."""
+    out = {}
+    for i, d in enumerate(dates):
+        above = total = 0
+        for v in tickers.values():
+            s = v["series"]
+            cur = s.get(d)
+            m = sma(s, dates, i, ma)
+            if cur and m:
+                total += 1
+                if cur >= m:
+                    above += 1
+        out[d] = (above / total) if total else None
+    return out
+
+
+def compute_regime_breadth(breadth, dates, low=0.40, high=0.55, enter_days=3, exit_days=5):
+    """breadth 히스테리시스 레짐 — 폭이 low 아래로 enter_days 연속이면 방어, high 위로 exit_days 연속이면 복귀.
+
+    이중 임계(low/high) + 일수 지연으로 지수-MA 단일선보다 휩쏘를 줄인다. 반환: list[bool](True=방어).
+    """
+    flags = [False] * len(dates)
+    defensive = False
+    below_run = above_run = 0
+    for i, d in enumerate(dates):
+        b = breadth.get(d)
+        if b is None:
+            flags[i] = defensive
+            continue
+        if b < low:
+            below_run += 1
+            above_run = 0
+        elif b > high:
+            above_run += 1
+            below_run = 0
+        else:
+            below_run = above_run = 0  # 중립대 — 카운터 리셋(경계 노이즈 억제)
+        if not defensive and below_run >= enter_days:
+            defensive = True
+        elif defensive and above_run >= exit_days:
+            defensive = False
+        flags[i] = defensive
+    return flags
+
+
 def backtest(tickers, index_series, dates,
              top_n=5, mom_fast=60, mom_slow=120, trend_ma=200,
              rebal_days=5, start_idx=None, end_idx=None,

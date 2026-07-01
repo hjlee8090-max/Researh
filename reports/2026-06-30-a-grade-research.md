@@ -80,3 +80,6 @@ A의 80%는 **①가격 신선도 + ②약세장 검증** 두 개에 들어 있�
   단일 점수 권위로, `screen_universe` promote/rotate 가 이를 따르게 함(상대강도·품질은 2차 컨텍스트로 강등).
   결과: rotate_out 11→6, **momentum 매수대상인데 회전아웃되던 모순 0건**(한미·LIG·삼성SDI 보호). policy
   `momentum_strategy.discovery_gate`(promote_score_min=30·rotate_score_max=0), momentum_signal 결측 시 RS fallback.
+- [2026-06-30] **breadth 레짐 연구** 완료 — index-MA 휩쏘 문제의 대안 검증. breadth(유니버스 MA200 상회율)가
+  index-MA 를 **전 시나리오 수익 우위**로 압도, 강세장 비용 −176%p→**−56%p** 급감(완만약세는 OFF 를
+  양쪽서 이김). 서킷브레이커 기본 신호를 `regime_type=breadth`로 채택(기본 여전히 OFF). 약점=급격한 급락 지연.

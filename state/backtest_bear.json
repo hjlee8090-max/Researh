@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-06-30T22:16:40+09:00",
+  "as_of": "2026-07-01T09:56:14+09:00",
   "method": "실데이터 일간 로그수익률에 시장 드리프트 δ 합성(상대강도·변동성 보존). 합성 스트레스 — 실제 약세장 아님.",
   "data_window": {
     "start": "2024-01-02",
@@ -14,11 +14,20 @@
     "mom_slow": 120,
     "compared": "regime_filter ON vs OFF(현 권장값)"
   },
-  "regime_hysteresis": {
-    "enter_days": 5,
-    "exit_days": 15,
-    "index_ma": 200,
-    "rule": "지수 MA200 5일 연속 이탈 시 방어(현금), 15일 연속 회복 시 복귀"
+  "regime_configs": {
+    "index_ma": {
+      "enter_days": 5,
+      "exit_days": 15,
+      "index_ma": 200
+    },
+    "breadth": {
+      "low": 0.4,
+      "high": 0.55,
+      "enter_days": 3,
+      "exit_days": 5,
+      "ma": 200,
+      "rule": "유니버스 중 자기 MA200 상회 비율이 low 아래 3일 연속→방어, high 위 5일 연속→복귀"
+    }
   },
   "scenarios": {
     "bull": {
@@ -38,21 +47,21 @@
         "trading_days": 391,
         "n_trades": 56
       },
-      "strategy_regime_on": {
-        "total_return_pct": 157.2,
-        "cagr_pct": 83.8,
-        "sharpe": 1.65,
-        "max_drawdown_pct": -21.5,
-        "trading_days": 391,
-        "n_trades": 40
-      },
-      "strategy_regime_hysteresis": {
+      "strategy_regime_index_ma": {
         "total_return_pct": 96.5,
         "cagr_pct": 54.5,
         "sharpe": 1.25,
         "max_drawdown_pct": -22.4,
         "trading_days": 391,
         "n_trades": 46
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 215.5,
+        "cagr_pct": 109.7,
+        "sharpe": 1.8,
+        "max_drawdown_pct": -22.4,
+        "trading_days": 391,
+        "n_trades": 60
       }
     },
     "bear_40": {
@@ -72,19 +81,19 @@
         "trading_days": 391,
         "n_trades": 50
       },
-      "strategy_regime_on": {
-        "total_return_pct": 32.9,
-        "cagr_pct": 20.1,
-        "sharpe": 0.69,
-        "max_drawdown_pct": -24.1,
-        "trading_days": 391,
-        "n_trades": 18
-      },
-      "strategy_regime_hysteresis": {
+      "strategy_regime_index_ma": {
         "total_return_pct": 16.1,
         "cagr_pct": 10.1,
         "sharpe": 0.44,
         "max_drawdown_pct": -29.8,
+        "trading_days": 391,
+        "n_trades": 24
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 19.4,
+        "cagr_pct": 12.1,
+        "sharpe": 0.58,
+        "max_drawdown_pct": -24.4,
         "trading_days": 391,
         "n_trades": 24
       }
@@ -106,21 +115,21 @@
         "trading_days": 391,
         "n_trades": 52
       },
-      "strategy_regime_on": {
-        "total_return_pct": 42.2,
-        "cagr_pct": 25.5,
-        "sharpe": 0.8,
-        "max_drawdown_pct": -23.4,
-        "trading_days": 391,
-        "n_trades": 18
-      },
-      "strategy_regime_hysteresis": {
+      "strategy_regime_index_ma": {
         "total_return_pct": 25.9,
         "cagr_pct": 16.0,
         "sharpe": 0.58,
         "max_drawdown_pct": -29.2,
         "trading_days": 391,
         "n_trades": 26
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 50.7,
+        "cagr_pct": 30.3,
+        "sharpe": 0.88,
+        "max_drawdown_pct": -24.0,
+        "trading_days": 391,
+        "n_trades": 28
       }
     },
     "crash": {
@@ -140,21 +149,21 @@
         "trading_days": 391,
         "n_trades": 56
       },
-      "strategy_regime_on": {
-        "total_return_pct": 92.0,
-        "cagr_pct": 52.3,
-        "sharpe": 1.33,
-        "max_drawdown_pct": -21.5,
-        "trading_days": 391,
-        "n_trades": 18
-      },
-      "strategy_regime_hysteresis": {
+      "strategy_regime_index_ma": {
         "total_return_pct": 72.1,
         "cagr_pct": 41.9,
         "sharpe": 1.09,
         "max_drawdown_pct": -25.7,
         "trading_days": 391,
         "n_trades": 30
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 79.7,
+        "cagr_pct": 45.9,
+        "sharpe": 1.06,
+        "max_drawdown_pct": -43.8,
+        "trading_days": 391,
+        "n_trades": 44
       }
     },
     "sideways": {
@@ -174,21 +183,21 @@
         "trading_days": 391,
         "n_trades": 52
       },
-      "strategy_regime_on": {
-        "total_return_pct": 66.9,
-        "cagr_pct": 39.1,
-        "sharpe": 0.87,
-        "max_drawdown_pct": -30.7,
-        "trading_days": 391,
-        "n_trades": 32
-      },
-      "strategy_regime_hysteresis": {
+      "strategy_regime_index_ma": {
         "total_return_pct": 33.0,
         "cagr_pct": 20.2,
         "sharpe": 0.61,
         "max_drawdown_pct": -37.9,
         "trading_days": 391,
         "n_trades": 26
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 66.9,
+        "cagr_pct": 39.1,
+        "sharpe": 0.87,
+        "max_drawdown_pct": -30.7,
+        "trading_days": 391,
+        "n_trades": 32
       }
     },
     "reverse": {
@@ -208,21 +217,21 @@
         "trading_days": 391,
         "n_trades": 38
       },
-      "strategy_regime_on": {
-        "total_return_pct": -20.0,
-        "cagr_pct": -13.4,
-        "sharpe": -0.59,
-        "max_drawdown_pct": -25.6,
-        "trading_days": 391,
-        "n_trades": 26
-      },
-      "strategy_regime_hysteresis": {
+      "strategy_regime_index_ma": {
         "total_return_pct": -20.0,
         "cagr_pct": -13.4,
         "sharpe": -0.85,
         "max_drawdown_pct": -25.6,
         "trading_days": 391,
         "n_trades": 24
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 0.0,
+        "cagr_pct": 0.0,
+        "sharpe": 0.0,
+        "max_drawdown_pct": 0.0,
+        "trading_days": 391,
+        "n_trades": 0
       }
     }
   },
@@ -230,63 +239,63 @@
     {
       "scenario": "bull",
       "label": "강세장(원본·트레이드오프 기준)",
-      "hysteresis_return_pct": 96.5,
-      "hysteresis_mdd_pct": -22.4,
-      "hy_vs_off_pp": -175.6,
-      "hy_vs_on_pp": -60.7,
-      "hy_mdd_improvement_vs_bench_pp": -2.5
+      "breadth_return_pct": 215.5,
+      "breadth_mdd_pct": -22.4,
+      "breadth_vs_off_return_pp": -56.6,
+      "breadth_vs_off_mdd_pp": 0.0,
+      "breadth_vs_index_ma_return_pp": 119.0
     },
     {
       "scenario": "bear_40",
       "label": "지속 약세 -40%",
-      "hysteresis_return_pct": 16.1,
-      "hysteresis_mdd_pct": -29.8,
-      "hy_vs_off_pp": -1.6,
-      "hy_vs_on_pp": -16.8,
-      "hy_mdd_improvement_vs_bench_pp": 3.7
+      "breadth_return_pct": 19.4,
+      "breadth_mdd_pct": -24.4,
+      "breadth_vs_off_return_pp": 1.7,
+      "breadth_vs_off_mdd_pp": 10.0,
+      "breadth_vs_index_ma_return_pp": 3.3
     },
     {
       "scenario": "mild_bear_20",
       "label": "완만 약세 -20%",
-      "hysteresis_return_pct": 25.9,
-      "hysteresis_mdd_pct": -29.2,
-      "hy_vs_off_pp": -13.6,
-      "hy_vs_on_pp": -16.3,
-      "hy_mdd_improvement_vs_bench_pp": 0.7
+      "breadth_return_pct": 50.7,
+      "breadth_mdd_pct": -24.0,
+      "breadth_vs_off_return_pp": 11.2,
+      "breadth_vs_off_mdd_pp": 6.5,
+      "breadth_vs_index_ma_return_pp": 24.8
     },
     {
       "scenario": "crash",
       "label": "중반 급락 -35%(30일)",
-      "hysteresis_return_pct": 72.1,
-      "hysteresis_mdd_pct": -25.7,
-      "hy_vs_off_pp": -62.1,
-      "hy_vs_on_pp": -19.9,
-      "hy_mdd_improvement_vs_bench_pp": 16.9
+      "breadth_return_pct": 79.7,
+      "breadth_mdd_pct": -43.8,
+      "breadth_vs_off_return_pp": -54.5,
+      "breadth_vs_off_mdd_pp": 0.0,
+      "breadth_vs_index_ma_return_pp": 7.6
     },
     {
       "scenario": "sideways",
       "label": "횡보+휩쏘(드리프트0·변동성×1.4)",
-      "hysteresis_return_pct": 33.0,
-      "hysteresis_mdd_pct": -37.9,
-      "hy_vs_off_pp": -41.3,
-      "hy_vs_on_pp": -33.9,
-      "hy_mdd_improvement_vs_bench_pp": -2.2
+      "breadth_return_pct": 66.9,
+      "breadth_mdd_pct": -30.7,
+      "breadth_vs_off_return_pp": -7.4,
+      "breadth_vs_off_mdd_pp": 8.3,
+      "breadth_vs_index_ma_return_pp": 33.9
     },
     {
       "scenario": "reverse",
       "label": "시계열 역전(강세장 거울상)",
-      "hysteresis_return_pct": -20.0,
-      "hysteresis_mdd_pct": -25.6,
-      "hy_vs_off_pp": -15.8,
-      "hy_vs_on_pp": 0.0,
-      "hy_mdd_improvement_vs_bench_pp": 3.9
+      "breadth_return_pct": 0.0,
+      "breadth_mdd_pct": 0.0,
+      "breadth_vs_off_return_pp": 4.2,
+      "breadth_vs_off_mdd_pp": 25.6,
+      "breadth_vs_index_ma_return_pp": 20.0
     }
   ],
-  "conclusion": "지수-MA200 레짐 타이밍(고정/히스테리시스)은 '공짜 개선'이 아니라 가혹한 트레이드오프다. 종목별 추세필터가 이미 강세장 MDD 를 통제(-22)하므로, 지수 레짐을 더하면 약세장 방어를 얻는 대신 강세장 수익을 크게(grid 상 -150~-176%p) 반납한다. 따라서 기본값은 OFF(항시투자) 유지가 합리적이며, 동적 레짐은 '거시 약세 증거 누적 시 수동 ON' 하는 서킷브레이커(opt-in)로만 제공한다.",
+  "conclusion": "breadth 레짐이 index_ma 레짐보다 명백히 우월하다 — 강세장 비용이 훨씬 작고(강세장 +272→+216 vs index_ma +96) 완만약세는 OFF 를 수익·낙폭 양쪽서 이긴다. 단 급격한 단기 급락(30일 -35%)은 breadth 지연으로 방어가 약함(index_ma 유리). 종합: 동적 레짐이 필요하면 breadth 를 쓴다. 그래도 강세장 비용(-56%p)이 0은 아니므로 policy 기본은 여전히 enabled=False(항시투자) — 거시 약세 누적 시 breadth 서킷브레이커를 수동 ON.",
   "interpretation": [
-    "bull 행의 HYST 수익이 OFF 대비 크게 낮으면 → 레짐 타이밍의 강세장 비용이 큼(채택은 약세 확신 시에만).",
-    "hy_mdd_improvement_vs_bench (+) = 동적 레짐이 buy&hold 대비 낙폭은 줄임(트레이드오프의 이득 쪽).",
-    "어떤 enter/exit 도 강세장 비용 없이 약세장 방어를 주지 못함 — index-MA 자체가 휩쏘원. 향후 breadth(과반 종목 MA200 상회) 기반 레짐이 대안."
+    "breadth_vs_off_return (+) AND breadth_vs_off_mdd (+, 낙폭 축소) 가 동시면 그 시나리오에선 breadth 가 파레토 개선(완만약세가 대표적).",
+    "breadth_vs_index_ma_return 이 대부분 크게 (+) → breadth 가 강세장·대부분 약세장서 index_ma 보다 수익 우위.",
+    "crash 행에서 breadth MDD 가 안 좋으면 → 급락 방어는 breadth 지연이 약점(향후 breadth+급락감지 併用 여지)."
   ],
   "note": "학습·시뮬레이션. 합성 약세장은 실제 약세장의 상관·점프·유동성 고갈을 완전히 재현하지 못한다(보수적 하한 추정)."
 }

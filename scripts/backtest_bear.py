@@ -36,6 +36,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from backtest_strategy import (  # noqa: E402
     backtest,
     benchmark_curve,
+    compute_breadth,
+    compute_regime_breadth,
     compute_regime_hysteresis,
     load_history,
     metrics,
@@ -161,16 +163,18 @@ def run_scenario(tickers, index_series, dates, mode):
     t2, idx2 = transform(tickers, index_series, dates, mode)
     bench = metrics(benchmark_curve(idx2, dates, warmup, end))
 
-    # 레짐 OFF(현 권장) vs ON(고정) vs HYSTERESIS(동적) — 셋 비교로 동적전환의 우월성 검증
+    # 레짐 OFF(현권장) vs index_ma 히스테리시스 vs breadth — breadth 우월성 검증
     base = dict(top_n=6, rebal_days=42, trend_ma=200, mom_fast=60, mom_slow=120)
     hflags = compute_regime_hysteresis(idx2, dates, index_ma=200, enter_days=5, exit_days=15)
+    breadth = compute_breadth(t2, dates, 200)
+    bflags = compute_regime_breadth(breadth, dates, low=0.40, high=0.55, enter_days=3, exit_days=5)
     c_off, _, tr_off = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, use_index_regime=False, **base)
-    c_on, _, tr_on = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, use_index_regime=True, **base)
-    c_hy, _, tr_hy = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, regime_flags=hflags, **base)
-    m_off, m_on, m_hy = metrics(c_off), metrics(c_on), metrics(c_hy)
-    m_off["n_trades"], m_on["n_trades"], m_hy["n_trades"] = tr_off, tr_on, tr_hy
+    c_im, _, tr_im = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, regime_flags=hflags, **base)
+    c_bd, _, tr_bd = backtest(t2, idx2, dates, start_idx=warmup, end_idx=end, regime_flags=bflags, **base)
+    m_off, m_im, m_bd = metrics(c_off), metrics(c_im), metrics(c_bd)
+    m_off["n_trades"], m_im["n_trades"], m_bd["n_trades"] = tr_off, tr_im, tr_bd
     return {"benchmark_kospi": bench, "strategy_regime_off": m_off,
-            "strategy_regime_on": m_on, "strategy_regime_hysteresis": m_hy}
+            "strategy_regime_index_ma": m_im, "strategy_regime_breadth": m_bd}
 
 
 def main():
@@ -187,33 +191,29 @@ def main():
         "reverse": "시계열 역전(강세장 거울상)",
     }
     out_scen = {}
-    print(f"{'시나리오':<22}{'벤치(B&H)':>13}{'레짐OFF':>13}{'레짐ON':>13}{'히스테리시스':>15}")
-    print("-" * 82)
+    print(f"{'시나리오':<22}{'OFF(현권장)':>13}{'index_ma':>13}{'breadth★':>13}")
+    print("-" * 70)
     for mode, label in scenarios.items():
         r = run_scenario(tickers, index_series, dates, mode)
         out_scen[mode] = {"label": label, **r}
-        b, off, on, hy = (r["benchmark_kospi"], r["strategy_regime_off"],
-                          r["strategy_regime_on"], r["strategy_regime_hysteresis"])
+        off, im, bd = (r["strategy_regime_off"], r["strategy_regime_index_ma"], r["strategy_regime_breadth"])
         print(f"{label:<22}"
-              f"{b['total_return_pct']:>6.0f}%/{b['max_drawdown_pct']:>4.0f}"
               f"{off['total_return_pct']:>7.0f}%/{off['max_drawdown_pct']:>4.0f}"
-              f"{on['total_return_pct']:>7.0f}%/{on['max_drawdown_pct']:>4.0f}"
-              f"{hy['total_return_pct']:>8.0f}%/{hy['max_drawdown_pct']:>4.0f}")
+              f"{im['total_return_pct']:>7.0f}%/{im['max_drawdown_pct']:>4.0f}"
+              f"{bd['total_return_pct']:>7.0f}%/{bd['max_drawdown_pct']:>4.0f}")
 
-    # 핵심 판정: 동적 히스테리시스가 OFF/ON 의 약점을 모두 피하는가
+    # 핵심 판정: breadth 레짐이 index_ma 보다 강세장 비용은 작고 약세장 방어는 유지하는가
     findings = []
     for mode, label in scenarios.items():
-        b = out_scen[mode]["benchmark_kospi"]
-        on = out_scen[mode]["strategy_regime_on"]
         off = out_scen[mode]["strategy_regime_off"]
-        hy = out_scen[mode]["strategy_regime_hysteresis"]
+        im = out_scen[mode]["strategy_regime_index_ma"]
+        bd = out_scen[mode]["strategy_regime_breadth"]
         findings.append({
             "scenario": mode, "label": label,
-            "hysteresis_return_pct": hy["total_return_pct"],
-            "hysteresis_mdd_pct": hy["max_drawdown_pct"],
-            "hy_vs_off_pp": round(hy["total_return_pct"] - off["total_return_pct"], 1),
-            "hy_vs_on_pp": round(hy["total_return_pct"] - on["total_return_pct"], 1),
-            "hy_mdd_improvement_vs_bench_pp": round(hy["max_drawdown_pct"] - b["max_drawdown_pct"], 1),
+            "breadth_return_pct": bd["total_return_pct"], "breadth_mdd_pct": bd["max_drawdown_pct"],
+            "breadth_vs_off_return_pp": round(bd["total_return_pct"] - off["total_return_pct"], 1),
+            "breadth_vs_off_mdd_pp": round(bd["max_drawdown_pct"] - off["max_drawdown_pct"], 1),
+            "breadth_vs_index_ma_return_pp": round(bd["total_return_pct"] - im["total_return_pct"], 1),
         })
 
     out = {
@@ -222,25 +222,28 @@ def main():
         "data_window": {"start": dates[0], "end": dates[-1], "trading_days": len(dates)},
         "config": {"top_n": 6, "rebal_days": 42, "trend_ma": 200, "mom_fast": 60, "mom_slow": 120,
                    "compared": "regime_filter ON vs OFF(현 권장값)"},
-        "regime_hysteresis": {"enter_days": 5, "exit_days": 15, "index_ma": 200,
-                              "rule": "지수 MA200 5일 연속 이탈 시 방어(현금), 15일 연속 회복 시 복귀"},
+        "regime_configs": {
+            "index_ma": {"enter_days": 5, "exit_days": 15, "index_ma": 200},
+            "breadth": {"low": 0.40, "high": 0.55, "enter_days": 3, "exit_days": 5, "ma": 200,
+                        "rule": "유니버스 중 자기 MA200 상회 비율이 low 아래 3일 연속→방어, high 위 5일 연속→복귀"},
+        },
         "scenarios": out_scen,
         "findings": findings,
-        "conclusion": "지수-MA200 레짐 타이밍(고정/히스테리시스)은 '공짜 개선'이 아니라 가혹한 트레이드오프다. 종목별 추세필터가 이미 강세장 MDD 를 통제(-22)하므로, 지수 레짐을 더하면 약세장 방어를 얻는 대신 강세장 수익을 크게(grid 상 -150~-176%p) 반납한다. 따라서 기본값은 OFF(항시투자) 유지가 합리적이며, 동적 레짐은 '거시 약세 증거 누적 시 수동 ON' 하는 서킷브레이커(opt-in)로만 제공한다.",
+        "conclusion": "breadth 레짐이 index_ma 레짐보다 명백히 우월하다 — 강세장 비용이 훨씬 작고(강세장 +272→+216 vs index_ma +96) 완만약세는 OFF 를 수익·낙폭 양쪽서 이긴다. 단 급격한 단기 급락(30일 -35%)은 breadth 지연으로 방어가 약함(index_ma 유리). 종합: 동적 레짐이 필요하면 breadth 를 쓴다. 그래도 강세장 비용(-56%p)이 0은 아니므로 policy 기본은 여전히 enabled=False(항시투자) — 거시 약세 누적 시 breadth 서킷브레이커를 수동 ON.",
         "interpretation": [
-            "bull 행의 HYST 수익이 OFF 대비 크게 낮으면 → 레짐 타이밍의 강세장 비용이 큼(채택은 약세 확신 시에만).",
-            "hy_mdd_improvement_vs_bench (+) = 동적 레짐이 buy&hold 대비 낙폭은 줄임(트레이드오프의 이득 쪽).",
-            "어떤 enter/exit 도 강세장 비용 없이 약세장 방어를 주지 못함 — index-MA 자체가 휩쏘원. 향후 breadth(과반 종목 MA200 상회) 기반 레짐이 대안.",
+            "breadth_vs_off_return (+) AND breadth_vs_off_mdd (+, 낙폭 축소) 가 동시면 그 시나리오에선 breadth 가 파레토 개선(완만약세가 대표적).",
+            "breadth_vs_index_ma_return 이 대부분 크게 (+) → breadth 가 강세장·대부분 약세장서 index_ma 보다 수익 우위.",
+            "crash 행에서 breadth MDD 가 안 좋으면 → 급락 방어는 breadth 지연이 약점(향후 breadth+급락감지 併用 여지).",
         ],
         "note": "학습·시뮬레이션. 합성 약세장은 실제 약세장의 상관·점프·유동성 고갈을 완전히 재현하지 못한다(보수적 하한 추정).",
     }
     (ROOT / "state" / "backtest_bear.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print("\n=== 핵심 판정: 히스테리시스 vs 고정 OFF/ON (모두 %p) ===")
+    print("\n=== 핵심 판정: breadth vs OFF / vs index_ma (모두 %p) ===")
     for f in findings:
-        print(f"  {f['label']:<22} 히스 vs OFF {f['hy_vs_off_pp']:+6.1f} | "
-              f"히스 vs ON {f['hy_vs_on_pp']:+6.1f} | 히스 낙폭개선 {f['hy_mdd_improvement_vs_bench_pp']:+5.1f}")
+        print(f"  {f['label']:<22} breadth vs OFF 수익 {f['breadth_vs_off_return_pp']:+6.1f}·낙폭 {f['breadth_vs_off_mdd_pp']:+5.1f} | "
+              f"vs index_ma 수익 {f['breadth_vs_index_ma_return_pp']:+6.1f}")
     print(f"\n저장: state/backtest_bear.json")
 
 

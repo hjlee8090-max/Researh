@@ -45,13 +45,22 @@
     "config_note": "top_n/min_score/tracked_only 는 momentum_signal.py 가 이 블록에서 읽어 적용(코드 수정 없이 튜닝). 백테스트 검증범위: top_n 5~10, MA 100~200 (Sharpe 2.0~2.34 군집). min_score·tracked_only 는 충전재·미추적 종목 배제용 신규 게이트(2026-06-30).",
     "regime_circuit_breaker": {
       "enabled": false,
-      "purpose": "동적 레짐 서킷브레이커(opt-in). backtest_bear.py 검증: 지수-MA200 레짐 타이밍은 강세장 수익을 크게(-150~-176%p) 반납하는 트레이드오프라 기본 OFF. 종목별 추세필터가 이미 강세장 MDD 통제. 거시 약세 증거(연속 지표 악화·지수 추세붕괴)가 누적될 때만 routine/운영자가 수동 ON 하는 안전판.",
+      "purpose": "동적 레짐 서킷브레이커(opt-in). regime_type=breadth(권장): 시장 폭이 낮아 다수 종목이 추세 이탈하면 방어. index_ma 대비 강세장 비용이 작아 트레이드오프가 개선됨(backtest_bear.json). 기본 enabled=False — 거시 약세 증거 누적 시 수동 ON.",
       "index_ma": 200,
       "enter_days": 5,
       "exit_days": 15,
       "action_when_defensive": "executable_allocation 을 현금화(orders 비움)하고 target_basket 에 defensive 플래그. 진입 신호만 차단하며 기존 보유 청산은 routine 의 손절·회전 룰이 별도 판단.",
       "rule": "지수 종가가 MA200 아래로 enter_days 연속 이탈 시 방어 ON, MA200 위로 exit_days 연속 회복 시 OFF(히스테리시스로 휩쏘 억제).",
-      "backtest_ref": "state/backtest_bear.json — 강세장 비용 vs 약세장 방어 트레이드오프 수치."
+      "backtest_ref": "state/backtest_bear.json — 강세장 비용 vs 약세장 방어 트레이드오프 수치.",
+      "regime_type": "breadth",
+      "breadth": {
+        "ma": 200,
+        "low": 0.4,
+        "high": 0.55,
+        "enter_days": 3,
+        "exit_days": 5,
+        "rationale": "backtest_bear.py 검증: breadth(유니버스 중 자기 MA200 상회 비율) 레짐은 index-MA 레짐보다 강세장 비용이 훨씬 작다(강세장 +272→+216 vs indexMA +96) + 완만약세는 OFF를 수익·낙폭 양쪽서 이김. 단 급격한 단기 급락은 breadth 지연으로 방어가 약함(index_ma 가 유리)."
+      }
     },
     "discovery_gate": {
       "enabled": true,

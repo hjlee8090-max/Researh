@@ -48,13 +48,14 @@ def load_config():
 
 
 def regime_circuit_breaker():
-    """동적 레짐 서킷브레이커(opt-in, 기본 OFF). 지수 MA200 히스테리시스로 방어 여부 판정.
+    """동적 레짐 서킷브레이커(opt-in, 기본 OFF). regime_type=breadth(권장) 또는 index_ma.
 
-    backtest_bear.py 검증 결과 지수-MA200 레짐 타이밍은 강세장 수익을 크게 반납하는
-    트레이드오프라 policy 에서 enabled=False 가 기본. 거시 약세 증거 누적 시 운영자가 ON.
+    backtest_bear.py 검증: breadth(유니버스 중 자기 MA200 상회 비율) 레짐이 index-MA 보다
+    강세장 비용이 훨씬 작아 트레이드오프 우수. 어느 쪽이든 강세장 수익을 일부 반납하므로
+    policy 기본 enabled=False. 거시 약세 증거 누적 시 운영자가 ON.
     반환: {enabled, defensive, ...} — enabled False 면 항상 defensive False.
     """
-    out = {"enabled": False, "defensive": False, "below_run": 0, "above_run": 0, "note": None}
+    out = {"enabled": False, "defensive": False, "note": None}
     try:
         cfg = json.load(open(ROOT / "config" / "policy.json"))["momentum_strategy"]["regime_circuit_breaker"]
     except Exception:
@@ -62,36 +63,35 @@ def regime_circuit_breaker():
     if not cfg.get("enabled", False):
         return out
     out["enabled"] = True
-    ma_win = int(cfg.get("index_ma", 200))
-    enter_days = int(cfg.get("enter_days", 5))
-    exit_days = int(cfg.get("exit_days", 15))
+    regime_type = cfg.get("regime_type", "breadth")
+    out["regime_type"] = regime_type
     try:
-        idx = json.load(open(ROOT / "state" / "price_history.json")).get("index", {})
-        bars = sorted((b for b in idx.get("bars", []) if b.get("close")), key=lambda b: b["date"])
-        closes = [float(b["close"]) for b in bars]
-    except Exception:
-        out["note"] = "index 시계열 없음 — 방어 미발동(보수적으로 invested 유지)"
-        return out
-    if len(closes) < ma_win + 1:
-        out["note"] = "index 데이터 부족 — 방어 미발동"
-        return out
-    defensive = False
-    below_run = above_run = 0
-    for i in range(ma_win - 1, len(closes)):
-        ma = sum(closes[i - ma_win + 1:i + 1]) / ma_win
-        cur = closes[i]
-        if cur < ma:
-            below_run += 1
-            above_run = 0
-        else:
-            above_run += 1
-            below_run = 0
-        if not defensive and below_run >= enter_days:
-            defensive = True
-        elif defensive and above_run >= exit_days:
-            defensive = False
-    out.update({"defensive": defensive, "below_run": below_run, "above_run": above_run,
-                "index_ma": ma_win, "enter_days": enter_days, "exit_days": exit_days})
+        if regime_type == "breadth":
+            from backtest_strategy import load_history, compute_breadth, compute_regime_breadth
+            bcfg = cfg.get("breadth", {})
+            tickers, _idx, dates = load_history()
+            if not dates:
+                out["note"] = "price_history 없음 — 방어 미발동"
+                return out
+            breadth = compute_breadth(tickers, dates, int(bcfg.get("ma", 200)))
+            flags = compute_regime_breadth(breadth, dates, float(bcfg.get("low", 0.40)),
+                                           float(bcfg.get("high", 0.55)),
+                                           int(bcfg.get("enter_days", 3)), int(bcfg.get("exit_days", 5)))
+            out.update({"defensive": bool(flags[-1]),
+                        "current_breadth": round(breadth.get(dates[-1]) or 0.0, 3),
+                        "low": bcfg.get("low", 0.40), "high": bcfg.get("high", 0.55)})
+        else:  # index_ma
+            from backtest_strategy import load_history, compute_regime_hysteresis
+            ma_win = int(cfg.get("index_ma", 200))
+            _tk, index_series, dates = load_history()
+            if len(dates) < ma_win + 1:
+                out["note"] = "index 데이터 부족 — 방어 미발동"
+                return out
+            flags = compute_regime_hysteresis(index_series, dates, ma_win,
+                                              int(cfg.get("enter_days", 5)), int(cfg.get("exit_days", 15)))
+            out.update({"defensive": bool(flags[-1]), "index_ma": ma_win})
+    except Exception as e:
+        out["note"] = f"레짐 계산 실패({type(e).__name__}) — 방어 미발동(보수적 invested)"
     return out
 
 
@@ -324,12 +324,12 @@ def main():
         },
         "regime_circuit_breaker": {
             "enabled": regime["enabled"],
+            "regime_type": regime.get("regime_type"),
             "defensive": regime["defensive"],
-            "below_run": regime.get("below_run"),
-            "above_run": regime.get("above_run"),
+            "current_breadth": regime.get("current_breadth"),
             "note": regime.get("note") or ("방어 발동 — 신규 진입 차단(현금)" if regime["defensive"]
                     else ("감시 중(invested)" if regime["enabled"] else "비활성(기본 OFF) — 항시투자")),
-            "backtest_ref": "state/backtest_bear.json (강세장 비용 vs 약세장 방어 트레이드오프)",
+            "backtest_ref": "state/backtest_bear.json (breadth vs index_ma 트레이드오프)",
         },
         "strategy": f"dual-momentum rotation Top{TOP_N}, score_floor≥{MIN_SCORE:g}, tracked_only={TRACKED_ONLY}, MA200 trend filter",
         "config": {"top_n": TOP_N, "min_score": MIN_SCORE, "tracked_only": TRACKED_ONLY,
@@ -385,8 +385,9 @@ def main():
     print(f"데이터 기준일: {data_as_of} (effective {_date10(effective_as_of)})")
     print(f"게이트: 점수하한≥{MIN_SCORE:g} · 추적전용={TRACKED_ONLY}")
     if regime["enabled"]:
-        print(f"레짐 서킷브레이커: {'🛑 방어(현금화)' if regime['defensive'] else '👀 감시(invested)'} "
-              f"(MA200 below_run={regime.get('below_run')}/{regime.get('enter_days')})")
+        detail = f"breadth={regime.get('current_breadth')}" if regime.get("regime_type") == "breadth" else "index-MA"
+        print(f"레짐 서킷브레이커[{regime.get('regime_type')}]: "
+              f"{'🛑 방어(현금화)' if regime['defensive'] else '👀 감시(invested)'} ({detail})")
     print(f"적격(추세+모멘텀): {len(eligible)}개 → 매수대상(게이트 통과): {len(buyable)}개 / 전체 {len(ranked)}개")
     if skipped_below_floor:
         print(f"  ↓점수하한 미달 제외: " + ", ".join(f"{r['name']}({r['score']:.1f})" for r in skipped_below_floor))

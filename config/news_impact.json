@@ -21,9 +21,21 @@
     "auto_news_note": "state/news_feed.json(fetch_news.py 키워드 자동 분류)의 항목은 factor 할인으로 반영한다 — 자동은 후보, 확정은 검증(manual_news). 같은 유형의 manual 기록이 ±5일 내 있으면 manual 우선. 유형당 최신 1건만(같은 기사 도배 방지)."
   },
   "event_type_impact_pct": {
-    "earnings_report": {"high": 6.0, "medium": 3.0, "low": 1.0},
-    "dividend": {"high": 2.0, "medium": 1.0, "low": 0.5},
-    "macro": {"high": 0.0, "medium": 0.0, "low": 0.0}
+    "earnings_report": {
+      "high": 6.0,
+      "medium": 3.0,
+      "low": 1.0
+    },
+    "dividend": {
+      "high": 2.0,
+      "medium": 1.0,
+      "low": 0.5
+    },
+    "macro": {
+      "high": 0.0,
+      "medium": 0.0,
+      "low": 0.0
+    }
   },
   "earnings_signal_direction": {
     "strong_growth": 1.0,
@@ -34,18 +46,58 @@
     "unknown": 0.0
   },
   "news_type_impact_pct": {
-    "supply_contract_major": {"impact_pct": 8.0, "label": "대형 공급계약·고객사 공식 지명 (예: NVIDIA HBM 공급사 지명)"},
-    "earnings_surprise_beat": {"impact_pct": 6.0, "label": "실적 서프라이즈(컨센 상회 beat)"},
-    "tech_breakthrough": {"impact_pct": 6.0, "label": "기술 돌파·신제품 양산 개시"},
-    "order_backlog_surprise": {"impact_pct": 5.0, "label": "수주 서프라이즈·수주잔고 급증"},
-    "buyback_cancellation": {"impact_pct": 4.0, "label": "자사주 매입·소각, 배당 확대(주주환원)"},
-    "analyst_target_upgrade": {"impact_pct": 3.0, "label": "증권사 목표주가 상향(복수 기관)"},
-    "policy_support": {"impact_pct": 3.0, "label": "정부 정책 수혜(밸류업·보조금·규제완화)"},
-    "labor_or_litigation_resolved": {"impact_pct": 2.0, "label": "노사분규·소송 리스크 해소"},
-    "labor_dispute": {"impact_pct": -3.0, "label": "파업·노사 갈등 발생"},
-    "regulation_or_tariff": {"impact_pct": -4.0, "label": "규제·관세 역풍"},
-    "supply_glut_or_price_drop": {"impact_pct": -5.0, "label": "공급과잉·판가 하락"},
-    "earnings_miss_or_guidance_cut": {"impact_pct": -6.0, "label": "실적 miss·가이던스 컷"}
+    "supply_contract_major": {
+      "impact_pct": 8.0,
+      "label": "대형 공급계약·고객사 공식 지명 (예: NVIDIA HBM 공급사 지명)"
+    },
+    "earnings_surprise_beat": {
+      "impact_pct": 6.0,
+      "label": "실적 서프라이즈(컨센 상회 beat)"
+    },
+    "tech_breakthrough": {
+      "impact_pct": 6.0,
+      "label": "기술 돌파·신제품 양산 개시"
+    },
+    "order_backlog_surprise": {
+      "impact_pct": 5.0,
+      "label": "수주 서프라이즈·수주잔고 급증"
+    },
+    "buyback_cancellation": {
+      "impact_pct": 4.0,
+      "label": "자사주 매입·소각, 배당 확대(주주환원)"
+    },
+    "analyst_target_upgrade": {
+      "impact_pct": 3.0,
+      "label": "증권사 목표주가 상향(복수 기관)"
+    },
+    "policy_support": {
+      "impact_pct": 3.0,
+      "label": "정부 정책 수혜(밸류업·보조금·규제완화)"
+    },
+    "labor_or_litigation_resolved": {
+      "impact_pct": 2.0,
+      "label": "노사분규·소송 리스크 해소"
+    },
+    "labor_dispute": {
+      "impact_pct": -3.0,
+      "label": "파업·노사 갈등 발생"
+    },
+    "regulation_or_tariff": {
+      "impact_pct": -4.0,
+      "label": "규제·관세 역풍"
+    },
+    "supply_glut_or_price_drop": {
+      "impact_pct": -5.0,
+      "label": "공급과잉·판가 하락"
+    },
+    "earnings_miss_or_guidance_cut": {
+      "impact_pct": -6.0,
+      "label": "실적 miss·가이던스 컷"
+    },
+    "capex_expansion": {
+      "impact_pct": 3.0,
+      "label": "대규모 투자·증설 발표(생산능력 확대 — 중장기 성장 시그널)"
+    }
   },
   "manual_news_schema": "{ticker, type(news_type_impact_pct 키), date(YYYY-MM-DD, 게재일), note, source_url, impact_pct(생략 시 테이블값)} — 0900/1800 routine 또는 sunday_strategy 가 출처 URL+게재일과 함께 추가한다(web_verify_guard.source_date_verification 동일 적용). news_decay_days 가 지난 항목은 자동 0 반영이므로 삭제하지 않아도 된다.",
   "calibration": {

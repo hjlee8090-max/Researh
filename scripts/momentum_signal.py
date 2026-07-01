@@ -26,10 +26,154 @@ ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 
 # 검증된 권장 파라미터(backtest_strategy.json.recommended_config 와 일치)
-TOP_N = 10
+# top_n / min_score 는 config/policy.json.momentum_strategy.config 로 오버라이드 가능(아래 load_config).
+TOP_N = 6          # Top10 → Top6 축소: 강한 추세주 집중(후행주 충전재 배제). 백테스트 Top5~6 Sharpe 2.16~2.34.
+MIN_SCORE = 30.0   # 모멘텀 점수 하한 — 이 값 미만은 바스켓 제외(은행 등 저모멘텀 충전재 자동 탈락).
+TRACKED_ONLY = True  # 추적 대상(candidates ∪ 보유) 종목만 매수. 미추적 트렌드주는 screen_universe→candidates 승격 후에만.
+MIN_TRADABLE = 2   # 매수대상 < 이 값이면 floor 완화 폴백(추적·추세 게이트는 유지 — 마름 방지).
+MIN_TRADE_KRW = 100000  # 이 미만 지시 매수는 dust 로 skip(오드랏 방지).
 MOM_FAST = 60
 MOM_SLOW = 120
 TREND_MA = 200
+
+
+def load_config():
+    """policy.json.momentum_strategy.config 로 파라미터 오버라이드(코드 수정 없이 튜닝)."""
+    global TOP_N, MIN_SCORE, TRACKED_ONLY, MIN_TRADABLE, MIN_TRADE_KRW
+    try:
+        cfg = json.load(open(ROOT / "config" / "policy.json"))["momentum_strategy"]["config"]
+        TOP_N = int(cfg.get("top_n", TOP_N))
+        MIN_SCORE = float(cfg.get("min_score", MIN_SCORE))
+        TRACKED_ONLY = bool(cfg.get("tracked_only", TRACKED_ONLY))
+        MIN_TRADABLE = int(cfg.get("min_tradable", MIN_TRADABLE))
+        MIN_TRADE_KRW = float(cfg.get("min_trade_krw", MIN_TRADE_KRW))
+    except Exception:
+        pass
+
+
+def regime_circuit_breaker():
+    """동적 레짐 서킷브레이커(opt-in, 기본 OFF). regime_type=breadth(권장) 또는 index_ma.
+
+    backtest_bear.py 검증: breadth(유니버스 중 자기 MA200 상회 비율) 레짐이 index-MA 보다
+    강세장 비용이 훨씬 작아 트레이드오프 우수. 어느 쪽이든 강세장 수익을 일부 반납하므로
+    policy 기본 enabled=False. 거시 약세 증거 누적 시 운영자가 ON.
+    반환: {enabled, defensive, ...} — enabled False 면 항상 defensive False.
+    """
+    out = {"enabled": False, "defensive": False, "note": None}
+    try:
+        cfg = json.load(open(ROOT / "config" / "policy.json"))["momentum_strategy"]["regime_circuit_breaker"]
+    except Exception:
+        return out
+    if not cfg.get("enabled", False):
+        return out
+    out["enabled"] = True
+    regime_type = cfg.get("regime_type", "breadth")
+    out["regime_type"] = regime_type
+    try:
+        if regime_type == "breadth":
+            from backtest_strategy import load_history, compute_breadth, compute_regime_breadth
+            bcfg = cfg.get("breadth", {})
+            tickers, _idx, dates = load_history()
+            if not dates:
+                out["note"] = "price_history 없음 — 방어 미발동"
+                return out
+            breadth = compute_breadth(tickers, dates, int(bcfg.get("ma", 200)))
+            flags = compute_regime_breadth(breadth, dates, float(bcfg.get("low", 0.40)),
+                                           float(bcfg.get("high", 0.55)),
+                                           int(bcfg.get("enter_days", 3)), int(bcfg.get("exit_days", 5)))
+            out.update({"defensive": bool(flags[-1]),
+                        "current_breadth": round(breadth.get(dates[-1]) or 0.0, 3),
+                        "low": bcfg.get("low", 0.40), "high": bcfg.get("high", 0.55)})
+        else:  # index_ma
+            from backtest_strategy import load_history, compute_regime_hysteresis
+            ma_win = int(cfg.get("index_ma", 200))
+            _tk, index_series, dates = load_history()
+            if len(dates) < ma_win + 1:
+                out["note"] = "index 데이터 부족 — 방어 미발동"
+                return out
+            flags = compute_regime_hysteresis(index_series, dates, ma_win,
+                                              int(cfg.get("enter_days", 5)), int(cfg.get("exit_days", 15)))
+            out.update({"defensive": bool(flags[-1]), "index_ma": ma_win})
+    except Exception as e:
+        out["note"] = f"레짐 계산 실패({type(e).__name__}) — 방어 미발동(보수적 invested)"
+    return out
+
+
+def tracked_tickers():
+    """매수 허용 추적 집합 = candidates.json 후보 ∪ 현재 보유 종목.
+
+    momentum 바스켓이 30종목 가격풀에서 자유롭게 뽑던 것을 '추적 중인 종목'으로 제한한다.
+    신규 트렌드주는 screen_universe.py 가 candidates 승격을 '제안'하고 routine 이 thesis 와 함께
+    승격해야 매수 대상이 된다(바스켓이 스스로 추적목록에 역등록하던 순환 차단).
+    """
+    tracked: set[str] = set()
+    try:
+        cand = json.load(open(ROOT / "config" / "candidates.json")).get("candidates", [])
+        tracked |= {c.get("ticker") for c in cand if isinstance(c, dict) and c.get("ticker")}
+    except Exception:
+        pass
+    try:
+        pos = json.load(open(ROOT / "config" / "portfolio.json")).get("positions", [])
+        tracked |= {p.get("ticker") for p in pos if isinstance(p, dict) and p.get("ticker")}
+    except Exception:
+        pass
+    return tracked
+
+
+def _date10(s):
+    """ISO/날짜 문자열의 앞 10자(YYYY-MM-DD)만 — 비교용. 실패 시 빈 문자열."""
+    return s[:10] if isinstance(s, str) and len(s) >= 10 else ""
+
+
+def fresh_overlay(tickers, history_as_of):
+    """price_history(주간 Actions 갱신, stale 가능)에 fresh snapshot 의 당일 종가를 덧입힌다.
+
+    momentum_signal 의 1순위 입력인 price_history.json 이 묵으면(Actions 미실행 등) 60·120일
+    모멘텀이 묵은 '현재가'로 계산돼 추세 신호가 지연된다. market_snapshot 이 더 신선하면 종목별
+    last_close 를 최신 봉으로 덧입혀 '오늘 가격 대비 모멘텀'을 회복한다(numerator 보정).
+
+    한계: 스냅샷은 당일 1점만 주므로 history 와의 거래일 공백(누락 봉)은 못 메운다 — 룩백
+    구간이 공백만큼 어긋날 수 있다(메타에 기록). 신뢰도 low 출처는 덧입히지 않는다.
+    반환: overlay 메타(dict).
+    """
+    meta = {"applied": False, "history_as_of": history_as_of, "snapshot_as_of": None,
+            "overlaid": [], "skipped_low_conf": [], "stale_history": False, "warning": None}
+    try:
+        snap = json.load(open(ROOT / "state" / "market_snapshot.json"))
+    except Exception:
+        meta["warning"] = "snapshot 없음 — price_history 그대로 사용"
+        return meta
+    snap_as_of = snap.get("as_of")
+    meta["snapshot_as_of"] = snap_as_of
+    h10, s10 = _date10(history_as_of), _date10(snap_as_of)
+    meta["stale_history"] = bool(h10 and s10 and s10 > h10)
+    snap_tk = snap.get("tickers", {}) if isinstance(snap, dict) else {}
+    # 스냅샷이 history 보다 신선할 때만 덧입힌다(같거나 더 묵으면 보정 의미 없음).
+    if not (meta["stale_history"] and snap_tk):
+        if h10 and s10 and s10 == h10:
+            meta["warning"] = "price_history 와 snapshot 동일 기준일 — 보정 불필요"
+        elif not meta["stale_history"]:
+            meta["warning"] = "price_history 가 snapshot 보다 신선하거나 비교불가 — 보정 안 함"
+        return meta
+    for tk, t in tickers.items():
+        st = snap_tk.get(tk)
+        if not isinstance(st, dict):
+            continue
+        close = st.get("last_close")
+        if not isinstance(close, (int, float)) or close <= 0:
+            continue
+        if st.get("confidence") == "low":  # 저신뢰 출처는 추격 금지(가격 신뢰 게이트 일관)
+            meta["skipped_low_conf"].append(tk)
+            continue
+        # 당일 종가를 새 봉으로 추가(history 마지막 봉은 보존, MA200 은 최신 포함). 같은 날이면 교체.
+        if _date10(t["dates"][-1]) == s10:
+            t["closes"][-1] = float(close)
+        else:
+            t["dates"].append(s10)
+            t["closes"].append(float(close))
+        meta["overlaid"].append(tk)
+    meta["applied"] = bool(meta["overlaid"])
+    return meta
 
 
 def load():
@@ -95,6 +239,9 @@ def executable_allocation(eligible, equity, min_cash_pct=10.0, per_name_cap_pct=
         if shares <= 0:
             continue
         cost = shares * r["close"]
+        # min-trade: dust 규모 지시 매수는 skip(오드랏·회전비용 대비 무의미)
+        if cost < MIN_TRADE_KRW:
+            continue
         spent += cost
         orders.append({"ticker": r["ticker"], "name": r["name"], "shares": shares,
                        "price": r["close"], "cost": round(cost),
@@ -104,18 +251,54 @@ def executable_allocation(eligible, equity, min_cash_pct=10.0, per_name_cap_pct=
 
 
 def main():
+    load_config()
+    tracked = tracked_tickers() if TRACKED_ONLY else None
     tickers, data_as_of = load()
+    # 1순위 신선도 가드: price_history 가 묵었으면 fresh snapshot 종가로 최신 봉 보정
+    overlay = fresh_overlay(tickers, data_as_of)
+    effective_as_of = overlay["snapshot_as_of"] if overlay["applied"] else data_as_of
     ranked = []
     for tk, v in tickers.items():
         s = score_ticker(v["closes"])
         s["ticker"] = tk
         s["name"] = v["name"]
+        # 기본 자격: 추세(가격>MA200) AND 절대모멘텀>0
         s["pass_filter"] = bool(s["in_uptrend"] and s["score"] > 0)
+        # 추가 게이트: 모멘텀 점수 하한 + 추적 대상 여부
+        s["above_floor"] = bool(s["score"] >= MIN_SCORE)
+        s["tracked"] = (tracked is None) or (tk in tracked)
+        s["buyable"] = bool(s["pass_filter"] and s["above_floor"] and s["tracked"])
         ranked.append(s)
 
+    # 자격(추세+모멘텀) 통과분 — 랭킹·진단 표시용(게이트 적용 전 전체 모습)
     eligible = sorted([r for r in ranked if r["pass_filter"]],
                       key=lambda r: -r["score"])
-    target = eligible[:TOP_N]
+    # 실제 매수 대상 = 자격 + 점수하한 + 추적 게이트 모두 통과
+    buyable = sorted([r for r in ranked if r["buyable"]], key=lambda r: -r["score"])
+    # 게이트에 걸려 제외된 종목(투명성 — routine 이 승격/재평가 판단에 사용)
+    skipped_below_floor = [
+        {"ticker": r["ticker"], "name": r["name"], "score": r["score"]}
+        for r in eligible if not r["above_floor"]
+    ]
+    skipped_untracked = [
+        {"ticker": r["ticker"], "name": r["name"], "score": r["score"]}
+        for r in eligible if r["above_floor"] and not r["tracked"]
+    ]
+    # tradable 폴백: 매수대상 < MIN_TRADABLE 이면 floor 만 완화해 채운다(추적·추세 게이트는 유지 —
+    # 미추적/하락 종목을 사는 게 아니라, 추적+추세통과(score>0)인데 floor 미달인 최선 종목으로 마름 방지).
+    floor_relaxed = []
+    if len(buyable) < MIN_TRADABLE:
+        fill = sorted([r for r in ranked
+                       if r["pass_filter"] and r["tracked"] and not r["above_floor"]],
+                      key=lambda r: -r["score"])
+        for r in fill:
+            if len(buyable) >= MIN_TRADABLE:
+                break
+            r["buyable"] = True
+            buyable.append(r)
+            floor_relaxed.append({"ticker": r["ticker"], "name": r["name"], "score": r["score"]})
+        buyable.sort(key=lambda r: -r["score"])
+    target = buyable[:TOP_N]
     target_tickers = [r["ticker"] for r in target]
     weight = round(1.0 / TOP_N, 4)
     cash_weight = round(1.0 - weight * len(target), 4)
@@ -137,17 +320,46 @@ def main():
         equity = float(json.load(open(ROOT / "config" / "portfolio.json")).get("equity", equity))
     except Exception:
         pass
-    exec_orders, cash_left, cash_left_pct = executable_allocation(eligible, equity)
+    # 동적 레짐 서킷브레이커(opt-in, 기본 OFF): 방어 시 신규 진입 차단(현금화)
+    regime = regime_circuit_breaker()
+    if regime["enabled"] and regime["defensive"]:
+        exec_orders, cash_left, cash_left_pct = [], round(equity), 100.0
+    else:
+        # 매수 대상(buyable)만 정수주 배분 — 점수하한·추적 게이트 통과분으로 제한
+        exec_orders, cash_left, cash_left_pct = executable_allocation(buyable, equity)
 
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "data_as_of": data_as_of,
-        "strategy": "dual-momentum rotation Top10, monthly rebalance, MA200 trend filter, always-invested",
-        "config": {"top_n": TOP_N, "mom_fast": MOM_FAST, "mom_slow": MOM_SLOW, "trend_ma": TREND_MA},
+        "effective_as_of": effective_as_of,
+        "price_freshness": {
+            "history_as_of": overlay["history_as_of"],
+            "snapshot_as_of": overlay["snapshot_as_of"],
+            "stale_history": overlay["stale_history"],
+            "overlay_applied": overlay["applied"],
+            "overlaid_count": len(overlay["overlaid"]),
+            "overlaid_tickers": overlay["overlaid"],
+            "skipped_low_conf": overlay["skipped_low_conf"],
+            "warning": overlay["warning"],
+            "note": "price_history(주간 Actions) 가 묵으면 fresh snapshot 종가로 최신 봉 보정 — 묵은 현재가로 모멘텀 계산되던 지연 해소. 룩백 공백(누락 거래일)은 못 메움(스냅샷 1점).",
+        },
+        "regime_circuit_breaker": {
+            "enabled": regime["enabled"],
+            "regime_type": regime.get("regime_type"),
+            "defensive": regime["defensive"],
+            "current_breadth": regime.get("current_breadth"),
+            "note": regime.get("note") or ("방어 발동 — 신규 진입 차단(현금)" if regime["defensive"]
+                    else ("감시 중(invested)" if regime["enabled"] else "비활성(기본 OFF) — 항시투자")),
+            "backtest_ref": "state/backtest_bear.json (breadth vs index_ma 트레이드오프)",
+        },
+        "strategy": f"dual-momentum rotation Top{TOP_N}, score_floor≥{MIN_SCORE:g}, tracked_only={TRACKED_ONLY}, MA200 trend filter",
+        "config": {"top_n": TOP_N, "min_score": MIN_SCORE, "tracked_only": TRACKED_ONLY,
+                   "min_tradable": MIN_TRADABLE, "min_trade_krw": MIN_TRADE_KRW,
+                   "mom_fast": MOM_FAST, "mom_slow": MOM_SLOW, "trend_ma": TREND_MA},
         "executable_allocation": {
             "equity": round(equity),
             "constraints": {"min_cash_pct": 10.0, "per_name_cap_pct": 30.0,
-                            "excluded_too_expensive": [r["ticker"] for r in eligible
+                            "excluded_too_expensive": [r["ticker"] for r in buyable
                                                        if r["close"] > equity * 0.30][:TOP_N]},
             "orders": exec_orders,
             "cash_left": cash_left,
@@ -157,6 +369,15 @@ def main():
         "equal_weight_pct": round(weight * 100, 2),
         "cash_weight_pct": round(cash_weight * 100, 2),
         "n_eligible": len(eligible),
+        "n_buyable": len(buyable),
+        "gate": {
+            "min_score": MIN_SCORE,
+            "tracked_only": TRACKED_ONLY,
+            "skipped_below_floor": skipped_below_floor,
+            "skipped_untracked": skipped_untracked,
+            "floor_relaxed_fallback": floor_relaxed,
+            "note": "skipped_untracked 는 트렌드는 강하나 추적목록(candidates)에 없는 종목 — screen_universe.py 가 candidates 승격을 제안하고 routine 이 thesis 와 함께 승격해야 매수 대상이 된다(바스켓 자기역등록 순환 차단).",
+        },
         "target_basket": [
             {"ticker": r["ticker"], "name": r["name"], "weight_pct": round(weight * 100, 2),
              "score": r["score"], "mom60_pct": r["mom60_pct"], "mom120_pct": r["mom120_pct"],
@@ -168,13 +389,33 @@ def main():
         "caveats": [
             "data_as_of 가 오래됐으면(주말/공휴일/Actions 미실행) stale — 18시·09시 routine 은 fresh 가격 확인 후 적용.",
             "리밸런스 주기는 약 21거래일. 매일 강제 회전 금지(거래비용·휩쏘).",
+            f"매수 게이트: 점수≥{MIN_SCORE:g} AND 추적대상(candidates∪보유). 미통과분은 gate.skipped_* 에 기록.",
             "학습·시뮬레이션 목적. 미래 수익 보장 아님.",
         ],
     }
+    # fail-loud: history 가 묵었는데 보정도 못 했으면(스냅샷 결측) 신호 신뢰 경고
+    if overlay["stale_history"] and not overlay["applied"]:
+        out["caveats"].insert(0, "⚠️ price_history stale + fresh snapshot 보정 실패 — 모멘텀이 묵은 현재가 기반. 신규 진입 신중(fresh 가격 재확인 필수).")
+    elif overlay["applied"]:
+        out["caveats"].insert(0, f"price_history({_date10(overlay['history_as_of'])}) stale → snapshot({_date10(overlay['snapshot_as_of'])}) 종가로 {len(overlay['overlaid'])}종목 최신 봉 보정 적용. 룩백 공백 주의.")
     prev_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print(f"데이터 기준일: {data_as_of}")
-    print(f"적격(추세+모멘텀 통과) 종목: {len(eligible)}개 / 전체 {len(ranked)}개")
+    pf = out["price_freshness"]
+    if pf["overlay_applied"]:
+        print(f"🔄 신선도 보정: history {_date10(pf['history_as_of'])} → snapshot {_date10(pf['snapshot_as_of'])} 종가로 {pf['overlaid_count']}종목 최신 봉 적용")
+    elif pf["stale_history"]:
+        print(f"⚠️ history stale({_date10(pf['history_as_of'])}) + 보정 실패 — {pf['warning']}")
+    print(f"데이터 기준일: {data_as_of} (effective {_date10(effective_as_of)})")
+    print(f"게이트: 점수하한≥{MIN_SCORE:g} · 추적전용={TRACKED_ONLY}")
+    if regime["enabled"]:
+        detail = f"breadth={regime.get('current_breadth')}" if regime.get("regime_type") == "breadth" else "index-MA"
+        print(f"레짐 서킷브레이커[{regime.get('regime_type')}]: "
+              f"{'🛑 방어(현금화)' if regime['defensive'] else '👀 감시(invested)'} ({detail})")
+    print(f"적격(추세+모멘텀): {len(eligible)}개 → 매수대상(게이트 통과): {len(buyable)}개 / 전체 {len(ranked)}개")
+    if skipped_below_floor:
+        print(f"  ↓점수하한 미달 제외: " + ", ".join(f"{r['name']}({r['score']:.1f})" for r in skipped_below_floor))
+    if skipped_untracked:
+        print(f"  ↓미추적 제외(승격 필요): " + ", ".join(f"{r['name']}({r['score']:.1f})" for r in skipped_untracked))
     print(f"목표 바스켓 Top{TOP_N} (각 {weight*100:.1f}%, 현금 {cash_weight*100:.1f}%):")
     for r in target:
         print(f"  {r['name']:<12}({r['ticker']}) score {r['score']:+7.1f} | "

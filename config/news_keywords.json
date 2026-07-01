@@ -4,66 +4,339 @@
   "purpose": "뉴스 자동 수집·분류(fetch_news.py)의 키워드 레지스트리. type_keywords 의 키는 config/news_impact.json 의 news_type_impact_pct 와 1:1 — 여기서 키워드를 보강하면 목표주가 추정식의 뉴스 가산점 분류가 그대로 따라온다. 매칭은 공백 제거 후 부분일치(예: '공급 계약'='공급계약'). exclude 가 제목에 있으면 해당 유형 매칭을 취소한다(예: '파업 철회' 기사가 labor_dispute 로 오분류되는 것 방지).",
   "recall_note": "재현율 우선 — 종목 별칭이 잡힌 기사는 유형 미매칭이어도 news_feed 의 unclassified 로 보존한다(라우틴이 검토 후 manual_news 로 승격하거나 여기 키워드를 보강). 키워드 보강은 sunday_policy_review 에서 unclassified 누적분을 보고 주기적으로 한다.",
   "ticker_aliases": {
-    "005930": ["삼성전자", "삼전"],
-    "000660": ["SK하이닉스", "하이닉스"],
-    "005380": ["현대차", "현대자동차"],
-    "009540": ["HD한국조선해양", "한국조선해양"],
-    "010140": ["삼성중공업"],
-    "012450": ["한화에어로스페이스", "한화에어로"],
-    "267260": ["HD현대일렉트릭", "현대일렉트릭"],
-    "373220": ["LG에너지솔루션", "LG엔솔"],
-    "105560": ["KB금융"]
+    "005930": [
+      "삼성전자",
+      "삼전"
+    ],
+    "000660": [
+      "SK하이닉스",
+      "하이닉스"
+    ],
+    "005380": [
+      "현대차",
+      "현대자동차"
+    ],
+    "009540": [
+      "HD한국조선해양",
+      "한국조선해양"
+    ],
+    "010140": [
+      "삼성중공업"
+    ],
+    "012450": [
+      "한화에어로스페이스",
+      "한화에어로"
+    ],
+    "267260": [
+      "HD현대일렉트릭",
+      "현대일렉트릭"
+    ],
+    "373220": [
+      "LG에너지솔루션",
+      "LG엔솔"
+    ],
+    "105560": [
+      "KB금융"
+    ]
   },
   "type_keywords": {
     "supply_contract_major": {
-      "any": ["공급계약", "납품계약", "공급사선정", "공급사지명", "공급확정", "장기공급", "수주계약", "본계약", "퀄테스트통과", "퀄통과", "공급협의", "독점공급", "주공급사"],
-      "boost": ["엔비디아", "NVIDIA", "AMD", "애플", "테슬라", "마이크로소프트", "구글", "HBM"],
-      "exclude": ["검토중", "추진계획", "무산", "결렬"]
+      "any": [
+        "공급계약",
+        "납품계약",
+        "공급사선정",
+        "공급사지명",
+        "공급확정",
+        "장기공급",
+        "수주계약",
+        "본계약",
+        "퀄테스트통과",
+        "퀄통과",
+        "공급협의",
+        "독점공급",
+        "주공급사",
+        "계약사선정",
+        "첫수주",
+        "첫공급",
+        "납품개시",
+        "단독공급",
+        "수주성공"
+      ],
+      "boost": [
+        "엔비디아",
+        "NVIDIA",
+        "AMD",
+        "애플",
+        "테슬라",
+        "마이크로소프트",
+        "구글",
+        "HBM"
+      ],
+      "exclude": [
+        "검토중",
+        "추진계획",
+        "무산",
+        "결렬"
+      ]
     },
     "earnings_surprise_beat": {
-      "any": ["어닝서프라이즈", "컨센서스상회", "예상치상회", "사상최대실적", "영업이익급증", "흑자전환", "실적호조", "깜짝실적"],
-      "exclude": ["하회", "쇼크", "부진"]
+      "any": [
+        "어닝서프라이즈",
+        "컨센서스상회",
+        "예상치상회",
+        "사상최대실적",
+        "영업이익급증",
+        "흑자전환",
+        "실적호조",
+        "깜짝실적",
+        "기대치상회",
+        "기대치웃돌",
+        "컨센상회",
+        "예상치웃돌",
+        "호실적",
+        "어닝비트",
+        "실적개선세"
+      ],
+      "exclude": [
+        "하회",
+        "쇼크",
+        "부진"
+      ]
     },
     "tech_breakthrough": {
-      "any": ["양산개시", "양산돌입", "양산성공", "세계최초", "개발성공", "수율개선", "신기술", "기술확보", "전고체", "차세대공정", "AI성능두배", "AI성능향상"],
-      "exclude": ["지연", "난항", "실패"]
+      "any": [
+        "양산개시",
+        "양산돌입",
+        "양산성공",
+        "세계최초",
+        "개발성공",
+        "수율개선",
+        "신기술",
+        "기술확보",
+        "전고체",
+        "차세대공정",
+        "AI성능두배",
+        "AI성능향상",
+        "국산화",
+        "특허취득",
+        "특허획득",
+        "특허출원",
+        "상용화",
+        "초도양산",
+        "세계최초개발",
+        "첫개발",
+        "독자개발"
+      ],
+      "exclude": [
+        "지연",
+        "난항",
+        "실패"
+      ]
     },
     "order_backlog_surprise": {
-      "any": ["수주잔고", "대규모수주", "수주급증", "사상최대수주", "수출급증", "잭팟", "수주랠리", "일감확보"],
-      "exclude": ["수주취소", "수주감소"]
+      "any": [
+        "수주잔고",
+        "대규모수주",
+        "수주급증",
+        "사상최대수주",
+        "수출급증",
+        "잭팟",
+        "수주랠리",
+        "일감확보",
+        "수주확대",
+        "수주증가",
+        "대규모납품",
+        "공급망진입"
+      ],
+      "exclude": [
+        "수주취소",
+        "수주감소"
+      ]
     },
     "buyback_cancellation": {
-      "any": ["자사주매입", "자사주소각", "자기주식취득", "배당확대", "특별배당", "주주환원확대", "중간배당"],
-      "exclude": ["보류", "철회"]
+      "any": [
+        "자사주매입",
+        "자사주소각",
+        "자기주식취득",
+        "배당확대",
+        "특별배당",
+        "주주환원확대",
+        "중간배당",
+        "자사주취득",
+        "주주환원",
+        "배당성향확대"
+      ],
+      "exclude": [
+        "보류",
+        "철회"
+      ]
     },
     "analyst_target_upgrade": {
-      "any": ["목표주가상향", "목표가상향", "목표주가올려", "투자의견상향", "매수의견", "톱픽", "최선호주"],
-      "exclude": ["하향", "매도의견"]
+      "any": [
+        "목표주가상향",
+        "목표가상향",
+        "목표주가올려",
+        "투자의견상향",
+        "매수의견",
+        "톱픽",
+        "최선호주",
+        "목표가↑",
+        "목표주가↑",
+        "목표가올려",
+        "목표가높여",
+        "눈높이상향",
+        "목표가눈높이",
+        "저평가매력",
+        "밸류에이션매력"
+      ],
+      "exclude": [
+        "하향",
+        "매도의견"
+      ]
     },
     "policy_support": {
-      "any": ["밸류업", "세제혜택", "보조금", "규제완화", "정책지원", "지원책", "감세", "인센티브"],
-      "exclude": ["보조금삭감", "지원중단"]
+      "any": [
+        "밸류업",
+        "세제혜택",
+        "보조금",
+        "규제완화",
+        "정책지원",
+        "지원책",
+        "감세",
+        "인센티브",
+        "국책과제",
+        "정부지원",
+        "국산화지원",
+        "세액공제",
+        "첨단전략산업"
+      ],
+      "exclude": [
+        "보조금삭감",
+        "지원중단"
+      ]
     },
     "labor_or_litigation_resolved": {
-      "any": ["파업철회", "파업유보", "잠정합의", "임단협타결", "찬반투표가결", "노사합의", "소송승소", "무혐의", "합의타결", "분쟁종결", "과징금감경", "관세환급", "제재해제", "특허승소", "특허분쟁승리", "특허완승"],
+      "any": [
+        "파업철회",
+        "파업유보",
+        "잠정합의",
+        "임단협타결",
+        "찬반투표가결",
+        "노사합의",
+        "소송승소",
+        "무혐의",
+        "합의타결",
+        "분쟁종결",
+        "과징금감경",
+        "관세환급",
+        "제재해제",
+        "특허승소",
+        "특허분쟁승리",
+        "특허완승"
+      ],
       "exclude": []
     },
     "labor_dispute": {
-      "any": ["총파업", "파업예고", "파업돌입", "쟁의행위", "협상결렬", "노사갈등", "파업찬반", "조정결렬"],
-      "exclude": ["철회", "유보", "타결", "가결", "합의"]
+      "any": [
+        "총파업",
+        "파업예고",
+        "파업돌입",
+        "쟁의행위",
+        "협상결렬",
+        "노사갈등",
+        "파업찬반",
+        "조정결렬"
+      ],
+      "exclude": [
+        "철회",
+        "유보",
+        "타결",
+        "가결",
+        "합의"
+      ]
     },
     "regulation_or_tariff": {
-      "any": ["관세", "수출규제", "수출통제", "제재", "반독점", "과징금", "리콜", "조사착수", "규제강화"],
-      "exclude": ["관세완화", "관세철폐", "규제완화", "제재해제", "환급", "감경", "제재대신", "족쇄끊", "부담도덜", "자진시정", "동의의결", "면제"],
+      "any": [
+        "관세",
+        "수출규제",
+        "수출통제",
+        "제재",
+        "반독점",
+        "과징금",
+        "리콜",
+        "조사착수",
+        "규제강화"
+      ],
+      "exclude": [
+        "관세완화",
+        "관세철폐",
+        "규제완화",
+        "제재해제",
+        "환급",
+        "감경",
+        "제재대신",
+        "족쇄끊",
+        "부담도덜",
+        "자진시정",
+        "동의의결",
+        "면제"
+      ],
       "exclude_note": "2026-06-10 1차 수집 검수 — '관세 환급'(LG엔솔 호재)·'과징금 감경'(KB금융 호재)·'제재 대신 상생안'(삼성중공업 해소)·'관세 족쇄 끊고'(현대차 호재)가 악재로 오분류된 사례 교정. 리스크 '해소' 기사는 악재 아님."
     },
     "supply_glut_or_price_drop": {
-      "any": ["공급과잉", "가격하락", "판가하락", "재고증가", "감산", "수요둔화", "가격급락", "덤핑"],
-      "exclude": ["가격상승", "판가인상"]
+      "any": [
+        "공급과잉",
+        "가격하락",
+        "판가하락",
+        "재고증가",
+        "감산",
+        "수요둔화",
+        "가격급락",
+        "덤핑"
+      ],
+      "exclude": [
+        "가격상승",
+        "판가인상"
+      ]
     },
     "earnings_miss_or_guidance_cut": {
-      "any": ["어닝쇼크", "컨센서스하회", "예상치하회", "실적부진", "영업이익급감", "적자전환", "가이던스하향", "감익", "실적악화"],
-      "exclude": ["상회", "호조"]
+      "any": [
+        "어닝쇼크",
+        "컨센서스하회",
+        "예상치하회",
+        "실적부진",
+        "영업이익급감",
+        "적자전환",
+        "가이던스하향",
+        "감익",
+        "실적악화"
+      ],
+      "exclude": [
+        "상회",
+        "호조"
+      ]
+    },
+    "capex_expansion": {
+      "any": [
+        "조투자",
+        "조원투자",
+        "조투입",
+        "조원투입",
+        "대규모투자",
+        "설비투자",
+        "증설",
+        "공장신설",
+        "생산거점",
+        "신규투자",
+        "생산능력확대",
+        "캐파확대",
+        "라인증설"
+      ],
+      "exclude": [
+        "투자주의",
+        "투자경고",
+        "투자위험"
+      ]
     }
   },
   "match_rules": {
@@ -89,47 +362,66 @@
         "query": "NVIDIA HBM memory orders AI data center capex",
         "channel": "customer",
         "affects_group": "ai_memory_hbm",
-        "affects_tickers": ["005930", "000660"]
+        "affects_tickers": [
+          "005930",
+          "000660"
+        ]
       },
       {
         "id": "semis_peer_signal",
         "query": "Micron OR Broadcom OR SanDisk memory guidance outlook",
         "channel": "peer",
         "affects_group": "ai_memory_hbm",
-        "affects_tickers": ["005930", "000660"]
+        "affects_tickers": [
+          "005930",
+          "000660"
+        ]
       },
       {
         "id": "foundry_peer",
         "query": "TSMC foundry price capacity",
         "channel": "peer",
-        "affects_tickers": ["005930"]
+        "affects_tickers": [
+          "005930"
+        ]
       },
       {
         "id": "shipbuilding_demand",
         "query": "LNG carrier newbuilding order shipyard Korea",
         "channel": "demand",
         "affects_group": "shipbuilding_supercycle",
-        "affects_tickers": ["009540", "010140", "042660", "329180"]
+        "affects_tickers": [
+          "009540",
+          "010140",
+          "042660",
+          "329180"
+        ]
       },
       {
         "id": "auto_trade_policy",
         "query": "US auto tariff Hyundai Korea import",
         "channel": "policy",
-        "affects_tickers": ["005380"]
+        "affects_tickers": [
+          "005380"
+        ]
       },
       {
         "id": "ev_battery_demand",
         "query": "EV battery demand ESS orders LGES",
         "channel": "demand",
         "affects_group": "ev_battery",
-        "affects_tickers": ["373220"]
+        "affects_tickers": [
+          "373220"
+        ]
       },
       {
         "id": "defense_demand",
         "query": "Europe defense rearmament artillery Korea export",
         "channel": "demand",
         "affects_group": "defense_export",
-        "affects_tickers": ["012450"]
+        "affects_tickers": [
+          "012450"
+        ]
       },
       {
         "id": "macro_fed",
@@ -141,33 +433,107 @@
     "type_keywords_en": {
       "global_customer_demand": {
         "impact_pct": 6.0,
-        "any": ["record orders", "capex increase", "raise capex", "AI demand surge", "data center expansion", "sold out", "supply deal", "long-term agreement", "raises forecast", "beats estimates"],
-        "exclude": ["cuts", "miss", "delay", "cancel"]
+        "any": [
+          "record orders",
+          "capex increase",
+          "raise capex",
+          "AI demand surge",
+          "data center expansion",
+          "sold out",
+          "supply deal",
+          "long-term agreement",
+          "raises forecast",
+          "beats estimates"
+        ],
+        "exclude": [
+          "cuts",
+          "miss",
+          "delay",
+          "cancel"
+        ]
       },
       "global_peer_pricing": {
         "impact_pct": 3.0,
-        "any": ["price hike", "price increase", "raises prices", "pricing power", "contract price up"],
-        "exclude": ["price cut", "price decline"]
+        "any": [
+          "price hike",
+          "price increase",
+          "raises prices",
+          "pricing power",
+          "contract price up"
+        ],
+        "exclude": [
+          "price cut",
+          "price decline"
+        ]
       },
       "global_peer_warning": {
         "impact_pct": -5.0,
-        "any": ["guidance cut", "miss estimates", "missed estimates", "oversupply", "weak demand", "inventory glut", "price decline", "downgrade", "profit warning"],
-        "exclude": ["despite", "rebound"]
+        "any": [
+          "guidance cut",
+          "miss estimates",
+          "missed estimates",
+          "oversupply",
+          "weak demand",
+          "inventory glut",
+          "price decline",
+          "downgrade",
+          "profit warning"
+        ],
+        "exclude": [
+          "despite",
+          "rebound"
+        ]
       },
       "global_order_demand": {
         "impact_pct": 5.0,
-        "any": ["newbuilding order", "carrier order", "fleet expansion", "shipbuilding boom", "charter rates surge", "wins order", "order backlog", "secures contract"],
-        "exclude": ["order cancel", "delay"]
+        "any": [
+          "newbuilding order",
+          "carrier order",
+          "fleet expansion",
+          "shipbuilding boom",
+          "charter rates surge",
+          "wins order",
+          "order backlog",
+          "secures contract"
+        ],
+        "exclude": [
+          "order cancel",
+          "delay"
+        ]
       },
       "global_tariff_trade": {
         "impact_pct": -4.0,
-        "any": ["tariff", "trade restriction", "export ban", "export control", "sanction", "antitrust probe"],
-        "exclude": ["tariff relief", "exemption", "exempt", "refund", "tariff cut", "waiver", "easing tariff", "eases tariff", "avoid tariff", "avoids tariff"],
+        "any": [
+          "tariff",
+          "trade restriction",
+          "export ban",
+          "export control",
+          "sanction",
+          "antitrust probe"
+        ],
+        "exclude": [
+          "tariff relief",
+          "exemption",
+          "exempt",
+          "refund",
+          "tariff cut",
+          "waiver",
+          "easing tariff",
+          "eases tariff",
+          "avoid tariff",
+          "avoids tariff"
+        ],
         "exclude_note": "2026-06-11 1차 해외수집 검수 — 'Exempts Autos'(면제 호재)·'easing tariff hit'(완화)가 악재 오분류 → exclude 보강(국내 '관세 환급' 사례와 동일 패턴)."
       },
       "global_macro_event": {
         "impact_pct": 0.0,
-        "any": ["rate decision", "FOMC", "rate hike", "rate cut", "inflation data"],
+        "any": [
+          "rate decision",
+          "FOMC",
+          "rate hike",
+          "rate cut",
+          "inflation data"
+        ],
         "exclude": []
       }
     }

@@ -14,18 +14,24 @@
     "doc": "docs/strategy_momentum.md",
     "generator": "scripts/momentum_signal.py",
     "config": {
-      "top_n": 10,
+      "top_n": 6,
       "mom_fast_days": 60,
       "mom_slow_days": 120,
       "trend_ma": 200,
       "rebalance_days": 21,
-      "regime_filter": false
+      "regime_filter": false,
+      "min_score": 30.0,
+      "tracked_only": true,
+      "min_tradable": 2,
+      "min_trade_krw": 100000
     },
     "rules": [
       "진입 1순위 후보 = momentum_signal.json.executable_allocation.orders (계좌 정수주 바스켓).",
       "종목 자격 = 가격 > MA200(추세) AND 0.5×60일+0.5×120일 모멘텀 > 0. 미달 종목은 보유 회전아웃.",
-      "리밸런스 주기 약 21거래일 — 매일 강제 회전 금지(거래비용·휩쏘). 변경분(enter/exit)만 반영.",
-      "강세장 현금화 금지: regime_filter=false. 적격 종목 < 5개일 때만 잔여 현금(추세 부재 시).",
+      "매수 게이트(v2): 자격 통과분 중 ① 점수 ≥ config.min_score(기본 30) AND ② 추적대상(candidates ∪ 현재보유)만 매수. 저모멘텀 충전재(은행 등)·미추적 종목 자동 배제 — gate.skipped_below_floor / skipped_untracked 에 기록.",
+      "미추적 트렌드주는 바스켓이 스스로 candidates 에 역등록하지 않는다(순환 차단). screen_universe.py 의 promote_suggestions → routine 이 thesis·근거 URL 과 함께 candidates 승격 후에만 매수 대상.",
+      "보유: 매수대상(buyable) 점수 상위 Top6 동일가중. 리밸런스 주기 약 21거래일 — 매일 강제 회전 금지(거래비용·휩쏘). 변경분(enter/exit)만 반영.",
+      "강세장 현금화 금지: regime_filter=false. 매수대상 < 5개일 때만 잔여 현금(추세·추적 부재 시).",
       "종목당 비중 ≤ max_position_weight_pct, 현금 ≥ 최소현금. 1주가 상한 초과인 초고가주는 바스켓 제외."
     ],
     "cash_trap_fix": {
@@ -37,7 +43,38 @@
         "주간 -5% 손실 한도·종목별 -2×ATR 손절 불변"
       ]
     },
-    "note": "학습·시뮬레이션 목적. 과거 백테스트 성과는 미래 수익을 보장하지 않는다. 약세장 검증 부족 → regime_filter 는 제거가 아닌 OFF 기본값, 실제 약세 신호 누적 시 재평가."
+    "note": "학습·시뮬레이션 목적. 과거 백테스트 성과는 미래 수익을 보장하지 않는다. 약세장 검증 부족 → regime_filter 는 제거가 아닌 OFF 기본값, 실제 약세 신호 누적 시 재평가.",
+    "config_note": "top_n/min_score/tracked_only 는 momentum_signal.py 가 이 블록에서 읽어 적용(코드 수정 없이 튜닝). 백테스트 검증범위: top_n 5~10, MA 100~200 (Sharpe 2.0~2.34 군집). min_score·tracked_only 는 충전재·미추적 종목 배제용 신규 게이트(2026-06-30).",
+    "regime_circuit_breaker": {
+      "enabled": false,
+      "purpose": "동적 레짐 서킷브레이커(opt-in). regime_type=breadth(권장): 시장 폭이 낮아 다수 종목이 추세 이탈하면 방어. index_ma 대비 강세장 비용이 작아 트레이드오프가 개선됨(backtest_bear.json). 기본 enabled=False — 거시 약세 증거 누적 시 수동 ON.",
+      "index_ma": 200,
+      "enter_days": 5,
+      "exit_days": 15,
+      "action_when_defensive": "executable_allocation 을 현금화(orders 비움)하고 target_basket 에 defensive 플래그. 진입 신호만 차단하며 기존 보유 청산은 routine 의 손절·회전 룰이 별도 판단.",
+      "rule": "지수 종가가 MA200 아래로 enter_days 연속 이탈 시 방어 ON, MA200 위로 exit_days 연속 회복 시 OFF(히스테리시스로 휩쏘 억제).",
+      "backtest_ref": "state/backtest_bear.json — 강세장 비용 vs 약세장 방어 트레이드오프 수치.",
+      "regime_type": "breadth",
+      "breadth": {
+        "ma": 200,
+        "low": 0.4,
+        "high": 0.55,
+        "enter_days": 3,
+        "exit_days": 5,
+        "rationale": "backtest_bear.py 검증: breadth(유니버스 중 자기 MA200 상회 비율) 레짐은 index-MA 레짐보다 강세장 비용이 훨씬 작다(강세장 +272→+216 vs indexMA +96) + 완만약세는 OFF를 수익·낙폭 양쪽서 이김. 단 급격한 단기 급락은 breadth 지연으로 방어가 약함(index_ma 가 유리)."
+      }
+    },
+    "discovery_gate": {
+      "enabled": true,
+      "purpose": "엔진 신호 일원화(기획 A관문). momentum_signal(절대모멘텀)이 매수를 결정하는데 screen_universe 는 상대강도(KOSPI대비)로 promote/rotate 를 판단해 '같은 종목을 momentum 은 사고 screen 은 회전아웃'하던 모순 제거. momentum_signal.full_ranking.score 를 단일 점수 권위로 삼고, 상대강도·테마·품질은 2차 랭킹/컨텍스트로 강등.",
+      "authority": "state/momentum_signal.json#full_ranking (0.5×60일+0.5×120일 절대모멘텀, 백테스트 검증)",
+      "promote_score_min": 30.0,
+      "promote_note": "비후보 종목은 모멘텀 점수 ≥ promote_score_min(매수 floor 와 정렬) AND pass_filter(추세) 일 때만 승격 제안 → 승격되면 실제 momentum 매수대상과 일치.",
+      "rotate_score_max": 0.0,
+      "rotate_note": "후보는 모멘텀 점수 ≤ rotate_score_max(절대모멘텀 소멸) 또는 pass_filter=False 일 때만 회전아웃 제안 → momentum 이 아직 원하는 종목은 회전아웃 안 함(모순 제거).",
+      "secondary_ranking": "상대강도(excess_60d)·테마·dynamic_excess_min 품질은 승격 후보 우선순위·라벨·컨텍스트로만 사용.",
+      "fallback": "momentum_signal.json 결측/파싱실패 시 기존 상대강도 로직(dynamic_excess_min)으로 graceful degrade."
+    }
   },
   "universe": {
     "market": "KOSPI",
@@ -481,7 +518,41 @@
     "relative_strength_leader_widening": {
       "purpose": "v2.7 — KOSPI 대비 60일 초과수익(excess = stock.ret_60d_pct − KOSPI.ret_60d_pct)이 excess_min_pct(+10%p) 이상인 주도주는 tier 임계를 extra_pct(-7%p)만큼 더 넓혀(예 strong_bull -13→-20%) '리더의 깊은 눌림목'만 통과시킨다. 후행주(RS 하위)는 넓히지 않아 계속 차단된다. 최종 임계는 entry_filter_hard_floor_pct(-22%) 아래로는 내려가지 않는다(진짜 자유낙하 차단). 예: 2026-06-08 SK하이닉스(excess +68.8%p·후보 점수 1위)가 5일 -17%로 평면 -7% 필터에 막히던 것을 이 예외가 strong_bull -20% 로 통과시키고, 반면 HD조선·한화에어로(RS 하위)는 -13% 유지로 계속 차단된다.",
       "excess_min_pct": 10.0,
-      "extra_pct": -7.0
+      "extra_pct": -7.0,
+      "dynamic_excess_min": {
+        "enabled": true,
+        "purpose": "강세장(KOSPI 자체가 주도)에서 거의 모든 종목의 KOSPI 대비 초과수익이 음(-)이 되어 promote 가 영구 0이 되는 문제 해소. 종목별 '기업가치(실적)+최근 호재뉴스' 품질로 음수 초과수익 허용폭을 동적 산출 — 좋은 회사+촉매면 KOSPI 에 다소 뒤져도 추적 승격 허용, 무뉴스·부실은 +base 엄격 유지.",
+        "applies_in_tiers": [
+          "strong_bull"
+        ],
+        "base_excess_min_pct": 10.0,
+        "max_relax_pct": 50.0,
+        "abs_floor_pct": -45.0,
+        "quality_weights": {
+          "fundamentals": 0.55,
+          "news": 0.45
+        },
+        "fundamentals_score": {
+          "dir_weight": 0.6,
+          "margin_weight": 0.25,
+          "growth_weight": 0.15,
+          "margin_norm_pct": 30.0,
+          "growth_norm_pct": 100.0,
+          "source": "state/fundamentals.json (op_margin_pct·op_growth_pop_pct·earnings_signal). 미커버 종목은 fund_score=0(완화 없음)."
+        },
+        "news_score": {
+          "decay_days": 90,
+          "max_premium_pct": 12.0,
+          "source": "state/news_feed.json.tickers[tk].classified 의 양(+) impact_pct 합 × 시간감쇠(news_impact.params.news_decay_days). 미커버=0."
+        },
+        "guardrails": [
+          "ret5 >= entry_filter_hard_floor_pct(-22%) 불변(자유낙하 차단)",
+          "data_ok=False 종목은 완화 없음",
+          "effective_min 은 abs_floor_pct 미만으로 내려가지 않음",
+          "strong_bull 외 tier 에선 base_excess_min_pct 엄격 적용"
+        ],
+        "note": "screen_universe.py 가 promote 판정에서 종목별 effective_excess_min 으로 사용. 파라미터는 sunday_policy_review 에서 lessons 실측으로 보정."
+      }
     },
     "block_reason_template": "최근 {lookback}일 누적 수익률 {ret}% — 추세 필터 위배로 진입 보류",
     "require_pre_mortem_one_liner": true,

@@ -1,7 +1,7 @@
 name: Fetch Price History (backtest)
 
 # 백테스트용 장기 일봉(~2.5년)을 인터넷 되는 러너에서 수집해 커밋한다.
-# 목표주가 추정식 백테스트(backtest_target_model.py)의 입력. 수동 트리거 전용.
+# 목표주가 추정식 백테스트(backtest_target_model.py) + momentum_signal 의 1순위 입력.
 
 on:
   workflow_dispatch:
@@ -11,6 +11,11 @@ on:
     paths:
       - "state/.history_request"
       - "scripts/fetch_history.py"
+  # 매 거래일 마감 후 자동 갱신 — price_history(모멘텀 1순위 입력)의 staleness 방지.
+  # fetch_prices(23:05 UTC) 이후로 두어 당일 종가가 반영된 뒤 수집한다.
+  # cron 23:30 UTC(0-4=일~목) = KST 월~금 08:30. momentum_signal 의 snapshot overlay 는 이제 안전망.
+  schedule:
+    - cron: "30 23 * * 0-4"
 
 permissions:
   contents: write

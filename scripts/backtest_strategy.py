@@ -65,10 +65,84 @@ def sma(series, dates, i, window):
     return sum(vals) / len(vals)
 
 
+def compute_regime_hysteresis(index_series, dates, index_ma=200, enter_days=5, exit_days=3):
+    """히스테리시스 레짐 — 지수가 MA200 아래로 '지속' 이탈할 때만 방어(현금) 전환.
+
+    약세장 백테스트 발견: 고정 레짐 OFF 는 지속 약세장에 위험하고, 고정 ON 은 V자 급락-반등을
+    바닥에서 놓친다(휩쏘). 해법은 enter_days 연속 이탈 시 ON, exit_days 연속 회복 시 OFF 로
+    전환을 지연시켜 단기 노이즈를 무시하는 것. 반환: dates 정렬 list[bool] (True=방어=현금).
+    """
+    flags = [False] * len(dates)
+    defensive = False
+    below_run = above_run = 0
+    for i, d in enumerate(dates):
+        cur = index_series.get(d)
+        ma = sma(index_series, dates, i, index_ma)
+        if cur and ma:
+            if cur < ma:
+                below_run += 1
+                above_run = 0
+            else:
+                above_run += 1
+                below_run = 0
+            if not defensive and below_run >= enter_days:
+                defensive = True
+            elif defensive and above_run >= exit_days:
+                defensive = False
+        flags[i] = defensive
+    return flags
+
+
+def compute_breadth(tickers, dates, ma=200):
+    """각 날짜별 '자기 MA200 위에 있는 종목 비율'(시장 폭). 지수 레벨보다 부드러운 레짐 신호."""
+    out = {}
+    for i, d in enumerate(dates):
+        above = total = 0
+        for v in tickers.values():
+            s = v["series"]
+            cur = s.get(d)
+            m = sma(s, dates, i, ma)
+            if cur and m:
+                total += 1
+                if cur >= m:
+                    above += 1
+        out[d] = (above / total) if total else None
+    return out
+
+
+def compute_regime_breadth(breadth, dates, low=0.40, high=0.55, enter_days=3, exit_days=5):
+    """breadth 히스테리시스 레짐 — 폭이 low 아래로 enter_days 연속이면 방어, high 위로 exit_days 연속이면 복귀.
+
+    이중 임계(low/high) + 일수 지연으로 지수-MA 단일선보다 휩쏘를 줄인다. 반환: list[bool](True=방어).
+    """
+    flags = [False] * len(dates)
+    defensive = False
+    below_run = above_run = 0
+    for i, d in enumerate(dates):
+        b = breadth.get(d)
+        if b is None:
+            flags[i] = defensive
+            continue
+        if b < low:
+            below_run += 1
+            above_run = 0
+        elif b > high:
+            above_run += 1
+            below_run = 0
+        else:
+            below_run = above_run = 0  # 중립대 — 카운터 리셋(경계 노이즈 억제)
+        if not defensive and below_run >= enter_days:
+            defensive = True
+        elif defensive and above_run >= exit_days:
+            defensive = False
+        flags[i] = defensive
+    return flags
+
+
 def backtest(tickers, index_series, dates,
              top_n=5, mom_fast=60, mom_slow=120, trend_ma=200,
              rebal_days=5, start_idx=None, end_idx=None,
-             use_index_regime=True, index_ma=200):
+             use_index_regime=True, index_ma=200, regime_flags=None):
     """추세추종 듀얼모멘텀 로테이션.
 
     매 rebal_days 마다:
@@ -116,9 +190,11 @@ def backtest(tickers, index_series, dates,
         if (i - start_idx) % rebal_days != 0:
             continue
 
-        # 레짐 필터
+        # 레짐 필터: regime_flags(히스테리시스 등 사전계산) 우선, 없으면 strict(지수<MA200 즉시 현금)
         regime_ok = True
-        if use_index_regime:
+        if regime_flags is not None:
+            regime_ok = not regime_flags[i]
+        elif use_index_regime:
             ma = sma(index_series, dates, i, index_ma)
             cur = index_series.get(d)
             regime_ok = bool(ma and cur and cur >= ma)

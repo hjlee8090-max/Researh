@@ -1,0 +1,301 @@
+{
+  "as_of": "2026-07-01T09:56:14+09:00",
+  "method": "실데이터 일간 로그수익률에 시장 드리프트 δ 합성(상대강도·변동성 보존). 합성 스트레스 — 실제 약세장 아님.",
+  "data_window": {
+    "start": "2024-01-02",
+    "end": "2026-06-10",
+    "trading_days": 592
+  },
+  "config": {
+    "top_n": 6,
+    "rebal_days": 42,
+    "trend_ma": 200,
+    "mom_fast": 60,
+    "mom_slow": 120,
+    "compared": "regime_filter ON vs OFF(현 권장값)"
+  },
+  "regime_configs": {
+    "index_ma": {
+      "enter_days": 5,
+      "exit_days": 15,
+      "index_ma": 200
+    },
+    "breadth": {
+      "low": 0.4,
+      "high": 0.55,
+      "enter_days": 3,
+      "exit_days": 5,
+      "ma": 200,
+      "rule": "유니버스 중 자기 MA200 상회 비율이 low 아래 3일 연속→방어, high 위 5일 연속→복귀"
+    }
+  },
+  "scenarios": {
+    "bull": {
+      "label": "강세장(원본·트레이드오프 기준)",
+      "benchmark_kospi": {
+        "total_return_pct": 198.1,
+        "cagr_pct": 102.2,
+        "sharpe": 2.24,
+        "max_drawdown_pct": -19.9,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 272.1,
+        "cagr_pct": 133.2,
+        "sharpe": 1.97,
+        "max_drawdown_pct": -22.4,
+        "trading_days": 391,
+        "n_trades": 56
+      },
+      "strategy_regime_index_ma": {
+        "total_return_pct": 96.5,
+        "cagr_pct": 54.5,
+        "sharpe": 1.25,
+        "max_drawdown_pct": -22.4,
+        "trading_days": 391,
+        "n_trades": 46
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 215.5,
+        "cagr_pct": 109.7,
+        "sharpe": 1.8,
+        "max_drawdown_pct": -22.4,
+        "trading_days": 391,
+        "n_trades": 60
+      }
+    },
+    "bear_40": {
+      "label": "지속 약세 -40%",
+      "benchmark_kospi": {
+        "total_return_pct": 5.5,
+        "cagr_pct": 3.5,
+        "sharpe": 0.27,
+        "max_drawdown_pct": -33.5,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 17.7,
+        "cagr_pct": 11.1,
+        "sharpe": 0.46,
+        "max_drawdown_pct": -34.4,
+        "trading_days": 391,
+        "n_trades": 50
+      },
+      "strategy_regime_index_ma": {
+        "total_return_pct": 16.1,
+        "cagr_pct": 10.1,
+        "sharpe": 0.44,
+        "max_drawdown_pct": -29.8,
+        "trading_days": 391,
+        "n_trades": 24
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 19.4,
+        "cagr_pct": 12.1,
+        "sharpe": 0.58,
+        "max_drawdown_pct": -24.4,
+        "trading_days": 391,
+        "n_trades": 24
+      }
+    },
+    "mild_bear_20": {
+      "label": "완만 약세 -20%",
+      "benchmark_kospi": {
+        "total_return_pct": 27.5,
+        "cagr_pct": 17.0,
+        "sharpe": 0.63,
+        "max_drawdown_pct": -29.9,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 39.5,
+        "cagr_pct": 23.9,
+        "sharpe": 0.69,
+        "max_drawdown_pct": -30.5,
+        "trading_days": 391,
+        "n_trades": 52
+      },
+      "strategy_regime_index_ma": {
+        "total_return_pct": 25.9,
+        "cagr_pct": 16.0,
+        "sharpe": 0.58,
+        "max_drawdown_pct": -29.2,
+        "trading_days": 391,
+        "n_trades": 26
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 50.7,
+        "cagr_pct": 30.3,
+        "sharpe": 0.88,
+        "max_drawdown_pct": -24.0,
+        "trading_days": 391,
+        "n_trades": 28
+      }
+    },
+    "crash": {
+      "label": "중반 급락 -35%(30일)",
+      "benchmark_kospi": {
+        "total_return_pct": 93.7,
+        "cagr_pct": 53.1,
+        "sharpe": 1.39,
+        "max_drawdown_pct": -42.6,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 134.2,
+        "cagr_pct": 73.1,
+        "sharpe": 1.36,
+        "max_drawdown_pct": -43.8,
+        "trading_days": 391,
+        "n_trades": 56
+      },
+      "strategy_regime_index_ma": {
+        "total_return_pct": 72.1,
+        "cagr_pct": 41.9,
+        "sharpe": 1.09,
+        "max_drawdown_pct": -25.7,
+        "trading_days": 391,
+        "n_trades": 30
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 79.7,
+        "cagr_pct": 45.9,
+        "sharpe": 1.06,
+        "max_drawdown_pct": -43.8,
+        "trading_days": 391,
+        "n_trades": 44
+      }
+    },
+    "sideways": {
+      "label": "횡보+휩쏘(드리프트0·변동성×1.4)",
+      "benchmark_kospi": {
+        "total_return_pct": 72.8,
+        "cagr_pct": 42.2,
+        "sharpe": 0.98,
+        "max_drawdown_pct": -35.7,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": 74.3,
+        "cagr_pct": 43.0,
+        "sharpe": 0.88,
+        "max_drawdown_pct": -39.0,
+        "trading_days": 391,
+        "n_trades": 52
+      },
+      "strategy_regime_index_ma": {
+        "total_return_pct": 33.0,
+        "cagr_pct": 20.2,
+        "sharpe": 0.61,
+        "max_drawdown_pct": -37.9,
+        "trading_days": 391,
+        "n_trades": 26
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 66.9,
+        "cagr_pct": 39.1,
+        "sharpe": 0.87,
+        "max_drawdown_pct": -30.7,
+        "trading_days": 391,
+        "n_trades": 32
+      }
+    },
+    "reverse": {
+      "label": "시계열 역전(강세장 거울상)",
+      "benchmark_kospi": {
+        "total_return_pct": -16.8,
+        "cagr_pct": -11.2,
+        "sharpe": -0.49,
+        "max_drawdown_pct": -29.5,
+        "trading_days": 391
+      },
+      "strategy_regime_off": {
+        "total_return_pct": -4.2,
+        "cagr_pct": -2.7,
+        "sharpe": 0.02,
+        "max_drawdown_pct": -25.6,
+        "trading_days": 391,
+        "n_trades": 38
+      },
+      "strategy_regime_index_ma": {
+        "total_return_pct": -20.0,
+        "cagr_pct": -13.4,
+        "sharpe": -0.85,
+        "max_drawdown_pct": -25.6,
+        "trading_days": 391,
+        "n_trades": 24
+      },
+      "strategy_regime_breadth": {
+        "total_return_pct": 0.0,
+        "cagr_pct": 0.0,
+        "sharpe": 0.0,
+        "max_drawdown_pct": 0.0,
+        "trading_days": 391,
+        "n_trades": 0
+      }
+    }
+  },
+  "findings": [
+    {
+      "scenario": "bull",
+      "label": "강세장(원본·트레이드오프 기준)",
+      "breadth_return_pct": 215.5,
+      "breadth_mdd_pct": -22.4,
+      "breadth_vs_off_return_pp": -56.6,
+      "breadth_vs_off_mdd_pp": 0.0,
+      "breadth_vs_index_ma_return_pp": 119.0
+    },
+    {
+      "scenario": "bear_40",
+      "label": "지속 약세 -40%",
+      "breadth_return_pct": 19.4,
+      "breadth_mdd_pct": -24.4,
+      "breadth_vs_off_return_pp": 1.7,
+      "breadth_vs_off_mdd_pp": 10.0,
+      "breadth_vs_index_ma_return_pp": 3.3
+    },
+    {
+      "scenario": "mild_bear_20",
+      "label": "완만 약세 -20%",
+      "breadth_return_pct": 50.7,
+      "breadth_mdd_pct": -24.0,
+      "breadth_vs_off_return_pp": 11.2,
+      "breadth_vs_off_mdd_pp": 6.5,
+      "breadth_vs_index_ma_return_pp": 24.8
+    },
+    {
+      "scenario": "crash",
+      "label": "중반 급락 -35%(30일)",
+      "breadth_return_pct": 79.7,
+      "breadth_mdd_pct": -43.8,
+      "breadth_vs_off_return_pp": -54.5,
+      "breadth_vs_off_mdd_pp": 0.0,
+      "breadth_vs_index_ma_return_pp": 7.6
+    },
+    {
+      "scenario": "sideways",
+      "label": "횡보+휩쏘(드리프트0·변동성×1.4)",
+      "breadth_return_pct": 66.9,
+      "breadth_mdd_pct": -30.7,
+      "breadth_vs_off_return_pp": -7.4,
+      "breadth_vs_off_mdd_pp": 8.3,
+      "breadth_vs_index_ma_return_pp": 33.9
+    },
+    {
+      "scenario": "reverse",
+      "label": "시계열 역전(강세장 거울상)",
+      "breadth_return_pct": 0.0,
+      "breadth_mdd_pct": 0.0,
+      "breadth_vs_off_return_pp": 4.2,
+      "breadth_vs_off_mdd_pp": 25.6,
+      "breadth_vs_index_ma_return_pp": 20.0
+    }
+  ],
+  "conclusion": "breadth 레짐이 index_ma 레짐보다 명백히 우월하다 — 강세장 비용이 훨씬 작고(강세장 +272→+216 vs index_ma +96) 완만약세는 OFF 를 수익·낙폭 양쪽서 이긴다. 단 급격한 단기 급락(30일 -35%)은 breadth 지연으로 방어가 약함(index_ma 유리). 종합: 동적 레짐이 필요하면 breadth 를 쓴다. 그래도 강세장 비용(-56%p)이 0은 아니므로 policy 기본은 여전히 enabled=False(항시투자) — 거시 약세 누적 시 breadth 서킷브레이커를 수동 ON.",
+  "interpretation": [
+    "breadth_vs_off_return (+) AND breadth_vs_off_mdd (+, 낙폭 축소) 가 동시면 그 시나리오에선 breadth 가 파레토 개선(완만약세가 대표적).",
+    "breadth_vs_index_ma_return 이 대부분 크게 (+) → breadth 가 강세장·대부분 약세장서 index_ma 보다 수익 우위.",
+    "crash 행에서 breadth MDD 가 안 좋으면 → 급락 방어는 breadth 지연이 약점(향후 breadth+급락감지 併用 여지)."
+  ],
+  "note": "학습·시뮬레이션. 합성 약세장은 실제 약세장의 상관·점프·유동성 고갈을 완전히 재현하지 못한다(보수적 하한 추정)."
+}

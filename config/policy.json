@@ -52,6 +52,17 @@
       "action_when_defensive": "executable_allocation 을 현금화(orders 비움)하고 target_basket 에 defensive 플래그. 진입 신호만 차단하며 기존 보유 청산은 routine 의 손절·회전 룰이 별도 판단.",
       "rule": "지수 종가가 MA200 아래로 enter_days 연속 이탈 시 방어 ON, MA200 위로 exit_days 연속 회복 시 OFF(히스테리시스로 휩쏘 억제).",
       "backtest_ref": "state/backtest_bear.json — 강세장 비용 vs 약세장 방어 트레이드오프 수치."
+    },
+    "discovery_gate": {
+      "enabled": true,
+      "purpose": "엔진 신호 일원화(기획 A관문). momentum_signal(절대모멘텀)이 매수를 결정하는데 screen_universe 는 상대강도(KOSPI대비)로 promote/rotate 를 판단해 '같은 종목을 momentum 은 사고 screen 은 회전아웃'하던 모순 제거. momentum_signal.full_ranking.score 를 단일 점수 권위로 삼고, 상대강도·테마·품질은 2차 랭킹/컨텍스트로 강등.",
+      "authority": "state/momentum_signal.json#full_ranking (0.5×60일+0.5×120일 절대모멘텀, 백테스트 검증)",
+      "promote_score_min": 30.0,
+      "promote_note": "비후보 종목은 모멘텀 점수 ≥ promote_score_min(매수 floor 와 정렬) AND pass_filter(추세) 일 때만 승격 제안 → 승격되면 실제 momentum 매수대상과 일치.",
+      "rotate_score_max": 0.0,
+      "rotate_note": "후보는 모멘텀 점수 ≤ rotate_score_max(절대모멘텀 소멸) 또는 pass_filter=False 일 때만 회전아웃 제안 → momentum 이 아직 원하는 종목은 회전아웃 안 함(모순 제거).",
+      "secondary_ranking": "상대강도(excess_60d)·테마·dynamic_excess_min 품질은 승격 후보 우선순위·라벨·컨텍스트로만 사용.",
+      "fallback": "momentum_signal.json 결측/파싱실패 시 기존 상대강도 로직(dynamic_excess_min)으로 graceful degrade."
     }
   },
   "universe": {

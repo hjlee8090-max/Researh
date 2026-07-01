@@ -76,3 +76,7 @@ A의 80%는 **①가격 신선도 + ②약세장 검증** 두 개에 들어 있�
 - [2026-06-30] **뉴스 하이브리드 분류(3순위)** 완료 — 키워드 사전 보강(동의어 +7유형, capex 신설) +
   LLM 리뷰 큐(`fetch_news` → `llm_review_queue`) 2단계. 측정: 미분류 170건 중 **+18건(10.6%p) 회수, 오탐 0**.
   잔여는 routine LLM 이 큐로 분류·승격.
+- [2026-06-30] **두 엔진 신호 일원화(기획 A관문)** 완료 — `momentum_signal.full_ranking.score`(절대모멘텀)를
+  단일 점수 권위로, `screen_universe` promote/rotate 가 이를 따르게 함(상대강도·품질은 2차 컨텍스트로 강등).
+  결과: rotate_out 11→6, **momentum 매수대상인데 회전아웃되던 모순 0건**(한미·LIG·삼성SDI 보호). policy
+  `momentum_strategy.discovery_gate`(promote_score_min=30·rotate_score_max=0), momentum_signal 결측 시 RS fallback.

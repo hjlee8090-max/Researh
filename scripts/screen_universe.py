@@ -250,6 +250,14 @@ def main() -> int:
     news_impact = load_json("config/news_impact.json", {})
     now = datetime.now(KST)
 
+    # 엔진 일원화: momentum_signal.full_ranking 를 단일 점수 권위로 로드(결측 시 상대강도 fallback).
+    mom_signal = load_json("state/momentum_signal.json", {})
+    mom_rank = {r.get("ticker"): r for r in mom_signal.get("full_ranking", []) if isinstance(r, dict) and r.get("ticker")}
+    dg = policy.get("momentum_strategy", {}).get("discovery_gate", {}) if isinstance(policy.get("momentum_strategy"), dict) else {}
+    dg_enabled = bool(dg.get("enabled", False)) and bool(mom_rank)  # 데이터 있을 때만 권위 적용
+    promote_score_min = float(dg.get("promote_score_min", 30.0))
+    rotate_score_max = float(dg.get("rotate_score_max", 0.0))
+
     theme_strength: dict[str, float] = {
         t.get("id"): float(t.get("strength", 0.0))
         for t in themes_cfg.get("themes", [])
@@ -348,6 +356,9 @@ def main() -> int:
             "quality": quality,
             "effective_excess_min": eff_min,
             "excess_relax_applied": relax,
+            # 단일 점수 권위(momentum_signal 절대모멘텀) — 없으면 None → RS fallback
+            "mom_score": (mom_rank.get(tk, {}) or {}).get("score"),
+            "mom_pass_filter": (mom_rank.get(tk, {}) or {}).get("pass_filter"),
             "ret5": ret5,
             "ret20": ret20,
             "ret60": ret60,
@@ -369,27 +380,40 @@ def main() -> int:
     ranked.sort(key=lambda r: r["screen_score"], reverse=True)
 
     # --- v2.7 종목 탐색: 승격/회전아웃 제안 (v2.9 동적 임계: 강세장 기업가치+호재로 음수 허용) ---
+    # 승격 후보 우선순위: 단일 권위(momentum score) 있으면 그 순, 없으면 상대강도 순.
+    promote_pool = sorted(ranked, key=lambda r: (-(r["mom_score"] if r.get("mom_score") is not None else -999),
+                                                 -(r["screen_score"] or 0)))
     promote: list[dict[str, Any]] = []
-    for r in ranked:
+    for r in promote_pool:
         if r["in_candidates"] or not r["data_ok"]:
             continue
-        # 종목별 동적 하한: 무뉴스·부실은 base(+10) 엄격, 좋은회사+촉매는 음수까지 허용
-        threshold = r.get("effective_excess_min", excess_min)
-        if r["excess_60d"] is None or r["excess_60d"] < threshold:
-            continue
         if r["ret5"] is not None and r["ret5"] < hard_floor:
-            continue
+            continue  # 자유낙하 차단(불변)
+        if dg_enabled and r.get("mom_score") is not None:
+            # 일원화: momentum 이 실제 매수할 만한 종목만 승격(promote_score_min 은 매수 floor 와 정렬)
+            if not r.get("mom_pass_filter") or r["mom_score"] < promote_score_min:
+                continue
+        else:
+            # fallback: momentum 데이터 없을 때만 상대강도 동적임계 사용
+            threshold = r.get("effective_excess_min", excess_min)
+            if r["excess_60d"] is None or r["excess_60d"] < threshold:
+                continue
         promote.append(r)
         if len(promote) >= promote_max:
             break
-    # 회전아웃도 동적임계로 보호: 기업가치+호재 품질이 부여한 허용하한(effective_excess_min)보다
-    # 위에 있으면 만성 후행으로 보지 않는다(강세장에서 좋은 회사를 KOSPI 추월 실패만으로 내치지 않음).
-    rotate_out = [
-        r for r in ranked
-        if r["in_candidates"] and r["excess_60d"] is not None
-        and r["excess_60d"] <= rotate_excess
-        and r["excess_60d"] < r.get("effective_excess_min", rotate_excess)
-    ]
+    # 회전아웃: 일원화 시 momentum 이 버린 종목만(절대모멘텀 소멸/추세이탈) — momentum 이 아직
+    # 원하는 종목은 회전아웃 안 함(모순 제거). fallback 은 기존 상대강도+품질 보호 로직.
+    rotate_out = []
+    for r in ranked:
+        if not r["in_candidates"]:
+            continue
+        if dg_enabled and r.get("mom_score") is not None:
+            if (r.get("mom_pass_filter") is False) or (r["mom_score"] <= rotate_score_max):
+                rotate_out.append(r)
+        else:
+            if (r["excess_60d"] is not None and r["excess_60d"] <= rotate_excess
+                    and r["excess_60d"] < r.get("effective_excess_min", rotate_excess)):
+                rotate_out.append(r)
 
     # --- v2.8 섹터 로테이션: theme(없으면 sector)로 그룹핑해 '몰입' 신호 산출(전 섹터 범용) ---
     groups: dict[str, dict[str, Any]] = {}
@@ -452,6 +476,13 @@ def main() -> int:
         "sensitivity_basis": sensitivity_basis,
         "immersion_min_signals": min_signals,
         "rank_blend": {"relative_strength": w_rs, "thematic": w_th},
+        "score_authority": {
+            "unified": dg_enabled,
+            "source": "state/momentum_signal.json#full_ranking.score" if dg_enabled else "relative_strength(fallback)",
+            "promote_score_min": promote_score_min,
+            "rotate_score_max": rotate_score_max,
+            "note": "일원화 ON 시 promote/rotate 는 momentum 절대점수 권위를 따르고 상대강도·품질은 2차 랭킹/컨텍스트. momentum_signal 결측 시 상대강도로 degrade.",
+        },
         "promote_threshold": {
             "base_excess_min_pct": base_excess_min,
             "dynamic_enabled": bool(dcfg.get("enabled", False)),
@@ -499,21 +530,22 @@ def _report_md(
     lines.append(f"- 벤치마크: KOSPI 60일 {kospi_ret60}% / tier {tier} / 몰입 신호 {min_signals}개 요구")
     lines.append("")
     if promote:
-        lines.append("**승격 제안 (상대강도 또는 기업가치+호재 동적임계 통과):**")
+        lines.append("**승격 제안 (momentum 절대점수 권위 — 매수 floor 와 정렬):**")
         for r in promote:
+            ms = r.get("mom_score")
+            head = f"모멘텀 {ms:+.1f}" if ms is not None else f"초과수익 {r['excess_60d']:+.1f}%p"
             q = r.get("quality", 0.0)
-            relax = r.get("excess_relax_applied", 0.0)
-            eff = r.get("effective_excess_min")
-            qnote = (f" · 품질 {q:.2f}(실적 {r.get('fund_score')}/뉴스 {r.get('news_score')}) → 허용하한 {eff:+.0f}%p"
-                     if relax else "")
-            lines.append(f"- {r['name']}({r['ticker']}) · {r['sector']} — 초과수익 {r['excess_60d']:+.1f}%p, 5일 {r['ret5']}%{qnote}")
+            qnote = f" · 품질 {q:.2f}(실적 {r.get('fund_score')}/뉴스 {r.get('news_score')})" if q else ""
+            lines.append(f"- {r['name']}({r['ticker']}) · {r['sector']} — {head}, 5일 {r['ret5']}%{qnote}")
     else:
-        lines.append("**승격 제안: 없음** (상대강도·동적임계 통과 신규 주도주 미발견 — 데이터 차단 시 다음 주 재시도)")
+        lines.append("**승격 제안: 없음** (momentum 점수 상위 신규 주도주가 이미 모두 추적 중 — 정상)")
     if rotate_out:
         lines.append("")
-        lines.append("**회전아웃 제안 (만성 후행주):**")
+        lines.append("**회전아웃 제안 (momentum 절대점수 소멸 — 단일 권위):**")
         for r in rotate_out:
-            lines.append(f"- {r['name']}({r['ticker']}) — 초과수익 {r['excess_60d']:+.1f}%p (KOSPI 대비 후행)")
+            ms = r.get("mom_score")
+            ms_s = f"모멘텀 {ms:+.1f}" if ms is not None else f"초과수익 {r['excess_60d']:+.1f}%p"
+            lines.append(f"- {r['name']}({r['ticker']}) — {ms_s} (추세·절대모멘텀 이탈)")
     lines.append("")
     lines.append("**🔥 섹터 로테이션 — 몰입 신호 (호재는 routine 이 별도 web_verify):**")
     heating = [s for s in sector_rotation if s["immersion_met"]]

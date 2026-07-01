@@ -46,6 +46,7 @@
 | 형식 | 작성 시간대 | 작성 주체 |
 |---|---|---|
 | `reports/YYYY-MM-DD-00.md` | 자정 00:00 KST | `prompts/0000_global.md` |
+| `reports/YYYY-MM-DD-06.md` | 미국장 마감 06:00 KST (발화 06:30) | `prompts/0630_us_close.md` |
 | `reports/YYYY-MM-DD-09.md` | 개장 09:00 KST | `prompts/0900_pre_market.md` |
 | `reports/YYYY-MM-DD-12.md` | 장중 12:00 KST | `prompts/1200_midday.md` |
 | `reports/YYYY-MM-DD-15.md` | 마감 임박 15:00 KST | `prompts/1500_close.md` |
@@ -74,11 +75,25 @@
 - `config/watchlist.json` (야간 경보 코멘트 추가만)
 - `state/lessons.md` (orange/red 사전 경보 시)
 
+### 🌄 06:00 미국장 마감 확정 (`prompts/0630_us_close.md`, 발화 06:30)
+**읽기**:
+- `state/lessons.md`, `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`, `config/candidates.json`
+- 오늘 자정 파일: `reports/YYYY-MM-DD-00.md` (진행형 태그·개장 갭 예측·if-then 표)
+- `state/pending_orders.json`, `state/inference_checklist.md`, `state/market_snapshot.json`
+
+**쓰기**:
+- `reports/YYYY-MM-DD-06.md` (신규 생성)
+- `state/pending_orders.json` (트리거 값·메모 갱신만 — 체결/status 변경 없음)
+- `state/inference_log.jsonl` (개장 갭 갱신 예측 append, `slot":"06:00"`·`horizon="09:00"` — 채점은 09시)
+- `config/watchlist.json` (마감 경보 코멘트 추가 시)
+- **매매 없음** (한국 폐장 — `execution_mode=none`)
+
 ### 🌅 09:00 개장 (`prompts/0900_pre_market.md`)
 **읽기**:
 - `state/lessons.md` (먼저)
 - `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 - 오늘 자정 파일: `reports/YYYY-MM-DD-00.md`
+- 오늘 06시 파일: `reports/YYYY-MM-DD-06.md` (있으면 마감 확정·갱신 갭 예측을 1순위 흡수)
 - 직전 영업일 18시: `reports/YYYY-MM-DD-18.md`
 - 직전 주말 archive: `reports/YYYY-Www-archive.md`
 
@@ -150,7 +165,7 @@
 
 ### 일요일 21:00 archive (`prompts/sunday_archive.md`) — 새로 추가
 **읽기**:
-- 지난주 평일 5일 × 5슬롯 = 최대 25개 시간대별 리포트
+- 지난주 평일 5일 × 6슬롯 = 최대 30개 시간대별 리포트
 - 토요일 사후분석 + 일요일 전략 (선택)
 - config/* 4개, state/lessons.md
 

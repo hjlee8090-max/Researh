@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """카카오 '나에게 보내기' API로 routine 알림 발송.
 
-GitHub Actions 에서 09/12/15/18 routine 푸시 후 호출.
+GitHub Actions 에서 00/06/09/12/15/18 routine 푸시 후 호출.
 커밋 메시지 프리픽스에 따라 다른 요약을 보낸다:
-  - 일일 routine(chore(09/12/15)·"report:") → 현재 평가금액(config/portfolio.json)
+  - 일일 routine(chore(06/09/12/15)·"report:") → 현재 평가금액(config/portfolio.json)
     + 주요 뉴스(리포트 '한눈에 보기'의 매크로/시황·슬롯 한 줄) 간결 요약
   - 주말/감사/전략 등("weekly:"/"audit:"/"sun-strategy:" 등) → 해당 리포트 요약 불릿
 
@@ -68,7 +68,7 @@ def refresh_access_token() -> dict:
     )
 
 
-DAILY_REPORT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:-(00|09|12|15|18))?\.md$")
+DAILY_REPORT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:-(00|06|09|12|15|18))?\.md$")
 
 
 def find_latest_report() -> Path | None:
@@ -114,6 +114,7 @@ def find_slot_report(slot_hh: str) -> Path | None:
 
 SLOT_META = {
     "00:00": ("🌙", "00:00 글로벌 야간 점검", "## 🌙 00:00 글로벌 야간 점검", "00"),
+    "06:00": ("🌄", "06:00 미국장 마감 확정", "## 🌄 06:00 미국장 마감 확정", "06"),
     "09:00": ("🌅", "09:00 개장 점검", "## 🌅 09:00 개장 점검", "09"),
     "12:00": ("🕛", "12:00 장중 점검", "## 🕛 12:00 장중 점검", "12"),
     "15:00": ("🔔", "15:00 마감 임박 점검", "## 🔔 15:00 마감 임박 점검", "15"),
@@ -132,7 +133,7 @@ def detect_slot(commit_msg: str) -> tuple[str, str, str, str] | None:
     chore( 인데 슬롯 프리픽스가 아니면(예: chore(context)) routine 커밋이 아니므로 None.
     """
     subject = commit_msg.splitlines()[0] if commit_msg else ""
-    m = re.match(r"^chore\((00|09|12|15):00", subject)
+    m = re.match(r"^chore\((00|06|09|12|15):00", subject)
     if m:
         return SLOT_META[f"{m.group(1)}:00"]
     if subject.startswith("chore("):

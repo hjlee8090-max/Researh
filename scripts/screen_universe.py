@@ -76,7 +76,10 @@ def fundamentals_score(tk: str, funds: dict[str, Any], dir_map: dict[str, float]
     margin_norm = float(fcfg.get("margin_norm_pct", 30.0)) or 30.0
     growth_norm = float(fcfg.get("growth_norm_pct", 100.0)) or 100.0
     margin = v.get("op_margin_pct")
-    growth = v.get("op_growth_pop_pct")
+    # 성장률: 진짜 YoY(계절성 제거) 우선, 없으면 PoP 폴백
+    growth = v.get("op_growth_yoy_pct")
+    if growth is None:
+        growth = v.get("op_growth_pop_pct")
     margin_comp = _clamp((margin / margin_norm) if isinstance(margin, (int, float)) else 0.0, 0.0, 1.0)
     growth_comp = _clamp((growth / growth_norm) if isinstance(growth, (int, float)) else 0.0, 0.0, 1.0)
     score = (

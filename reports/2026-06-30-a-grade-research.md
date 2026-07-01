@@ -83,3 +83,9 @@ A의 80%는 **①가격 신선도 + ②약세장 검증** 두 개에 들어 있�
 - [2026-06-30] **breadth 레짐 연구** 완료 — index-MA 휩쏘 문제의 대안 검증. breadth(유니버스 MA200 상회율)가
   index-MA 를 **전 시나리오 수익 우위**로 압도, 강세장 비용 −176%p→**−56%p** 급감(완만약세는 OFF 를
   양쪽서 이김). 서킷브레이커 기본 신호를 `regime_type=breadth`로 채택(기본 여전히 OFF). 약점=급격한 급락 지연.
+- [2026-06-30] **저난이도 마무리 3종** 완료:
+  ① 진짜 YoY — `fetch_fundamentals` 가 전년 동기 영업이익 추가 조회해 `op_growth_yoy_pct` 산출(계절성 제거),
+    earnings_signal 을 YoY 우선(PoP 폴백)으로. screen_universe fundamentals_score 도 YoY 우선.
+  ② tradable 폴백 — 매수대상<`min_tradable`(2)면 floor 만 완화(추적·추세 게이트 유지)해 마름 방지. 검증:
+    미추적/음수 종목은 안 건드리고 보유·후보 중 floor 미달 최선만 채움.
+  ③ min-trade — `min_trade_krw`(10만) 미만 dust 매수 skip(오드랏 방지, 현 사이즈선 미바인딩).

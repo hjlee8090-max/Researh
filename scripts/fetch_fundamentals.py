@@ -173,15 +173,47 @@ def fetch_financials(api_key: str, corp_code: str, year: int) -> dict[str, Any] 
     return None
 
 
+def fetch_op_amount(api_key: str, corp_code: str, year: int, reprt: str) -> int | None:
+    """특정 연도·보고서의 영업이익(연결 우선) thstrm_amount 만 조회 — 진짜 YoY 기준값용."""
+    url = (
+        f"{DART_BASE}/fnlttSinglAcnt.json?crtfc_key={api_key}"
+        f"&corp_code={corp_code}&bsns_year={year}&reprt_code={reprt}"
+    )
+    try:
+        payload = json.loads(http_get(url))
+    except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as exc:
+        logger.warning("dart yoy fetch failed corp=%s %s %s: %s", corp_code, year, reprt, exc)
+        return None
+    if payload.get("status") != "000" or not payload.get("list"):
+        return None
+    rows = payload["list"]
+    for nm in ACCOUNT_ALIASES["operating_profit"]:
+        match = (next((r for r in rows if r.get("account_nm") == nm and r.get("fs_div") == "CFS"), None)
+                 or next((r for r in rows if r.get("account_nm") == nm), None))
+        if match:
+            return _to_int(match.get("thstrm_amount"))
+    return None
+
+
 def derive(fin: dict[str, Any]) -> dict[str, Any]:
-    """영업이익률·전기대비 영업이익 증감·earnings_signal 파생."""
+    """영업이익률·성장률(YoY 우선, PoP 폴백)·earnings_signal 파생."""
     rev, op = fin.get("revenue"), fin.get("operating_profit")
-    op_prev = fin.get("operating_profit_frmtrm")
+    op_prev = fin.get("operating_profit_frmtrm")       # 전기(직전기간)
+    op_yoy_ago = fin.get("operating_profit_yoy_ago")   # 전년 동기(진짜 YoY 기준)
     fin["op_margin_pct"] = round(op / rev * 100, 2) if rev and op is not None and rev != 0 else None
-    growth = None
+    # PoP(전기대비) — 기존 유지(참고용)
+    growth_pop = None
     if op is not None and op_prev not in (None, 0):
-        growth = round((op - op_prev) / abs(op_prev) * 100, 1)
-    fin["op_growth_pop_pct"] = growth  # period-over-period (전기 대비), 엄밀 YoY 아님
+        growth_pop = round((op - op_prev) / abs(op_prev) * 100, 1)
+    fin["op_growth_pop_pct"] = growth_pop
+    # YoY(전년 동기대비) — 계절성 제거한 진짜 성장률(있으면 우선)
+    growth_yoy = None
+    if op is not None and op_yoy_ago not in (None, 0):
+        growth_yoy = round((op - op_yoy_ago) / abs(op_yoy_ago) * 100, 1)
+    fin["op_growth_yoy_pct"] = growth_yoy
+    # earnings_signal: YoY 우선(같은 분기 비교로 계절성 왜곡 제거), 없으면 PoP 폴백
+    growth = growth_yoy if growth_yoy is not None else growth_pop
+    fin["earnings_signal_basis"] = "yoy" if growth_yoy is not None else ("pop" if growth_pop is not None else "none")
     if growth is None:
         signal = "unknown"
     elif growth >= 20:
@@ -209,6 +241,9 @@ def build_ticker_entry(
     fin = fetch_financials(api_key, corp, now.year)
     if not fin:
         return {"name": name, "corp_code": corp, "error": "재무 데이터 없음"}, False
+    # 진짜 YoY: 같은 보고서(reprt_code)의 전년도 영업이익을 추가 조회(계절성 제거)
+    if fin.get("reprt_code") and fin.get("bsns_year"):
+        fin["operating_profit_yoy_ago"] = fetch_op_amount(api_key, corp, fin["bsns_year"] - 1, fin["reprt_code"])
     entry = {
         "name": name,
         "corp_code": corp,

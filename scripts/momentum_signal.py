@@ -30,6 +30,8 @@ KST = timezone(timedelta(hours=9))
 TOP_N = 6          # Top10 → Top6 축소: 강한 추세주 집중(후행주 충전재 배제). 백테스트 Top5~6 Sharpe 2.16~2.34.
 MIN_SCORE = 30.0   # 모멘텀 점수 하한 — 이 값 미만은 바스켓 제외(은행 등 저모멘텀 충전재 자동 탈락).
 TRACKED_ONLY = True  # 추적 대상(candidates ∪ 보유) 종목만 매수. 미추적 트렌드주는 screen_universe→candidates 승격 후에만.
+MIN_TRADABLE = 2   # 매수대상 < 이 값이면 floor 완화 폴백(추적·추세 게이트는 유지 — 마름 방지).
+MIN_TRADE_KRW = 100000  # 이 미만 지시 매수는 dust 로 skip(오드랏 방지).
 MOM_FAST = 60
 MOM_SLOW = 120
 TREND_MA = 200
@@ -37,12 +39,14 @@ TREND_MA = 200
 
 def load_config():
     """policy.json.momentum_strategy.config 로 파라미터 오버라이드(코드 수정 없이 튜닝)."""
-    global TOP_N, MIN_SCORE, TRACKED_ONLY
+    global TOP_N, MIN_SCORE, TRACKED_ONLY, MIN_TRADABLE, MIN_TRADE_KRW
     try:
         cfg = json.load(open(ROOT / "config" / "policy.json"))["momentum_strategy"]["config"]
         TOP_N = int(cfg.get("top_n", TOP_N))
         MIN_SCORE = float(cfg.get("min_score", MIN_SCORE))
         TRACKED_ONLY = bool(cfg.get("tracked_only", TRACKED_ONLY))
+        MIN_TRADABLE = int(cfg.get("min_tradable", MIN_TRADABLE))
+        MIN_TRADE_KRW = float(cfg.get("min_trade_krw", MIN_TRADE_KRW))
     except Exception:
         pass
 
@@ -235,6 +239,9 @@ def executable_allocation(eligible, equity, min_cash_pct=10.0, per_name_cap_pct=
         if shares <= 0:
             continue
         cost = shares * r["close"]
+        # min-trade: dust 규모 지시 매수는 skip(오드랏·회전비용 대비 무의미)
+        if cost < MIN_TRADE_KRW:
+            continue
         spent += cost
         orders.append({"ticker": r["ticker"], "name": r["name"], "shares": shares,
                        "price": r["close"], "cost": round(cost),
@@ -277,6 +284,20 @@ def main():
         {"ticker": r["ticker"], "name": r["name"], "score": r["score"]}
         for r in eligible if r["above_floor"] and not r["tracked"]
     ]
+    # tradable 폴백: 매수대상 < MIN_TRADABLE 이면 floor 만 완화해 채운다(추적·추세 게이트는 유지 —
+    # 미추적/하락 종목을 사는 게 아니라, 추적+추세통과(score>0)인데 floor 미달인 최선 종목으로 마름 방지).
+    floor_relaxed = []
+    if len(buyable) < MIN_TRADABLE:
+        fill = sorted([r for r in ranked
+                       if r["pass_filter"] and r["tracked"] and not r["above_floor"]],
+                      key=lambda r: -r["score"])
+        for r in fill:
+            if len(buyable) >= MIN_TRADABLE:
+                break
+            r["buyable"] = True
+            buyable.append(r)
+            floor_relaxed.append({"ticker": r["ticker"], "name": r["name"], "score": r["score"]})
+        buyable.sort(key=lambda r: -r["score"])
     target = buyable[:TOP_N]
     target_tickers = [r["ticker"] for r in target]
     weight = round(1.0 / TOP_N, 4)
@@ -333,6 +354,7 @@ def main():
         },
         "strategy": f"dual-momentum rotation Top{TOP_N}, score_floor≥{MIN_SCORE:g}, tracked_only={TRACKED_ONLY}, MA200 trend filter",
         "config": {"top_n": TOP_N, "min_score": MIN_SCORE, "tracked_only": TRACKED_ONLY,
+                   "min_tradable": MIN_TRADABLE, "min_trade_krw": MIN_TRADE_KRW,
                    "mom_fast": MOM_FAST, "mom_slow": MOM_SLOW, "trend_ma": TREND_MA},
         "executable_allocation": {
             "equity": round(equity),
@@ -353,6 +375,7 @@ def main():
             "tracked_only": TRACKED_ONLY,
             "skipped_below_floor": skipped_below_floor,
             "skipped_untracked": skipped_untracked,
+            "floor_relaxed_fallback": floor_relaxed,
             "note": "skipped_untracked 는 트렌드는 강하나 추적목록(candidates)에 없는 종목 — screen_universe.py 가 candidates 승격을 제안하고 routine 이 thesis 와 함께 승격해야 매수 대상이 된다(바스켓 자기역등록 순환 차단).",
         },
         "target_basket": [

@@ -29,6 +29,15 @@
 - **겨울(EST) 폴백**: EST 구간엔 미 마감이 06:00 KST 라 06:30 시점에 종가가 아직 정착 안 됐을 수 있다.
   마감가가 미확정이면 **잠정치임을 명시**하고 "09시 routine 이 최종 확인" 을 병기한다.
 
+## 0-B. 한국 영업일 가드 (§0-0 다음 — 휴장일 갭 예측 방지)
+- `python scripts/check_market_open.py` 를 실행해 **오늘이 KRX 영업일인지** 확인한다(`is_open`).
+- `is_open=false` (공휴일·연휴) → **한국 휴장 모드**: 미국장 마감 정리(§1)와 자정 예측 확정 판정은
+  정상 수행하되, **개장 갭 예측(§2-1)·inference_log 적재·pending_orders 트리거 갱신(§2-2)을 생략**한다
+  — 열리지 않는 시장의 갭은 예측·채점 대상이 아니다. 리포트 머리말에 "한국 휴장(사유) — 갭 예측·주문
+  갱신 없음, 다음 영업일 참고용" 1줄을 명시하고 글로벌 마감 정리 중심의 축약 리포트로 마친다
+  (`config/market_calendar.json.behavior_on_holiday.weekday_routines["06:00"]`).
+- `is_open=true`: 정상 진행.
+
 ## 0-A. 시장 데이터 스냅샷 (참고용)
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 생성한다.
 - 06:30 routine 은 매매 의사결정이 아니라 **참고용**이지만, 보유·후보 종목의 최신 종가·5거래일

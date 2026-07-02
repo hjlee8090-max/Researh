@@ -35,8 +35,9 @@
 3. `state/trade_log.jsonl` (최근 30라인)
 3-1. `config/catalysts.json` (있으면 — §4 다음 거래일 액션의 임박 촉매 반영용, 옵셔널)
 3-2. `state/consensus.json`·`state/earnings_preview.json` (있으면 — §2-5 earnings-preview 입력/상태, 옵셔널)
-4. **오늘 시간대별 리포트 4개** — 18시 종합의 핵심 재료:
+4. **오늘 시간대별 리포트 5개** — 18시 종합의 핵심 재료:
    - `reports/YYYY-MM-DD-00.md` (자정)
+   - `reports/YYYY-MM-DD-06.md` (미국장 마감 확정)
    - `reports/YYYY-MM-DD-09.md` (개장)
    - `reports/YYYY-MM-DD-12.md` (장중)
    - `reports/YYYY-MM-DD-15.md` (마감 임박)
@@ -141,7 +142,7 @@
    - 09시가 이미 채점한 `horizon="09:00"` 예측은 건너뛴다(중복 금지).
    - 미배치(보류·blocked) 그림자 예측은 `{"id":"<id>","realized":{"forgone_krw":<샀더라면 손익>,"regime":"risk_on|risk_off"}}` — forgone 은 실제 관측 종가로만, `risk_off` 면 채점기가 감점 면제.
 2. **학습 기록**: miss 1건당 `state/lessons.md` 에 `선제추론오차` 항목 추가(분류·예측/실제·미흡했던 부분·**다음 추론 시 고려**·선제 액션 결과·분류 신뢰도). 미배치로 놓친 수익이 컸으면 `기회비용오차`. 누적 카운터(`선제추론오차`/`기회비용오차`)도 갱신.
-3. **당일 환류**: `python scripts/score_inferences.py` → `python scripts/build_inference_checklist.py` 실행 — 오늘 miss 가 `inference_checklist.md` 에 즉시 반영돼 **내일 00시/09시 추론이 어제 교훈을 이미 읽는다**(학습 지연 제거). 채점 산출(`inference_scorecard.json`)의 적중률·결합손익은 리포트에 나열하지 않고 일요일 리뷰·state 에만 둔다.
+3. **당일 환류**: `python scripts/score_inferences.py` → `python scripts/build_inference_checklist.py` 실행 — 오늘 miss 가 `inference_checklist.md` 에 즉시 반영돼 **내일 00시/06시/09시 추론이 어제 교훈을 이미 읽는다**(학습 지연 제거). 채점 산출(`inference_scorecard.json`)의 적중률·결합손익은 리포트에 나열하지 않고 일요일 리뷰·state 에만 둔다.
 
 ## 4. 다음 거래일 액션 결정
 - 손절·목표 도달로 청산된 종목 자리 → **다음 09시 신규 추천 후보** 선정 메모를 watchlist.json의 `next_day_plan` 필드에 기록
@@ -155,8 +156,8 @@
 
 ## 5. 18시 종합 리포트 작성 (시간대별 분리 — 종합 파일 생성)
 **오늘 날짜의 18시 리포트 `reports/YYYY-MM-DD-18.md` 를 새로 생성** 한다 (이미 존재하면 덮어쓰기).
-- 00/09/12/15 파일은 **절대 수정하지 않는다** (히스토리·자기보완 학습 재료).
-- 18시 파일은 그 4개를 **종합·검증** 하는 별개 파일이다.
+- 00/06/09/12/15 파일은 **절대 수정하지 않는다** (히스토리·자기보완 학습 재료).
+- 18시 파일은 그 5개를 **종합·검증** 하는 별개 파일이다.
 - 누락된 시간대가 있으면 본 리포트에서 "(N시 routine 미실행)" 으로 명시.
 
 ### 리포트 가독성 원칙 (작성 전 필독)
@@ -172,8 +173,8 @@
 ```markdown
 # 일일 리포트 — YYYY-MM-DD (요일) · 📊 18:00 종합·확정
 
-> 시리즈 진행: 🌙 00:00 [✓/⚠️] → 🌅 09:00 [✓/⚠️] → 🕛 12:00 [✓/⚠️] → 🔔 15:00 [✓/⚠️] → 📊 18:00 ✓ (확정)
-> 오늘의 시간대별 파일: [🌙 자정](./YYYY-MM-DD-00.md) · [🌅 09:00](./YYYY-MM-DD-09.md) · [🕛 12:00](./YYYY-MM-DD-12.md) · [🔔 15:00](./YYYY-MM-DD-15.md)
+> 시리즈 진행: 🌙 00:00 [✓/⚠️] → 🌄 06:00 [✓/⚠️] → 🌅 09:00 [✓/⚠️] → 🕛 12:00 [✓/⚠️] → 🔔 15:00 [✓/⚠️] → 📊 18:00 ✓ (확정)
+> 오늘의 시간대별 파일: [🌙 자정](./YYYY-MM-DD-00.md) · [🌄 06:00](./YYYY-MM-DD-06.md) · [🌅 09:00](./YYYY-MM-DD-09.md) · [🕛 12:00](./YYYY-MM-DD-12.md) · [🔔 15:00](./YYYY-MM-DD-15.md)
 > 마지막 갱신: YYYY-MM-DD HH:MM KST (18:00 — 일일 확정)
 > ※ 종가 출처·신선도·검증 결론은 이 줄 하나로 끝낸다 (예: "종가: 스냅샷 17:55 수집, 2출처 일치 — 당일 확정값"). 학습·시뮬레이션 용도.
 

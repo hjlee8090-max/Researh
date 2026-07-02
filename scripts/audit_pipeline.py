@@ -532,6 +532,7 @@ def audit_market_data_tooling(messages: list[str]) -> None:
 def audit_prompts_and_scripts(messages: list[str]) -> None:
     required_prompts = [
         "0000_global.md",
+        "0630_us_close.md",
         "0900_pre_market.md",
         "1200_midday.md",
         "1500_close.md",
@@ -607,10 +608,10 @@ def extract_glance_block(text: str) -> str:
 
 def audit_reports(messages: list[str]) -> None:
     all_reports = sorted((ROOT / "reports").glob("*.md"))
-    # 시간대별 분리 파일(YYYY-MM-DD-{00,09,12,15,18}.md) 및 구버전 단일 파일(YYYY-MM-DD.md) 모두 인식
+    # 시간대별 분리 파일(YYYY-MM-DD-{00,06,09,12,15,18}.md) 및 구버전 단일 파일(YYYY-MM-DD.md) 모두 인식
     reports = [
         path for path in all_reports
-        if re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:-(?:00|09|12|15|18))?\.md", path.name)
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:-(?:00|06|09|12|15|18))?\.md", path.name)
     ]
     if not reports:
         messages.append(result("WARN", "no daily reports found"))

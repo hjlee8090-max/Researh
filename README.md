@@ -1,7 +1,7 @@
 # KOSPI 자기보완형 주식 오토플로우
 
 500만원 가상 포트폴리오로 KOSPI 대형주 3종목을 중장기 운용하는 시뮬레이션 파이프라인.
-매일 4번(09/12/15/18시) 자동으로 뉴스를 조사하고 의사결정을 갱신하며,
+매일 여러 번(00/06/09/12/15/18시) 자동으로 뉴스를 조사하고 의사결정을 갱신하며,
 18시에 목표가 오차를 분석해 다음날 추천에 반영하는 **자기보완 루프**를 갖는다.
 
 > 본 산출물은 학습·시뮬레이션 용도이며 실제 투자 권유가 아니다.
@@ -35,7 +35,7 @@ state/
   inference_log.jsonl      (선제적 추론 루프 Phase 1) 예측 원장 — 라인당 1예측(상황추론·예측·확신·선제액션·사후 채점결과). 핫패스 아님
   inference_scorecard.json score_inferences.py 채점 산출 — 슬롯·subject·확신구간별 적중률 + 결합 실현손익/PF + 미배치 forgone
   inference_checklist.md   추론 직전 먼저 읽는 응축 체크리스트(핫패스, 상한 40줄) — build_inference_checklist.py 가 lessons+scorecard 에서 파생
-  pending_orders.json      (Phase 3) 조건부 사전주문(선제 커밋) — 18시가 작성, check_intraday_alerts 가 장중 트리거 평가·카톡 신호만, 체결은 09시 routine 이 게이트 통과 후·Tier2 승인
+  pending_orders.json      (Phase 3) 조건부 사전주문(선제 커밋) — 18시가 작성, 06시가 미국장 마감 확정으로 트리거 값만 갱신(체결·status 변경 없음), check_intraday_alerts 가 장중 트리거 평가·카톡 신호만, 체결은 09시 routine 이 게이트 통과 후·Tier2 승인
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
   audit_log.jsonl          파이프라인 자동 점검 이력
   watchlist_archive.json   watchlist 에서 이관된 청산 종목 전체 기록 + 오래된 코멘트 (compact_state.py)
@@ -53,7 +53,7 @@ reports/
   YYYY-MM-DD-audit.md      파이프라인 자동 감사 리포트 (평일 19:30)
   YYYY-MM-DD-saturday-review.md  토요일 사후분석
   YYYY-MM-DD-sunday-strategy.md  일요일 전략
-  YYYY-Www-archive.md      일요일 21시 — 지난주 평일 25개 파일을 1개로 응축
+  YYYY-Www-archive.md      일요일 21시 — 지난주 평일 30개 파일을 1개로 응축
 prompts/
   0000_global.md           자정 글로벌 야간 점검
   0900_pre_market.md       09시 개장 점검
@@ -102,12 +102,13 @@ scripts/
 ```
 
 ## 스케줄 (Asia/Seoul)
-**평일** — 시간대별 분리 파일 5개 생성 (한 파일 = 한 슬롯)
+**평일** — 시간대별 분리 파일 6개 생성 (한 파일 = 한 슬롯)
 
 | 시각 | 내용 | 생성 파일 |
 |------|------|------------|
 | 00:00 | 글로벌 야간 점검 (미국장·유럽장·환율·원자재) → 보유 종목 야간 영향 매핑·한국 개장 갭 예측 | `reports/YYYY-MM-DD-00.md` |
-| 09:20 | 자정 예측 검증 + 미국장 마감(05:00)까지 흐름 + 한국 개장 인사이트 (발화 09:20, 슬롯·파일명은 `09` 유지) | `reports/YYYY-MM-DD-09.md` |
+| 06:30 | 미국장 마감 확정 → 자정 예측 확정·정정(진행형 지정학 역전 봉합), 개장 동시호가(08:30) 전 갭 예측·pending_orders 트리거 갱신 (발화 06:30, 슬롯·파일명은 `06` 유지·매매 없음) | `reports/YYYY-MM-DD-06.md` |
+| 09:20 | 자정·06시 예측 검증 + 미국장 마감(05:00)까지 흐름 + 한국 개장 인사이트 (발화 09:20, 슬롯·파일명은 `09` 유지) | `reports/YYYY-MM-DD-09.md` |
 | 12:00 | 장중 점검 (단계 경보·함정 패턴 cross-check) | `reports/YYYY-MM-DD-12.md` |
 | 15:00 | 마감 임박 점검, 종가 임박치로 1차 검증, 익일 09시 액션 후보 정리 | `reports/YYYY-MM-DD-15.md` |
 | 18:00 | (마감 후) 종가 확정 → 목표가 오차 판정 → lessons.md 갱신, 포트폴리오 평가, **종가 청산만**(ts=15:30·closing_auction, 신규진입은 09시 이연), 종합 리포트 | `reports/YYYY-MM-DD-18.md` |
@@ -119,7 +120,7 @@ scripts/
 | 매일 00:00 | 글로벌 야간 점검은 **주말에도 발화** — 단 일·월 자정은 미국 현물장 휴장이라 주말 자정 모드(주말 지정학·보유 종목 뉴스 중심, 미국 지수는 "(금요일 종가)" 표기 강제) | `reports/YYYY-MM-DD-00.md` |
 | 토 18:00 | 지난주 사후분석 | `reports/YYYY-MM-DD-saturday-review.md` |
 | 일 18:00 | 다음주 전략·weekly_plan 갱신 | `reports/YYYY-MM-DD-sunday-strategy.md` |
-| **일 21:00** | **지난주 평일 25개 시간대별 파일 → 1개 archive 응축** (콘텍스트 절약) | `reports/YYYY-Www-archive.md` |
+| **일 21:00** | **지난주 평일 30개 시간대별 파일 → 1개 archive 응축** (콘텍스트 절약) | `reports/YYYY-Www-archive.md` |
 
 > 각 시간대 파일은 **자기 슬롯만 담는다**. 이전 시간대 결론은 "📝 오늘의 이야기" 첫 문단에서 산문으로 1~2문장 이어받는다(구버전 "이어받기 박스"는 폐지). 이전 파일은 **절대 수정하지 않음** (히스토리·자기보완 학습 재료 보존).
 
@@ -214,14 +215,16 @@ score_candidates 가 block_reasons 로 사유를 노출해 리포트에 자동 �
 GitHub 레포 `hjlee8090-max/Researh`에 호스팅됨. 어디서든 동일 상태를 이어받아 동작.
 
 ### A. 원격 routine (PC 꺼져있어도 자동 실행) — 기본 모드
-- 평일 09:20 / 12:00 / 15:00 / 18:00 KST에 Anthropic 클라우드에서 자동 발화
+- 평일 06:30 / 09:20 / 12:00 / 15:00 / 18:00 KST + 매일 00:00 KST에 Anthropic 클라우드에서 자동 발화
   - 09시 슬롯은 **발화 시각만 09:20**(개장 직후 변동성 진정 + 시세 스냅샷 안착 대기). 슬롯 식별자·파일명(`-09.md`)·파서 고정문자열(`## 🌅 09:00 개장 점검`)은 관례상 `09` 로 유지한다.
+  - 06시 슬롯도 같은 관례 — **발화 시각은 06:30**(미국장 마감 EDT 05:00 / EST 06:00 KST 정착 대기)이나 슬롯 식별자·파일명(`-06.md`)·파서 고정문자열(`## 🌄 06:00 미국장 마감 확정`)은 `06` 로 유지한다.
 - 각 routine은 이 레포를 git clone → 해당 시각 prompt 파일 읽기 → 실행 → git commit/push
 - 등록·관리: https://claude.ai/code/routines
 
 | 시각 | Routine ID |
 |---|---|
 | 00:00 | 등록됨 — **매일 00:00 KST 발화로 수정 완료(2026-06-12 사용자 등록 변경)**. 이전 등록은 화~토만 발화해 월요일 자정 3주 연속 미실행(5/25·6/1·6/8)이었음. 일·월 자정은 미국 현물장 휴장이라 `prompts/0000_global.md` §0-0 **주말 자정 모드**(금요일 종가 표기 강제·주말 지정학 중심)로 분기. 검증: 다음 일·월 자정 리포트 생성 여부 + 월요일 19:30 audit(00 파일 누락 WARN) |
+| 06:30 | 등록됨 (2026-07-02 — `prompts/0630_us_close.md`, 월~금 06:30 KST). 미국장 마감 확정·개장 전 갱신. 월요일·미 공휴일 다음날은 프롬프트 §0-0 주말 마감 모드로 자동 분기. 검증: 다음 평일 06시 리포트(`-06.md`) 생성 여부 + 카톡 `🌄 06:00` 알림 수신 |
 | 09:20 | `trig_01SMcVbAS1L2tUrhKAWbHUk7` |
 | 12:00 | `trig_01Fx8FfsxXqCsugnW3XjZM6M` |
 | 15:00 | `trig_01U8ZvyhgVRkYTDeP9BjttjQ` |
@@ -255,20 +258,21 @@ powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1
 ## 모바일 노티 셋업 (HTML 리포트 + 카카오톡)
 
 각 routine 은 **자기 시간대 전용 리포트 파일을 새로 생성** 한다 (이전 파일 수정 금지):
-1. 00/09/12/15/18 routine → `reports/YYYY-MM-DD-{00,09,12,15,18}.md` 각각 1개
+1. 00/06/09/12/15/18 routine → `reports/YYYY-MM-DD-{00,06,09,12,15,18}.md` 각각 1개
 2. GitHub Actions가 `reports/*.md` → HTML 변환 → GitHub Pages 배포
 3. 카카오 '나에게 보내기' API 로 **해당 시간대 파일의 '한눈에 보기'** 요약 + Pages 링크 전송 (그 슬롯 HTML 페이지로 바로 이동)
-4. 인덱스 페이지(`/index.html`)에서 날짜별로 5개 슬롯이 한 카드로 묶여 있어 "왜 이 결정을 했는지" 추적 가능
-5. 일요일 21시 archive routine 이 지난주 평일 25개 파일을 1개 `reports/YYYY-Www-archive.md` 로 응축 → 다음주 routine 콘텍스트 절약
+4. 인덱스 페이지(`/index.html`)에서 날짜별로 6개 슬롯이 한 카드로 묶여 있어 "왜 이 결정을 했는지" 추적 가능
+5. 일요일 21시 archive routine 이 지난주 평일 30개 파일을 1개 `reports/YYYY-Www-archive.md` 로 응축 → 다음주 routine 콘텍스트 절약
 
 ### 시간대별 리포트 파이프라인 (분리 파일)
 ```
 🌙 00:00 글로벌 야간 점검    → reports/YYYY-MM-DD-00.md
-🌅 09:00 개장 점검          → reports/YYYY-MM-DD-09.md  (이전: -00.md를 "이어받기" 박스에서 요약)
+🌄 06:00 미국장 마감 확정    → reports/YYYY-MM-DD-06.md  (발화 06:30. 자정 예측 확정·개장 전 갱신, 매매 없음)
+🌅 09:00 개장 점검          → reports/YYYY-MM-DD-09.md  (이전: -00.md·-06.md를 "이어받기"로 요약)
 🕛 12:00 장중 점검          → reports/YYYY-MM-DD-12.md  (이전: -09.md 요약)
 🔔 15:00 마감 임박 점검      → reports/YYYY-MM-DD-15.md  (이전: -12.md 요약)
-📊 18:00 종합·확정 리포트    → reports/YYYY-MM-DD-18.md  (이전 4개를 모두 종합·검증)
-🗂️ 일 21:00 주간 archive    → reports/YYYY-Www-archive.md  (지난주 평일 25개 → 1개로 응축)
+📊 18:00 종합·확정 리포트    → reports/YYYY-MM-DD-18.md  (이전 5개를 모두 종합·검증)
+🗂️ 일 21:00 주간 archive    → reports/YYYY-Www-archive.md  (지난주 평일 30개 → 1개로 응축)
 ```
 
 각 시간대 파일은 다음 공통 섹션을 포함한다 (초보자 친화):

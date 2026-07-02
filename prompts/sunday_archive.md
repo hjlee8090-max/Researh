@@ -21,7 +21,7 @@
 1. `config/policy.json`, `config/weekly_plan.json`, `config/portfolio.json`, `config/watchlist.json`
 2. `state/lessons.md`
 3. **지난주 평일 시간대별 리포트** — archive 대상:
-   - 월~금 각 날짜에 대해 `reports/YYYY-MM-DD-00.md`, `-09.md`, `-12.md`, `-15.md`, `-18.md`
+   - 월~금 각 날짜에 대해 `reports/YYYY-MM-DD-00.md`, `-06.md`, `-09.md`, `-12.md`, `-15.md`, `-18.md`
    - 구버전 단일 파일 `reports/YYYY-MM-DD.md` 가 있으면 함께 흡수
 4. `reports/*-saturday-review.md` (해당 주 토요일 사후분석)
 5. `reports/*-sunday-strategy.md` (해당 주 일요일 전략 리포트) — 다음주 전략을 미리 확인
@@ -55,7 +55,7 @@
 # 주간 리포트 archive — YYYY-Www (월/일 ~ 월/일)
 
 > 생성: YYYY-MM-DD 21:00 KST (일요일)
-> 응축 원본: 지난주 평일 5일 × 5슬롯 (최대 25개 파일)
+> 응축 원본: 지난주 평일 5일 × 6슬롯 (최대 30개 파일)
 > 다음주 routine은 이 archive 1개 파일만 읽으면 지난주 흐름을 복원할 수 있도록 설계.
 > ※ 학습·시뮬레이션 용도.
 
@@ -106,7 +106,7 @@
 
 ## 참조 원본 파일
 응축에 사용한 원본 (다음주 routine은 읽지 않아도 됨; 감사·복기용 링크):
-- [월요일 모음](./YYYY-MM-DD-00.md) [09](./YYYY-MM-DD-09.md) [12](./YYYY-MM-DD-12.md) [15](./YYYY-MM-DD-15.md) [18](./YYYY-MM-DD-18.md)
+- [월요일 모음](./YYYY-MM-DD-00.md) [06](./YYYY-MM-DD-06.md) [09](./YYYY-MM-DD-09.md) [12](./YYYY-MM-DD-12.md) [15](./YYYY-MM-DD-15.md) [18](./YYYY-MM-DD-18.md)
 - (화·수·목·금 동일)
 
 ### 면책
@@ -115,7 +115,7 @@
 
 ## 4. 원본 파일 정리 (선택적)
 - archive 작성 후, 원본 시간대별 파일들은 **그 자리에 그대로 둔다** (지우지 않는다 — 감사 추적성 보존).
-- 단, 다음주 routine은 archive 파일을 우선 참조하고 원본 25개는 읽지 않는다. (콘텍스트 절약)
+- 단, 다음주 routine은 archive 파일을 우선 참조하고 원본 30개는 읽지 않는다. (콘텍스트 절약)
 - 평일 routine에서 archive 누적이 너무 커지면(예: 12개 주차 이상) 6개월 이상 지난 archive는 별도 디렉토리로 옮길지 사용자에게 제안.
 
 ## 5. weekly_plan.json 연결

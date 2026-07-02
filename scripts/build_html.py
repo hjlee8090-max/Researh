@@ -174,6 +174,7 @@ def build_positions_html(portfolio: dict) -> str:
 
 SLOT_LABEL = {
     "00": ("🌙", "자정"),
+    "06": ("🌄", "06시"),
     "09": ("🌅", "09시"),
     "12": ("🕛", "12시"),
     "15": ("🔔", "15시"),
@@ -181,7 +182,7 @@ SLOT_LABEL = {
 }
 
 DAILY_REPORT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:-(\d{2}))?$")
-STD_SLOTS = ("00", "09", "12", "15", "18")
+STD_SLOTS = ("00", "06", "09", "12", "15", "18")
 AUDIT_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-audit$")
 WEEKEND_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(saturday-review|sunday-strategy|policy-review)$")
 ARCHIVE_RE = re.compile(r"^(\d{4})-W(\d{2})-archive$")
@@ -230,7 +231,7 @@ def _weekday_card(date: str, slots: dict) -> str:
     """평일 카드 — 00·09·12·15·18 시간대 슬롯(미생성분은 점선) + 비표준 시간대 + 감사 + 구버전 단일 파일."""
     extras = sorted(k for k in slots if k.isdigit() and k not in STD_SLOTS)
     preview_path = next(
-        (slots[k] for k in ("18", "15", "12", "09", "00", *extras, "legacy", "audit") if k in slots),
+        (slots[k] for k in ("18", "15", "12", "09", "06", "00", *extras, "legacy", "audit") if k in slots),
         None,
     )
     preview = _preview_of(preview_path) if preview_path else ""

@@ -1,5 +1,5 @@
 # 주식 오토플로우 - Windows 작업스케줄러 등록 스크립트
-# 1회 실행하면 평일 09/12/15/18시에 자동 실행되는 작업 4개가 등록된다.
+# 1회 실행하면 평일 06:30/09/12/15/18시 + 자정에 자동 실행되는 작업이 등록된다.
 #
 # 실행:  관리자 권한 PowerShell에서
 #        powershell -ExecutionPolicy Bypass -File register_tasks.ps1
@@ -17,6 +17,7 @@ $TaskFolder  = "\주식오토플로우"
 
 $Slots = @(
     @{ Name = "주식_0030_글로벌점검"; Time = "00:30"; Prompt = "0000_global"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
+    @{ Name = "주식_0630_미국마감";  Time = "06:30"; Prompt = "0630_us_close"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
     @{ Name = "주식_0900_개장점검";  Time = "09:20"; Prompt = "0900_pre_market"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
     @{ Name = "주식_1200_장중점검";  Time = "12:00"; Prompt = "1200_midday"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }
     @{ Name = "주식_1500_마감점검";  Time = "15:00"; Prompt = "1500_close"; Days = @("Monday","Tuesday","Wednesday","Thursday","Friday") }

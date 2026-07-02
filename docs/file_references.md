@@ -52,6 +52,7 @@
 | 형식 | 작성 시간대 | 작성 주체 |
 |---|---|---|
 | `reports/YYYY-MM-DD-00.md` | 자정 00:00 KST | `prompts/0000_global.md` |
+| `reports/YYYY-MM-DD-06.md` | 미국장 마감 06:00 KST (발화 06:30) | `prompts/0630_us_close.md` |
 | `reports/YYYY-MM-DD-09.md` | 개장 09:00 KST | `prompts/0900_pre_market.md` |
 | `reports/YYYY-MM-DD-12.md` | 장중 12:00 KST | `prompts/1200_midday.md` |
 | `reports/YYYY-MM-DD-15.md` | 마감 임박 15:00 KST | `prompts/1500_close.md` |
@@ -80,11 +81,25 @@
 - `config/watchlist.json` (야간 경보 코멘트 추가만)
 - `state/lessons.md` (orange/red 사전 경보 시)
 
+### 🌄 06:00 미국장 마감 확정 (`prompts/0630_us_close.md`, 발화 06:30)
+**읽기**:
+- `state/lessons.md`, `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`, `config/candidates.json`
+- 오늘 자정 파일: `reports/YYYY-MM-DD-00.md` (진행형 태그·개장 갭 예측·if-then 표)
+- `state/pending_orders.json`, `state/inference_checklist.md`, `state/market_snapshot.json`
+
+**쓰기**:
+- `reports/YYYY-MM-DD-06.md` (신규 생성)
+- `state/pending_orders.json` (트리거 값·메모 갱신만 — 체결/status 변경 없음)
+- `state/inference_log.jsonl` (개장 갭 갱신 예측 append, `slot":"06:00"`·`horizon="09:00"` — 채점은 09시)
+- `config/watchlist.json` (마감 경보 코멘트 추가 시)
+- **매매 없음** (한국 폐장 — `execution_mode=none`)
+
 ### 🌅 09:00 개장 (`prompts/0900_pre_market.md`)
 **읽기**:
 - `state/lessons.md` (먼저)
 - `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 - 오늘 자정 파일: `reports/YYYY-MM-DD-00.md`
+- 오늘 06시 파일: `reports/YYYY-MM-DD-06.md` (있으면 마감 확정·갱신 갭 예측을 1순위 흡수)
 - 직전 영업일 18시: `reports/YYYY-MM-DD-18.md`
 - 직전 주말 archive: `reports/YYYY-Www-archive.md`
 
@@ -123,7 +138,7 @@
 - `state/lessons.md`
 - `config/*` 4개
 - `state/trade_log.jsonl` (최근 30라인)
-- 오늘 시간대별 리포트 4개: `reports/YYYY-MM-DD-{00,09,12,15}.md`
+- 오늘 시간대별 리포트 5개: `reports/YYYY-MM-DD-{00,06,09,12,15}.md`
 
 **쓰기**:
 - `reports/YYYY-MM-DD-18.md` (신규 생성)
@@ -156,7 +171,7 @@
 
 ### 일요일 21:00 archive (`prompts/sunday_archive.md`) — 새로 추가
 **읽기**:
-- 지난주 평일 5일 × 5슬롯 = 최대 25개 시간대별 리포트
+- 지난주 평일 5일 × 6슬롯 = 최대 30개 시간대별 리포트
 - 토요일 사후분석 + 일요일 전략 (선택)
 - config/* 4개, state/lessons.md
 
@@ -171,7 +186,7 @@
 ## 4. 보조 스크립트의 참조 구조
 
 ### `scripts/audit_pipeline.py`
-- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py`·`scripts/check_market_session.py`·`scripts/check_trade_log_gate.py` 존재 확인
+- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|06|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py`·`scripts/check_market_session.py`·`scripts/check_trade_log_gate.py` 존재 확인
 - `audit_trade_provenance` 가 `check_trade_log_gate.py` 를 subprocess 로 실행해 price_source 누락 + 장중 시간 밖 booking 을 FAIL 로 흡수
 - 쓰기: 없음 (stdout만)
 
@@ -326,7 +341,7 @@
 
 ## 7. 점검 체크리스트 (수동 점검 시)
 
-- [ ] 오늘 날짜로 `reports/YYYY-MM-DD-{00,09,12,15,18}.md` 5개 파일이 모두 있는가?
+- [ ] 오늘 날짜로 `reports/YYYY-MM-DD-{00,06,09,12,15,18}.md` 6개 파일이 모두 있는가?
 - [ ] 각 파일의 첫 줄(`# 일일 리포트 — ... · 슬롯명`) 이 자기 슬롯과 일치하는가?
 - [ ] "시리즈 진행" 줄의 ✓ 표시가 자기 시간대만 ✓ / 나머지는 "대기" 또는 "✓"(이전 시간대) 인가?
 - [ ] 이전 시간대 파일 링크가 깨지지 않았는가?

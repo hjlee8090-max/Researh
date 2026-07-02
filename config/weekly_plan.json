@@ -1,186 +1,183 @@
 {
-  "version": "1.0",
-  "week_id": "2026-W27",
-  "as_of": "2026-07-01T22:16:16+09:00",
-  "status": "active",
-  "operating_mode": "balanced",
-  "objective": {
-    "starting_equity": 4934930,
-    "target_return_pct": 1.0,
-    "target_equity": 4984279,
-    "current_equity": 4989419,
-    "gap_to_target": -5140,
-    "required_return_from_now_pct": -0.1,
-    "kospi_week_start_close": 8411.21,
-    "kospi_week_to_date_pct": -1.282,
-    "max_weekly_drawdown_pct": -5.0,
-    "max_single_trade_risk_pct_of_equity": 2.0,
-    "rationale": "W27 일요일 전략 기준(2026-06-28). equity 4,934,930원(현금 100%). KOSPI 직전 주간(W26) -7.72%(9,114.55→8,411.21) → 상대 목표(-7.22%) < 절대 하한(+1.0%)이므로 절대 하한 적용. target_equity 4,984,279원. 핵심 과제: ①삼성·SK하이닉스 1,000조 발표(6/29 예정) + KOSPI 8,471 안착선 회복 확인 → probe 재개. ②web_verify 통로 복구. kospi_week_start_close는 6/30 첫 영업일 18시 routine이 채운다(직전 금요일 종가 8,411.21 시드 가능)."
-  },
-  "capital_plan": {
-    "cash": 1993619,
-    "cash_weight_pct": 39.96,
-    "invested_weight_pct": 60.04,
-    "deployment_bias": "momentum_basket_deploy",
-    "heat_budget_krw": 444144,
-    "heat_used_krw": 0,
-    "heat_remaining_krw": 444144,
-    "per_trade_risk_krw": 172723,
-    "target_equity_pct_range": [
-      85,
-      95
-    ],
-    "note": "전략 전환(W27): 백테스트 검증된 듀얼모멘텀 로테이션을 채택해 현금 마비에서 탈출한다. 진단 — 직전 구간 KOSPI +198% 강세장 내내 현금 보유가 -1.3% 패배의 단일 원인(docs/strategy_momentum.md). 6/30 09시 개장에 state/momentum_signal.json 의 검증 바스켓(추세 상위 9종목 정수주, SK하이닉스는 초고가로 30% 상한 초과→제외)을 일괄 배치, 현금 ~12% 잔여. 종목별 -2×ATR 손절·월간 리밸런스. 추격 아님 — 사전 계산된 바스켓의 게이트 통과 체결."
-  },
-  "weekly_thesis": [
-    {
-      "id": "momentum_rotation_deploy_w27",
-      "title": "듀얼모멘텀 로테이션 배치 — 현금 탈출, 추세 상위주 일괄 진입",
-      "direction": "bullish_systematic",
-      "linked_tickers": [
-        "005930",
-        "010120",
-        "005380",
-        "079550",
-        "042700",
-        "028260",
-        "006400",
-        "055550",
-        "086790"
-      ],
-      "primary": true,
-      "engine": "state/momentum_signal.json (scripts/momentum_signal.py — 백테스트: docs/strategy_momentum.md)",
-      "confirming_signals": [
-        "6/30 09시 momentum_signal.json.executable_allocation.orders 의 9종목 정수주 게이트 통과 체결(약 88% 투입·현금 12%)",
-        "각 종목 가격 > MA200 추세필터 유지 — 이탈 종목은 다음 월간 리밸런스에 회전아웃",
-        "fetch_history Actions 갱신 후 신호 재산출 — 바스켓 변경분(enter/exit)만 반영"
-      ],
-      "invalidation_triggers": [
-        "개별 종목 진입가 대비 -2×ATR 이탈 → 해당 종목 손절(바스켓 전체가 아님)",
-        "지수 급변으로 적격(추세+모멘텀) 종목 < 5개 → 잔여는 현금(강제 배치 금지)",
-        "주간 계좌 -5% 손실 한도 도달 → 신규 회전 중단"
-      ],
-      "daily_linkage": "09시: momentum_signal.json 바스켓을 1순위 진입 후보로 §2 게이트(가격신뢰도·heat·R/R) 통과분 체결. 12/15시: 보유 추세필터 점검. 18시: 종가 평가 + 월간 리밸런스 도래 시 신호 변경분 적용.",
-      "today_verdict_18:00": "강화 — W27 D3(수) EOD. KOSPI -2.04%(외국인 반도체 순매도 지속)에도 바스켓은 방산(LIG넥스원 +7.1%)·전력기기(LS ELECTRIC +10.7%) divergence 상승으로 equity +1.891%·6종목 전부 가격>MA200 추세필터 유지·경보 0건. 비반도체 로테이션 바스켓의 지수 하락 방어력 실증(외국인 매도=반도체 집중, 바스켓 비노출). 월간 리밸런스 미도래(enter/exit 0)."
-    },
-    {
-      "id": "samsung_1000t_catalyst_recovery",
-      "title": "삼성·SK하이닉스 1,000조 투자 발표 — KOSPI 8,471 안착선 회복 촉매",
-      "direction": "bullish_if_confirmed",
-      "linked_tickers": [
-        "005930",
-        "000660"
-      ],
-      "confirming_signals": [
-        "6/29 대통령실 브리핑 삼성+SK하이닉스 1,000조 투자 계획 공식 발표 web_verify(URL+게재일)",
-        "6/30 KOSPI 종가 8,471 이상 — 안착선 회복 확정",
-        "6/30 외국인 반도체 순매수 유입(글로벌 투자 발표 촉매로 수급 전환)",
-        "삼성전자 6/30 종가 350,000원 이상 — 발표 긍정 반응 확인"
-      ],
-      "invalidation_triggers": [
-        "1,000조 발표 취소·지연 또는 내용 실망(컨센서스 대비 크게 미달)",
-        "셀더뉴스 — 발표 후 KOSPI 6/30 -2% 이상 하락 + 외국인 순매도 지속",
-        "KOSPI 8,200 이하 재이탈(2차 하락 시나리오 전환)"
-      ],
-      "daily_linkage": "6/29 22시(일요일 밤) web_verify 사전 확인 → 6/30 00시 routine: 미국 선물 방향 + 발표 내용 최종 확인. 09시: 갭 측정·삼성전자 probe 조건 판정(8,471+web_verify 동시 충족). 12시: 오전 수급 방향 재확인. 15시: 내일(7/1) 09시 액션 후보 정리. 18시: 주간 thesis 상태 갱신.",
-      "today_verdict_18:00": "약화 유지 — 6/30 KOSPI 종가 8,476.48로 안착선 8,471 +5.48pt 회복(confirming 일부 충족)하나 장중 +2.14%서 종가 +0.97%로 상승폭 반납, 삼성전자 350,000 이상·외국인 반도체 순매수 전환은 세션 내 미확인(egress403). 보유 미편입(갭업 추격상한 초과 보류)이라 직접 노출 없음."
-    },
-    {
-      "id": "hbm_ai_supercycle_q3_intact",
-      "title": "HBM4 AI 수퍼사이클 Q3 intact — Micron beat + SK하이닉스 ADR D-13",
-      "direction": "bullish_if_confirmed",
-      "linked_tickers": [
-        "000660",
-        "005930"
-      ],
-      "confirming_signals": [
-        "SK하이닉스 Nasdaq ADR(HXSL) D-13(7/10 상장) 수급 기대 — 차주 중 언론 보도 확인",
-        "Micron FY26 Q3 EPS $25.11(컨센 +22.6% 대폭 beat) 서사가 국내 HBM 수요에 이월",
-        "HBM 주요 고객사(Nvidia·AWS·MS) 주문 취소·공급독점 회귀 뉴스 미발생",
-        "SK하이닉스 주간 -13% 이상 급락(strong_bull 추세 필터 위반) 없음"
-      ],
-      "invalidation_triggers": [
-        "AI 데이터센터 투자 감속 구체적 증거(OpenAI IPO 연기 이상의 충격 — 수주 취소·가이던스 컷)",
-        "SOXX -5% 이상 급락(HBM guidance 충격 재발)",
-        "SK하이닉스·삼성전자 HBM 공급 독점 회귀 보도(URL+게재일 필수)"
-      ],
-      "daily_linkage": "00시: Nvidia·AI 클라우드 관련 야간 뉴스 확인. 09시: SK하이닉스 5거래일 추세 필터 재확인(현재 -3.29%, 임계 -13% 충분한 여유) + 자본 제약(1주 단가 > 종목 상한) 재계산. 18시: 주중 HBM 서사 진전 여부 기록.",
-      "today_verdict_18:00": "유지 — 미국장 야간 반도체 강세(Nasdaq +2%) 이월, 한미반도체(반도체 장비) green·SK하이닉스 추세필터 위반 없음. HBM 공급 독점 회귀·가이던스 컷 등 무효화 트리거 미발생."
-    },
-    {
-      "id": "pce_dollar_macro_headwind",
-      "title": "PCE 4.10% YoY + 달러 강세 — 외국인 수급 부담·안착선 회복 지연 헤지",
-      "direction": "bearish_if_confirmed",
-      "linked_tickers": [],
-      "confirming_signals": [
-        "외국인 반도체 3거래일 연속 순매도 >5,000억/일 — 달러 강세·금리 재긴축 수급 압박",
-        "KOSPI 8,200 이하 종가 재이탈(2차 하락 본격화)",
-        "원달러 환율 1,560원 이상 유지·달러인덱스 103 돌파"
-      ],
-      "invalidation_triggers": [
-        "7월 FOMC 발언 완화(금리 인하 기대 복원) + 달러 반전",
-        "PCE MoM 기준 추가 둔화 확인 — 연준 인하 기대 재점화",
-        "외국인 반도체 순매수 복귀(3거래일 연속 순매수)"
-      ],
-      "daily_linkage": "00시: 달러인덱스·원달러 환율 방향 점검. 09시: 외국인 수급 방향 확인. 18시: 주간 외국인 누적 순매수/매도 기록. 목요일(7/2) 15시: time_stop 점검(이 thesis 강화 시 신규 진입 자제 강화).",
-      "today_verdict_18:00": "유지 — 외국인 수급·원달러는 세션 내 독립검증 불가(egress403)이나 KOSPI 종가가 장중 상승폭 절반을 반납한 점은 매크로 헤드윈드(강달러·외국인 매도) 잔존 정황. 8,200 종가 재이탈은 없음(무효화 미충족)."
-    }
+ "version": "1.0",
+ "week_id": "2026-W27",
+ "as_of": "2026-07-02T18:05:00+09:00",
+ "status": "active",
+ "operating_mode": "balanced",
+ "objective": {
+  "starting_equity": 4934930,
+  "target_return_pct": 1.0,
+  "target_equity": 4984279,
+  "current_equity": 4890719,
+  "gap_to_target": 93560,
+  "required_return_from_now_pct": 1.91,
+  "kospi_week_start_close": 8411.21,
+  "kospi_week_to_date_pct": -9.073,
+  "max_weekly_drawdown_pct": -5.0,
+  "max_single_trade_risk_pct_of_equity": 2.0,
+  "rationale": "W27 일요일 전략 기준(2026-06-28). equity 4,934,930원(현금 100%). KOSPI 직전 주간(W26) -7.72%(9,114.55→8,411.21) → 상대 목표(-7.22%) < 절대 하한(+1.0%)이므로 절대 하한 적용. target_equity 4,984,279원. 핵심 과제: ①삼성·SK하이닉스 1,000조 발표(6/29 예정) + KOSPI 8,471 안착선 회복 확인 → probe 재개. ②web_verify 통로 복구. kospi_week_start_close는 6/30 첫 영업일 18시 routine이 채운다(직전 금요일 종가 8,411.21 시드 가능)."
+ },
+ "capital_plan": {
+  "cash": 1993619,
+  "cash_weight_pct": 40.76,
+  "invested_weight_pct": 59.24,
+  "deployment_bias": "momentum_basket_deploy",
+  "heat_budget_krw": 444144,
+  "heat_used_krw": 0,
+  "heat_remaining_krw": 444144,
+  "per_trade_risk_krw": 172723,
+  "target_equity_pct_range": [
+   85,
+   95
   ],
-  "daily_bridge": {
-    "holiday_note": "2026-06-29(월)~07-03(금) 5영업일 모두 정규 영업일 — 휴장 없음.",
-    "00:00": "미국 주말 시장(6/27 금요일 마감) S&P500·SOXX·나스닥 방향 확인. 삼성·SK하이닉스 1,000조 발표 관련 주말 뉴스 web_verify(URL+게재일 의무). 이란 MOU [진행형] 주말 변수 최종 확인(지정학 이슈 진행형 → 불확실도 ±1.5~2.5% 병기). 달러인덱스·원달러 환율 방향 점검. 미국 선물 방향으로 6/30 KOSPI 갭 사전 추정(단방향 단정 금지).",
-    "09:00": "삼성·SK하이닉스 1,000조 발표 최종 web_verify. KOSPI 6/30 개장 갭 측정 + 8,471 안착선 회복 여부 판정. 삼성전자(005930) probe 조건 판정: ①KOSPI 8,471 이상 ②web_verify 통로 개방 둘 다 충족 시에만 probe 1주(overheat→probe 의무). 외국인 수급 방향 확인(pce_dollar_macro thesis 판정). 조선 avoid_reentry 몰입 재판정.",
-    "12:00": "오전 수급·뉴스로 thesis 3개 상태 갱신. 발표 후 셀더뉴스 vs 촉매 지속 판정. 삼성전자 진입 후 성과 점검(진입 시). 한화에어로 이란 진행형 영향 확인.",
-    "15:00": "다음날 09시 액션 후보를 thesis 단위로 정리. 목요일(7/2) 15시: time_stop 점검(주간 목표 기여도 30% 미만이고 신규 촉매 없으면 비중 축소 검토). 주간 중반 KOSPI 방향에 따라 probe 사이즈 재검토.",
-    "18:00": "18:00 종가 확정 — equity 4,989,419원(일일 +1.891%·누적 -0.212%), 미실현 +54,489·현금 39.96%. KOSPI 8,303.41(-2.04%) 안착선 8,471 하회했으나 방산·전력기기 divergence로 바스켓 상승 방어. 6종목 🟢 green·경보 0건·체결 0건. 주간목표 4,984,279원 종가 초과 달성(+5,140, WTD +1.104% vs 목표 +1.0%). R/R<1.0(LS ELECTRIC 0.513·LIG넥스원 0.853) → (b)트레일링 관리·강제매도 없음. 회복 단계 normal(누적 -0.212% > -3.5% caution 임계 — 단계 불변). 선제추론오차 1건(안착선 종가 유지 예측 miss). 내일 7/2 NFP D-1 관망."
+  "note": "전략 전환(W27): 백테스트 검증된 듀얼모멘텀 로테이션을 채택해 현금 마비에서 탈출한다. 진단 — 직전 구간 KOSPI +198% 강세장 내내 현금 보유가 -1.3% 패배의 단일 원인(docs/strategy_momentum.md). 6/30 09시 개장에 state/momentum_signal.json 의 검증 바스켓(추세 상위 9종목 정수주, SK하이닉스는 초고가로 30% 상한 초과→제외)을 일괄 배치, 현금 ~12% 잔여. 종목별 -2×ATR 손절·월간 리밸런스. 추격 아님 — 사전 계산된 바스켓의 게이트 통과 체결."
+ },
+ "weekly_thesis": [
+  {
+   "id": "momentum_rotation_deploy_w27",
+   "title": "듀얼모멘텀 로테이션 배치 — 현금 탈출, 추세 상위주 일괄 진입",
+   "direction": "bullish_systematic",
+   "linked_tickers": [
+    "005930",
+    "010120",
+    "005380",
+    "079550",
+    "042700",
+    "028260",
+    "006400",
+    "055550",
+    "086790"
+   ],
+   "primary": true,
+   "engine": "state/momentum_signal.json (scripts/momentum_signal.py — 백테스트: docs/strategy_momentum.md)",
+   "confirming_signals": [
+    "6/30 09시 momentum_signal.json.executable_allocation.orders 의 9종목 정수주 게이트 통과 체결(약 88% 투입·현금 12%)",
+    "각 종목 가격 > MA200 추세필터 유지 — 이탈 종목은 다음 월간 리밸런스에 회전아웃",
+    "fetch_history Actions 갱신 후 신호 재산출 — 바스켓 변경분(enter/exit)만 반영"
+   ],
+   "invalidation_triggers": [
+    "개별 종목 진입가 대비 -2×ATR 이탈 → 해당 종목 손절(바스켓 전체가 아님)",
+    "지수 급변으로 적격(추세+모멘텀) 종목 < 5개 → 잔여는 현금(강제 배치 금지)",
+    "주간 계좌 -5% 손실 한도 도달 → 신규 회전 중단"
+   ],
+   "daily_linkage": "09시: momentum_signal.json 바스켓을 1순위 진입 후보로 §2 게이트(가격신뢰도·heat·R/R) 통과분 체결. 12/15시: 보유 추세필터 점검. 18시: 종가 평가 + 월간 리밸런스 도래 시 신호 변경분 적용.",
+   "today_verdict_18:00": "유지 — 지수 -7.89% 매도 사이드카 폭락에도 비반도체 바스켓(은행·방산·전력기기) divergence 방어로 계좌 -1.98%(vs 지수 -7.89%, +5.9pp). 6종목 전부 🟢 green·추세필터 유지·손절 이탈 0건. invalidation(개별 -2×ATR·적격<5·주간 -5%) 미충족. 반도체 노출(한미반도체 -15.3%)만 섹터 동행 약세이나 유효 yellow·손절선 안쪽."
   },
-  "watch_items": [
-    "【7/2 18시 0순위·LS ELECTRIC 트레일 확정 판정】LS ELECTRIC(010120) 15시 마감 임박 237,500원이 1차 트레일선 239,495원 하회 근접(스냅샷 medium·네이버 237,500/야후 240,500 상충). 18시 확정 종가가 239,495 이탈 시 → 50% 부분익절(잔여 트레일선 215,510), 239,495 상회 시 → 활성 추적 유지(매도 아님). 활성선 상회≠부분익절.",
-    "【7/2 익일 09시 1순위·은행주 목표가 근접 익절 관찰】신한지주(055550) 15시 102,500원 목표가(110,829) 까지 +8.1% 근접·하나금융(086790) 121,400원 목표까지 +9.3%. 목표가 도달 시 부분익절 검토 후보로 관찰(현 단계 홀드, 도달 전 선매도 금지).",
-    "【7/2 09시 0순위·NFP 당일 관망】미국 6월 고용지표(NFP) 7/2 발표(D-day, macro high). 강한 고용 시 금리·달러 강세·외국인 매도 지속 압력 — 방향 미확정 이벤트 직전 신규 비중 확대 금지·보유 홀드 우선. 개장 시가로 야간 미국 방향 확인(종가 외삽 금지).",
-    "【7/2 09시 1순위·R/R<1.0 종목 트레일링 재평가】LS ELECTRIC(010120) R/R 0.513·LIG넥스원(079550) 0.853 < strong_bull 하한 1.0(상승 자연압축). LS ELECTRIC 트레일 1차 239,495(이탈 시 50% 부분익절)/잔여 215,510 활성 유지 — 종가 부분익절선 이탈 여부만 판정(활성선 상회는 매도 아님). LIG넥스원 트레일 병기(고점 대비)·stop 583,143 유지, 목표 근접 시 상향. 강제매도 없음, 추세 유효 한 홀드.",
-    "【7/2 09시 2순위·보유 6종목 추세필터 유지】W27 바스켓 6종목 전부 🟢 green(LS ELECTRIC +14.32% 최강·한미반도체 -4.85% 최약)·경보 0건. 기본값 홀드(가격>MA200 유지 한). 종가 -2×ATR 손절선 이탈 종목만 청산. 한미반도체(-3.90% 당일)만 반도체 약세 동행 — ATR 경보선 여유 크나 반도체 외국인 매도 강도 주시.",
-    "【W27 3순위·비반도체 divergence 지속성 검증】7/1 KOSPI -2.04%에도 방산·전력기기(LS ELECTRIC 데이터센터 전력수요·LIG넥스원 방산 모멘텀) divergence 상승. 이 로테이션 방어력이 NFP·외국인 매도 지속 시에도 유지되는지 7/2~ 확인 — 유지 시 잔여 현금 40% 비반도체 상위주 추가배치 후보(pre_trade·web_verify·heat 선행).",
-    "【W27 4순위·잔여 현금 40% 배치 여부】주식 60.04% < strong_bull 목표 하한 80%. 신규/추가 배치는 ①안착선 8,471 종가 회복 or 비반도체 divergence 지속 ②heat 잔여 회복 ③NFP 통과 동시 충족 시에만 재판정. 그 전까지 자본보존 홀드.",
-    "【W27 5순위·SK하이닉스 ADR D-8 수급】SK하이닉스 나스닥 ADR 7/10 상장 — D-8. 차주 언론 보도·기관 수급 이벤트 주시(반도체 대형주 심리 변수).",
-    "【W27 상시·조선 avoid 유지】조선 섹터 avoid_sectors 유지(HD조선 3회 손실). 해제는 sector_rotation_reentry(호재 촉매 web_verify + 몰입 발자국 immersion_met) 둘 다 충족 시 — 현재 미충족, 09시 screen_universe avoid_reentry 재판정 지속."
-  ],
-  "decision_rules": {
-    "new_entry_requires": [
-      "price_data_quality confidence medium 이상",
-      "최근 5거래일 누적 수익률: strong_bull 임계 -13% 이상(RS 주도주 -20% 이내)",
-      "기대 보상/위험 비율 1.0 이상(strong_bull tier)",
-      "weekly_thesis 중 최소 1개와 연결",
-      "단일 거래 손실 예상액이 equity의 3.5%(약 172,723원) 이하",
-      "밸류에이션 overheat 종목(삼성전자·SK하이닉스): probe 사이즈(1주) 의무",
-      "web_verify(URL+게재일+today_ohlc) 선행 의무",
-      "KOSPI 안착선(8,471) 종가 회복 확인 후 신규 probe"
-    ],
-    "hold_requires": [
-      "진입 thesis가 유지 또는 강화",
-      "tier green 또는 yellow에서 원인 분석 완료",
-      "R/R 1.0 이상(strong_bull 레짐 적응 하한)"
-    ],
-    "exit_or_reduce_when": [
-      "invalidation_trigger 확인",
-      "orange/red 진입(ATR 적응형 유효 임계 기준)",
-      "목요일(7/2) 15시까지 주간 목표 기여도 30% 미만이고 신규 촉매 없음",
-      "KOSPI 8,200 이하 재이탈 — 2차 조정 시나리오 전환"
-    ]
+  {
+   "id": "samsung_1000t_catalyst_recovery",
+   "title": "삼성·SK하이닉스 1,000조 투자 발표 — KOSPI 8,471 안착선 회복 촉매",
+   "direction": "bullish_if_confirmed",
+   "linked_tickers": [
+    "005930",
+    "000660"
+   ],
+   "confirming_signals": [
+    "6/29 대통령실 브리핑 삼성+SK하이닉스 1,000조 투자 계획 공식 발표 web_verify(URL+게재일)",
+    "6/30 KOSPI 종가 8,471 이상 — 안착선 회복 확정",
+    "6/30 외국인 반도체 순매수 유입(글로벌 투자 발표 촉매로 수급 전환)",
+    "삼성전자 6/30 종가 350,000원 이상 — 발표 긍정 반응 확인"
+   ],
+   "invalidation_triggers": [
+    "1,000조 발표 취소·지연 또는 내용 실망(컨센서스 대비 크게 미달)",
+    "셀더뉴스 — 발표 후 KOSPI 6/30 -2% 이상 하락 + 외국인 순매도 지속",
+    "KOSPI 8,200 이하 재이탈(2차 하락 시나리오 전환)"
+   ],
+   "daily_linkage": "6/29 22시(일요일 밤) web_verify 사전 확인 → 6/30 00시 routine: 미국 선물 방향 + 발표 내용 최종 확인. 09시: 갭 측정·삼성전자 probe 조건 판정(8,471+web_verify 동시 충족). 12시: 오전 수급 방향 재확인. 15시: 내일(7/1) 09시 액션 후보 정리. 18시: 주간 thesis 상태 갱신.",
+   "today_verdict_18:00": "약화 유지 — 6/30 KOSPI 종가 8,476.48로 안착선 8,471 +5.48pt 회복(confirming 일부 충족)하나 장중 +2.14%서 종가 +0.97%로 상승폭 반납, 삼성전자 350,000 이상·외국인 반도체 순매수 전환은 세션 내 미확인(egress403). 보유 미편입(갭업 추격상한 초과 보류)이라 직접 노출 없음."
   },
-  "weekend_review": {
-    "last_completed": "2026-06-28",
-    "next_due": "2026-07-05",
-    "saturday_review_2026_06_27": null,
-    "sunday_strategy_2026_06_28": "reports/2026-06-28-sunday-strategy.md",
-    "saturday_review_2026_06_20": "reports/2026-06-20-saturday-review.md",
-    "sunday_strategy_2026_06_21": "reports/2026-06-21-sunday-strategy.md",
-    "required_outputs": [
-      "reports/YYYY-MM-DD-saturday-review.md",
-      "reports/YYYY-MM-DD-sunday-strategy.md",
-      "config/weekly_plan.json 갱신",
-      "다음 영업일(월) 09시 우선 액션",
-      "주말 뉴스가 daily_bridge에 미치는 영향"
-    ]
+  {
+   "id": "hbm_ai_supercycle_q3_intact",
+   "title": "HBM4 AI 수퍼사이클 Q3 intact — Micron beat + SK하이닉스 ADR D-13",
+   "direction": "bullish_if_confirmed",
+   "linked_tickers": [
+    "000660",
+    "005930"
+   ],
+   "confirming_signals": [
+    "SK하이닉스 Nasdaq ADR(HXSL) D-13(7/10 상장) 수급 기대 — 차주 중 언론 보도 확인",
+    "Micron FY26 Q3 EPS $25.11(컨센 +22.6% 대폭 beat) 서사가 국내 HBM 수요에 이월",
+    "HBM 주요 고객사(Nvidia·AWS·MS) 주문 취소·공급독점 회귀 뉴스 미발생",
+    "SK하이닉스 주간 -13% 이상 급락(strong_bull 추세 필터 위반) 없음"
+   ],
+   "invalidation_triggers": [
+    "AI 데이터센터 투자 감속 구체적 증거(OpenAI IPO 연기 이상의 충격 — 수주 취소·가이던스 컷)",
+    "SOXX -5% 이상 급락(HBM guidance 충격 재발)",
+    "SK하이닉스·삼성전자 HBM 공급 독점 회귀 보도(URL+게재일 필수)"
+   ],
+   "daily_linkage": "00시: Nvidia·AI 클라우드 관련 야간 뉴스 확인. 09시: SK하이닉스 5거래일 추세 필터 재확인(현재 -3.29%, 임계 -13% 충분한 여유) + 자본 제약(1주 단가 > 종목 상한) 재계산. 18시: 주중 HBM 서사 진전 여부 기록.",
+   "today_verdict_18:00": "유지 — 미국장 야간 반도체 강세(Nasdaq +2%) 이월, 한미반도체(반도체 장비) green·SK하이닉스 추세필터 위반 없음. HBM 공급 독점 회귀·가이던스 컷 등 무효화 트리거 미발생."
+  },
+  {
+   "id": "pce_dollar_macro_headwind",
+   "title": "PCE 4.10% YoY + 달러 강세 — 외국인 수급 부담·안착선 회복 지연 헤지",
+   "direction": "bearish_if_confirmed",
+   "linked_tickers": [],
+   "confirming_signals": [
+    "외국인 반도체 3거래일 연속 순매도 >5,000억/일 — 달러 강세·금리 재긴축 수급 압박",
+    "KOSPI 8,200 이하 종가 재이탈(2차 하락 본격화)",
+    "원달러 환율 1,560원 이상 유지·달러인덱스 103 돌파"
+   ],
+   "invalidation_triggers": [
+    "7월 FOMC 발언 완화(금리 인하 기대 복원) + 달러 반전",
+    "PCE MoM 기준 추가 둔화 확인 — 연준 인하 기대 재점화",
+    "외국인 반도체 순매수 복귀(3거래일 연속 순매수)"
+   ],
+   "daily_linkage": "00시: 달러인덱스·원달러 환율 방향 점검. 09시: 외국인 수급 방향 확인. 18시: 주간 외국인 누적 순매수/매도 기록. 목요일(7/2) 15시: time_stop 점검(이 thesis 강화 시 신규 진입 자제 강화).",
+   "today_verdict_18:00": "유지 — 외국인 수급·원달러는 세션 내 독립검증 불가(egress403)이나 KOSPI 종가가 장중 상승폭 절반을 반납한 점은 매크로 헤드윈드(강달러·외국인 매도) 잔존 정황. 8,200 종가 재이탈은 없음(무효화 미충족)."
   }
+ ],
+ "daily_bridge": {
+  "holiday_note": "2026-06-29(월)~07-03(금) 5영업일 모두 정규 영업일 — 휴장 없음.",
+  "00:00": "미국 주말 시장(6/27 금요일 마감) S&P500·SOXX·나스닥 방향 확인. 삼성·SK하이닉스 1,000조 발표 관련 주말 뉴스 web_verify(URL+게재일 의무). 이란 MOU [진행형] 주말 변수 최종 확인(지정학 이슈 진행형 → 불확실도 ±1.5~2.5% 병기). 달러인덱스·원달러 환율 방향 점검. 미국 선물 방향으로 6/30 KOSPI 갭 사전 추정(단방향 단정 금지).",
+  "09:00": "삼성·SK하이닉스 1,000조 발표 최종 web_verify. KOSPI 6/30 개장 갭 측정 + 8,471 안착선 회복 여부 판정. 삼성전자(005930) probe 조건 판정: ①KOSPI 8,471 이상 ②web_verify 통로 개방 둘 다 충족 시에만 probe 1주(overheat→probe 의무). 외국인 수급 방향 확인(pce_dollar_macro thesis 판정). 조선 avoid_reentry 몰입 재판정.",
+  "12:00": "오전 수급·뉴스로 thesis 3개 상태 갱신. 발표 후 셀더뉴스 vs 촉매 지속 판정. 삼성전자 진입 후 성과 점검(진입 시). 한화에어로 이란 진행형 영향 확인.",
+  "15:00": "다음날 09시 액션 후보를 thesis 단위로 정리. 목요일(7/2) 15시: time_stop 점검(주간 목표 기여도 30% 미만이고 신규 촉매 없으면 비중 축소 검토). 주간 중반 KOSPI 방향에 따라 probe 사이즈 재검토.",
+  "18:00": "18:00 종가 확정 — equity 4,890,719원(일일 -1.978%·누적 -2.186%), 미실현 -44,211·현금 40.76%. KOSPI 7,648.09(-7.89%) 매도 사이드카(09:07) 폭락 — 미 마이크론發 AI/반도체 매도·외국인 2.35조 순매도·원달러 17년 최저권·6월 CPI 3.2% BOK 긴축 우려 복합 매크로(웹 교차 corroborated). 6종목 🟢 green·경보 0건·체결 0건. 비반도체 divergence 방어(신한 +6.0%·하나 +3.8%·LIG +3.2%·LS +2.6% 역행). WTD -0.90% vs KOSPI WTD -9.07%(+8.17pp). 주간목표 4,984,279원 부족 93,560(WTD -0.896% < 목표 +1.0% — 폭락으로 미달 전환, 리스크 축소 우선). R/R<1.0 3종목(LIG 0.94·신한 0.56·하나 0.69) 목표근접/상승 자연압축→(b)/(c) 관리·강제매도 없음·익일 09시 재평가 보류. 회복 단계 normal(누적 -2.186% > -3.5% caution 임계 — 폭락에도 바스켓+현금 방어로 단계 불변). 선제추론 inf-20260702-0900-1=hit(손절 이탈 0건). 루틴 오차 1건(트레일링 1차선 ATR 배수 오기입 정정 239,495→222,117). 내일 NFP(오늘 21:30 발표) 결과가 개장 방향 결정."
+ },
+ "watch_items": [
+  "【7/3 09시 0순위·NFP 결과 반영】미 6월 NFP 7/2 21:30 KST 발표(마감 후·18시 미반영) — 내일 개장 첫 반영. 강한 고용 시 금리인하 기대 후퇴·달러 강세·반도체 추가 압력, 약한 고용 시 반등 실마리. 개장 방향 확인 후 대응(종가 외삽 금지)·방향 미확정이면 신규 비중 확대 금지.",
+  "【7/3 09시 1순위·은행주 목표가 근접 익절】신한지주(055550) 종가 102,200원 목표 110,829(+8.4%)·하나금융(086790) 120,800원 목표 132,750(+9.9%). 종가 목표 도달 시 50% 부분익절(도달 전 선매도 금지). 지수 -7.9%일 역행 방어 로테이션 지속성 확인.",
+  "【7/3 09시 1순위·LS ELECTRIC 트레일 잔여선】LS ELECTRIC(010120) 트레일 1차선 222,117(v2.14 1.5×ATR·최고종가 263,500 기준)/잔여 샹들리에 208,323. 종가 236,500 두 선 위 → 홀드. 종가 222,117 이탈 시 50% 부분익절, 208,323 이탈 시 잔여 청산. ※15시까지 이월된 오기입값 239,495는 폐기(EOD 정정).",
+  "【7/3 09시 2순위·한미반도체 반도체 수급 감시】한미반도체(042700) 종가 219,500(-15.3% 진입가)·보유주 최약. 유효 yellow(-17.6%)까지 -2.3%p·손절선 199,143 대비 +10.2%. 마이크론·외국인 반도체 매도 강도 지속 시 유효 yellow 이탈 여부 종가 감시(2×ATR 손절선 이탈만 청산).",
+  "【7/3 2순위·비반도체 divergence 지속성】지수 폭락 2거래일(7/1 -2.04%·7/2 -7.89%) 연속 방산·전력기기·은행 divergence 방어 확인. NFP·외국인 매도 지속 국면에서 이 로테이션 방어력이 이어지는지가 W27 방어의 핵심 — 꺾이면 비중 축소 검토.",
+  "【W27 3순위·현금 40% 재배치 조건】heat 잔여 회복 + KOSPI 안착선(8,471) 회복 + NFP 방향 확인 3조건 동시 충족 전까지 신규 보류(자본보존). 폭락 국면 falling knife 추격 금지."
+ ],
+ "decision_rules": {
+  "new_entry_requires": [
+   "price_data_quality confidence medium 이상",
+   "최근 5거래일 누적 수익률: strong_bull 임계 -13% 이상(RS 주도주 -20% 이내)",
+   "기대 보상/위험 비율 1.0 이상(strong_bull tier)",
+   "weekly_thesis 중 최소 1개와 연결",
+   "단일 거래 손실 예상액이 equity의 3.5%(약 172,723원) 이하",
+   "밸류에이션 overheat 종목(삼성전자·SK하이닉스): probe 사이즈(1주) 의무",
+   "web_verify(URL+게재일+today_ohlc) 선행 의무",
+   "KOSPI 안착선(8,471) 종가 회복 확인 후 신규 probe"
+  ],
+  "hold_requires": [
+   "진입 thesis가 유지 또는 강화",
+   "tier green 또는 yellow에서 원인 분석 완료",
+   "R/R 1.0 이상(strong_bull 레짐 적응 하한)"
+  ],
+  "exit_or_reduce_when": [
+   "invalidation_trigger 확인",
+   "orange/red 진입(ATR 적응형 유효 임계 기준)",
+   "목요일(7/2) 15시까지 주간 목표 기여도 30% 미만이고 신규 촉매 없음",
+   "KOSPI 8,200 이하 재이탈 — 2차 조정 시나리오 전환"
+  ]
+ },
+ "weekend_review": {
+  "last_completed": "2026-06-28",
+  "next_due": "2026-07-05",
+  "saturday_review_2026_06_27": null,
+  "sunday_strategy_2026_06_28": "reports/2026-06-28-sunday-strategy.md",
+  "saturday_review_2026_06_20": "reports/2026-06-20-saturday-review.md",
+  "sunday_strategy_2026_06_21": "reports/2026-06-21-sunday-strategy.md",
+  "required_outputs": [
+   "reports/YYYY-MM-DD-saturday-review.md",
+   "reports/YYYY-MM-DD-sunday-strategy.md",
+   "config/weekly_plan.json 갱신",
+   "다음 영업일(월) 09시 우선 액션",
+   "주말 뉴스가 daily_bridge에 미치는 영향"
+  ]
+ }
 }

@@ -60,6 +60,7 @@
     - 예: `{"ts":"2026-06-01T15:30:00+09:00","action":"SELL_ORANGE_STOP","ticker":"...","execution_venue":"closing_auction","price_source":"snapshot_fresh|web_verified","close_price":...,"execution_price":...,"reason":"orange 단계 종가 확정 — ..."}`
   - **장중에 손절선을 이미 통과한 종목**은 09/12/15 routine 에서 실시간 체결됐어야 한다 — 18시는 그날 종가로 비로소 손절/목표에 도달한 분만 종가 청산한다.
 - 종가 확정 후 `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 종가 기준으로 갱신한다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 아래 §종목별 종가 점검의 `news_target_line` 과 §뉴스 반영 매매가 섹션에 사용). 매 routine 1행이 `target_estimate_log.jsonl` 에 쌓여 '리포트마다 변경값' 델타가 산출된다.
+- **(v2.20 그림자)** `python scripts/track_ratchet_shadow.py` 실행 — 본전 래칫 스톱(`policy.risk.breakeven_ratchet`, mode=shadow) 종가 기록 → `state/ratchet_shadow.json`. **관측 전용: 실제 손절가·체결·리포트 판단을 바꾸지 않고 본문에도 싣지 않는다** (승격 심사는 일요일 policy_review §1-8).
 
 ## 2. 포트폴리오 평가
 종가 기준으로:

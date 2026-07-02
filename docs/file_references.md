@@ -3,6 +3,12 @@
 이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
 시간대별 리포트 분리 + 시장 데이터 자동 수집 + 휴장일 가드 작업 이후 갱신.
 
+> **신규 추가 (2026-07-02, v2.20 포지션 유동 운영 — 본전 래칫 그림자)**
+> - `policy.risk.breakeven_ratchet` — 본전 래칫 스톱(mode=shadow, 관측 전용·체결 변화 0). 함께: `position_sizing.max_positions` 5→6(momentum top_n 동기 — vacant_slots 영구 0 해소), `risk.time_stop.precedence_over_min_hold`·`horizon.min_hold_precedence`(시간손절 vs 최소보유 우선순위 명문화)
+> - `scripts/track_ratchet_shadow.py` — 읽기: `config/policy.json`·`config/portfolio.json`·`state/market_snapshot.json` / 쓰기: `state/ratchet_shadow.json` (1800 §1 종가 확정 후 실행 — 멱등 upsert·커밋 대상)
+> - `scripts/score_ratchet_shadow.py` — 읽기: `state/ratchet_shadow.json`·`state/price_history.json`·`state/trade_log.jsonl`·policy / 쓰기: `state/ratchet_shadow_scorecard.json` (sunday_policy_review 0-E 실행 → §1-8 승격 심사 입력)
+> - 진단·설계 전문: `reports/2026-07-02-position-management-research.md`
+>
 > **신규 추가 (2026-06-12, v2.13 콘텍스트 예산)**
 > - `scripts/compact_state.py` — 핫패스 누적 필드 압축: watchlist 청산 종목·오래된 코멘트 → `state/watchlist_archive.json`,
 >   watch_items 초과분 → `state/watch_items_archive.jsonl`, portfolio.history → `state/portfolio_history.jsonl`(config 최근 10개),

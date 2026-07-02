@@ -37,6 +37,12 @@
 - `python scripts/build_inference_checklist.py` 를 실행하여 `state/inference_checklist.md` 를 주간 응축한다(만료·중복 정리, 상한 40줄).
 - 이 산출물은 1-7 점검의 1차 입력이다.
 
+## 0-E. 본전 래칫 스톱 그림자 채점 (breakeven ratchet — `policy.risk.breakeven_ratchet`, mode=shadow)
+- `python scripts/score_ratchet_shadow.py` 를 실행하여 `state/ratchet_shadow_scorecard.json` 을 만든다.
+  - `scoring`: 가상 breach(래칫 레벨 종가 이탈)의 t+1/t+5 반사실 손익 — 보호(피한 하락) vs 노이즈 익절(forgone) · noise_exit_rate · 실제 청산 대비 보호액 · 해방가능 heat 일평균.
+  - 표본이 `promotion_criteria`(관측 10거래일·breach 확정 3건) 미달이면 '채점 보류' — 통계 과신 금지(0-C 와 동일 원칙).
+- 이 산출물은 1-8 점검의 1차 입력이다.
+
 ## 0. 컨텍스트 적재 (이 순서 — grep 우선, 전문 통읽기 금지)
 > 이 routine 의 입력(전체 prompts ~200KB + policy ~100KB + lessons)은 통째로 읽으면 콘텍스트가
 > 넘친다. **0-A/0-B/0-C 의 스크립트 산출물(인덱스·대조 결과)을 1차 입력**으로 쓰고, 원문은
@@ -108,6 +114,14 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 - **체크리스트 위생**: `miss_factors` 가 `inference_checklist.md` 에 반영됐는지, `checklist_sunset_trading_days`(5) 만료 항목이 정리됐는지 확인. 검증 안 된 즉석 선제 룰의 영구 적체 금지.
 - **기회비용**: `opportunity_cost.verdict` 가 '미배치로 놓친 수익 누적'이면 진입 적극성(entry_filters·사이징) 완화 후보로 §1-2-b 와 함께 검토(단 risk_off 미배치는 감점 면제 — 과잉교정 금지).
 - **예측 품질**: 원장에 모호 예측(검증 가능 수치·horizon 누락 = `falsifiable_rule` 위반)이 보이면 해당 슬롯 프롬프트 보강 후보로 등록(sandbagging 차단).
+
+### 1-8. 본전 래칫 스톱 승격 심사 (ratchet_shadow_scorecard — v2.20 그림자)
+`state/ratchet_shadow_scorecard.json`(0-E 생성)의 `verdict` 를 점검한다 (§1-7 Tier 2 심사와 동일 패턴 — 그림자 입증 전 체결 변화 금지):
+- **채점 보류**(표본 부족)면 그림자 관측 지속 — 액션 없음.
+- **승격 후보**(breach 확정 ≥3건 AND net_protection ≥ 0 AND noise_exit_rate ≤ 0.5)면 산출물 1 §3 패치 후보에 `mode=shadow→live` 전환을 상정한다 — 전환은 policy 패치 관례(근거 명기·changelog)를 따르고, live 의 의미는 "유효 손절 = max(현행 손절가, 래칫 레벨)"(스톱을 올리기만 함).
+- **기각·완화 후보**(noise율 > 0.5 — 본전 노이즈 체결 과다)면 `steps.when_gain_atr` 상향(예 1.0→1.5) 또는 기각을 상정한다(KB금융 give-back 교훈의 재현 여부가 판단 기준).
+- **무해 판정**(20거래일+ breach 0건)이면 '노이즈 비용 없음 + heat 해방 실익(scoring.avg_freed_heat_krw)'을 근거로 승격 상정 가능(관측 병행).
+- 근거·설계 전문: `reports/2026-07-02-position-management-research.md` P1. 후속 연구(히트 예산 9→14% 재보정 P2·승자 증량 P4)는 backtest_strategy 오버레이 검증 결과가 나온 뒤에만 상정한다.
 
 ## 2. 산출물 1: reports/YYYY-MM-DD-policy-review.md
 

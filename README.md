@@ -41,6 +41,8 @@ state/
   watchlist_archive.json   watchlist 에서 이관된 청산 종목 전체 기록 + 오래된 코멘트 (compact_state.py)
   watch_items_archive.jsonl weekly_plan.watch_items 만료분 보존 (compact_state.py)
   portfolio_history.jsonl  일일 equity 스냅샷 전체 이력 (config/portfolio.json 엔 최근 10개만)
+  ratchet_shadow.json      (v2.20) 본전 래칫 스톱 그림자 관측 — track_ratchet_shadow.py 가 18시 종가 기준 stage·가상 breach·해방가능 heat 기록 (관측 전용, 체결 없음)
+  ratchet_shadow_scorecard.json score_ratchet_shadow.py 채점 — 가상 breach 의 t+1/t+5 반사실 손익·noise율·실제 청산 대비 보호액 (일 20시 policy_review §1-8 승격 심사 입력)
   market_snapshot.json     (gitignored) 매 routine마다 fetch_market_data.py가 생성하는 다중출처 가격·5일추세 스냅샷
 reports/
   YYYY-MM-DD-00.md         🌙 자정 글로벌 야간 리포트
@@ -90,6 +92,8 @@ scripts/
   build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력 (선제 추론 루프 위해 '다음 추론 시 고려' 라벨도 캡처)
   score_inferences.py      (선제 추론 루프) 예측 vs 실측 채점 — rule_attribution 손익 결합 → state/inference_scorecard.json (18시·일 20시)
   build_inference_checklist.py (선제 추론 루프) lessons+scorecard → state/inference_checklist.md 응축(상한 40줄) — 다음 추론 직전 입력
+  track_ratchet_shadow.py  (v2.20) 본전 래칫 스톱 그림자 트래커 — 18시 EOD 실행, 이익 +1×ATR 시 스톱→본전 래칫의 가상 stage·breach·해방 heat 기록 → state/ratchet_shadow.json (관측 전용)
+  score_ratchet_shadow.py  래칫 그림자 채점 — 가상 breach t+1/t+5 반사실 손익·noise율·보호액 → state/ratchet_shadow_scorecard.json (일 20시 policy_review 0-E)
   audit_pipeline.py        파이프라인 무결성 점검 (의존성 0)
   write_audit_report.py    audit 결과 + 자동 수정 → 사람 친화 리포트
   build_html.py            reports/*.md → _site/*.html (GitHub Pages)

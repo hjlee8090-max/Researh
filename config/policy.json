@@ -1,7 +1,8 @@
 {
-  "version": "2.19",
-  "last_updated": "2026-06-28",
+  "version": "2.20",
+  "last_updated": "2026-07-02",
   "changelog": [
+    "2.20: 포지션 유동 운영 진단 반영 3종(근거: reports/2026-07-02-position-management-research.md — 매도 8건 전부 룰 실행 vs SCALE_IN 6주 0건의 매수측 마비 비대칭). ①position_sizing.max_positions 5→6 — momentum top_n(6)과 불일치로 바스켓 만석 시 compute_allocation vacant_slots 가 영구 0이 되어 09시 §2-C deploy 경로가 사문화되던 정합 오류 수정(6/30 top_n 10→6 축소 때 미동기화). ②risk.breakeven_ratchet 신설(mode=shadow — 관측 전용·체결 변화 0): 이익 +1.0×ATR 도달 시 스톱→본전+왕복비용, +2.0×ATR 시 본전+0.5×ATR 로 올리는 래칫을 그림자 채점. 목적 = 트레일링 활성화(목표진행 70%) 전 사각지대의 open_risk 인플레이션 해소로 히트 예산 재활용(7/2 실측: LIG넥스원 1종목 open_risk 186,857원=strong_bull 예산 42%, deploy 1,372,090원 권고 vs 히트 잔여 0원·현금 41% 잠금) + 6/23 보호손절(+25,369원) 실증의 규칙화. 부작용(본전 노이즈 체결 — 5/28 KB금융 give-back -13,598원·t5 forgone +164,798원 교훈) 검증을 위해 scripts/track_ratchet_shadow.py(18시 EOD)→state/ratchet_shadow.json, scripts/score_ratchet_shadow.py(일 20시 0-E)→state/ratchet_shadow_scorecard.json 로 반사실 채점 후 promotion_criteria 충족 시에만 sunday_policy_review §1-8 이 live 전환을 심사. ③risk.time_stop.precedence_over_min_hold + horizon.min_hold_precedence — min_hold(5일)는 이익·중립 종목 회전마찰 방지용, '평가손실+모멘텀 소멸(score<10)' 종목엔 time_stop(목요일 리뷰)·회전아웃이 우선(W27 화·수 진입 주의 목요일 리뷰 충돌 해소). 히트 예산 자체 재보정(9→14%)·승자 증량(SCALE_IN winners_only)은 백테스트 오버레이 검증 후 별도 상정(연구 P2·P4).",
     "2.19: 수익형 전략 엔진 채택(momentum_strategy) — 현금 마비 구조 결함의 근본 해소. 진단: 직전 구간 KOSPI +198% 강세장인데 계좌 -1.3% — web_verify(403) 차단 시 재량 진입이 confidence 게이트에 막혀 자동 현금화되던 것이 단일 패배 원인(docs/strategy_momentum.md). 해법: ①scripts/backtest_strategy.py 로 그리드+walk-forward 검증된 듀얼모멘텀 로테이션(Top10·월간리밸·MA200추세필터·항시투자)을 1순위 진입 엔진으로 등록 — 전구간 +313%/Sharpe 2.34 로 벤치(+198%/2.24) 상회. ②scripts/momentum_signal.py 가 계좌 크기 정수주 바스켓 산출(state/momentum_signal.json) — 종목당 30% 상한·최소현금 10% 준수. ③cash_trap_fix: 사전 계산된 바스켓의 게이트 통과 체결은 묵은가격 추격이 아니므로, web_verify 차단 시 커밋된 momentum_signal·snapshot 을 medium 신뢰 출처로 인정해 배치를 진행(low 만 차단). ④레짐필터 OFF — 강세장 현금화는 전구간 수익을 깎음, 개별 추세필터(가격>MA200)로 대체. fetch_history.yml 가 신호 자동 재생성.",
     "2.18: 09시 개장 점검 '매일 가격 신뢰도 low' 구조 버그 3종 해소(2026-06-26 사용자 진단 — 개장 직후 후보 전종목이 confidence=low 로 신규매수 봉쇄, 6/23~ 5영업일 반복). fetch_market_data.py: ①fetch_yahoo 가 meta.regularMarketPrice/Time(당일 실시간 체결가)로 마지막 봉 보강 — 일봉이 개장 직후 전일자로 들어오는 Yahoo 지연을 메워 naver(당일)와 거래일 정렬. ②compute_confidence 를 '동일 거래일(date) cohort' 교차검증으로 재작성 — naver 당일 현재가 vs yahoo 전일 종가를 '출처 불일치 2%'로 오판해 low 로 강등하던 버그 제거(가장 신선한 날짜를 공유하는 출처끼리만 괴리 판정; 단일 당일치 출처는 medium). confidence_levels '동일 시각대 2개 이상' 정의를 코드가 실제로 준수. ③fetch_krx EOD 백스톱 호출 조건 확장(naver·yahoo 동시 실패 → 둘 중 하나라도 빈손, 또는 장 마감 후 당일치 교차확인 < 2; KRX 는 EOD 전용이라 마감 후에만 보강 의미). medium 부터 신규매수 허용(min_confidence_for_new_entry=medium)이라 개장 직후에도 진입 게이트 통과. screen_universe.py 동일 시그니처 반영. 단위·통합 테스트 18건 통과.",
     "2.17: 세션 웹 검증 차단(이그레스 403) 폴백 — live_verify_required 가 세션 웹 차단으로 영구 미충족되어 신규 매수만 봉쇄되던 비대칭 해소(2026-06-23~ '가격조회 다 실패'의 원인). price_data_quality.web_verify_unavailable_fallback + pre_trade_check.py --egress 신설. 전문: docs/policy_changelog.md·docs/network_egress_allowlist.md."
@@ -89,6 +90,7 @@
   "horizon": {
     "style": "중장기 스윙",
     "min_hold_days": 5,
+    "min_hold_precedence": "v2.20 — min_hold 는 이익·중립 종목의 회전 마찰(휩쏘·거래비용) 방지용이다. '평가손실 + 모멘텀 소멸(momentum_signal score < 10)' 종목에는 risk.time_stop(목요일 리뷰)·회전아웃 룰이 min_hold 보다 우선한다(단일 규칙 원문: risk.time_stop.precedence_over_min_hold). 손절·보호청산·thesis hard 무효화 청산은 언제나 min_hold 와 무관하게 집행한다.",
     "review_cadence": "일 4회 (09/12/15/18)"
   },
   "risk": {
@@ -101,6 +103,29 @@
       "residual_trail_rule": "잔여 50% 는 샹들리에 트레일 -2.0×ATR%(최고 종가 기준)로 추세 추종. 이탈 시 잔여 전량 청산.",
       "levels_logging": "트레일링 활성화 시 watchlist 코멘트에 trailing_first_level(고점×(1−max(3,1.5×ATR%)/100))·trailing_residual_level(최고 종가×(1−2.0×ATR%/100)) 두 레벨을 기록한다.",
       "note": "v2.14(2026-06-14 sunday_policy_review) — 1.0×ATR%→1.5×ATR% 확대. 근거: W23 삼성전자 354,290원 조기청산 후 t1 +232,186원(ATR 7~8% 구간에서 -max(3%,7%)=-7% 폭이 노이즈 체결 반복). 1.5배 확대 시 동일 구간 -max(3%,10.5%)=-10.5%로 상승 추세 노이즈 체결 횟수 감소 기대. 잔여 2단(-2.0×ATR%) 현행 유지로 tail-risk 방어. 평시 ATR 2~3%에선 first trail -max(3%,3~4.5%)=-3~4.5%로 기존 대비 소폭 확대. 이전: v2.11 — 고정 -3%(0.5×ATR) 전량 청산 교정(+236,000원 일실 근거)."
+    },
+    "breakeven_ratchet": {
+      "mode": "shadow",
+      "purpose": "v2.20 — 본전 래칫 스톱(그림자 관측 전용). 트레일링 활성화(목표진행 70%) 전 구간에서 손절선이 진입가-2×ATR 에 고정된 채 주가만 오르면 open_risk 가 부풀어 히트 예산을 잠근다(7/2 실측: LIG넥스원 1종목=예산 42%, deploy 권고 137만원 vs 히트 잔여 0원). 이익이 ATR 단위로 진행되면 스톱을 본전 이상으로만 올려(래칫 — 하향 없음) 예산을 재활용하고 좌측 꼬리를 자른다. 실증: 6/23 보호손절 +25,369원. 반대 위험: 본전 노이즈 체결(5/28 KB금융 give-back 교훈) — ATR 게이트·종가 판정으로 완충하고 그림자 채점으로 net 실익 입증 후에만 라이브 전환. 전문: reports/2026-07-02-position-management-research.md P1.",
+      "basis": "close",
+      "steps": [
+        { "when_gain_atr": 1.0, "stop_to": "entry_plus_costs", "label": "본전+왕복비용" },
+        { "when_gain_atr": 2.0, "stop_to": "entry_plus_half_atr", "label": "본전+0.5×ATR" }
+      ],
+      "atr_source": "market_snapshot.tickers.<t>.volatility.atr14 (결측 시 close×atr_pct/100 폴백, 둘 다 결측이면 해당 종목 판정 생략 — 결측 래칫 방지)",
+      "cost_basis": "본전 = entry × (1 + 왕복 거래비용). 왕복 비용 = trading_cost 매수(슬리피지 0.2+수수료 0.015) + 매도(슬리피지 0.2+거래세 0.18+수수료 0.015) ≈ 0.61%",
+      "shadow_mode_rules": [
+        "mode=shadow 동안 체결 변화 0 — 실제 손절가·트레일링·orange/red 판정·리포트 액션은 현행 그대로",
+        "scripts/track_ratchet_shadow.py 를 18시 routine 이 §1 종가 확정 후 실행 → state/ratchet_shadow.json 에 종목·일자별 stage/래칫레벨/가상 breach/해방가능 heat 를 기록(멱등 upsert, 커밋 대상 — routine 클론 간 상태 승계)",
+        "scripts/score_ratchet_shadow.py 를 sunday_policy_review 가 0-E 에서 실행 → 가상 breach 의 t+1/t+5 반사실 손익(노이즈 익절 vs 보호)·noise율·실제 청산 대비 보호액 채점 → state/ratchet_shadow_scorecard.json",
+        "라이브 전환 시의 의미(참고): 유효 손절 = max(현행 손절가, 래칫 레벨) — 래칫은 스톱을 올리기만 하며 기존 손절·트레일링을 느슨하게 풀지 않는다"
+      ],
+      "promotion_criteria": {
+        "min_shadow_trading_days": 10,
+        "min_breach_events": 3,
+        "open_when": "net_protection_krw ≥ 0 AND noise_exit_rate ≤ 0.5 (breach 확정 표본 ≥ min_breach_events 기준). 표본 미달이면 '채점 보류' — 단 20거래일 경과·breach 0건이면 '무해(노이즈 비용 없음) + heat 해방 실익'을 근거로 승격 상정 가능",
+        "owner": "sunday_policy_review §1-8 — 승격(mode=live)·완화(when_gain_atr 상향)·기각·관측 연장 중 택1. live 전환은 policy 패치 관례(근거 명기·changelog)를 따르고, 전환 전까지 어떤 체결도 바꾸지 않는다"
+      }
     },
     "weekly_account_target_return_pct": 1.0,
     "weekly_target_mode": "relative_to_kospi",
@@ -137,7 +162,8 @@
     "time_stop": {
       "enabled": true,
       "review_day": "Thursday",
-      "action": "목요일 15시까지 주간 목표 기여도가 30% 미만이고 진입 논리가 강화되지 않으면 비중 축소 또는 교체 후보로 표시"
+      "action": "목요일 15시까지 주간 목표 기여도가 30% 미만이고 진입 논리가 강화되지 않으면 비중 축소 또는 교체 후보로 표시",
+      "precedence_over_min_hold": "v2.20 — horizon.min_hold_days(5)는 이익·중립 종목의 회전 마찰 방지용이며, '평가손실 + 모멘텀 소멸(momentum_signal score < 10)' 종목에는 time_stop 리뷰·회전아웃이 min_hold 보다 우선한다. 화·수 진입 주의 목요일 리뷰가 min_hold 를 이유로 손실·모멘텀 소멸 종목의 축소·교체 표시를 건너뛰지 않는다(W27 사례: 6/30 진입 바스켓의 7/2 목요일 리뷰). 손절·보호청산·thesis hard 무효화는 언제나 min_hold 무관."
     },
     "dynamic_exit_model": {
       "enabled": true,
@@ -720,7 +746,8 @@
   },
   "position_sizing": {
     "initial_capital_krw": 5000000,
-    "max_positions": 5,
+    "max_positions": 6,
+    "max_positions_note": "v2.20 — momentum_strategy.config.top_n(6)과 동기 유지. 5 로 남아 있던 동안 바스켓 만석(6종목) 시 compute_allocation 의 vacant_slots = max(0, 5−6) = 0 이 영구화돼 09시 §2-C deploy 경로가 사문화됐다(2026-06-30 top_n 10→6 축소 때 미동기화 — reports/2026-07-02-position-management-research.md 병목 B). top_n 변경 시 이 값을 함께 조정한다.",
     "max_position_weight_pct": 35.0,
     "min_cash_weight_pct": 5.0,
     "default_entry_weight_pct": 30.0,

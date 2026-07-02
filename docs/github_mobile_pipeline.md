@@ -8,6 +8,7 @@
 | 구분 | 실행 위치 | 산출물 | 모바일 발송 |
 |---|---|---|---|
 | 00:30 글로벌 점검 | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD.md` 00시 섹션 | `chore(00:00):` 커밋 후 Kakao |
+| 06:30 미국장 마감 확정 | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD-06.md` (자정 예측 확정·개장 전 갱신) | `chore(06:00):` 커밋 후 Kakao |
 | 09:00 개장 점검 | Claude cloud routine 또는 Codex worktree | 09시 섹션, `portfolio.json`, `watchlist.json` | `chore(09:00):` 커밋 후 Kakao |
 | 12:00 장중 점검 | Claude cloud routine 또는 Codex worktree | 12시 섹션, 체결/경보 | `chore(12:00):` 커밋 후 Kakao |
 | 15:00 마감 임박 | Claude cloud routine 또는 Codex worktree | 15시 섹션, 익일 후보 | `chore(15:00):` 커밋 후 Kakao |
@@ -21,6 +22,7 @@
 GitHub Actions의 `build_and_notify.yml`은 아래 커밋 프리픽스를 감지해 HTML 빌드와 Kakao 발송을 수행한다.
 
 - `chore(00:00):` 글로벌 야간 점검
+- `chore(06:00):` 미국장 마감 확정
 - `chore(09:00):` 개장 점검
 - `chore(12:00):` 장중 점검
 - `chore(15:00):` 마감 임박 점검

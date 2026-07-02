@@ -21,7 +21,7 @@
 1. `config/policy.json`, `config/weekly_plan.json`, `config/portfolio.json`, `config/watchlist.json`
 2. `state/lessons.md`
 3. **지난주 평일 시간대별 리포트** — archive 대상:
-   - 월~금 각 날짜에 대해 `reports/YYYY-MM-DD-00.md`, `-09.md`, `-12.md`, `-15.md`, `-18.md`
+   - 월~금 각 날짜에 대해 `reports/YYYY-MM-DD-00.md`, `-06.md`, `-09.md`, `-12.md`, `-15.md`, `-18.md`
    - 구버전 단일 파일 `reports/YYYY-MM-DD.md` 가 있으면 함께 흡수
 4. `reports/*-saturday-review.md` (해당 주 토요일 사후분석)
 5. `reports/*-sunday-strategy.md` (해당 주 일요일 전략 리포트) — 다음주 전략을 미리 확인
@@ -106,7 +106,7 @@
 
 ## 참조 원본 파일
 응축에 사용한 원본 (다음주 routine은 읽지 않아도 됨; 감사·복기용 링크):
-- [월요일 모음](./YYYY-MM-DD-00.md) [09](./YYYY-MM-DD-09.md) [12](./YYYY-MM-DD-12.md) [15](./YYYY-MM-DD-15.md) [18](./YYYY-MM-DD-18.md)
+- [월요일 모음](./YYYY-MM-DD-00.md) [06](./YYYY-MM-DD-06.md) [09](./YYYY-MM-DD-09.md) [12](./YYYY-MM-DD-12.md) [15](./YYYY-MM-DD-15.md) [18](./YYYY-MM-DD-18.md)
 - (화·수·목·금 동일)
 
 ### 면책

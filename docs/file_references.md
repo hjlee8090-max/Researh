@@ -132,7 +132,7 @@
 - `state/lessons.md`
 - `config/*` 4개
 - `state/trade_log.jsonl` (최근 30라인)
-- 오늘 시간대별 리포트 4개: `reports/YYYY-MM-DD-{00,09,12,15}.md`
+- 오늘 시간대별 리포트 5개: `reports/YYYY-MM-DD-{00,06,09,12,15}.md`
 
 **쓰기**:
 - `reports/YYYY-MM-DD-18.md` (신규 생성)
@@ -180,7 +180,7 @@
 ## 4. 보조 스크립트의 참조 구조
 
 ### `scripts/audit_pipeline.py`
-- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py`·`scripts/check_market_session.py`·`scripts/check_trade_log_gate.py` 존재 확인
+- 읽기: `config/*` 6개(policy/weekly_plan/watchlist/portfolio/candidates/market_calendar), `state/trade_log.jsonl`, `prompts/*.md` (존재 확인), `reports/*.md` (정규식 `YYYY-MM-DD(-(00|06|09|12|15|18))?.md`), `scripts/fetch_market_data.py`·`scripts/check_market_open.py`·`scripts/check_market_session.py`·`scripts/check_trade_log_gate.py` 존재 확인
 - `audit_trade_provenance` 가 `check_trade_log_gate.py` 를 subprocess 로 실행해 price_source 누락 + 장중 시간 밖 booking 을 FAIL 로 흡수
 - 쓰기: 없음 (stdout만)
 
@@ -335,7 +335,7 @@
 
 ## 7. 점검 체크리스트 (수동 점검 시)
 
-- [ ] 오늘 날짜로 `reports/YYYY-MM-DD-{00,09,12,15,18}.md` 5개 파일이 모두 있는가?
+- [ ] 오늘 날짜로 `reports/YYYY-MM-DD-{00,06,09,12,15,18}.md` 6개 파일이 모두 있는가?
 - [ ] 각 파일의 첫 줄(`# 일일 리포트 — ... · 슬롯명`) 이 자기 슬롯과 일치하는가?
 - [ ] "시리즈 진행" 줄의 ✓ 표시가 자기 시간대만 ✓ / 나머지는 "대기" 또는 "✓"(이전 시간대) 인가?
 - [ ] 이전 시간대 파일 링크가 깨지지 않았는가?

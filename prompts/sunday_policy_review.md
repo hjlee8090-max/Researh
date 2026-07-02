@@ -76,7 +76,7 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 ### 1-4. prompt 간 일관성
 같은 룰(예: trend filter -7%)이 여러 prompt 에 분산돼 있을 때 표현이 일치하는지 확인.
 - 불일치 → 어느 prompt 가 진실의 원천(source of truth)인지 명시
-- **신뢰도 출처 규칙 일관성 점검**: 00/09/12/15/18·주말 prompt 가 모두 "`market_snapshot` 의 `confidence` 를 1순위로 사용하고, 레거시 'fetch 차단/403/data confidence=low/신규 진입 보류' 서술을 이월하지 않으며, stale≠low" 규칙을 담고 있는지 grep 으로 확인. 누락된 prompt 가 있으면 미반영 패치 후보로 등록한다.
+- **신뢰도 출처 규칙 일관성 점검**: 00/06/09/12/15/18·주말 prompt 가 모두 "`market_snapshot` 의 `confidence` 를 1순위로 사용하고, 레거시 'fetch 차단/403/data confidence=low/신규 진입 보류' 서술을 이월하지 않으며, stale≠low" 규칙을 담고 있는지 grep 으로 확인. 누락된 prompt 가 있으면 미반영 패치 후보로 등록한다.
 
 ### 1-5. 목표가 추정 레이어 채점·뉴스 키워드 보강 (estimate_scorecard — v1.4)
 `state/estimate_scorecard.json`(0-C 단계 생성)을 점검한다:

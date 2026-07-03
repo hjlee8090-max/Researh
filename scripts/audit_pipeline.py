@@ -75,7 +75,11 @@ def is_known_action(action: str | None) -> bool:
     if action in ALLOWED_TRADE_ACTIONS or action in ALLOWED_NONTRADE_ACTIONS:
         return True
     # SELL_GIVE_BACK_STOP / SELL_ORANGE_STOP / BUY_PROBE 등 체결 변형 수용 (reconcile 과 정합)
-    return action.startswith("BUY_") or action.startswith("SELL_")
+    if action.startswith("BUY_") or action.startswith("SELL_"):
+        return True
+    # 관측·마커 계열 비매매 액션의 화이트리스트 추격전 종료 (INTRADAY_CHECK 13회 연속 WARN 방치 재발 방지):
+    # _CHECK/_MARK/_EVAL 접미 액션은 점검·기록 마커로 수용한다. 매매 판정(is_trade_action)에는 불포함.
+    return action.endswith("_CHECK") or action.endswith("_MARK") or action.endswith("_EVAL")
 
 
 def is_trade_action(action: str | None) -> bool:
@@ -583,21 +587,35 @@ GLANCE_BANNED_TOKENS = [
 ]
 
 
-def is_business_day_today() -> bool:
-    """주말 + market_calendar.json 휴장일 판정 (의존성 0 유지 — check_market_open 로직 축약)."""
-    today = datetime.now(KST).date()
-    if today.weekday() >= 5:
-        return False
+def _holidays_map() -> dict[str, str]:
+    """market_calendar.json 의 holidays_<YYYY> 연도 키를 전부 병합해 {date: name} 으로 반환.
+    (기존 버그 수정: 'holidays' 라는 존재하지 않는 키를 읽어 공휴일 판정이 항상 무력화돼 있었다.)"""
     try:
         calendar = read_json(ROOT / "config" / "market_calendar.json")
     except (OSError, json.JSONDecodeError):
-        return True
-    holidays = calendar.get("holidays", []) if isinstance(calendar, dict) else []
-    iso = today.isoformat()
-    for h in holidays:
-        if (isinstance(h, str) and h == iso) or (isinstance(h, dict) and h.get("date") == iso):
-            return False
-    return True
+        return {}
+    if not isinstance(calendar, dict):
+        return {}
+    merged: dict[str, str] = {}
+    for key, value in calendar.items():
+        if isinstance(key, str) and key.startswith("holidays_") and isinstance(value, list):
+            for h in value:
+                if isinstance(h, dict) and h.get("date"):
+                    merged[str(h["date"])] = str(h.get("name", "공휴일"))
+                elif isinstance(h, str):
+                    merged[h] = "공휴일"
+    return merged
+
+
+def is_business_day(target) -> bool:
+    """주말 + market_calendar.json 휴장일 판정 (의존성 0 유지 — check_market_open 로직 축약)."""
+    if target.weekday() >= 5:
+        return False
+    return target.isoformat() not in _holidays_map()
+
+
+def is_business_day_today() -> bool:
+    return is_business_day(datetime.now(KST).date())
 
 
 def extract_glance_block(text: str) -> str:
@@ -656,6 +674,96 @@ def audit_reports(messages: list[str]) -> None:
             "WARN",
             "리포트 '한눈에 보기'에 운영 용어 노출(가독성 원칙 §3 — 사람 말로 풀어쓸 것): " + "; ".join(leaked),
         ))
+
+
+SLOT_MATRIX_06_SINCE = "2026-07-02"  # 06시 슬롯 신설일 — 이전 날짜는 06 부재를 따지지 않는다
+
+
+def audit_slot_matrix(messages: list[str]) -> None:
+    """지난 7일(어제~D-7) 슬롯·주말 산출물 발화 매트릭스 (plan_hourly_report_gap_fix Phase 1-1).
+
+    기존 감사는 '당일 00시 부재' 1종만 봐서 주간 아카이브 3주 사망(W24~W26)·주말 루틴 미발화를
+    아무도 감지하지 못했다. 여기서는 완결된 날짜(어제까지)만 검사해 장중 push 오탐을 피한다.
+    관측 전용 — WARN/INFO 만 내고 FAIL 은 내지 않는다(빌드 차단 금지).
+    """
+    reports_dir = ROOT / "reports"
+    today = datetime.now(KST).date()
+    holidays = _holidays_map()
+    missing_days: list[str] = []
+    missing_06: list[str] = []
+    for back in range(1, 8):
+        d = today - timedelta(days=back)
+        ds = d.isoformat()
+        missing: list[str] = []
+        wd = d.weekday()
+        if wd < 5:  # 평일
+            if ds in holidays:
+                # 휴장 평일: 00(무가드)·09(축약 의무 생성)·18(축약 모드)은 기대, 12/15는 프롬프트가 생략 허용
+                expected = ("00", "09", "18")
+            else:
+                expected = ("00", "09", "12", "15", "18")
+            for hh in expected:
+                if not (reports_dir / f"{ds}-{hh}.md").exists():
+                    missing.append(f"{hh}시")
+            if not (reports_dir / f"{ds}-audit.md").exists():
+                missing.append("audit")
+            if ds >= SLOT_MATRIX_06_SINCE and not (reports_dir / f"{ds}-06.md").exists():
+                missing_06.append(ds)
+        elif wd == 5:  # 토요일 — 00시(매일 발화) + 사후분석
+            if not (reports_dir / f"{ds}-00.md").exists():
+                missing.append("00시")
+            if not (reports_dir / f"{ds}-saturday-review.md").exists():
+                missing.append("saturday-review")
+        else:  # 일요일 — 00시 + 전략 + 정책리뷰 + 주간 아카이브(그 주 ISO 주차)
+            if not (reports_dir / f"{ds}-00.md").exists():
+                missing.append("00시")
+            if not (reports_dir / f"{ds}-sunday-strategy.md").exists():
+                missing.append("sunday-strategy")
+            if not (reports_dir / f"{ds}-policy-review.md").exists():
+                missing.append("policy-review")
+            iso = d.isocalendar()
+            archive_name = f"{iso[0]}-W{iso[1]:02d}-archive.md"
+            if not (reports_dir / archive_name).exists():
+                missing.append(f"주간아카이브({archive_name})")
+        if missing:
+            missing_days.append(f"{ds}: {', '.join(missing)}")
+    if missing_days:
+        messages.append(result(
+            "WARN",
+            "슬롯 산출물 누락(지난 7일): " + "; ".join(missing_days)
+            + " — 루틴 미발화 의심, claude.ai/code/routines 등록 상태 확인",
+        ))
+    else:
+        messages.append(result("OK", "지난 7일 슬롯·주말 산출물 매트릭스 결손 없음"))
+    if missing_06:
+        messages.append(result("INFO", "06시 리포트 부재(시행 초기 관찰 — 2주 후 WARN 승격 예정): " + ", ".join(missing_06)))
+
+
+def audit_state_schema(messages: list[str]) -> None:
+    """LLM 이 손으로 쓰는 state 파일의 스키마 검증 (plan_hourly_report_gap_fix Phase 1-5).
+
+    check_state_schema.py 를 subprocess 로 실행(체크 자체는 의존성 0 유지)해 위반을 WARN 으로 흡수.
+    형식이 어긋난 예측은 채점 스크립트가 조용히 스킵하는 무음 실패가 되므로 표면화가 목적이다.
+    """
+    script = ROOT / "scripts" / "check_state_schema.py"
+    if not script.exists():
+        messages.append(result("WARN", "scripts/check_state_schema.py missing — state 스키마 게이트 비활성"))
+        return
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(script)], capture_output=True, text=True, timeout=30, cwd=str(ROOT),
+        )
+        payload = json.loads(proc.stdout or "{}")
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+        messages.append(result("WARN", f"state 스키마 검사 실행 실패: {exc}"))
+        return
+    violations = payload.get("violations", [])
+    if violations:
+        detail = "; ".join(str(v) for v in violations[:6])
+        more = f" 외 {len(violations) - 6}건" if len(violations) > 6 else ""
+        messages.append(result("WARN", f"state 스키마 위반(채점 누락 위험): {detail}{more}"))
+    else:
+        messages.append(result("OK", "state 스키마 정상 (inference_log·pending_orders·weekly_plan)"))
 
 
 # 핫패스 파일 크기 상한 — 초과 시 콘텍스트 오버 위험 (docs/plan_context_compaction.md 진단 근거).
@@ -861,6 +969,8 @@ def main() -> int:
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)
     audit_reports(messages)
+    audit_slot_matrix(messages)
+    audit_state_schema(messages)
     audit_context_budget(data, messages)
     audit_inference_loop(messages)
     audit_github_notify(messages)

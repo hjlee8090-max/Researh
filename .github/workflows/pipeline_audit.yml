@@ -2,8 +2,10 @@ name: Pipeline Audit Report
 
 on:
   schedule:
-    # 19:30 KST, Monday-Friday
-    - cron: "30 10 * * 1-5"
+    # 19:30 KST, 매일 — 주말 실행이 주말 산출물(사후분석·전략·정책리뷰·주간 아카이브)과
+    # 슬롯 매트릭스를 감시한다. 평일 한정이던 시절 주간 아카이브 3주 미발화(W24~W26)를
+    # 아무도 감지하지 못했다 (docs/plan_hourly_report_gap_fix.md Phase 1-2).
+    - cron: "30 10 * * *"
   workflow_dispatch:
 
 permissions:

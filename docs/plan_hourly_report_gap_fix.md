@@ -63,6 +63,8 @@
 
 **검증**: ①grep 스윕 — `§1-1|§1-2` 참조 정합, 주말 프롬프트 4곳 `06` 포함 확인 ②`audit_pipeline.py` 통과 ③`run_prompt.ps1 -PromptName 0630_us_close -WhatIf` 파라미터 바인딩 통과. **룰·게이트·수치 무변경 — 서술·참조만 수정.**
 
+> ✅ **2026-07-03 구현 완료** (16파일 +54/-26). 계획 대비 조정 2건 — ①0-2 리넘버: §1-3/§1-4 는 0900 §1 그룹이 이미 사용 중(연계 인사이트·촉매 경보)이라 두 번째 쌍을 **§1-5/§1-6** 으로 부여 ②"§C-5-1"은 참조 3곳(1800:152·file_references:37·lessons:122 codify 기록)이 이미 정착된 이름이라 참조 교체 대신 **0900 :287 항목에 앵커 `(§C-5-1 …)` 부여**(lessons 불변 원칙). 검증 실측: check_market_open 영업일 exit 0 / 주말 10 / 공휴일 11(3·1절 대체) + 2027 날짜 → stderr WARN 후 정상 판정(stdout JSON 무오염), audit FAIL 0 + `lists 13 holidays (holidays_2026)` OK, weekly_plan JSON 파스·daily_bridge 6슬롯 키 확인, ValidateSet 에 0630_us_close 포함.
+
 ---
 
 ## 3. Phase 1 — 감시·검증 계층 신설 (1~2일, 2커밋)

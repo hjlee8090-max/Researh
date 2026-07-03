@@ -20,18 +20,23 @@ KST = timezone(timedelta(hours=9))
 CALENDAR_PATH = ROOT / "config" / "market_calendar.json"
 
 
-def load_holidays() -> dict[str, str]:
+def load_holidays(year: int) -> dict[str, str]:
     if not CALENDAR_PATH.exists():
         return {}
     data = json.loads(CALENDAR_PATH.read_text(encoding="utf-8"))
-    return {h["date"]: h.get("name", "공휴일") for h in data.get("holidays_2026", [])}
+    key = f"holidays_{year}"
+    if key not in data:
+        # 연도 키 부재 시 무음 무력화 방지 — stdout JSON 은 유지하고 stderr 로만 경고
+        print(f"[WARN] market_calendar.json 에 {key} 없음 — 공휴일 목록 미적용(연도별 갱신 필요)", file=sys.stderr)
+        return {}
+    return {h["date"]: h.get("name", "공휴일") for h in data[key]}
 
 
 def evaluate(target: date) -> tuple[bool, str, int]:
     weekday = target.weekday()  # 0=Mon..6=Sun
     if weekday >= 5:
         return False, f"주말({'토' if weekday == 5 else '일'}요일)", 10
-    holidays = load_holidays()
+    holidays = load_holidays(target.year)
     key = target.isoformat()
     if key in holidays:
         return False, f"공휴일({holidays[key]})", 11

@@ -169,7 +169,7 @@
 - **카톡 노출**: D-2 이내 high 촉매가 있으면 이 슬롯 리포트의 "한눈에 보기" 표/불릿에 `📅 촉매: [종목명] [이벤트] D-N` 행을 1줄 추가한다(`send_kakao.py` 가 "촉매" 라벨을 요약에 노출). 없으면 추가하지 않는다.
 - **earnings-preview 연계** (`policy.earnings_preview` 활성 시): 오늘이 보유 종목 실적 발표일(D-0)이거나 `state/earnings_preview.json.active` 에 해당 종목이 있으면 **`prompts/earnings_preview.md`** 를 따라 (a) 발표 전이면 시나리오 플레이북을 재확인하고, (b) 발표 결과가 이미 나왔으면 SCORE(채점)를 1차 수행한다(확정은 18시). 추정일이었다면 웹검색으로 확정해 `manual_events` 승격 + 프리뷰 날짜 정정.
 
-### 1-1. 진입 후보 추세 필터 (신규 매수 전 의무)
+### 1-5. 진입 후보 추세 필터 (신규 매수 전 의무)
 신규 진입을 검토 중인 모든 종목에 대해 **반드시** 다음을 확인·기록:
 - **1순위 — `state/market_snapshot.json`의 `tickers.<ticker>.five_day_cumulative_return_pct` 와 `entry_filter.passes` 값을 그대로 사용**한다. (0-B 단계에서 `fetch_market_data.py` 가 자동 계산)
 - 후보 종목이 `config/candidates.json` 에 등록되어 있지 않다면 다음 schema 로 추가하고, 다음 routine 부터 자동 추적되도록 한다:
@@ -190,7 +190,7 @@
 - snapshot 양쪽 출처가 모두 실패한 경우에 한해 백업으로 웹검색 ("[종목명] 최근 5거래일 주가")으로 보강하되, 사용한 출처를 명시한다.
 - **(v2.15) 비과열 후보 발굴 의무** (`policy.valuation_anchor.non_overheat_candidate_mandate`): 보유·상위 후보가 overheat_entry(밸류에이션 밴드 상단 초과)로 묶이고 `allocation.recommendation=deploy` 이거나 현금 비중 > 40% 이면, overheat 종목 외 **비과열 후보(valuation verdict=ok/deep_value)를 최소 1회 명시적으로 발굴·평가**한다. `state/valuation_check.json`·`candidate_scores.json.ranked` 에서 overheat 가 아닌 tradable 후보를 가려내 R/R·추세필터로 검토하고, 통과 후보가 0건이면 "비과열 후보 0건 — 사유" 1줄을 리포트에 남긴다(0건은 정상 — 자본보존 우선, 추격 진입 금지). 만성 미배치(W25 cash 86% 사례) 방지용 — overheat 3종에만 매달려 랠리를 놓치지 않게 비과열 대안을 매일 한 번은 들여다본다.
 
-### 1-2. 구조적 악재 키워드 스캔 (신규 매수 전 의무)
+### 1-6. 구조적 악재 키워드 스캔 (신규 매수 전 의무)
 각 후보 종목의 **최근 30일 뉴스**에서 `policy.entry_filters.structural_bear_keywords` 매칭 여부 확인:
 - 매칭되는 키워드 발견 → `bear_case`에 명시 의무
 - conviction 점수 -1점 자동 조정
@@ -237,7 +237,7 @@
 3. 각 종목에 대해 다음을 산출 (애널리스트 관점, 냉정하게):
    - **티커 / 종목명**
    - **현재가 추정** (검색 기반, 정확하지 않을 수 있음을 명시)
-   - **최근 5거래일 누적 수익률 추정** (추세 필터 통과 여부 명시) — §1-1 결과
+   - **최근 5거래일 누적 수익률 추정** (추세 필터 통과 여부 명시) — §1-5 결과
    - **진입가** (현재가 ±1% 이내)
    - **목표가** = §2 공통 규칙으로 동적 산정 (기본 참고 진입가×1.10 + 촉매·저항선, 강세 tier 는 `target_price_rule` 상향. **주간 부족분(`gap_to_target`) 반영 금지** — 목표가 인플레 차단).
    - **손절가** = ATR 기반 동적 산정 (`policy.risk.volatility_sizing`): 기본 **진입가 − 2×ATR14**, 단 유효 red 임계(atr_adaptive)·단일거래 2.0%·heat 6.0% 중 **가장 타이트한 값** 채택. ATR 결측 시 진입가 × 0.90 폴백.
@@ -246,7 +246,7 @@
    - **투자 포인트 3개** (Bull case)
    - **미래 테마 노출**: 해당 종목이 `config/themes.json` 의 어떤 메가트렌드에 얼마나 노출돼 있는지 `[{theme, exposure 0~1, evidence, source(URL)}]` 형태로 기록. 근거 출처(URL)는 필수(환각 방지). 노출 테마가 없으면 빈 배열.
    - **최근 분기 실적**(`state/fundamentals.json` 있으면): 매출·영업이익·영업이익률·전기대비 증감·`earnings_signal`. 컨빅션 보강 근거로 쓰되 타이밍 신호로 과신 금지(후행). 데이터 없으면 생략.
-   - **리스크 2개** (Bear case) — §1-2에서 구조적 키워드 매칭됐다면 첫 항목으로 우선 기재
+   - **리스크 2개** (Bear case) — §1-6에서 구조적 키워드 매칭됐다면 첫 항목으로 우선 기재
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
    - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
 4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함). 후보를 `config/candidates.json` 에 추가·갱신할 때 `theme_exposure`(근거 URL 포함)도 함께 기록해 다음 routine 의 `score_candidates.py` thematic 점수에 반영되게 한다.
@@ -284,7 +284,7 @@
 3. 각 tradable 후보에 §2 공통 규칙으로 진입가·동적손절가·목표가(강세 tier 상향)·R/R(레짐 적응 하한) 산출. R/R 통과 시 **목표 수량 = §2 공통 사이징**으로 가상 매수 체결(trade_log + portfolio 갱신, `weekly_thesis_id` 기록).
 4. `vacant_slots` 와 deploy krw 한도가 남는 한 다음 순위 후보로 **반복(복수 종목 진입)**. 종목당 35%·현금 하한 5% 준수.
 5. tradable 후보가 **2건 미만**이면: (a) `python scripts/screen_universe.py` 실행 → `promote_suggestions`(상대강도 상위 주도주)·`rotate_out_suggestions`(만성 후행주) 확인. 승격 제안은 web_verify(출처 URL)·구조적악재 점검 후 `config/candidates.json` 에 thesis·`theme_exposure`(근거 URL)와 함께 추가(**근거 없는 추가 금지**). 회전아웃 제안은 강등·교체 후보로 검토. (b) 그래도 tradable 0건이면 "후보 부족으로 배치 보류" 를 리포트에 명시. **빈 슬롯이 있는데 현금만 들고 끝내지 않는다.**
-5-1. **avoid 섹터 재진입 점검 (범용 — 호재+몰입, `policy.sector_rotation_reentry`)**: `screen_universe.py` 산출 `state/universe_screen.json` 의 `avoid_reentry`(avoid 섹터별 몰입)·`sector_rotation`(전 섹터 몰입)을 읽는다. **조선 전용이 아니라 avoid 에 오른 모든 섹터에 동일 적용.**
+5-1. **avoid 섹터 재진입 점검 (§C-5-1 — 범용, 호재+몰입, `policy.sector_rotation_reentry`)**: `screen_universe.py` 산출 `state/universe_screen.json` 의 `avoid_reentry`(avoid 섹터별 몰입)·`sector_rotation`(전 섹터 몰입)을 읽는다. **조선 전용이 아니라 avoid 에 오른 모든 섹터에 동일 적용.**
    - **민감도 자동(v2.10)**: `screen_universe` 가 레짐 tier 로 민감도(요구 몰입 신호 수)를 정한다 — `state/universe_screen.json.sensitivity_basis` 확인(strong_bull=aggressive 1신호 … bull/neutral=medium 2 … bear/deep_bear=conservative 3, `policy.sector_rotation_reentry.sensitivity_by_tier`). **회복 단계가 caution/defensive 면 한 단계 더 보수적으로**(더 보수적인 쪽) 적용해 드로다운 중 바닥낚시를 막는다.
    - 어떤 avoid 섹터의 `immersion_met=true`(자금 유입 발자국 ≥ min_signals: rs_inflection·volume_surge·sector_breadth)이면 → 그 섹터 **호재(촉매)를 web_verify** 한다(출처 URL+게재일 오늘~D-3, `web_verify_guard.source_date_verification`). **촉매 확인 AND 몰입 충족 둘 다**면 `config/watchlist.json.avoid_sectors` 에서 해당 항목 제거(또는 강등)하고, 섹터 최상위 종목을 **probe 진입**(비중 절반·ATR 타이트 손절, R/R·entry_filter·heat 통과)으로 §2 사이징해 체결.
    - **촉매 없이 몰입만, 또는 몰입 없이 헤드라인만으론 해제 금지**(스토리≠자금 — lessons v2.8). 가격 변동 단독·무출처 '기대감 추정'은 촉매 불인정.

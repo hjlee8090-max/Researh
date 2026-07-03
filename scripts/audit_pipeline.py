@@ -465,8 +465,12 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     if calendar.exists():
         try:
             payload = json.loads(calendar.read_text(encoding="utf-8"))
-            count = len(payload.get("holidays_2026", []))
-            messages.append(result("OK", f"config/market_calendar.json lists {count} holidays"))
+            year_key = f"holidays_{datetime.now(KST).year}"
+            holiday_list = payload.get(year_key)
+            if holiday_list is None:
+                messages.append(result("WARN", f"config/market_calendar.json 에 {year_key} 없음 — 올해 휴장일 가드 무력화(연도별 갱신 필요)"))
+            else:
+                messages.append(result("OK", f"config/market_calendar.json lists {len(holiday_list)} holidays ({year_key})"))
         except Exception as exc:  # noqa: BLE001
             messages.append(result("FAIL", f"config/market_calendar.json parse failed: {exc}"))
     else:

@@ -1038,6 +1038,33 @@ def audit_trade_provenance(messages: list[str]) -> None:
             messages.append(result("WARN", "check_trade_log_gate 비정상 종료(violation 미보고)"))
 
 
+def audit_merge_conflicts(messages: list[str]) -> None:
+    """auto_merge rebase 충돌 마커 표면화 (plan Phase 2-4, 진단 P6).
+
+    auto_merge 는 충돌 시 state/merge_conflicts.jsonl 에 마커를 커밋한다 — 이전엔 실패가
+    '아무 일도 안 일어남'이라 산출물이 세션 브랜치에 무음 고립됐다. 최근 3일분만 WARN.
+    """
+    path = ROOT / "state" / "merge_conflicts.jsonl"
+    if not path.exists():
+        return
+    cutoff = (datetime.now(KST).date() - timedelta(days=3)).isoformat()
+    recent: list[dict] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        try:
+            e = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(e, dict) and str(e.get("ts", ""))[:10] >= cutoff:
+            recent.append(e)
+    if recent:
+        detail = "; ".join(
+            f"{e.get('branch', '?')}({str(e.get('ts', ''))[:16]})" for e in recent[-4:]
+        )
+        messages.append(result(
+            "WARN", f"routine 자동 머지 충돌(최근 3일): {detail} — 세션 브랜치 수동 검토 필요",
+        ))
+
+
 def main() -> int:
     messages: list[str] = []
     messages.append(f"Pipeline audit @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -1060,6 +1087,7 @@ def main() -> int:
     audit_context_budget(data, messages)
     audit_inference_loop(messages)
     audit_github_notify(messages)
+    audit_merge_conflicts(messages)
 
     print("\n".join(messages))
     return 1 if any(m.startswith("[FAIL]") for m in messages) else 0

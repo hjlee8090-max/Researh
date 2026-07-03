@@ -236,6 +236,7 @@ def humanize_audit_line(line: str) -> str:
         ("발송 성공 기록 없음(어제", "리포트는 만들어졌지만 카카오 알림이 나간 기록이 없습니다 — 전달 구간 점검이 필요합니다: "),
         ("카카오 발송 실패 기록(어제): ", "어제 카카오 발송이 실패한 기록이 있습니다: "),
         ("카카오 토큰 만료 임박 — ", "카카오 알림 토큰이 곧 만료됩니다 — GitHub Secret(KAKAO_REFRESH_TOKEN) 교체가 필요합니다: "),
+        ("routine 자동 머지 충돌(최근 3일): ", "루틴 산출물이 main 에 자동 머지되지 못하고 브랜치에 남아 있습니다 — 수동 검토가 필요합니다: "),
     ]
     if clean.startswith("latest daily report:"):
         return f"최신 데일리 리포트를 확인했습니다: {clean.split(':', 1)[1].strip()}"

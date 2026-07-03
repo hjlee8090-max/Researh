@@ -39,7 +39,8 @@ jobs:
       startsWith(github.event.head_commit.message, 'weekly:') ||
       startsWith(github.event.head_commit.message, 'weekly-archive:') ||
       startsWith(github.event.head_commit.message, 'data(catalysts):') ||
-      startsWith(github.event.head_commit.message, 'data(consensus):')
+      startsWith(github.event.head_commit.message, 'data(consensus):') ||
+      startsWith(github.event.head_commit.message, 'Merge ')
     steps:
       - uses: actions/checkout@v5
         with:
@@ -66,8 +67,31 @@ jobs:
               echo "ok=false" >> "$GITHUB_OUTPUT" ;;
           esac
 
+      # head 가 merge 커밋인 push 는 1차 필터를 'Merge ' 로 통과시킨 뒤, 여기서 push 안에
+      # routine 프리픽스 커밋(제목줄 앵커)이 실제로 있는지 확인한다 (Phase 2-4, 진단 P6:
+      # routine 커밋 위에 merge 커밋이 얹히면 head 불일치로 산출물이 브랜치에 무음 고립되던 결합).
+      # contains(join(commits)) 방식은 커밋 본문의 우연한 문자열에 오발동하므로 쓰지 않는다.
+      - name: Verify push contains routine commits (merge-head fallback)
+        id: routine_check
+        env:
+          HEAD_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          case "$HEAD_MSG" in
+            Merge\ *)
+              git fetch origin main --quiet || true
+              if git log --format=%s origin/main..HEAD | \
+                 grep -qE '^(chore\(|report:|audit:|sat-review:|sun-strategy:|policy-review:|weekly:|weekly-archive:|data\(catalysts\):|data\(consensus\):)'; then
+                echo "ok=true" >> "$GITHUB_OUTPUT"
+              else
+                echo "merge-head push without routine commits — skip"
+                echo "ok=false" >> "$GITHUB_OUTPUT"
+              fi ;;
+            *)
+              echo "ok=true" >> "$GITHUB_OUTPUT" ;;
+          esac
+
       - name: Rebase routine commits onto main and fast-forward push
-        if: steps.guard.outputs.ok == 'true'
+        if: steps.guard.outputs.ok == 'true' && steps.routine_check.outputs.ok == 'true'
         env:
           SOURCE_SHA: ${{ github.sha }}
           SOURCE_REF: ${{ github.ref_name }}
@@ -83,6 +107,14 @@ jobs:
             if ! git rebase origin/main; then
               echo "::error::rebase conflict on $SOURCE_REF — leaving branch for manual review"
               git rebase --abort || true
+              # 충돌을 커밋된 마커로 표면화 — 일일 감사가 WARN 으로 승격한다 (Phase 2-4, 진단 P6:
+              # 이전엔 실패가 '아무 일도 안 일어남'이라 감지 장치가 없었다).
+              git checkout -B conflict_marker origin/main
+              printf '{"ts":"%s","branch":"%s","reason":"auto_merge rebase conflict"}\n' \
+                "$(date -u +%FT%TZ)" "$SOURCE_REF" >> state/merge_conflicts.jsonl
+              git add state/merge_conflicts.jsonl
+              git commit -m "data(merge): conflict marker $SOURCE_REF"
+              git push origin conflict_marker:main || echo "::warning::conflict marker push failed"
               exit 1
             fi
             # 이미 main 에 포함된 커밋이면(중복 발화·재실행) push 는 no-op → dispatch 도 생략해 중복 알림 방지.
@@ -90,8 +122,12 @@ jobs:
               echo "already merged into main — skip merge & dispatch"
               exit 0
             fi
+            # dispatch 용 커밋 메시지 — head 가 merge 커밋이어도 routine 제목을 보존해
+            # 카톡 슬롯 식별이 살아있게 한다 (push 후에는 range 가 비므로 push 전에 계산).
+            ROUTINE_MSG=$(git log --format=%s origin/main..routine_work | \
+              grep -m1 -E '^(chore\(|report:|audit:|sat-review:|sun-strategy:|policy-review:|weekly:|weekly-archive:)' || true)
             if git push origin routine_work:main; then
-              MSG_FIRST="${HEAD_MSG%%$'\n'*}"
+              MSG_FIRST="${ROUTINE_MSG:-${HEAD_MSG%%$'\n'*}}"
               echo "auto-merged $SOURCE_REF -> main (head: $MSG_FIRST)"
               # GITHUB_TOKEN push 는 build_and_notify 를 트리거하지 않으므로 명시 dispatch.
               gh workflow run build_and_notify.yml --ref main -f commit_message="$MSG_FIRST" \

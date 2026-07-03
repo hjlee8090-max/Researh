@@ -22,6 +22,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -69,18 +70,34 @@ def ledger_slot_label() -> str:
     return meta[3] if meta else "?"
 
 
-def http_post(url: str, data, headers=None) -> dict:
+def http_post(url: str, data, headers=None, retries: int = 3) -> dict:
+    """POST + 재시도 — 네트워크 오류·5xx 만 지수 백오프(2/4/8s), 4xx 는 즉시 실패.
+
+    (Phase 2-2, 진단 P5) 이전엔 시도 1회 + 즉시 sys.exit 라 일시 장애 1번에
+    슬롯 알림이 통째로 유실됐다. 실패는 최종적으로 sys.exit → main 의 원장 기록 경로.
+    """
     if isinstance(data, dict):
         body = urllib.parse.urlencode(data).encode("utf-8")
     else:
         body = data
-    req = urllib.request.Request(url, data=body, headers=headers or {}, method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=15) as r:
-            return json.loads(r.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", errors="replace")
-        sys.exit(f"HTTP {e.code} from {url}: {body}")
+    last_err = ""
+    for attempt in range(1, retries + 1):
+        req = urllib.request.Request(url, data=body, headers=headers or {}, method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                return json.loads(r.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            err_body = e.read().decode("utf-8", errors="replace")
+            if e.code < 500:
+                sys.exit(f"HTTP {e.code} from {url}: {err_body}")
+            last_err = f"HTTP {e.code} from {url}: {err_body[:120]}"
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            last_err = f"network error to {url}: {e}"
+        if attempt < retries:
+            wait = 2 ** attempt
+            print(f"http_post retry {attempt}/{retries - 1} in {wait}s — {last_err}", flush=True)
+            time.sleep(wait)
+    sys.exit(f"failed after {retries} attempts: {last_err}")
 
 
 def refresh_access_token() -> dict:
@@ -185,6 +202,25 @@ def changed_files() -> set[str] | None:
         return None
     files = {line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()}
     return files or None
+
+
+def detect_slot_from_files() -> tuple[str, str, str, str] | None:
+    """이번 push 가 변경한 '오늘자' 슬롯 리포트 파일명에서 슬롯 도출 (프리픽스 보완 신호, Phase 2-4).
+
+    커밋 제목 문자열 규약에만 결합된 슬롯 식별(진단 P6: 오타 1글자 = 조용한 미발송)을 완화한다.
+    오늘 날짜의 슬롯 리포트가 정확히 1개 변경됐을 때만 신호로 인정 — 0개(리포트 외 push)나
+    복수(백필 일괄 push)는 None 을 반환해 제목 프리픽스에 위임한다. 18시는 build_report_message
+    경로가 별도라 대상에서 제외(00/06/09/12/15만).
+    """
+    files = changed_files()
+    if not files:
+        return None
+    today = datetime.now(KST).date().isoformat()
+    pattern = re.compile(rf"^reports/{today}-(00|06|09|12|15)\.md$")
+    slots = sorted({m.group(1) for f in files if (m := pattern.match(f))})
+    if len(slots) != 1:
+        return None
+    return SLOT_META.get(f"{slots[0]}:00")
 
 
 def push_modified(report: Path | None) -> bool:
@@ -304,7 +340,13 @@ def _tier_emoji(tier: str | None, pct: float | None) -> str:
 
 
 def portfolio_holdings_line() -> str | None:
-    """config/portfolio.json 의 보유 종목을 '종목 N주 ±X%🟢' 형태로 1줄 요약(캡 66자)."""
+    """보유 요약 1줄 — 압축형 '보유 N종목 · 특이만' (Phase 2-1, 진단 I1·I17).
+
+    이전 형태(전 종목 나열)는 66자 캡에 6종목 중 4종목만 실리고, current_price 키
+    오참조(portfolio 실제 키: current_price_approx)로 등락률이 항상 공란이라 정보량
+    없이 예산 1/3을 소비했다. 이제 진입가 대비 ±3% 밖이거나 단계색이 green 이 아닌
+    종목만 명기하고, 나머지는 개수로 요약한다.
+    """
     path = ROOT / "config" / "portfolio.json"
     try:
         d = json.loads(path.read_text(encoding="utf-8"))
@@ -313,19 +355,29 @@ def portfolio_holdings_line() -> str | None:
     positions = [p for p in d.get("positions", []) if isinstance(p, dict) and p.get("shares")]
     if not positions:
         return "📌 보유 없음 · 현금 100%"
-    parts = []
+    notables: list[tuple[float, str]] = []
+    all_green = True
     for p in positions:
-        name = p.get("name") or p.get("ticker") or "?"
-        shares = p.get("shares")
         pct = p.get("pct_from_entry")
         if not isinstance(pct, (int, float)):
-            ep, cp = p.get("entry_price"), p.get("current_price")
-            if isinstance(ep, (int, float)) and isinstance(cp, (int, float)) and ep:
-                pct = (cp - ep) / ep * 100
-        pct_txt = f"{pct:+.1f}%" if isinstance(pct, (int, float)) else ""
-        emoji = _tier_emoji(p.get("tier"), pct if isinstance(pct, (int, float)) else None)
-        parts.append(f"{name} {shares}주 {pct_txt}{emoji}".strip())
-    return cap("📌 보유: " + ", ".join(parts), 66)
+            ep = p.get("entry_price")
+            cp = p.get("current_price_approx") or p.get("current_price")
+            pct = (cp - ep) / ep * 100 if (
+                isinstance(ep, (int, float)) and isinstance(cp, (int, float)) and ep
+            ) else None
+        tier = p.get("tier")
+        if tier and tier != "green":
+            all_green = False
+        if (isinstance(pct, (int, float)) and abs(pct) >= 3.0) or (tier and tier != "green"):
+            name = p.get("name") or p.get("ticker") or "?"
+            pct_txt = f" {pct:+.1f}%" if isinstance(pct, (int, float)) else ""
+            emoji = _tier_emoji(tier, pct if isinstance(pct, (int, float)) else None)
+            notables.append((abs(pct) if isinstance(pct, (int, float)) else 99.0, f"{name}{pct_txt}{emoji}"))
+    base = f"📌 보유 {len(positions)}종목"
+    if not notables:
+        return base + (" · 전종목 진입가 ±3% 이내 🟢" if all_green else " · 특이 없음")
+    notables.sort(key=lambda x: -x[0])
+    return cap(base + " · 특이: " + ", ".join(t for _, t in notables), 64)
 
 
 def glance_subsection(section_text: str) -> str:
@@ -360,42 +412,56 @@ NEWS_LABELS = ("매크로", "핵심 인사이트", "인사이트", "KOSPI", "시
 HEADLINE_LABELS = ("한줄평", "한 줄", "오늘의 액션", "액션", "핵심", "촉매")
 
 
-def pick_news_lines(fields: list[tuple[str, str]], max_lines: int = 2) -> list[str]:
-    """라벨 우선순위로 '주요 뉴스/시황' 값을 최대 max_lines 개 고른다(매크로/시황 → 슬롯 한 줄)."""
-    picked: list[str] = []
+def pick_news_lines(fields: list[tuple[str, str]], max_lines: int = 2) -> list[tuple[str, str]]:
+    """(라벨, 값) 목록에서 카톡 본문 후보를 고른다 — ⚡액션/한줄평(HEADLINE) 1순위, 시황(NEWS) 2순위.
+
+    (Phase 2-1, 진단 I1) 이전엔 시황 라벨(NEWS)을 먼저 스캔해 KOSPI 시세가 항상 첫 슬롯을
+    차지하고 액션 라인은 2순위+예산 부족으로 구조적으로 탈락했다(−7.89% 폭락일 행동 지시 0건).
+    순서를 뒤집어 "내가 뭘 해야 하나"가 먼저 실린다. 라벨을 함께 반환해 compose 가 ⚡/📰 를 구분한다.
+    """
+    picked: list[tuple[str, str]] = []
     used: set[int] = set()
-    for groups in (NEWS_LABELS, HEADLINE_LABELS):
+    for groups in (HEADLINE_LABELS, NEWS_LABELS):
         for i, (label, value) in enumerate(fields):
             if i in used or not value:
                 continue
             if any(kw in label for kw in groups):
-                picked.append(value)
+                picked.append((label, value))
                 used.add(i)
                 break
         if len(picked) >= max_lines:
             break
     if not picked:  # 라벨 매칭 실패 — 첫 비어있지 않은 값으로 폴백
-        for _, value in fields:
+        for label, value in fields:
             if value:
-                picked.append(value)
+                picked.append((label, value))
             if len(picked) >= max_lines:
                 break
     return picked[:max_lines]
 
 
-def compose_daily_body(news: list[str]) -> str:
-    """평가금액 + 보유 포트폴리오 + 주요 뉴스. 평가금액·보유는 항상 포함하고,
-    뉴스는 카톡 200자 한도(본문 ≤168자) 안에서 들어가는 만큼만 그리디로 추가한다."""
-    head: list[str] = []
-    eq = portfolio_equity_line()
-    if eq:
-        head.append(eq)
-    hold = portfolio_holdings_line()
-    if hold:
-        head.append(hold)
-    body_lines = list(head)
-    for nv in news:
-        candidate = body_lines + [f"📰 {cap(nv)}"]
+def compose_daily_body(news: list[tuple[str, str]]) -> str:
+    """카톡 본문 조립 — ⚡액션 → 💰평가금액 → 📌보유(압축) → 📰시황 순 그리디(≤168자).
+
+    (Phase 2-1, 진단 I1) 이전 조립은 평가금액+보유 전 종목 나열이 168자 예산을 선점해
+    액션 라인이 항상 잘렸다. 이제 1순위 픽(액션/한줄평)이 예산 최우선으로 항상 실리고,
+    평가·보유·시황은 남는 예산에서만 그리디로 붙는다.
+    """
+    def line_emoji(label: str) -> str:
+        return "⚡" if any(kw in label for kw in HEADLINE_LABELS) else "📰"
+
+    body_lines: list[str] = []
+    if news:
+        label, value = news[0]
+        body_lines.append(f"{line_emoji(label)} {cap(value, 72)}")
+    for extra in (portfolio_equity_line(), portfolio_holdings_line()):
+        if not extra:
+            continue
+        candidate = body_lines + [extra]
+        if len("\n".join(candidate)) <= 168:
+            body_lines = candidate
+    for label, value in news[1:]:
+        candidate = body_lines + [f"{line_emoji(label)} {cap(value)}"]
         if len("\n".join(candidate)) <= 168:
             body_lines = candidate
         else:
@@ -413,7 +479,7 @@ def build_slot_message(slot_meta: tuple[str, str, str, str]) -> tuple[str, str, 
     emoji, slot_title, section_header, slot_hh = slot_meta
     title = f"{emoji} {slot_title}"
     report = find_slot_report(slot_hh)
-    news: list[str] = []
+    news: list[tuple[str, str]] = []
     if report is not None:
         section = extract_section(report.read_text(encoding="utf-8"), section_header)
         if section:
@@ -614,6 +680,20 @@ def main():
         button = "리포트 열기"
     else:
         slot_meta = detect_slot(COMMIT_MESSAGE)
+        file_meta = detect_slot_from_files()
+        if slot_meta is not None and file_meta is not None and slot_meta[3] != file_meta[3]:
+            # 두 신호(제목 프리픽스 vs 변경 파일) 불일치 — 오발송 방지가 우선이므로
+            # 발송하지 않고 원장에 남긴다 (Phase 2-4, 미식별=미발송 원칙 유지).
+            print(f"slot signal mismatch: prefix={slot_meta[3]} vs files={file_meta[3]} — skip notify", flush=True)
+            log_notify("skip", reason="slot_signal_mismatch",
+                       prefix_slot=slot_meta[3], file_slot=file_meta[3])
+            return
+        if slot_meta is None and file_meta is not None:
+            # 제목이 슬롯을 말하지 않아도(오타 등) push 가 오늘자 슬롯 리포트를 정확히 1개
+            # 변경했다면 그 파일 신호로 발송한다 — "제목 오타 1글자 = 조용한 미발송" 완화 (P6).
+            print(f"slot from changed files: {file_meta[3]} (제목 프리픽스 미식별 보완)", flush=True)
+            log_notify("slot_from_files", slot=file_meta[3])
+            slot_meta = file_meta
         if slot_meta is None:
             # 폴백 발송 금지 — 슬롯 미식별 커밋(chore(context) 등 비-routine)이
             # '가장 최근'(=전일) 리포트를 발송하던 사고 방지 (2026-06-12 17:21 6/11 일일 종합).

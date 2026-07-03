@@ -45,6 +45,10 @@ WATCHLIST_ARCHIVE = ROOT / "state" / "watchlist_archive.json"
 WATCH_ITEMS_ARCHIVE = ROOT / "state" / "watch_items_archive.jsonl"
 PORTFOLIO_HISTORY = ROOT / "state" / "portfolio_history.jsonl"
 CHANGELOG_DOC = ROOT / "docs" / "policy_changelog.md"
+TARGET_LOG = ROOT / "state" / "target_estimate_log.jsonl"
+TARGET_LOG_ARCHIVE = ROOT / "state" / "target_estimate_log_archive.jsonl"
+# score_target_estimates 의 60거래일 채점 지평(≈88 캘린더일)을 덮는 보존 창 — 초과분만 이관.
+TARGET_LOG_KEEP_DAYS = 90
 
 
 def now_kst() -> str:
@@ -200,6 +204,40 @@ def compact_policy_changelog(dry: bool) -> dict:
     return {"archived_to_doc": appended, "kept": KEEP_CHANGELOG}
 
 
+def compact_target_estimate_log(dry: bool) -> dict:
+    """target_estimate_log.jsonl 보존창(90일) 초과분을 archive 로 이관 (plan Phase 1-6).
+
+    이 원장은 0900/1200/1800 슬롯마다 append 되어 일 ~19KB 씩 무한 성장하는데(진단 P13),
+    소비자(score_target_estimates)의 채점 지평은 60거래일이라 그 밖은 핫패스에 필요 없다.
+    멱등 — archive 에는 동일 라인을 중복 적재하지 않는다.
+    """
+    if not TARGET_LOG.exists():
+        return {"skipped": "missing"}
+    cutoff = (datetime.now(KST).date() - timedelta(days=TARGET_LOG_KEEP_DAYS)).isoformat()
+    keep: list[str] = []
+    move: list[str] = []
+    for raw in TARGET_LOG.read_text(encoding="utf-8").splitlines():
+        if not raw.strip():
+            continue
+        try:
+            entry = json.loads(raw)
+            stamp = str(entry.get("date") or entry.get("as_of") or "")[:10]
+        except json.JSONDecodeError:
+            keep.append(raw)  # 파싱 불가 라인은 이관하지 않고 보존(데이터 훼손 방지)
+            continue
+        (move if stamp and stamp < cutoff else keep).append(raw)
+    if move and not dry:
+        existing: set[str] = set()
+        if TARGET_LOG_ARCHIVE.exists():
+            existing = set(TARGET_LOG_ARCHIVE.read_text(encoding="utf-8").splitlines())
+        with TARGET_LOG_ARCHIVE.open("a", encoding="utf-8") as fh:
+            for raw in move:
+                if raw not in existing:
+                    fh.write(raw + "\n")
+        TARGET_LOG.write_text("\n".join(keep) + ("\n" if keep else ""), encoding="utf-8")
+    return {"entries": len(keep) + len(move), "kept": len(keep), "moved": len(move), "cutoff": cutoff}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="핫패스 config 누적 필드 압축 (archive 이관)")
     parser.add_argument("--dry-run", action="store_true", help="변경량만 출력하고 파일은 건드리지 않음")
@@ -212,6 +250,7 @@ def main() -> int:
         "watch_items": compact_watch_items(args.dry_run),
         "portfolio_history": compact_portfolio_history(args.dry_run),
         "policy_changelog": compact_policy_changelog(args.dry_run),
+        "target_estimate_log": compact_target_estimate_log(args.dry_run),
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0

@@ -581,6 +581,7 @@ def audit_prompts_and_scripts(messages: list[str]) -> None:
 
 # '한눈에 보기'(카톡 발송부)에 노출되면 안 되는 운영 용어 — 리포트 가독성 원칙 §3 의 기계 점검.
 # 행동을 바꾼 요인은 사람 말로 녹여 쓰는 것이 규칙이며, 게이트/내부 지표 명칭 노출은 WARN.
+# 계약 단일 스펙: docs/report_contract.md §3 (본문 전체의 고정밀 검사는 check_report_contract.py).
 GLANCE_BANNED_TOKENS = [
     "live_verify", "web_verify", "pre_trade", "resync", "HTTP 403",
     "freshness", "snapshot_age", "tier=", "stale", "mark-to-market", "time_stop", "§",
@@ -766,6 +767,39 @@ def audit_state_schema(messages: list[str]) -> None:
         messages.append(result("OK", "state 스키마 정상 (inference_log·pending_orders·weekly_plan)"))
 
 
+def audit_report_contract(messages: list[str]) -> None:
+    """당일 슬롯 리포트의 형식 계약 검사 (plan Phase 1-4 — 단일 스펙 docs/report_contract.md).
+
+    파서 앵커(슬롯 헤더·한눈에 보기·시리즈 줄) 위반이 "카톡이 안 오는" 형태로만
+    사후 발견되던 것을 발행 당일 WARN 으로 표면화한다. 관측 전용 — FAIL 없음.
+    """
+    script = ROOT / "scripts" / "check_report_contract.py"
+    if not script.exists():
+        messages.append(result("WARN", "scripts/check_report_contract.py missing — 리포트 계약 검사 비활성"))
+        return
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(script)], capture_output=True, text=True, timeout=30, cwd=str(ROOT),
+        )
+        payload = json.loads(proc.stdout or "{}")
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+        messages.append(result("WARN", f"리포트 계약 검사 실행 실패: {exc}"))
+        return
+    checked = payload.get("files_checked", 0)
+    if not checked:
+        messages.append(result("INFO", "오늘 슬롯 리포트 없음 — 계약 검사 대상 없음"))
+        return
+    violations = payload.get("violations", [])
+    if violations:
+        detail = "; ".join(
+            f"{v.get('file')}({v.get('rule')}: {str(v.get('detail'))[:60]})" for v in violations[:6]
+        )
+        more = f" 외 {len(violations) - 6}건" if len(violations) > 6 else ""
+        messages.append(result("WARN", f"리포트 계약 위반: {detail}{more}"))
+    else:
+        messages.append(result("OK", f"오늘 슬롯 리포트 {checked}건 계약 검사 통과"))
+
+
 # 핫패스 파일 크기 상한 — 초과 시 콘텍스트 오버 위험 (docs/plan_context_compaction.md 진단 근거).
 CONTEXT_BUDGET = {
     "config/watchlist.json": {"max_bytes": 100_000, "max_lines": 1_500},
@@ -887,6 +921,57 @@ def audit_github_notify(messages: list[str]) -> None:
     else:
         messages.append(result("WARN", "notification triggers incomplete: " + ", ".join(missing)))
 
+    # ---- 발송 이력 원장 대사 (plan Phase 1-3) — 설정 grep 이 아니라 실제 발송 기록을 본다 ----
+    ledger_path = ROOT / "state" / "notify_log.jsonl"
+    if not ledger_path.exists():
+        messages.append(result("INFO", "notify_log 원장 없음(시행 초기) — 다음 발송부터 기록·대사"))
+        return
+    entries: list[dict] = []
+    for raw in ledger_path.read_text(encoding="utf-8").splitlines():
+        try:
+            e = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(e, dict):
+            entries.append(e)
+    if not entries:
+        messages.append(result("INFO", "notify_log 원장 비어 있음(시행 초기)"))
+        return
+    dates = sorted({str(e.get("ts", ""))[:10] for e in entries if e.get("ts")})
+    first_day = dates[0] if dates else ""
+    yesterday = (datetime.now(KST).date() - timedelta(days=1)).isoformat()
+    y_entries = [e for e in entries if str(e.get("ts", "")).startswith(yesterday)]
+    fails = [e for e in y_entries if e.get("event") == "send" and not e.get("ok")]
+    if fails:
+        detail = "; ".join(f"{e.get('slot', '?')}: {str(e.get('reason', ''))[:60]}" for e in fails[:4])
+        messages.append(result("WARN", f"카카오 발송 실패 기록(어제): {detail}"))
+    if first_day and first_day <= yesterday:
+        sent_slots = {str(e.get("slot")) for e in y_entries if e.get("event") == "send" and e.get("ok")}
+        unsent = [
+            f"{hh}시" for hh in ("00", "06", "09", "12", "15", "18")
+            if (ROOT / "reports" / f"{yesterday}-{hh}.md").exists() and hh not in sent_slots
+        ]
+        if unsent:
+            messages.append(result(
+                "WARN",
+                f"발송 성공 기록 없음(어제 {yesterday}): {', '.join(unsent)} — 리포트는 있으나 카톡 미발송/규약 불일치 의심",
+            ))
+        elif not fails:
+            messages.append(result("OK", "어제 슬롯 발송 원장 대사 일치"))
+    # 토큰 로테이션 D-7 경보 — refresh_token 60일 유효, 마지막 로테이션 53일 경과 시 교체 촉구
+    refreshes = [str(e.get("ts", ""))[:10] for e in entries if e.get("event") == "token_refresh"]
+    if refreshes:
+        last = max(refreshes)
+        try:
+            age = (datetime.now(KST).date() - datetime.strptime(last, "%Y-%m-%d").date()).days
+        except ValueError:
+            age = -1
+        if age >= 53:
+            messages.append(result(
+                "WARN",
+                f"카카오 토큰 만료 임박 — 마지막 로테이션 {last}(D+{age}), Secret(KAKAO_REFRESH_TOKEN) 교체 필요",
+            ))
+
 
 def audit_lessons_applied(messages: list[str]) -> None:
     """check_lessons_applied.py 를 실행 — lessons.md 의 자기-인지 미반영 교훈(명문화 필요·미적용 등 +
@@ -971,6 +1056,7 @@ def main() -> int:
     audit_reports(messages)
     audit_slot_matrix(messages)
     audit_state_schema(messages)
+    audit_report_contract(messages)
     audit_context_budget(data, messages)
     audit_inference_loop(messages)
     audit_github_notify(messages)

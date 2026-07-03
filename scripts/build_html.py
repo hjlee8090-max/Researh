@@ -33,7 +33,7 @@ def render(template: str, **vars) -> str:
 
 
 def extract_oneline(md_text: str) -> str:
-    """'오늘의 한줄평' 라인을 og:description으로."""
+    """'오늘의 한줄평' 라인을 og:description으로. (고정 문자열 계약: docs/report_contract.md §2)"""
     m = re.search(r"오늘의 한줄평\s*[:：]\s*(.+)", md_text)
     if m:
         return m.group(1).strip().lstrip("- ").strip()

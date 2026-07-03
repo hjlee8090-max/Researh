@@ -1,0 +1,48 @@
+name: Weekly Context Compaction
+
+# compact_state.py 의 담체를 일요일 21시 archive 루틴에서 분리해 Actions cron 으로 이중화한다.
+# 배경: 아카이브 루틴이 3주 연속(W24~W26) 미발화하는 동안 압축 루프가 통째로 멈춰
+# 콘텍스트 예산(policy 106KB>95KB 등)이 재돌파됐다 (docs/plan_hourly_report_gap_fix.md Phase 1-6, 진단 P2·P13).
+# sunday_archive 루틴의 실행 지시는 유지한다 — compact_state 는 멱등이라 중복 실행이 무해하다.
+
+on:
+  schedule:
+    - cron: "30 12 * * 0"   # KST 일요일 21:30 (아카이브 루틴 21:00 직후 — 어느 쪽이 먼저여도 안전)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-compact
+  cancel-in-progress: false
+
+jobs:
+  compact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Dry-run (변경량 로그)
+        run: python scripts/compact_state.py --dry-run
+      - name: Compact
+        run: python scripts/compact_state.py
+      - name: Commit & push
+        run: |
+          git config user.name "kospi-autoflow-bot"
+          git config user.email "hjlee8090@gmail.com"
+          git add config/ state/ docs/policy_changelog.md
+          if git diff --cached --quiet; then
+            echo "no compaction changes"
+            exit 0
+          fi
+          git commit -m "chore(compact): weekly context compaction $(TZ=Asia/Seoul date +%Y-%m-%d)"
+          for i in 1 2 3; do
+            if git push; then exit 0; fi
+            git pull --rebase origin main || true
+          done
+          git push

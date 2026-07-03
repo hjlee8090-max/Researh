@@ -38,6 +38,36 @@ COMMIT_MESSAGE = os.environ.get("COMMIT_MESSAGE", "")
 CHANGED_FILES_FILE = os.environ.get("CHANGED_FILES_FILE", "")
 DRY_RUN = os.environ.get("KAKAO_DRY_RUN", "").strip().lower() in ("1", "true", "yes", "on")
 
+# 발송 이력 원장 (docs/plan_hourly_report_gap_fix.md Phase 1-3) — 시도·성공·실패·스킵을 전부 남겨
+# audit_github_notify 가 "어제 리포트의 발송이 실제로 나갔는지"를 대사한다. 워크플로가 커밋한다.
+NOTIFY_LOG = ROOT / "state" / "notify_log.jsonl"
+
+
+def log_notify(event: str, **fields) -> None:
+    """원장 append — 어떤 실패도 발송 흐름을 깨지 않는다(로깅은 부수 기능)."""
+    if DRY_RUN:
+        return
+    try:
+        entry = {"ts": datetime.now(KST).isoformat(timespec="seconds"), "event": event}
+        entry.update({k: v for k, v in fields.items() if v is not None})
+        with NOTIFY_LOG.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except OSError as exc:  # noqa: BLE001
+        print(f"notify_log append failed (ignored): {exc}", flush=True)
+
+
+def ledger_slot_label() -> str:
+    """원장용 슬롯 라벨 — 커밋 프리픽스에서 도출 (00/06/09/12/15/18/audit/…)."""
+    for prefix, label in (
+        ("report:", "18"), ("audit:", "audit"), ("weekly-archive:", "archive"),
+        ("weekly:", "weekend"), ("sat-review:", "sat"), ("sun-strategy:", "sun"),
+        ("policy-review:", "policy"),
+    ):
+        if COMMIT_MESSAGE.startswith(prefix):
+            return label
+    meta = detect_slot(COMMIT_MESSAGE)
+    return meta[3] if meta else "?"
+
 
 def http_post(url: str, data, headers=None) -> dict:
     if isinstance(data, dict):
@@ -112,6 +142,8 @@ def find_slot_report(slot_hh: str) -> Path | None:
     return find_latest_report()
 
 
+# 슬롯 헤더 고정 문자열 계약 — 단일 스펙은 docs/report_contract.md.
+# 변경 시 반드시 함께 갱신: check_report_contract.py(검사)·build_html.py·prompts/*.md 파서 고정 문자열 절.
 SLOT_META = {
     "00:00": ("🌙", "00:00 글로벌 야간 점검", "## 🌙 00:00 글로벌 야간 점검", "00"),
     "06:00": ("🌄", "06:00 미국장 마감 확정", "## 🌄 06:00 미국장 마감 확정", "06"),
@@ -189,9 +221,13 @@ def guard_or_skip(report: Path | None, what: str) -> bool:
     """공통 발송 가드 — 통과 못 하면 사유를 남기고 False."""
     if not is_dated_today(report):
         print(f"skip notify: {what} 리포트({report.name if report else '?'})가 오늘 날짜가 아님 — 묵은 리포트 재발송 방지", flush=True)
+        log_notify("skip", slot=ledger_slot_label(), what=what, reason="stale_report",
+                   report=report.name if report else None)
         return False
     if not push_modified(report):
         print(f"skip notify: 이번 push 가 {what} 리포트를 변경하지 않음 — 후속 잡무 커밋 중복 알림 방지", flush=True)
+        log_notify("skip", slot=ledger_slot_label(), what=what, reason="push_not_modified",
+                   report=report.name if report else None)
         return False
     return True
 
@@ -582,6 +618,8 @@ def main():
             # 폴백 발송 금지 — 슬롯 미식별 커밋(chore(context) 등 비-routine)이
             # '가장 최근'(=전일) 리포트를 발송하던 사고 방지 (2026-06-12 17:21 6/11 일일 종합).
             print(f"unrecognized commit, skip notify: {COMMIT_MESSAGE.splitlines()[0][:80] if COMMIT_MESSAGE else '(empty)'}", flush=True)
+            log_notify("skip", reason="unrecognized_commit",
+                       commit=(COMMIT_MESSAGE.splitlines()[0][:80] if COMMIT_MESSAGE else ""))
             return
         slot_msg = build_slot_message(slot_meta)
         if slot_msg is None:
@@ -602,23 +640,32 @@ def main():
         print(f"[DRY_RUN] body:\n{body}", flush=True)
         return
 
-    if not REST_KEY or not REFRESH_TOKEN:
-        sys.exit("KAKAO_REST_API_KEY / KAKAO_REFRESH_TOKEN 환경변수 필요")
-    token_res = refresh_access_token()
-    access_token = token_res.get("access_token")
-    if not access_token:
-        sys.exit(f"failed to refresh: {token_res}")
+    slot_label = ledger_slot_label()
+    try:
+        if not REST_KEY or not REFRESH_TOKEN:
+            sys.exit("KAKAO_REST_API_KEY / KAKAO_REFRESH_TOKEN 환경변수 필요")
+        token_res = refresh_access_token()
+        access_token = token_res.get("access_token")
+        if not access_token:
+            sys.exit(f"failed to refresh: {token_res}")
 
-    new_refresh = token_res.get("refresh_token")
-    if new_refresh and new_refresh != REFRESH_TOKEN:
-        print("=" * 60, flush=True)
-        print("⚠️  NEW REFRESH TOKEN ISSUED — UPDATE GITHUB SECRET!", flush=True)
-        print(f"   Secret name: KAKAO_REFRESH_TOKEN", flush=True)
-        print(f"   New value  : {new_refresh}", flush=True)
-        print("=" * 60, flush=True)
+        new_refresh = token_res.get("refresh_token")
+        if new_refresh and new_refresh != REFRESH_TOKEN:
+            print("=" * 60, flush=True)
+            print("⚠️  NEW REFRESH TOKEN ISSUED — UPDATE GITHUB SECRET!", flush=True)
+            print(f"   Secret name: KAKAO_REFRESH_TOKEN", flush=True)
+            print(f"   New value  : {new_refresh}", flush=True)
+            print("=" * 60, flush=True)
+            # 토큰 값은 원장에 기록하지 않는다 — 만료 D-7 경보(audit)의 기준 시각만 남긴다.
+            log_notify("token_refresh")
 
-    res = send_kakao(access_token, title, body, url, button)
+        res = send_kakao(access_token, title, body, url, button)
+    except SystemExit as exc:
+        # sys.exit 경로(토큰 실패·HTTP 오류)도 원장에 남긴다 — 무음 실패 방지 (P5).
+        log_notify("send", slot=slot_label, ok=False, reason=str(exc)[:160])
+        raise
     print(f"sent: {res}", flush=True)
+    log_notify("send", slot=slot_label, ok=True, title=title[:60])
 
 
 if __name__ == "__main__":

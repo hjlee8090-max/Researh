@@ -30,10 +30,11 @@
   - **채택 사유 노티**: `candidate_scores.json.report_section_md`("### 신규 후보 채택 사유" 완성 마크다운)를 리포트 본문에 **그대로 붙여 넣는다** — send_kakao 가 이 섹션으로 채택 후보를 발송한다.
 - `python scripts/estimate_target_price.py` 를 실행하여 `state/target_estimate.json` 을 만든다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가**(목표가/(1+레짐 R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한) 추정 + 직전 리포트 대비 변동·원인 뉴스 — `report_section_md` 와 종목별 `news_target_line`·`entry_cap_line` 생성). 매 routine 실행이 `target_estimate_log.jsonl` 에 1행을 쌓아 '리포트마다 변경값' 델타가 산출된다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
+- `python scripts/compute_exit_levels.py` 를 실행하여 `state/exit_levels.json` 을 만든다 — **보유 종목의 트레일링 1차선·샹들리에·손절·목표 수치는 리포트·판단에서 이 파일 값만 인용한다. 손계산·직전 리포트 이월 금지** (7/1 ATR 배수 오기입 239,495원이 세 리포트에 유통된 사고의 재발 방지 — 진단 I8).
 - `python scripts/momentum_signal.py` 를 실행하여 `state/momentum_signal.json` 을 갱신한다 (**수익형 전략 1순위 진입 엔진** — `policy.momentum_strategy`). `executable_allocation.orders` 가 오늘 목표 정수주 바스켓이고, `rebalance_changes.enter/exit` 가 변경분이다. 백테스트 근거: `docs/strategy_momentum.md`.
 
 > **스냅샷 출처 주의**: 세션 네트워크 차단 시 스크립트는 Actions(`fetch_prices.yml`) 정기 수집본을 보존하고 `stale` 표시만 남긴다 — 리포트 머리말 각주에 명시. **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결** — 묵은 가격 선체결 후 재확인(booking-then-verify) 금지.
-- `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료.
+- `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료하되, **`-09.md` 축약 리포트(불일치 내용 명기)는 반드시 생성·커밋한다**(복구 계약 ③ — 무음 종료 금지: 리포트가 없으면 12시가 장애/휴장을 구분할 수 없다).
 - 이후 가격·추세 판단은 **이 스냅샷·점수 파일을 1순위 출처**로 사용하고, 보강이 필요한 부분만 웹검색으로 채운다.
 - `data_confidence` 는 스냅샷 `tickers.<ticker>.confidence` 값을 그대로 따른다 — 임의 재판정 금지. 과거 리포트·`weekly_plan.json`·`lessons.md` 의 "fetch 차단/403/low/신규 진입 보류" 류 **레거시 서술을 이월·복제하지 않는다**(5/26 2출처 수집으로 해결 — lessons archive). `stale` 키가 있어도 confidence 는 스냅샷 그대로 — **stale ≠ low.**
 - 스냅샷의 신뢰도(`confidence`)가 **실제로** 모두 `low` 일 때만 출처 차단 가능성 → 사용자에게 보고하고 routine 은 진행하되 매매는 차단 (`policy.price_data_quality.block_trade_if_confidence_below = "medium"`).
@@ -135,7 +136,7 @@
 - **당일 예측 적재(INFER)**: `state/inference_checklist.md` 를 먼저 읽고, 오늘 장중~종가 방향 예측을 1~2건 `inference_log.jsonl` 에 append(검증 가능 수치+horizon, 보통 `"horizon":"18:00"`, `checklist_refs` 증빙). 선제 액션은 §2 게이트를 통과한 Tier 0~1(준비·리스크감소)만 — Tier 2(probe 신규매수)는 Phase 1 에서 **paper(그림자)로만** 기록(`"preemptive_action":{"tier":2,"paper":true}`).
 
 ### 1-PO. 선제 커밋(pending_orders) 점검·집행 (proactive inference loop — `policy.proactive_inference`)
-`state/pending_orders.json` 의 `active` 주문과 `state/intraday_alert.json.pending_signals`(장중 트리거 충족분)를 읽는다(kill_switch=true 면 전체 건너뜀):
+`state/pending_orders.json` 의 `active` 주문을 읽고, **`python scripts/check_intraday_alerts.py` 를 직접 실행해** 트리거 충족분(`state/intraday_alert.json.pending_signals`)을 재산출한다(kill_switch=true 면 전체 건너뜀). 이 파일은 gitignored 라 원격 fresh clone 에는 존재하지 않는다 — **파일 읽기에 의존하지 말고 반드시 스크립트로 재산출**(진단 P9 데드 입력). KAKAO env 없는 세션에서는 경보 발송 없이 상태만 기록되므로 안전하다:
 - **트리거 충족 + 미체결 주문**: §2-PRE 게이트(`pre_trade_check.py`) 통과 후 집행한다 — 가격 fresh 또는 web_verified 만, 묵은 가격 선체결 금지(기존 원칙 그대로). 체결 시 `trade_log` 에 평소 필드 + `inference_id`·`preemption_tier` 를 함께 기록하고, 해당 주문 status=`triggered` 로 갱신.
 - **Tier 2(공격·신규매수)**: `action_ladder.tier2_probe.enabled=false` 인 동안 **자동 체결 금지** — 대화창/카톡으로 사용자 승인을 요청하고, 승인 전이면 status 유지·"승인 대기" 메모만(반자동).
 - **만료**: `valid_until` 지난 주문은 status=`expired` 로 정리(미체결 사유 1줄).
@@ -313,6 +314,7 @@
 4. **파서 고정 문자열 (변형 금지)**: 슬롯 헤더 `## 🌅 09:00 개장 점검` 과 `### 한눈에 보기` 는 카톡 알림(`scripts/send_kakao.py`)이 파싱한다. 한눈에 보기 불릿은 `- 라벨: 값` 평문 (라벨에 `**` 굵게 금지).
 5. **용어는 처음 1회만 풀이**: 본문 첫 등장 시 괄호로 1줄.
 6. **미검증 시세 단정·운영 용어 노출 금지**: 당일 미확인(직전 수집본) 지수·시세는 등락률을 사실처럼 단정 표기하지 말고 수치 옆에 "(전일 종가 기준, 당일 미확인)"을 붙인다. '한눈에 보기'에는 영문 운영 용어(stale·live_verify·web_verify·time_stop·mark-to-market·HTTP 403 등)를 쓰지 않는다 — 행동이 바뀐 경우에만 사람 말로 1줄 (예: "실시간 가격 확인이 안 돼 신규 매수 보류"). audit 이 자동 점검한다.
+7. **슬롯 미실행·복구 계약** (원본: docs/report_contract.md §7): ①이전 슬롯 부재 표기는 사유를 구분한다 — 장애·미발화면 "(N시 미실행)", 휴장 규칙에 따른 생략이면 "(N시 휴장 생략)". ②소급 작성(백필)은 기본 금지 — 예외는 [당일 중 + 파일 머리에 "※ HH:MM 소급 작성" 라벨 + 시리즈 진행 줄은 실제 발화 시각 기준] 3조건 동시 충족 시에만. ③자기 슬롯 리포트는 실패·축약 모드에서도 반드시 생성·커밋한다(무음 종료 금지).
 
 리포트 파일 양식:
 ```markdown

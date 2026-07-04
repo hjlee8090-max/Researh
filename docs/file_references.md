@@ -108,7 +108,7 @@
 - 오늘 06시 파일: `reports/YYYY-MM-DD-06.md` (있으면 마감 확정·갱신 갭 예측을 1순위 흡수)
 - 직전 영업일 18시: `reports/YYYY-MM-DD-18.md`
 - 직전 주말 archive: `reports/YYYY-Www-archive.md`
-- 0-B 산출물: `state/market_snapshot.json`, `state/candidate_scores.json`, `state/allocation.json`
+- 0-B 산출물: `state/market_snapshot.json`, `state/candidate_scores.json`, `state/allocation.json`, `state/exit_levels.json` (compute_exit_levels — 트레일링·손절·목표 단일 소스, 손계산 금지)
 - `state/momentum_signal.json` (§0-M 바스켓), `state/pending_orders.json` (§1-PO 집행 판정), `state/intraday_alert.json` (§1-PO — gitignored·원격 fresh clone 에선 부재 가능)
 - `state/inference_checklist.md` (§1-0 채점·예측 전 필독), `state/target_estimate.json` (§3-1 뉴스 반영 매매가 표)
 - 참고: `state/fundamentals.json`·`state/valuation_check.json`·`state/consensus.json` (§2 사이징·천장 검증)

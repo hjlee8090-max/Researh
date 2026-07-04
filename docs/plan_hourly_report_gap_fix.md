@@ -170,6 +170,12 @@
 
 **검증**: 시행 후 첫 영업일 사이클에서 — inference_log 12/15 엔트리, exit_levels.json vs 18시 리포트 수치 일치(diff 0), audit 미채점 잔량 감소 추세 확인.
 
+> ✅ **2026-07-03 구현 완료** (1커밋, KST 14시대 push — 15시 슬롯부터 적용). 검증 실측 —
+> ①**compute_exit_levels `--selftest` 가 7/2 EOD 정정 사례를 원단위 재현**: (최고 263,500·ATR 10.47%) → 1차선 222,117·샹들리에 208,323. 실데이터 6종목 산출 성공(LS ELECTRIC 최고 263,500(7/1)·1차선 222,236 — 당일 ATR 반영치).
+> ②구현 중 데이터 공백 발견·보강: `exit_tracking.json` 이 현 보유 종목(6/30 진입분)을 미커버 — 최고 종가를 exit_tracking ∪ snapshot `five_day_history` **날짜 합집합**으로 산출하도록 설계 변경(폴백만 쓰면 1차선이 189,765로 과소산출되는 것을 실측으로 확인).
+> ③프롬프트 정합 grep: inference 12/15시 0→3회, 00시 check_market_open 0→1회, 복구 계약 6/6 파일, exit_levels 인용 의무 09/15/18 + file_references. audit exit=0.
+> **계획 대비 조정 2건**: (a) 1800 채점부는 무수정 — §3-1 step 1 이 이미 "horizon 도래분 전부 채점" 일반형이라 15시 예측(horizon 18:00)·12시 예측(15시 채점 누락 시)을 자동 커버함을 확인. (b) 3-7 은 계획대로 스크립트 직접 실행으로 교체하되, `check_intraday_alerts.py` 가 KAKAO env 부재 시 발송 없이 상태만 기록함을 확인해 중복 경보 리스크 없음을 명시.
+
 ---
 
 ## 6. Phase 4 — 정보전달성 개편 + 콘텍스트 다이어트 2차 (주말 배포, Phase 1 가동 후)

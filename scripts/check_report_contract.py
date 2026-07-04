@@ -55,9 +55,13 @@ def check_file(path: Path, slot: str, violations: list[dict]) -> None:
     # 1) 슬롯 헤더 고정 문자열
     if SLOT_HEADERS[slot] not in text:
         add("slot_header", f"고정 헤더 '{SLOT_HEADERS[slot]}' 부재 — 카톡 섹션 추출 실패 위험")
-    # 2) 한눈에 보기
+    # 2) 한눈에 보기 — 존재 + 본문 첫 ### 이어야 한다 (2026-07-04 §8-1: 30초 의사결정 우선)
     if not GLANCE_RE.search(text):
         add("glance", "'### 한눈에 보기' 부재 — 카톡 요약 추출 불가")
+    else:
+        first_h3 = re.search(r"^###\s+(.+)$", text, re.MULTILINE)
+        if first_h3 and "한눈에 보기" not in first_h3.group(1):
+            add("glance_order", f"본문 첫 ### 이 '한눈에 보기'가 아님(실제: {first_h3.group(1)[:30]}) — 요약 최상단 계약(§8-1)")
     # 3) 시리즈 진행 줄 (6슬롯 전부 표기)
     series_lines = [ln for ln in text.splitlines() if ln.strip().startswith(SERIES_PREFIX)]
     if not series_lines:

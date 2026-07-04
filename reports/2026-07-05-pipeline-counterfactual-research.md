@@ -211,6 +211,11 @@
 5. **12/15시 check_intraday_alerts 재산출 확장** (근거: 7/3 저가 218,000<222,117 터치를 09시 단일 재산출로는 미포착 — 이번엔 무해했으나 종가 확인 대기 신호로 표면화됐어야 함).
 6. **inference_id ↔ trade_log 결합 착수** (근거: scorecard pnl_linked_n=0 — po-20260702-*에 inference_id가 이미 있으므로 체결 시 결합만 하면 PF 산출 가능, tier2_probe 개방의 전제).
 7. **7/3 12시 제3값(≈221,340) 재발 방지 명문화** (근거: 신 스펙은 12시에 09시 산출본 인용이나 "손계산 금지"의 12시 명시가 약함 — 1200_midday.md에 exit_levels 인용 강제 문구 추가).
+8. **확정 종가의 단일 출처 정의** (근거: 7/3 LS ELECTRIC 종가가 price_history=225,000 vs 18시 스냅샷/리포트=229,500, 신한지주 106,000/104,900/107,300 3원화 — 트레일선 이탈 판정이 종가 기준인 시스템에서 출처에 따라 이탈/미이탈이 갈릴 수 있음) — 판정용 확정 종가의 우선순위(예: 익일 price_history 확정 시 소급 검증)를 규약화.
+9. **무체결 날도 trade_log 슬롯 기록 계약** (근거: 6/26·6/29·7/1·7/3에 OPEN_CHECK/EOD_MARK 부재 — "체결 없음"과 "기록 없음"이 구분 불가, 반사실 검증·reconcile 원가 증가) — 영업일 EOD_MARK 1줄 의무화 + audit_slot_matrix 에 trade_log 슬롯 검사 추가.
+10. **exit_tracking 보유 종목 적재 확장** (근거: 현재 exited 4종목만 있고 보유 6종목 미커버 — five_day_history 폴백은 6일치뿐이라 보유 장기화 시 최고 종가 산출 붕괴, compute_exit_levels.py 주석의 "폴백만 쓰면 1차선 189,765 과소산출" 실측) — 18시 routine 이 보유 종목 종가를 exit_tracking 에 적재.
+
+**후속 조치(2026-07-05)**: 안건 ①~③은 본 리포트 확정 직후 구현 착수 — risk.exit_execution 규약 신설(policy v2.21, 안건③=위 3번), scripts/sync_pending_orders.py + 09/18시 프롬프트 연결(안건②=위 2번), audit_portfolio_heat 게이지(안건①=위 1번). 안건 4~10은 일 20시 policy_review 상정.
 
 ---
 

@@ -13,6 +13,8 @@
   - 허용되는 체결은 손절/목표/트레일링스톱에 **종가 기준으로 도달한 종목의 청산**뿐이다(아래 §1).
 - 영업일이면 `python scripts/fetch_market_data.py` 를 실행해 보유·후보 종목의 **확정 종가**를 `state/market_snapshot.json` 에 기록한다.
 - `python scripts/compute_exit_levels.py` 를 실행해 `state/exit_levels.json` 을 갱신한다 — **트레일링 1차선·샹들리에·손절·목표 수치는 종가 판정·리포트·if-then 표에서 이 파일 값만 인용한다. 손계산·직전 리포트 이월 금지** (7/1 ATR 배수 오기입 유통 사고의 재발 방지 — 진단 I8. 검증: `--selftest` 가 7/2 정정 사례 222,117/208,323원을 재현).
+- 직후 `python scripts/sync_pending_orders.py` 를 실행해 트레일링 계열 SELL 사전주문의 트리거값을 EOD 확정 exit_levels 와 동기화한다(익일 09시까지 po 고정값 표류 방지 — reports/2026-07-05-pipeline-counterfactual-research.md 안건②).
+- **종가 트리거 체결가 규약(`policy.risk.exit_execution` v2.21)**: 종가 이탈/도달 판정이 이 슬롯에서 확정되면 **당일 closing_auction(확정 종가)로 가상 체결**한다(익일 시가 아님 — 6/23 삼성전자 SELL_STOP 선례 표준화). 당일 판정을 놓쳐 익일 발견한 경우에만 익일 09시 시가 체결 + trade_log 에 지연 사유 명기. 장중 트리거 터치는 체결 사유가 아니다.
 - **종가 반영 지연 주의**: 네이버/Yahoo Finance 일별 캔들은 한국장 마감(15:30) 후 1~3시간 지연 후 갱신될 수 있다. 18시 실행 시 `market_snapshot.json` 의 보유 종목 `sources[*].last_date` 가 **오늘 날짜인지** 반드시 확인.
   - 오늘 날짜 ✓ → 스냅샷 종가를 1순위 출처로 사용.
   - 오늘 날짜 ✗ (전일 종가만 반영) → 웹검색 ("[종목명] 종가 오늘") 으로 보강하고 `data_confidence` 를 1단계 강등 (high→medium, medium→low).

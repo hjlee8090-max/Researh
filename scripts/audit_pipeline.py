@@ -278,6 +278,80 @@ def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
         messages.append(result("OK", f"보유 종목 모두 R/R 하한({threshold}, {basis}) 이상"))
 
 
+def audit_portfolio_heat(data: dict[str, object], messages: list[str]) -> None:
+    """포트폴리오 heat(합산 open_risk) vs tier별 예산 점검 — 초과 무경보 재발 방지.
+
+    근거: reports/2026-07-05-pipeline-counterfactual-research.md §③ — 6/30 바스켓 배치일
+    heat 10.14%·7/1 10.51% 로 strong_bull 예산 9.0% 를 2영업일 초과했으나 audit 는
+    R/R 만 지적하고 heat 는 침묵(사후 반사실 검증에서 발견). 공식은
+    policy.risk.portfolio_heat.open_risk_formula(shares × max(0, 현재가 − 손절가))를 따르고,
+    현재가는 market_snapshot last_close → portfolio current_price_approx 순으로 폴백한다.
+    """
+    policy = data.get("config/policy.json") or {}
+    portfolio = data.get("config/portfolio.json") or {}
+    if not isinstance(policy, dict) or not isinstance(portfolio, dict):
+        return
+    positions = [p for p in portfolio.get("positions", []) if isinstance(p, dict) and p.get("shares")]
+    if not positions:
+        messages.append(result("OK", "portfolio heat — 보유 0종목(해당 없음)"))
+        return
+    equity = portfolio.get("equity")
+    if not isinstance(equity, (int, float)) or equity <= 0:
+        messages.append(result("WARN", "portfolio heat 산출 불가 — portfolio.equity 누락/비정상"))
+        return
+
+    risk_cfg = policy.get("risk", {}) if isinstance(policy.get("risk"), dict) else {}
+    budget_pct = risk_cfg.get("portfolio_heat_budget_pct_of_equity", 6.0)
+    budget_basis = "고정"
+    by_tier = risk_cfg.get("portfolio_heat_budget_by_tier")
+    tier = None
+    try:
+        allocation = read_json(ROOT / "state" / "allocation.json")
+        tier = allocation.get("effective_tier") or allocation.get("tier")
+    except (OSError, json.JSONDecodeError):
+        pass
+    if isinstance(by_tier, dict) and isinstance(by_tier.get(tier), (int, float)):
+        budget_pct = by_tier[tier]
+        budget_basis = f"tier={tier}"
+
+    snapshot_tickers: dict = {}
+    try:
+        snapshot = read_json(ROOT / "state" / "market_snapshot.json")
+        if isinstance(snapshot.get("tickers"), dict):
+            snapshot_tickers = snapshot["tickers"]
+    except (OSError, json.JSONDecodeError):
+        pass
+
+    total = 0.0
+    missing: list[str] = []
+    for pos in positions:
+        ticker = str(pos.get("ticker", ""))
+        stop = pos.get("stop_price")
+        snap = snapshot_tickers.get(ticker, {}) if isinstance(snapshot_tickers, dict) else {}
+        price = snap.get("last_close") if isinstance(snap, dict) else None
+        if not isinstance(price, (int, float)):
+            price = pos.get("current_price_approx")
+        shares = pos.get("shares")
+        if not all(isinstance(v, (int, float)) for v in (price, stop, shares)):
+            missing.append(ticker)
+            continue
+        total += shares * max(0.0, float(price) - float(stop))
+
+    heat_pct = total / float(equity) * 100
+    budget_krw = float(equity) * float(budget_pct) / 100
+    detail = f"heat {total:,.0f}원={heat_pct:.2f}% vs 예산 {budget_pct}%({budget_krw:,.0f}원, {budget_basis})"
+    if missing:
+        detail += " ※가격/손절 결측 제외: " + ", ".join(missing)
+    if heat_pct > float(budget_pct):
+        messages.append(result(
+            "WARN",
+            f"portfolio heat 예산 초과 — {detail}. 신규 진입 보류 + 손절 상향(래칫)·부분익절로 open_risk 축소 필요"
+            " (policy.risk.portfolio_heat.budget_rule)",
+        ))
+    else:
+        messages.append(result("OK", f"portfolio heat 예산 내 — {detail}"))
+
+
 def audit_thesis(data: dict[str, object], messages: list[str]) -> None:
     """watchlist.stocks[].thesis(thesis-tracker, Part B) 스키마·enum 정합 점검."""
     policy = data.get("config/policy.json") or {}
@@ -1075,6 +1149,7 @@ def main() -> int:
     audit_reconciliation(messages)
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)
+    audit_portfolio_heat(data, messages)
     audit_thesis(data, messages)
     audit_target_consensus(data, messages)
     audit_recovery_stage(data, messages)

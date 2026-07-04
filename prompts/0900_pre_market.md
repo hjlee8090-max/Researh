@@ -31,6 +31,7 @@
 - `python scripts/estimate_target_price.py` 를 실행하여 `state/target_estimate.json` 을 만든다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가**(목표가/(1+레짐 R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한) 추정 + 직전 리포트 대비 변동·원인 뉴스 — `report_section_md` 와 종목별 `news_target_line`·`entry_cap_line` 생성). 매 routine 실행이 `target_estimate_log.jsonl` 에 1행을 쌓아 '리포트마다 변경값' 델타가 산출된다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
 - `python scripts/compute_exit_levels.py` 를 실행하여 `state/exit_levels.json` 을 만든다 — **보유 종목의 트레일링 1차선·샹들리에·손절·목표 수치는 리포트·판단에서 이 파일 값만 인용한다. 손계산·직전 리포트 이월 금지** (7/1 ATR 배수 오기입 239,495원이 세 리포트에 유통된 사고의 재발 방지 — 진단 I8).
+- 직후 `python scripts/sync_pending_orders.py` 를 실행하여 `state/pending_orders.json` 의 **트레일링 계열 SELL 트리거값을 exit_levels 산출값과 동기화**한다 — po 고정값과 단일 소스 재산출값의 괴리가 체결 여부를 가르는 것 방지(7/3 실측: 고정 222,117 vs 재산출 224,647, 종가 여유 +0.16% 박빙 — reports/2026-07-05-pipeline-counterfactual-research.md 안건②). 트리거 판정·체결 규약은 `policy.risk.exit_execution`(v2.21 — 종가 판정·당일 closing_auction 체결, 장중 터치는 신호일 뿐).
 - `python scripts/momentum_signal.py` 를 실행하여 `state/momentum_signal.json` 을 갱신한다 (**수익형 전략 1순위 진입 엔진** — `policy.momentum_strategy`). `executable_allocation.orders` 가 오늘 목표 정수주 바스켓이고, `rebalance_changes.enter/exit` 가 변경분이다. 백테스트 근거: `docs/strategy_momentum.md`.
 
 > **스냅샷 출처 주의**: 세션 네트워크 차단 시 스크립트는 Actions(`fetch_prices.yml`) 정기 수집본을 보존하고 `stale` 표시만 남긴다 — 리포트 머리말 각주에 명시. **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결** — 묵은 가격 선체결 후 재확인(booking-then-verify) 금지.

@@ -33,7 +33,7 @@ def render(template: str, **vars) -> str:
 
 
 def extract_oneline(md_text: str) -> str:
-    """'오늘의 한줄평' 라인을 og:description으로."""
+    """'오늘의 한줄평' 라인을 og:description으로. (고정 문자열 계약: docs/report_contract.md §2)"""
     m = re.search(r"오늘의 한줄평\s*[:：]\s*(.+)", md_text)
     if m:
         return m.group(1).strip().lstrip("- ").strip()
@@ -139,7 +139,15 @@ def _position_eval(p: dict) -> dict:
     return {"shares": shares, "cur": cur, "mv": mv, "cost": cost, "pnl": pnl, "avg": avg, "pnl_pct": pnl_pct}
 
 
-def build_positions_html(portfolio: dict) -> str:
+def build_positions_html(portfolio: dict, snapshot: dict | None = None, exit_levels: dict | None = None) -> str:
+    """보유 현황 패널 — 시세는 market_snapshot(09/12/15/18시 리포트 발행 시 커밋) 오버레이.
+
+    portfolio.json 의 current_price_approx 는 매매·EOD 때만 갱신돼 장중에 낡는다 —
+    스냅샷 당일가를 우선 사용해 09/12/15시 리포트가 나올 때마다 인덱스 보유 현황이
+    최신 시세·손절/목표/트레일선(exit_levels)으로 갱신되게 한다 (2026-07-04 사용자 요청).
+    """
+    snap_tickers = (snapshot or {}).get("tickers", {}) if isinstance(snapshot, dict) else {}
+    exit_tickers = (exit_levels or {}).get("tickers", {}) if isinstance(exit_levels, dict) else {}
     positions = [
         p for p in portfolio.get("positions", [])
         if isinstance(p, dict) and num(p.get("shares")) > 0
@@ -148,15 +156,31 @@ def build_positions_html(portfolio: dict) -> str:
         return '<p class="no-pos"><em>보유 종목 없음 — 전량 현금</em></p>'
     items = ['<ul class="positions">']
     for p in positions:
+        snap = snap_tickers.get(str(p.get("ticker")), {}) if isinstance(snap_tickers, dict) else {}
+        snap_cur = 0.0
+        if isinstance(snap, dict):
+            ohlc = snap.get("today_ohlc")
+            if isinstance(ohlc, dict):
+                snap_cur = num(ohlc.get("close"))
+            if not snap_cur:
+                snap_cur = num(snap.get("last_close"))
+        if snap_cur:
+            p = dict(p)
+            p["current_price"] = snap_cur  # 스냅샷 시세 오버레이 — _position_eval 이 최우선 사용
         e = _position_eval(p)
         pnl_cls = "pos" if e["pnl"] >= 0 else "neg"
         pnl_str = f'{e["pnl"]:+,.0f}원'.replace("+-", "-")
         pct_str = f'{e["pnl_pct"]:+.1f}%'
+        lv = exit_tickers.get(str(p.get("ticker")), {}) if isinstance(exit_tickers, dict) else {}
+        target = (lv.get("target_price") if isinstance(lv, dict) else None) or p.get("target_price")
+        stop = (lv.get("stop_price") if isinstance(lv, dict) else None) or p.get("stop_price")
         sub_bits = [f'평단 {format_num(e["avg"])} → 현재 {format_num(e["cur"])}']
-        if p.get("target_price"):
-            sub_bits.append(f'목표 {format_num(p["target_price"])}')
-        if p.get("stop_price"):
-            sub_bits.append(f'손절 {format_num(p["stop_price"])}')
+        if target:
+            sub_bits.append(f'목표 {format_num(target)}')
+        if stop:
+            sub_bits.append(f'손절 {format_num(stop)}')
+        if isinstance(lv, dict) and lv.get("trailing_activated") and lv.get("trailing_first_level"):
+            sub_bits.append(f'트레일1차 {format_num(lv["trailing_first_level"])}')
         items.append(
             f'<li>'
             f'<div class="pos-row">'
@@ -353,28 +377,38 @@ def build_report_list(reports: list[Path]) -> str:
             continue
         research.append(r)
 
+    # 2026-07-04 목록 구성 개편: 최근분만 펼치고 과거는 <details> 로 접는다 —
+    # 리포트 200+개가 한 페이지에 전부 펼쳐져 최신 확인에 스크롤이 길어지던 문제 해소.
+    def _folded(cards_html: list[str], recent_n: int, label: str) -> list[str]:
+        out = ['<ul class="report-list">'] + cards_html[:recent_n] + ["</ul>"]
+        older = cards_html[recent_n:]
+        if older:
+            out.append(f'<details class="rl-older"><summary>이전 {label} {len(older)}건 펼치기</summary>')
+            out.append('<ul class="report-list">')
+            out.extend(older)
+            out.append("</ul></details>")
+        return out
+
     blocks: list[str] = []
     if weekday_cards:
-        blocks.append('<h3 class="rl-section">📅 평일 리포트</h3>')
-        blocks.append('<ul class="report-list">')
-        for date in sorted(weekday_cards, reverse=True):
-            blocks.append(_weekday_card(date, weekday_cards[date]))
-        blocks.append("</ul>")
+        blocks.append('<h3 class="rl-section">📅 평일 리포트 <span class="rl-hint">최근 7일 — 과거는 아래 접힘</span></h3>')
+        cards = [_weekday_card(d, weekday_cards[d]) for d in sorted(weekday_cards, reverse=True)]
+        blocks.extend(_folded(cards, 7, "평일"))
     if weekend_cards:
         blocks.append('<h3 class="rl-section">🗓️ 주말 · 주간 리포트</h3>')
-        blocks.append('<ul class="report-list">')
-        for key in sorted(weekend_cards, reverse=True):
-            blocks.append(_weekend_card(key, weekend_cards[key], weekend_dates.get(key)))
-        blocks.append("</ul>")
+        cards = [
+            _weekend_card(k, weekend_cards[k], weekend_dates.get(k))
+            for k in sorted(weekend_cards, reverse=True)
+        ]
+        blocks.extend(_folded(cards, 2, "주말·주간"))
     if research:
         blocks.append('<h3 class="rl-section">🔬 리서치 · 기타</h3>')
-        blocks.append('<ul class="report-list">')
-        for r in sorted(research, key=lambda p: p.stem, reverse=True):
-            blocks.append(
-                f'<li><a href="./{r.stem}.html">{r.stem}'
-                f'<span class="preview">{_preview_of(r)}</span></a></li>'
-            )
-        blocks.append("</ul>")
+        cards = [
+            f'<li><a href="./{r.stem}.html">{r.stem}'
+            f'<span class="preview">{_preview_of(r)}</span></a></li>'
+            for r in sorted(research, key=lambda p: p.stem, reverse=True)
+        ]
+        blocks.extend(_folded(cards, 5, "리서치"))
     return "\n".join(blocks)
 
 
@@ -422,14 +456,28 @@ def main():
     except (TypeError, ValueError):
         portfolio_as_of = str(as_of_raw).replace("T", " ")[:16] or "—"
 
+    # 시세 기준시각 — market_snapshot 은 09/12/15/18시 리포트 발행(+장중 fetch_prices)마다 커밋된다.
+    def _load_state(name: str) -> dict:
+        path = ROOT / "state" / name
+        try:
+            return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+        except (OSError, json.JSONDecodeError):
+            return {}
+
+    snapshot = _load_state("market_snapshot.json")
+    exit_levels = _load_state("exit_levels.json")
+    snap_as_of_raw = str(snapshot.get("as_of", ""))
+    price_as_of = snap_as_of_raw.replace("T", " ")[:16] or portfolio_as_of
+
     index_html = render(
         index_tpl,
+        price_as_of=price_as_of,
         equity=format_num(equity),
         cash=format_num(cash),
         cumulative_return=f"{ret:+.2f}",
         return_class=return_class,
         portfolio_as_of=portfolio_as_of,
-        positions_html=build_positions_html(portfolio),
+        positions_html=build_positions_html(portfolio, snapshot, exit_levels),
         report_list=build_report_list(reports),
         updated_at=datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
     )

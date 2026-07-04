@@ -45,7 +45,7 @@
 > - `scripts/reconcile_portfolio.py` — trade_log ↔ portfolio 정합성 검증 (audit + 09시 사전 점검)
 > - `scripts/build_lessons_index.py` — lessons.md 분류·룰 인덱스 → `state/lessons_index.json`
 > - `prompts/sunday_policy_review.md` — 일요일 20시 정책 패치 리뷰
-> - `state/{market_snapshot,candidate_scores,lessons_index}.json` — 모두 매 routine 마다 신규 생성 (gitignored)
+> - `state/lessons_index.json` — 매 실행 재생성 (gitignored). `state/market_snapshot.json`·`state/candidate_scores.json` 은 GitHub Actions(`fetch_prices.yml`)가 수집·커밋해 **추적됨**(웹 세션 routine 의 1순위 출처 — §4 fetch_market_data 참조)
 
 ## 1. 리포트 파일 명명 규칙
 
@@ -73,11 +73,16 @@
 **읽기**:
 - `state/lessons.md`
 - `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
+- `config/candidates.json` (0-A 스냅샷 수집 대상)
+- `state/market_snapshot.json` (0-A 단계에서 `fetch_market_data.py` 로 생성)
+- `state/inference_checklist.md` (§2-4 갭 예측 기록 전 필독)
 - 직전 영업일 18시 리포트: `reports/YYYY-MM-DD-18.md` (없으면 구버전 `reports/YYYY-MM-DD.md`)
 - 직전 주말 archive: `reports/YYYY-Www-archive.md`
 
 **쓰기**:
 - `reports/YYYY-MM-DD-00.md` (신규 생성)
+- `state/inference_log.jsonl` (개장 갭 예측 append, `horizon=09:00` — 채점은 09시)
+- `config/catalysts.json` (`manual_events` — 야간 속보로 촉매 확정 시)
 - `config/watchlist.json` (야간 경보 코멘트 추가만)
 - `state/lessons.md` (orange/red 사전 경보 시)
 
@@ -98,15 +103,23 @@
 **읽기**:
 - `state/lessons.md` (먼저)
 - `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
+- `config/candidates.json` (자동 추적 후보), `config/catalysts.json` (D-day 경보, 있으면)
 - 오늘 자정 파일: `reports/YYYY-MM-DD-00.md`
 - 오늘 06시 파일: `reports/YYYY-MM-DD-06.md` (있으면 마감 확정·갱신 갭 예측을 1순위 흡수)
 - 직전 영업일 18시: `reports/YYYY-MM-DD-18.md`
 - 직전 주말 archive: `reports/YYYY-Www-archive.md`
+- 0-B 산출물: `state/market_snapshot.json`, `state/candidate_scores.json`, `state/allocation.json`, `state/exit_levels.json` (compute_exit_levels — 트레일링·손절·목표 단일 소스, 손계산 금지)
+- `state/momentum_signal.json` (§0-M 바스켓), `state/pending_orders.json` (§1-PO 집행 판정), `state/intraday_alert.json` (§1-PO — gitignored·원격 fresh clone 에선 부재 가능)
+- `state/inference_checklist.md` (§1-0 채점·예측 전 필독), `state/target_estimate.json` (§3-1 뉴스 반영 매매가 표)
+- 참고: `state/fundamentals.json`·`state/valuation_check.json`·`state/consensus.json` (§2 사이징·천장 검증)
 
 **쓰기**:
 - `reports/YYYY-MM-DD-09.md` (신규 생성)
 - `config/watchlist.json`, `config/portfolio.json`
+- `config/candidates.json` (신규 후보 등록·갱신 시)
 - `state/trade_log.jsonl` (체결 시 1라인 append)
+- `state/inference_log.jsonl` (00·06 예측 채점 + 당일 예측 append)
+- `state/pending_orders.json` (집행/만료 status 갱신)
 - `state/lessons.md` (필요 시)
 
 ### 🕛 12:00 장중 (`prompts/1200_midday.md`)
@@ -177,7 +190,7 @@
 
 **쓰기**:
 - `reports/YYYY-Www-archive.md` (주차별 응축 1개 파일)
-- 원본 25개 파일은 그대로 둔다 (감사 추적성)
+- 원본 30개 파일은 그대로 둔다 (감사 추적성)
 - 다음주 평일 routine 은 이 archive 1개만 읽으면 됨 → 콘텍스트 절약
 
 ### 주말 노트 (`prompts/weekend_report.md`)

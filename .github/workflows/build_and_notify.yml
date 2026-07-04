@@ -23,7 +23,8 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  # notify job 이 발송 이력 원장(state/notify_log.jsonl)을 커밋한다 (Phase 1-3).
+  contents: write
   pages: write
   id-token: write
 
@@ -41,8 +42,14 @@ jobs:
           python-version: "3.11"
       - name: Install deps
         run: pip install --quiet markdown
-      - name: Audit pipeline
-        run: python scripts/audit_pipeline.py
+      # 품질 게이트와 전송 계층 분리 (Phase 2-3, 진단 P7): audit FAIL 이 이미 커밋된 그날
+      # 리포트의 Pages 배포·카톡 발송까지 차단하던 결합 해소. FAIL 은 스텝 경고(주황)와
+      # 스텝 요약에 남고, 일일 감사 리포트(pipeline_audit — 슬롯 매트릭스 포함)가 표면화한다.
+      - name: Audit pipeline (non-blocking)
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python scripts/audit_pipeline.py 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Build HTML
         run: python scripts/build_html.py
       - name: Upload artifact
@@ -107,3 +114,22 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.inputs.commit_message || github.event.head_commit.message }}
           CHANGED_FILES_FILE: ${{ github.event_name == 'push' && '/tmp/changed_files.txt' || '' }}
         run: python scripts/send_kakao.py
+      # 발송 이력 원장 커밋 — 감사가 "어제 발송이 실제로 나갔는지" 대사한다 (Phase 1-3).
+      # notify_log 는 build_and_notify 의 paths 필터에 없어 이 push 가 재트리거를 만들지 않는다.
+      # if: always() — 발송이 실패(exit 1)해도 실패 기록은 커밋되어야 감사가 본다.
+      - name: Commit notify ledger
+        if: always()
+        run: |
+          git config user.name "kospi-autoflow-bot"
+          git config user.email "hjlee8090@gmail.com"
+          git add state/notify_log.jsonl
+          if git diff --cached --quiet; then
+            echo "no ledger changes"
+            exit 0
+          fi
+          git commit -m "data(notify): delivery ledger $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do
+            if git push; then exit 0; fi
+            git pull --rebase origin main || true
+          done
+          git push

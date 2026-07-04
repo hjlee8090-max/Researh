@@ -75,7 +75,11 @@ def is_known_action(action: str | None) -> bool:
     if action in ALLOWED_TRADE_ACTIONS or action in ALLOWED_NONTRADE_ACTIONS:
         return True
     # SELL_GIVE_BACK_STOP / SELL_ORANGE_STOP / BUY_PROBE 등 체결 변형 수용 (reconcile 과 정합)
-    return action.startswith("BUY_") or action.startswith("SELL_")
+    if action.startswith("BUY_") or action.startswith("SELL_"):
+        return True
+    # 관측·마커 계열 비매매 액션의 화이트리스트 추격전 종료 (INTRADAY_CHECK 13회 연속 WARN 방치 재발 방지):
+    # _CHECK/_MARK/_EVAL 접미 액션은 점검·기록 마커로 수용한다. 매매 판정(is_trade_action)에는 불포함.
+    return action.endswith("_CHECK") or action.endswith("_MARK") or action.endswith("_EVAL")
 
 
 def is_trade_action(action: str | None) -> bool:
@@ -465,8 +469,12 @@ def audit_market_data_tooling(messages: list[str]) -> None:
     if calendar.exists():
         try:
             payload = json.loads(calendar.read_text(encoding="utf-8"))
-            count = len(payload.get("holidays_2026", []))
-            messages.append(result("OK", f"config/market_calendar.json lists {count} holidays"))
+            year_key = f"holidays_{datetime.now(KST).year}"
+            holiday_list = payload.get(year_key)
+            if holiday_list is None:
+                messages.append(result("WARN", f"config/market_calendar.json 에 {year_key} 없음 — 올해 휴장일 가드 무력화(연도별 갱신 필요)"))
+            else:
+                messages.append(result("OK", f"config/market_calendar.json lists {len(holiday_list)} holidays ({year_key})"))
         except Exception as exc:  # noqa: BLE001
             messages.append(result("FAIL", f"config/market_calendar.json parse failed: {exc}"))
     else:
@@ -573,27 +581,42 @@ def audit_prompts_and_scripts(messages: list[str]) -> None:
 
 # '한눈에 보기'(카톡 발송부)에 노출되면 안 되는 운영 용어 — 리포트 가독성 원칙 §3 의 기계 점검.
 # 행동을 바꾼 요인은 사람 말로 녹여 쓰는 것이 규칙이며, 게이트/내부 지표 명칭 노출은 WARN.
+# 계약 단일 스펙: docs/report_contract.md §3 (본문 전체의 고정밀 검사는 check_report_contract.py).
 GLANCE_BANNED_TOKENS = [
     "live_verify", "web_verify", "pre_trade", "resync", "HTTP 403",
     "freshness", "snapshot_age", "tier=", "stale", "mark-to-market", "time_stop", "§",
 ]
 
 
-def is_business_day_today() -> bool:
-    """주말 + market_calendar.json 휴장일 판정 (의존성 0 유지 — check_market_open 로직 축약)."""
-    today = datetime.now(KST).date()
-    if today.weekday() >= 5:
-        return False
+def _holidays_map() -> dict[str, str]:
+    """market_calendar.json 의 holidays_<YYYY> 연도 키를 전부 병합해 {date: name} 으로 반환.
+    (기존 버그 수정: 'holidays' 라는 존재하지 않는 키를 읽어 공휴일 판정이 항상 무력화돼 있었다.)"""
     try:
         calendar = read_json(ROOT / "config" / "market_calendar.json")
     except (OSError, json.JSONDecodeError):
-        return True
-    holidays = calendar.get("holidays", []) if isinstance(calendar, dict) else []
-    iso = today.isoformat()
-    for h in holidays:
-        if (isinstance(h, str) and h == iso) or (isinstance(h, dict) and h.get("date") == iso):
-            return False
-    return True
+        return {}
+    if not isinstance(calendar, dict):
+        return {}
+    merged: dict[str, str] = {}
+    for key, value in calendar.items():
+        if isinstance(key, str) and key.startswith("holidays_") and isinstance(value, list):
+            for h in value:
+                if isinstance(h, dict) and h.get("date"):
+                    merged[str(h["date"])] = str(h.get("name", "공휴일"))
+                elif isinstance(h, str):
+                    merged[h] = "공휴일"
+    return merged
+
+
+def is_business_day(target) -> bool:
+    """주말 + market_calendar.json 휴장일 판정 (의존성 0 유지 — check_market_open 로직 축약)."""
+    if target.weekday() >= 5:
+        return False
+    return target.isoformat() not in _holidays_map()
+
+
+def is_business_day_today() -> bool:
+    return is_business_day(datetime.now(KST).date())
 
 
 def extract_glance_block(text: str) -> str:
@@ -652,6 +675,129 @@ def audit_reports(messages: list[str]) -> None:
             "WARN",
             "리포트 '한눈에 보기'에 운영 용어 노출(가독성 원칙 §3 — 사람 말로 풀어쓸 것): " + "; ".join(leaked),
         ))
+
+
+SLOT_MATRIX_06_SINCE = "2026-07-02"  # 06시 슬롯 신설일 — 이전 날짜는 06 부재를 따지지 않는다
+
+
+def audit_slot_matrix(messages: list[str]) -> None:
+    """지난 7일(어제~D-7) 슬롯·주말 산출물 발화 매트릭스 (plan_hourly_report_gap_fix Phase 1-1).
+
+    기존 감사는 '당일 00시 부재' 1종만 봐서 주간 아카이브 3주 사망(W24~W26)·주말 루틴 미발화를
+    아무도 감지하지 못했다. 여기서는 완결된 날짜(어제까지)만 검사해 장중 push 오탐을 피한다.
+    관측 전용 — WARN/INFO 만 내고 FAIL 은 내지 않는다(빌드 차단 금지).
+    """
+    reports_dir = ROOT / "reports"
+    today = datetime.now(KST).date()
+    holidays = _holidays_map()
+    missing_days: list[str] = []
+    missing_06: list[str] = []
+    for back in range(1, 8):
+        d = today - timedelta(days=back)
+        ds = d.isoformat()
+        missing: list[str] = []
+        wd = d.weekday()
+        if wd < 5:  # 평일
+            if ds in holidays:
+                # 휴장 평일: 00(무가드)·09(축약 의무 생성)·18(축약 모드)은 기대, 12/15는 프롬프트가 생략 허용
+                expected = ("00", "09", "18")
+            else:
+                expected = ("00", "09", "12", "15", "18")
+            for hh in expected:
+                if not (reports_dir / f"{ds}-{hh}.md").exists():
+                    missing.append(f"{hh}시")
+            if not (reports_dir / f"{ds}-audit.md").exists():
+                missing.append("audit")
+            if ds >= SLOT_MATRIX_06_SINCE and not (reports_dir / f"{ds}-06.md").exists():
+                missing_06.append(ds)
+        elif wd == 5:  # 토요일 — 00시(매일 발화) + 사후분석
+            if not (reports_dir / f"{ds}-00.md").exists():
+                missing.append("00시")
+            if not (reports_dir / f"{ds}-saturday-review.md").exists():
+                missing.append("saturday-review")
+        else:  # 일요일 — 00시 + 전략 + 정책리뷰 + 주간 아카이브(그 주 ISO 주차)
+            if not (reports_dir / f"{ds}-00.md").exists():
+                missing.append("00시")
+            if not (reports_dir / f"{ds}-sunday-strategy.md").exists():
+                missing.append("sunday-strategy")
+            if not (reports_dir / f"{ds}-policy-review.md").exists():
+                missing.append("policy-review")
+            iso = d.isocalendar()
+            archive_name = f"{iso[0]}-W{iso[1]:02d}-archive.md"
+            if not (reports_dir / archive_name).exists():
+                missing.append(f"주간아카이브({archive_name})")
+        if missing:
+            missing_days.append(f"{ds}: {', '.join(missing)}")
+    if missing_days:
+        messages.append(result(
+            "WARN",
+            "슬롯 산출물 누락(지난 7일): " + "; ".join(missing_days)
+            + " — 루틴 미발화 의심, claude.ai/code/routines 등록 상태 확인",
+        ))
+    else:
+        messages.append(result("OK", "지난 7일 슬롯·주말 산출물 매트릭스 결손 없음"))
+    if missing_06:
+        messages.append(result("INFO", "06시 리포트 부재(시행 초기 관찰 — 2주 후 WARN 승격 예정): " + ", ".join(missing_06)))
+
+
+def audit_state_schema(messages: list[str]) -> None:
+    """LLM 이 손으로 쓰는 state 파일의 스키마 검증 (plan_hourly_report_gap_fix Phase 1-5).
+
+    check_state_schema.py 를 subprocess 로 실행(체크 자체는 의존성 0 유지)해 위반을 WARN 으로 흡수.
+    형식이 어긋난 예측은 채점 스크립트가 조용히 스킵하는 무음 실패가 되므로 표면화가 목적이다.
+    """
+    script = ROOT / "scripts" / "check_state_schema.py"
+    if not script.exists():
+        messages.append(result("WARN", "scripts/check_state_schema.py missing — state 스키마 게이트 비활성"))
+        return
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(script)], capture_output=True, text=True, timeout=30, cwd=str(ROOT),
+        )
+        payload = json.loads(proc.stdout or "{}")
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+        messages.append(result("WARN", f"state 스키마 검사 실행 실패: {exc}"))
+        return
+    violations = payload.get("violations", [])
+    if violations:
+        detail = "; ".join(str(v) for v in violations[:6])
+        more = f" 외 {len(violations) - 6}건" if len(violations) > 6 else ""
+        messages.append(result("WARN", f"state 스키마 위반(채점 누락 위험): {detail}{more}"))
+    else:
+        messages.append(result("OK", "state 스키마 정상 (inference_log·pending_orders·weekly_plan)"))
+
+
+def audit_report_contract(messages: list[str]) -> None:
+    """당일 슬롯 리포트의 형식 계약 검사 (plan Phase 1-4 — 단일 스펙 docs/report_contract.md).
+
+    파서 앵커(슬롯 헤더·한눈에 보기·시리즈 줄) 위반이 "카톡이 안 오는" 형태로만
+    사후 발견되던 것을 발행 당일 WARN 으로 표면화한다. 관측 전용 — FAIL 없음.
+    """
+    script = ROOT / "scripts" / "check_report_contract.py"
+    if not script.exists():
+        messages.append(result("WARN", "scripts/check_report_contract.py missing — 리포트 계약 검사 비활성"))
+        return
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(script)], capture_output=True, text=True, timeout=30, cwd=str(ROOT),
+        )
+        payload = json.loads(proc.stdout or "{}")
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+        messages.append(result("WARN", f"리포트 계약 검사 실행 실패: {exc}"))
+        return
+    checked = payload.get("files_checked", 0)
+    if not checked:
+        messages.append(result("INFO", "오늘 슬롯 리포트 없음 — 계약 검사 대상 없음"))
+        return
+    violations = payload.get("violations", [])
+    if violations:
+        detail = "; ".join(
+            f"{v.get('file')}({v.get('rule')}: {str(v.get('detail'))[:60]})" for v in violations[:6]
+        )
+        more = f" 외 {len(violations) - 6}건" if len(violations) > 6 else ""
+        messages.append(result("WARN", f"리포트 계약 위반: {detail}{more}"))
+    else:
+        messages.append(result("OK", f"오늘 슬롯 리포트 {checked}건 계약 검사 통과"))
 
 
 # 핫패스 파일 크기 상한 — 초과 시 콘텍스트 오버 위험 (docs/plan_context_compaction.md 진단 근거).
@@ -775,6 +921,57 @@ def audit_github_notify(messages: list[str]) -> None:
     else:
         messages.append(result("WARN", "notification triggers incomplete: " + ", ".join(missing)))
 
+    # ---- 발송 이력 원장 대사 (plan Phase 1-3) — 설정 grep 이 아니라 실제 발송 기록을 본다 ----
+    ledger_path = ROOT / "state" / "notify_log.jsonl"
+    if not ledger_path.exists():
+        messages.append(result("INFO", "notify_log 원장 없음(시행 초기) — 다음 발송부터 기록·대사"))
+        return
+    entries: list[dict] = []
+    for raw in ledger_path.read_text(encoding="utf-8").splitlines():
+        try:
+            e = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(e, dict):
+            entries.append(e)
+    if not entries:
+        messages.append(result("INFO", "notify_log 원장 비어 있음(시행 초기)"))
+        return
+    dates = sorted({str(e.get("ts", ""))[:10] for e in entries if e.get("ts")})
+    first_day = dates[0] if dates else ""
+    yesterday = (datetime.now(KST).date() - timedelta(days=1)).isoformat()
+    y_entries = [e for e in entries if str(e.get("ts", "")).startswith(yesterday)]
+    fails = [e for e in y_entries if e.get("event") == "send" and not e.get("ok")]
+    if fails:
+        detail = "; ".join(f"{e.get('slot', '?')}: {str(e.get('reason', ''))[:60]}" for e in fails[:4])
+        messages.append(result("WARN", f"카카오 발송 실패 기록(어제): {detail}"))
+    if first_day and first_day <= yesterday:
+        sent_slots = {str(e.get("slot")) for e in y_entries if e.get("event") == "send" and e.get("ok")}
+        unsent = [
+            f"{hh}시" for hh in ("00", "06", "09", "12", "15", "18")
+            if (ROOT / "reports" / f"{yesterday}-{hh}.md").exists() and hh not in sent_slots
+        ]
+        if unsent:
+            messages.append(result(
+                "WARN",
+                f"발송 성공 기록 없음(어제 {yesterday}): {', '.join(unsent)} — 리포트는 있으나 카톡 미발송/규약 불일치 의심",
+            ))
+        elif not fails:
+            messages.append(result("OK", "어제 슬롯 발송 원장 대사 일치"))
+    # 토큰 로테이션 D-7 경보 — refresh_token 60일 유효, 마지막 로테이션 53일 경과 시 교체 촉구
+    refreshes = [str(e.get("ts", ""))[:10] for e in entries if e.get("event") == "token_refresh"]
+    if refreshes:
+        last = max(refreshes)
+        try:
+            age = (datetime.now(KST).date() - datetime.strptime(last, "%Y-%m-%d").date()).days
+        except ValueError:
+            age = -1
+        if age >= 53:
+            messages.append(result(
+                "WARN",
+                f"카카오 토큰 만료 임박 — 마지막 로테이션 {last}(D+{age}), Secret(KAKAO_REFRESH_TOKEN) 교체 필요",
+            ))
+
 
 def audit_lessons_applied(messages: list[str]) -> None:
     """check_lessons_applied.py 를 실행 — lessons.md 의 자기-인지 미반영 교훈(명문화 필요·미적용 등 +
@@ -841,6 +1038,33 @@ def audit_trade_provenance(messages: list[str]) -> None:
             messages.append(result("WARN", "check_trade_log_gate 비정상 종료(violation 미보고)"))
 
 
+def audit_merge_conflicts(messages: list[str]) -> None:
+    """auto_merge rebase 충돌 마커 표면화 (plan Phase 2-4, 진단 P6).
+
+    auto_merge 는 충돌 시 state/merge_conflicts.jsonl 에 마커를 커밋한다 — 이전엔 실패가
+    '아무 일도 안 일어남'이라 산출물이 세션 브랜치에 무음 고립됐다. 최근 3일분만 WARN.
+    """
+    path = ROOT / "state" / "merge_conflicts.jsonl"
+    if not path.exists():
+        return
+    cutoff = (datetime.now(KST).date() - timedelta(days=3)).isoformat()
+    recent: list[dict] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        try:
+            e = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(e, dict) and str(e.get("ts", ""))[:10] >= cutoff:
+            recent.append(e)
+    if recent:
+        detail = "; ".join(
+            f"{e.get('branch', '?')}({str(e.get('ts', ''))[:16]})" for e in recent[-4:]
+        )
+        messages.append(result(
+            "WARN", f"routine 자동 머지 충돌(최근 3일): {detail} — 세션 브랜치 수동 검토 필요",
+        ))
+
+
 def main() -> int:
     messages: list[str] = []
     messages.append(f"Pipeline audit @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -857,9 +1081,13 @@ def main() -> int:
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)
     audit_reports(messages)
+    audit_slot_matrix(messages)
+    audit_state_schema(messages)
+    audit_report_contract(messages)
     audit_context_budget(data, messages)
     audit_inference_loop(messages)
     audit_github_notify(messages)
+    audit_merge_conflicts(messages)
 
     print("\n".join(messages))
     return 1 if any(m.startswith("[FAIL]") for m in messages) else 0

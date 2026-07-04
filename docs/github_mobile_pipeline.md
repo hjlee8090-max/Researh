@@ -7,12 +7,12 @@
 
 | 구분 | 실행 위치 | 산출물 | 모바일 발송 |
 |---|---|---|---|
-| 00:30 글로벌 점검 | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD.md` 00시 섹션 | `chore(00:00):` 커밋 후 Kakao |
+| 00:00 글로벌 점검 (매일 — 로컬 보조 스케줄러는 평일 00:30) | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD-00.md` | `chore(00:00):` 커밋 후 Kakao |
 | 06:30 미국장 마감 확정 | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD-06.md` (자정 예측 확정·개장 전 갱신) | `chore(06:00):` 커밋 후 Kakao |
-| 09:00 개장 점검 | Claude cloud routine 또는 Codex worktree | 09시 섹션, `portfolio.json`, `watchlist.json` | `chore(09:00):` 커밋 후 Kakao |
-| 12:00 장중 점검 | Claude cloud routine 또는 Codex worktree | 12시 섹션, 체결/경보 | `chore(12:00):` 커밋 후 Kakao |
-| 15:00 마감 임박 | Claude cloud routine 또는 Codex worktree | 15시 섹션, 익일 후보 | `chore(15:00):` 커밋 후 Kakao |
-| 18:00 일일 확정 | Claude cloud routine 또는 Codex worktree | 18시 확정 리포트, `weekly_plan.json` 갱신 | `report:` 커밋 후 Kakao |
+| 09:00 개장 점검 (발화 09:20) | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD-09.md`, `portfolio.json`, `watchlist.json` | `chore(09:00):` 커밋 후 Kakao |
+| 12:00 장중 점검 | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD-12.md`, 체결/경보 | `chore(12:00):` 커밋 후 Kakao |
+| 15:00 마감 임박 | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD-15.md`, 익일 후보 | `chore(15:00):` 커밋 후 Kakao |
+| 18:00 일일 확정 | Claude cloud routine 또는 Codex worktree | `reports/YYYY-MM-DD-18.md`, `weekly_plan.json` 갱신 | `report:` 커밋 후 Kakao |
 | 19:30 평일 감사 | GitHub Actions | `reports/YYYY-MM-DD-audit.md` | 감사 workflow가 직접 Pages 배포 + Kakao |
 | 토요일 사후분석 | Codex worktree 또는 Claude cloud routine | `reports/YYYY-MM-DD-saturday-review.md` | `sat-review:` 커밋 후 Kakao |
 | 일요일 다음주 전략 | Codex worktree 또는 Claude cloud routine | `reports/YYYY-MM-DD-sunday-strategy.md`, `weekly_plan.json` | `sun-strategy:` 커밋 후 Kakao |

@@ -51,7 +51,7 @@
 2. `state/lessons.md` — 원문은 인덱스 항목의 컨텍스트 확인이 필요할 때 해당 섹션만
 3. `config/policy.json` — 점검 대상 키(`entry_filters`, `risk`, `weekly_recovery_plan`, `reward_risk_management`, `price_data_quality`, `lessons_logging`, `codex_automation`, `context_budget`)만 부분 조회. 변경 이력 전문은 `docs/policy_changelog.md`(grep 용)
 4. `prompts/*.md` — **전체 읽기 금지.** §1-1(룰 반영)·§1-4(일관성)는 `check_lessons_applied.py` 결과 + grep 으로 확인하고, 패치가 필요한 prompt 의 해당 섹션만 부분 Read
-5. `reports/YYYY-Www-archive.md` — 가장 최근 주차 archive (지난 주 25개 리포트 응축)
+5. `reports/YYYY-Www-archive.md` — 가장 최근 주차 archive (지난 주 평일 5일 × 6슬롯 최대 30개 리포트 응축)
 6. `config/weekly_plan.json` — 다음 주 thesis (일요일 18시 routine 이 생성한 결과)
 7. `reports/YYYY-MM-DD-saturday-review.md`·`YYYY-MM-DD-sunday-strategy.md` — 이번 주말 routine 산출물
 

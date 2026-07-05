@@ -13,6 +13,10 @@
   - 허용되는 체결은 손절/목표/트레일링스톱에 **종가 기준으로 도달한 종목의 청산**뿐이다(아래 §1).
 - 영업일이면 `python scripts/fetch_market_data.py` 를 실행해 보유·후보 종목의 **확정 종가**를 `state/market_snapshot.json` 에 기록한다.
 - `python scripts/compute_exit_levels.py` 를 실행해 `state/exit_levels.json` 을 갱신한다 — **트레일링 1차선·샹들리에·손절·목표 수치는 종가 판정·리포트·if-then 표에서 이 파일 값만 인용한다. 손계산·직전 리포트 이월 금지** (7/1 ATR 배수 오기입 유통 사고의 재발 방지 — 진단 I8. 검증: `--selftest` 가 7/2 정정 사례 222,117/208,323원을 재현).
+- 직후 `python scripts/sync_pending_orders.py` 를 실행해 트레일링 계열 SELL 사전주문의 트리거값을 EOD 확정 exit_levels 와 동기화한다(익일 09시까지 po 고정값 표류 방지 — reports/2026-07-05-pipeline-counterfactual-research.md 안건②).
+- `python scripts/update_exit_tracking.py` 를 **compute_exit_levels 직전에** 실행해 보유 종목의 당일 확정 종가를 `state/exit_tracking.json` 에 영속 적재한다(안건⑩ — five_day_history 6일 창 밖으로 초기 고점이 밀리면 최고 종가 산출이 무너지는 문제 방지. confidence=low 종목은 자동 보류). 판정용 확정 종가의 출처 우선순위는 `policy.price_data_quality.settlement_close_source` 를 따른다(안건⑧ — 스냅샷 당일자 교차확인 종가가 확정, 사후 price_history 괴리 ±0.5% 초과는 '데이터 정정' 소급 기록만·판정 번복 금지).
+- **무체결 날에도 `trade_log.jsonl` 에 EOD_MARK 1줄을 반드시 남긴다**(안건⑨, 2026-07-06 발효 — audit 가 영업일 기록 공백을 WARN 한다). '체결 없음'과 '기록 없음'이 구분되지 않으면 반사실 검증·reconcile 이 공백을 해석해야 한다(6/26·6/29·7/1·7/3 실측 공백).
+- **종가 트리거 체결가 규약(`policy.risk.exit_execution` v2.21)**: 종가 이탈/도달 판정이 이 슬롯에서 확정되면 **당일 closing_auction(확정 종가)로 가상 체결**한다(익일 시가 아님 — 6/23 삼성전자 SELL_STOP 선례 표준화). 당일 판정을 놓쳐 익일 발견한 경우에만 익일 09시 시가 체결 + trade_log 에 지연 사유 명기. 장중 트리거 터치는 체결 사유가 아니다.
 - **종가 반영 지연 주의**: 네이버/Yahoo Finance 일별 캔들은 한국장 마감(15:30) 후 1~3시간 지연 후 갱신될 수 있다. 18시 실행 시 `market_snapshot.json` 의 보유 종목 `sources[*].last_date` 가 **오늘 날짜인지** 반드시 확인.
   - 오늘 날짜 ✓ → 스냅샷 종가를 1순위 출처로 사용.
   - 오늘 날짜 ✗ (전일 종가만 반영) → 웹검색 ("[종목명] 종가 오늘") 으로 보강하고 `data_confidence` 를 1단계 강등 (high→medium, medium→low).
@@ -60,6 +64,7 @@
     - `ts` 는 routine 실행 시각(18:00)이 아니라 **정규장 마감 시각 `YYYY-MM-DDT15:30:00+09:00`** 로 기록한다 (반장이면 그 close).
     - `execution_venue":"closing_auction"` 을 **반드시** 포함한다. 이것이 없으면 `scripts/check_trade_log_gate.py` 가 "정규장 밖 체결"로 CI FAIL 시킨다 (`policy.market_hours.trade_timing_gate`).
     - 예: `{"ts":"2026-06-01T15:30:00+09:00","action":"SELL_ORANGE_STOP","ticker":"...","execution_venue":"closing_auction","price_source":"snapshot_fresh|web_verified","close_price":...,"execution_price":...,"reason":"orange 단계 종가 확정 — ..."}`
+    - **(v2.21 P&L 결합)** 이 청산이 `pending_orders` 주문에서 비롯됐으면 주문의 `inference_id` 를 trade_log 라인에 **그대로 복사**한다 — rule_attribution 라운드트립 → score_inferences 결합손익(PF) 집계의 유일한 연결고리(pnl_linked_n=0 고착의 원인이 이 복사 부재였다). 주문에 없으면 생략(발명 금지).
   - **장중에 손절선을 이미 통과한 종목**은 09/12/15 routine 에서 실시간 체결됐어야 한다 — 18시는 그날 종가로 비로소 손절/목표에 도달한 분만 종가 청산한다.
 - 종가 확정 후 `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 종가 기준으로 갱신한다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 아래 §종목별 종가 점검의 `news_target_line` 과 §뉴스 반영 매매가 섹션에 사용). 매 routine 1행이 `target_estimate_log.jsonl` 에 쌓여 '리포트마다 변경값' 델타가 산출된다.
 - **(v2.20 그림자)** `python scripts/track_ratchet_shadow.py` 실행 — 본전 래칫 스톱(`policy.risk.breakeven_ratchet`, mode=shadow) 종가 기록 → `state/ratchet_shadow.json`. **관측 전용: 실제 손절가·체결·리포트 판단을 바꾸지 않고 본문에도 싣지 않는다** (승격 심사는 일요일 policy_review §1-8).

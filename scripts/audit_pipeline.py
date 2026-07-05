@@ -10,7 +10,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, time as dt_time, timedelta, timezone
 from pathlib import Path
 
 KST = timezone(timedelta(hours=9))
@@ -276,6 +276,80 @@ def audit_reward_risk(data: dict[str, object], messages: list[str]) -> None:
         ))
     else:
         messages.append(result("OK", f"보유 종목 모두 R/R 하한({threshold}, {basis}) 이상"))
+
+
+def audit_portfolio_heat(data: dict[str, object], messages: list[str]) -> None:
+    """포트폴리오 heat(합산 open_risk) vs tier별 예산 점검 — 초과 무경보 재발 방지.
+
+    근거: reports/2026-07-05-pipeline-counterfactual-research.md §③ — 6/30 바스켓 배치일
+    heat 10.14%·7/1 10.51% 로 strong_bull 예산 9.0% 를 2영업일 초과했으나 audit 는
+    R/R 만 지적하고 heat 는 침묵(사후 반사실 검증에서 발견). 공식은
+    policy.risk.portfolio_heat.open_risk_formula(shares × max(0, 현재가 − 손절가))를 따르고,
+    현재가는 market_snapshot last_close → portfolio current_price_approx 순으로 폴백한다.
+    """
+    policy = data.get("config/policy.json") or {}
+    portfolio = data.get("config/portfolio.json") or {}
+    if not isinstance(policy, dict) or not isinstance(portfolio, dict):
+        return
+    positions = [p for p in portfolio.get("positions", []) if isinstance(p, dict) and p.get("shares")]
+    if not positions:
+        messages.append(result("OK", "portfolio heat — 보유 0종목(해당 없음)"))
+        return
+    equity = portfolio.get("equity")
+    if not isinstance(equity, (int, float)) or equity <= 0:
+        messages.append(result("WARN", "portfolio heat 산출 불가 — portfolio.equity 누락/비정상"))
+        return
+
+    risk_cfg = policy.get("risk", {}) if isinstance(policy.get("risk"), dict) else {}
+    budget_pct = risk_cfg.get("portfolio_heat_budget_pct_of_equity", 6.0)
+    budget_basis = "고정"
+    by_tier = risk_cfg.get("portfolio_heat_budget_by_tier")
+    tier = None
+    try:
+        allocation = read_json(ROOT / "state" / "allocation.json")
+        tier = allocation.get("effective_tier") or allocation.get("tier")
+    except (OSError, json.JSONDecodeError):
+        pass
+    if isinstance(by_tier, dict) and isinstance(by_tier.get(tier), (int, float)):
+        budget_pct = by_tier[tier]
+        budget_basis = f"tier={tier}"
+
+    snapshot_tickers: dict = {}
+    try:
+        snapshot = read_json(ROOT / "state" / "market_snapshot.json")
+        if isinstance(snapshot.get("tickers"), dict):
+            snapshot_tickers = snapshot["tickers"]
+    except (OSError, json.JSONDecodeError):
+        pass
+
+    total = 0.0
+    missing: list[str] = []
+    for pos in positions:
+        ticker = str(pos.get("ticker", ""))
+        stop = pos.get("stop_price")
+        snap = snapshot_tickers.get(ticker, {}) if isinstance(snapshot_tickers, dict) else {}
+        price = snap.get("last_close") if isinstance(snap, dict) else None
+        if not isinstance(price, (int, float)):
+            price = pos.get("current_price_approx")
+        shares = pos.get("shares")
+        if not all(isinstance(v, (int, float)) for v in (price, stop, shares)):
+            missing.append(ticker)
+            continue
+        total += shares * max(0.0, float(price) - float(stop))
+
+    heat_pct = total / float(equity) * 100
+    budget_krw = float(equity) * float(budget_pct) / 100
+    detail = f"heat {total:,.0f}원={heat_pct:.2f}% vs 예산 {budget_pct}%({budget_krw:,.0f}원, {budget_basis})"
+    if missing:
+        detail += " ※가격/손절 결측 제외: " + ", ".join(missing)
+    if heat_pct > float(budget_pct):
+        messages.append(result(
+            "WARN",
+            f"portfolio heat 예산 초과 — {detail}. 신규 진입 보류 + 손절 상향(래칫)·부분익절로 open_risk 축소 필요"
+            " (policy.risk.portfolio_heat.budget_rule)",
+        ))
+    else:
+        messages.append(result("OK", f"portfolio heat 예산 내 — {detail}"))
 
 
 def audit_thesis(data: dict[str, object], messages: list[str]) -> None:
@@ -617,6 +691,53 @@ def is_business_day(target) -> bool:
 
 def is_business_day_today() -> bool:
     return is_business_day(datetime.now(KST).date())
+
+
+# 무체결 날에도 EOD_MARK 1줄 의무(2026-07-06 발효) — '체결 없음'과 '기록 없음' 구분.
+# 근거: reports/2026-07-05-pipeline-counterfactual-research.md 안건⑨ — 6/26·6/29·7/1·7/3 에
+# OPEN_CHECK/EOD_MARK 부재로 반사실 검증·reconcile 이 '기록 없음'을 해석해야 했다.
+TRADE_LOG_DAILY_MARK_SINCE = "2026-07-06"
+
+
+def audit_trade_log_daily_mark(messages: list[str]) -> None:
+    """영업일별 trade_log 엔트리 존재 점검 — 발효일 이후 영업일에 ts 일자 엔트리가 0건이면 WARN."""
+    path = ROOT / "state" / "trade_log.jsonl"
+    if not path.exists():
+        return  # 부재 자체는 audit_trade_log 가 이미 WARN
+    logged_dates: set[str] = set()
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                ts = str(json.loads(line).get("ts", ""))
+            except json.JSONDecodeError:
+                continue
+            if len(ts) >= 10:
+                logged_dates.add(ts[:10])
+    except OSError:
+        return
+    now = datetime.now(KST)
+    since = max(
+        datetime.fromisoformat(TRADE_LOG_DAILY_MARK_SINCE).date(),
+        (now - timedelta(days=7)).date(),  # 검사창 상한 7일 — 과거 소급 경보 방지
+    )
+    missing: list[str] = []
+    day = since
+    while day <= now.date():
+        # 당일은 18:30(EOD_MARK 기록 시한) 이후에만 검사 — 장중 audit 오탐 방지
+        if day == now.date() and now.time() < dt_time(18, 30):
+            break
+        if is_business_day(day) and day.isoformat() not in logged_dates:
+            missing.append(day.isoformat())
+        day += timedelta(days=1)
+    if missing:
+        messages.append(result(
+            "WARN",
+            "trade_log 영업일 기록 공백(무체결 날도 EOD_MARK 1줄 의무 — 2026-07-06 발효): " + ", ".join(missing),
+        ))
+    else:
+        messages.append(result("OK", "trade_log 영업일 기록 계약 충족(발효일 이후 공백 없음)"))
 
 
 def extract_glance_block(text: str) -> str:
@@ -1075,6 +1196,8 @@ def main() -> int:
     audit_reconciliation(messages)
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)
+    audit_portfolio_heat(data, messages)
+    audit_trade_log_daily_mark(messages)
     audit_thesis(data, messages)
     audit_target_consensus(data, messages)
     audit_recovery_stage(data, messages)

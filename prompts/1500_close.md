@@ -16,6 +16,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 - `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 갱신한다 (뉴스·촉매 반영 **목표 매도가 + 신규진입 상한가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 리포트 §3 에 사용).
 - `python scripts/compute_allocation.py` 를 실행해 `state/allocation.json` 을 갱신한다. 마감 전 비중 조정(축소/유지)·익절 우선순위 판단에 목표 주식 비중 밴드와 `recommendation` 을 반영한다(tier=unknown 이면 정책 default).
 - `python scripts/compute_exit_levels.py` 를 실행해 `state/exit_levels.json` 을 갱신한다 — **트레일링 1차선·샹들리에·손절·목표 수치는 이 파일 값만 인용. 손계산·직전 리포트 이월 금지** (7/2 15시가 7/1 오기입값 239,495원을 이월해 "이탈 시 50% 부분익절"까지 안내한 사고 재발 방지 — 진단 I8).
+- 직후 `python scripts/sync_pending_orders.py` 를 실행해 트레일링 계열 SELL 사전주문 트리거값을 동기화하고(09/18시와 동일 — 안건②), `python scripts/check_intraday_alerts.py` 를 직접 실행해 트리거 신호를 재산출한다. **당일 저가/고가가 트리거·트레일선을 관통한 종목은 "장중 터치 — 마감 동시호가(종가) 확인 대기"를 한눈에 보기에 1줄 명기**한다(체결은 여전히 종가 판정 — `policy.risk.exit_execution.no_intraday_fill`. 7/3 15시가 저가 218,000<1차선 222,117 을 §종목별 표에 기록하고도 무판정 통과한 재발 방지).
 - **평가금액(equity)은 이번 스냅샷 현재가 × 보유 수량 + 현금으로 재계산한다 — 직전 슬롯 값 이월 금지** (7/2 15시가 09시 값을 원단위까지 재사용한 사고 — 진단 I10). 스냅샷이 stale 이라 재계산 불가면 "재계산 불가 — 12시 값 유지" 를 명기한다.
 - **(v2.2) 마감 직전이라도 `deploy`·`vacant_slots≥1` 이고 tradable 후보가 있으면 신규 진입은 `prompts/0900_pre_market.md` §2 공통 규칙·C경로를 동일 적용**한다(medium 허용·**min(리스크상한,목표비중,히트잔여) 사이징·단일거래 상한 2.0%+포트폴리오 히트 예산 6.0% 하드 천장**·레짐 적응 R/R). 신규/추가 매수는 아래 0-C 게이트 통과 후 fresh/웹확인 가격으로만 체결한다. 단 15:20~15:30 동시호가 변동성·주말 보유 리스크를 감안해 금요일 마감 임박 신규 진입은 신중히 판단한다.
 - **마감 임박치·변동률·신뢰도 판단은 이 스냅샷을 1순위 출처로 사용한다. 웹검색 시황은 보조이며, 신뢰도(confidence)를 사람이 임의로 재판정하지 않는다.**

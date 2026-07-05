@@ -31,6 +31,7 @@
 - `python scripts/estimate_target_price.py` 를 실행하여 `state/target_estimate.json` 을 만든다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가**(목표가/(1+레짐 R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한) 추정 + 직전 리포트 대비 변동·원인 뉴스 — `report_section_md` 와 종목별 `news_target_line`·`entry_cap_line` 생성). 매 routine 실행이 `target_estimate_log.jsonl` 에 1행을 쌓아 '리포트마다 변경값' 델타가 산출된다.
 - `python scripts/compute_allocation.py` 를 실행하여 `state/allocation.json` 을 만든다 (시장 레짐 tier 기반 동적 비중 — 0-5 단계에서 사용).
 - `python scripts/compute_exit_levels.py` 를 실행하여 `state/exit_levels.json` 을 만든다 — **보유 종목의 트레일링 1차선·샹들리에·손절·목표 수치는 리포트·판단에서 이 파일 값만 인용한다. 손계산·직전 리포트 이월 금지** (7/1 ATR 배수 오기입 239,495원이 세 리포트에 유통된 사고의 재발 방지 — 진단 I8).
+- 직후 `python scripts/sync_pending_orders.py` 를 실행하여 `state/pending_orders.json` 의 **트레일링 계열 SELL 트리거값을 exit_levels 산출값과 동기화**한다 — po 고정값과 단일 소스 재산출값의 괴리가 체결 여부를 가르는 것 방지(7/3 실측: 고정 222,117 vs 재산출 224,647, 종가 여유 +0.16% 박빙 — reports/2026-07-05-pipeline-counterfactual-research.md 안건②). 트리거 판정·체결 규약은 `policy.risk.exit_execution`(v2.21 — 종가 판정·당일 closing_auction 체결, 장중 터치는 신호일 뿐).
 - `python scripts/momentum_signal.py` 를 실행하여 `state/momentum_signal.json` 을 갱신한다 (**수익형 전략 1순위 진입 엔진** — `policy.momentum_strategy`). `executable_allocation.orders` 가 오늘 목표 정수주 바스켓이고, `rebalance_changes.enter/exit` 가 변경분이다. 백테스트 근거: `docs/strategy_momentum.md`.
 
 > **스냅샷 출처 주의**: 세션 네트워크 차단 시 스크립트는 Actions(`fetch_prices.yml`) 정기 수집본을 보존하고 `stale` 표시만 남긴다 — 리포트 머리말 각주에 명시. **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결** — 묵은 가격 선체결 후 재확인(booking-then-verify) 금지.
@@ -66,7 +67,7 @@
 - **원칙**: 강세장에서 현금 보유가 최대 적이다(진단: 직전 +198% 강세장에 계좌 -1.3%). `policy.momentum_strategy` 의 검증 바스켓을 1순위 진입 후보로 삼는다.
 - `pending_orders.json` 의 `strategy:"dual_momentum_w27"` 주문을 §2-PRE 게이트(가격신뢰도·heat·R/R) 통과 후 체결한다 — 현재가 ≤ `trigger.value`(진입상한 +5%) 면 `size_shares` 매수, 개장 fresh 가격으로 **종목당 30% 상한 내 수량 재산정**.
 - **cash_trap_fix**(`policy.momentum_strategy.cash_trap_fix`): web_verify(403) 차단 시에도 사전 계산 바스켓 체결은 '묵은 가격 추격'이 아니므로, 커밋된 `momentum_signal.json`+최신 committed snapshot 을 **medium 신뢰 출처로 인정**해 배치를 진행한다. **`low`(전 출처 결측)만 매매 차단.**
-- 체결분은 `portfolio.json`·`trade_log.jsonl`(`BUY_MOMENTUM_BASKET_*`)에 반영하고 watchlist `status`를 `held`로 전환, 해당 `pending_orders` 항목 `status:"triggered"`로 갱신한다.
+- 체결분은 `portfolio.json`·`trade_log.jsonl`(`BUY_MOMENTUM_BASKET_*`)에 반영하고 watchlist `status`를 `held`로 전환, 해당 `pending_orders` 항목 `status:"triggered"`로 갱신한다. **주문에 `inference_id` 가 있으면 trade_log 라인에 그대로 복사한다**(v2.21 — score_inferences 결합손익(PF) 집계 연결고리, 발명 금지).
 - 보유 종목이 추세필터(가격>MA200) 이탈하거나 -2×ATR 손절 도달 시 청산. 월간 리밸런스(약 21거래일) 도래 시 `rebalance_changes` 의 enter/exit 만 회전.
 
 > **파이프라인 연결 규칙** (핵심):

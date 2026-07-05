@@ -197,6 +197,10 @@ def build_round_trips(entries: list[dict]) -> tuple[list[dict], list[dict]]:
                 "shares": sh, "hold_days": hold_days,
                 "realized_pnl": _num(e.get("realized_pnl")),
                 "exit_rule": action,
+                # 선제추론 P&L 결합(v2.21 안건⑥→구현): trade_log SELL 항목의 inference_id 를
+                # 라운드트립에 전파 — score_inferences 가 rt.inference_id 로 결합 손익·PF 를 집계한다
+                # (기존엔 score 쪽만 읽고 쓰는 쪽이 없어 pnl_linked_n=0 영구 고착).
+                "inference_id": e.get("inference_id"),
             })
     open_lots = [
         {"ticker": t, "date": lot["date"], "price": lot["price"], "shares": lot["shares"]}

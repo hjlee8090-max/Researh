@@ -67,7 +67,7 @@
 - **원칙**: 강세장에서 현금 보유가 최대 적이다(진단: 직전 +198% 강세장에 계좌 -1.3%). `policy.momentum_strategy` 의 검증 바스켓을 1순위 진입 후보로 삼는다.
 - `pending_orders.json` 의 `strategy:"dual_momentum_w27"` 주문을 §2-PRE 게이트(가격신뢰도·heat·R/R) 통과 후 체결한다 — 현재가 ≤ `trigger.value`(진입상한 +5%) 면 `size_shares` 매수, 개장 fresh 가격으로 **종목당 30% 상한 내 수량 재산정**.
 - **cash_trap_fix**(`policy.momentum_strategy.cash_trap_fix`): web_verify(403) 차단 시에도 사전 계산 바스켓 체결은 '묵은 가격 추격'이 아니므로, 커밋된 `momentum_signal.json`+최신 committed snapshot 을 **medium 신뢰 출처로 인정**해 배치를 진행한다. **`low`(전 출처 결측)만 매매 차단.**
-- 체결분은 `portfolio.json`·`trade_log.jsonl`(`BUY_MOMENTUM_BASKET_*`)에 반영하고 watchlist `status`를 `held`로 전환, 해당 `pending_orders` 항목 `status:"triggered"`로 갱신한다.
+- 체결분은 `portfolio.json`·`trade_log.jsonl`(`BUY_MOMENTUM_BASKET_*`)에 반영하고 watchlist `status`를 `held`로 전환, 해당 `pending_orders` 항목 `status:"triggered"`로 갱신한다. **주문에 `inference_id` 가 있으면 trade_log 라인에 그대로 복사한다**(v2.21 — score_inferences 결합손익(PF) 집계 연결고리, 발명 금지).
 - 보유 종목이 추세필터(가격>MA200) 이탈하거나 -2×ATR 손절 도달 시 청산. 월간 리밸런스(약 21거래일) 도래 시 `rebalance_changes` 의 enter/exit 만 회전.
 
 > **파이프라인 연결 규칙** (핵심):

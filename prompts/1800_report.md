@@ -62,6 +62,7 @@
     - `ts` 는 routine 실행 시각(18:00)이 아니라 **정규장 마감 시각 `YYYY-MM-DDT15:30:00+09:00`** 로 기록한다 (반장이면 그 close).
     - `execution_venue":"closing_auction"` 을 **반드시** 포함한다. 이것이 없으면 `scripts/check_trade_log_gate.py` 가 "정규장 밖 체결"로 CI FAIL 시킨다 (`policy.market_hours.trade_timing_gate`).
     - 예: `{"ts":"2026-06-01T15:30:00+09:00","action":"SELL_ORANGE_STOP","ticker":"...","execution_venue":"closing_auction","price_source":"snapshot_fresh|web_verified","close_price":...,"execution_price":...,"reason":"orange 단계 종가 확정 — ..."}`
+    - **(v2.21 P&L 결합)** 이 청산이 `pending_orders` 주문에서 비롯됐으면 주문의 `inference_id` 를 trade_log 라인에 **그대로 복사**한다 — rule_attribution 라운드트립 → score_inferences 결합손익(PF) 집계의 유일한 연결고리(pnl_linked_n=0 고착의 원인이 이 복사 부재였다). 주문에 없으면 생략(발명 금지).
   - **장중에 손절선을 이미 통과한 종목**은 09/12/15 routine 에서 실시간 체결됐어야 한다 — 18시는 그날 종가로 비로소 손절/목표에 도달한 분만 종가 청산한다.
 - 종가 확정 후 `python scripts/estimate_target_price.py` 를 실행해 `state/target_estimate.json` 을 종가 기준으로 갱신한다 (뉴스·촉매·테마·섹터 반영 **목표 매도가 + 신규진입 상한가** 추정 + 직전 리포트 대비 변동·원인 뉴스 — 아래 §종목별 종가 점검의 `news_target_line` 과 §뉴스 반영 매매가 섹션에 사용). 매 routine 1행이 `target_estimate_log.jsonl` 에 쌓여 '리포트마다 변경값' 델타가 산출된다.
 - **(v2.20 그림자)** `python scripts/track_ratchet_shadow.py` 실행 — 본전 래칫 스톱(`policy.risk.breakeven_ratchet`, mode=shadow) 종가 기록 → `state/ratchet_shadow.json`. **관측 전용: 실제 손절가·체결·리포트 판단을 바꾸지 않고 본문에도 싣지 않는다** (승격 심사는 일요일 policy_review §1-8).

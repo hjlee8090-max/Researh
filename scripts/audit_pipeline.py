@@ -10,7 +10,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, time as dt_time, timedelta, timezone
 from pathlib import Path
 
 KST = timezone(timedelta(hours=9))
@@ -693,6 +693,53 @@ def is_business_day_today() -> bool:
     return is_business_day(datetime.now(KST).date())
 
 
+# 무체결 날에도 EOD_MARK 1줄 의무(2026-07-06 발효) — '체결 없음'과 '기록 없음' 구분.
+# 근거: reports/2026-07-05-pipeline-counterfactual-research.md 안건⑨ — 6/26·6/29·7/1·7/3 에
+# OPEN_CHECK/EOD_MARK 부재로 반사실 검증·reconcile 이 '기록 없음'을 해석해야 했다.
+TRADE_LOG_DAILY_MARK_SINCE = "2026-07-06"
+
+
+def audit_trade_log_daily_mark(messages: list[str]) -> None:
+    """영업일별 trade_log 엔트리 존재 점검 — 발효일 이후 영업일에 ts 일자 엔트리가 0건이면 WARN."""
+    path = ROOT / "state" / "trade_log.jsonl"
+    if not path.exists():
+        return  # 부재 자체는 audit_trade_log 가 이미 WARN
+    logged_dates: set[str] = set()
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                ts = str(json.loads(line).get("ts", ""))
+            except json.JSONDecodeError:
+                continue
+            if len(ts) >= 10:
+                logged_dates.add(ts[:10])
+    except OSError:
+        return
+    now = datetime.now(KST)
+    since = max(
+        datetime.fromisoformat(TRADE_LOG_DAILY_MARK_SINCE).date(),
+        (now - timedelta(days=7)).date(),  # 검사창 상한 7일 — 과거 소급 경보 방지
+    )
+    missing: list[str] = []
+    day = since
+    while day <= now.date():
+        # 당일은 18:30(EOD_MARK 기록 시한) 이후에만 검사 — 장중 audit 오탐 방지
+        if day == now.date() and now.time() < dt_time(18, 30):
+            break
+        if is_business_day(day) and day.isoformat() not in logged_dates:
+            missing.append(day.isoformat())
+        day += timedelta(days=1)
+    if missing:
+        messages.append(result(
+            "WARN",
+            "trade_log 영업일 기록 공백(무체결 날도 EOD_MARK 1줄 의무 — 2026-07-06 발효): " + ", ".join(missing),
+        ))
+    else:
+        messages.append(result("OK", "trade_log 영업일 기록 계약 충족(발효일 이후 공백 없음)"))
+
+
 def extract_glance_block(text: str) -> str:
     """'### 한눈에 보기' 섹션 본문만 추출 (다음 ###/## 헤더 전까지)."""
     m = re.search(r"^###\s*한눈에 보기.*?$", text, re.MULTILINE)
@@ -1150,6 +1197,7 @@ def main() -> int:
     audit_weekly_alignment(data, messages)
     audit_reward_risk(data, messages)
     audit_portfolio_heat(data, messages)
+    audit_trade_log_daily_mark(messages)
     audit_thesis(data, messages)
     audit_target_consensus(data, messages)
     audit_recovery_stage(data, messages)

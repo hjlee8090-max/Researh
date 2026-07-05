@@ -217,6 +217,7 @@
 
 **후속 조치(2026-07-05)**: 안건 ①~③은 본 리포트 확정 직후 구현 착수 — risk.exit_execution 규약 신설(policy v2.21, 안건③=위 3번), scripts/sync_pending_orders.py + 09/18시 프롬프트 연결(안건②=위 2번), audit_portfolio_heat 게이지(안건①=위 1번).
 **후속 조치 2차분(2026-07-05)**: 안건 4~6도 구현 완료 — 안건 4: 09시 예측 3건 ts/slot/subject 소급 보정(confidence 는 사후 부여 금지·null 격리) → check_state_schema 위반 0건, **09:00 슬롯 채점보류 해제(n=6·적중률 66.7% 최초 공표 — 본 리포트 §2 반사실 그대로 실현)** + proactive_inference.schema_gate 신설(10영업일 무위반 시 --strict 승격 심사·backfill_discipline). 안건 5: 12/15시 프롬프트에 check_intraday_alerts 재산출 + "장중 터치 — 종가 확인 대기" 명기 의무 + 15시 sync_pending_orders 동기화. 안건 6: rule_attribution 라운드트립에 trade_log SELL 의 inference_id 전파 + 0900/1800 booking 계약에 '주문 inference_id 를 trade_log 라인에 복사' 명문화(pnl_linked_n=0 고착 해소 배선). 잔여 상정 안건 7~10(12시 exit 인용 명문화·확정 종가 단일 출처·무체결일 trade_log 계약·exit_tracking 적재)은 일 20시 policy_review.
+**후속 조치 3차분(2026-07-05)**: 안건 7~10도 구현 완료 — 안건 7: 1200 프롬프트에 "09시 exit_levels 인용 슬롯, 손계산·재산정 금지" 명문화. 안건 8: `policy.price_data_quality.settlement_close_source` 신설(판정용 확정 종가 = 스냅샷 당일자 교차확인 종가 단일 출처, 사후 price_history ±0.5% 초과 괴리는 소급 기록만·판정 번복 금지). 안건 9: 무체결 영업일 EOD_MARK 1줄 의무(2026-07-06 발효) + `audit_trade_log_daily_mark` WARN 신설. 안건 10: `scripts/update_exit_tracking.py` 신설 — 보유 종목 일별 종가 영속 적재(기존 값 불변·low 보류), 보유 6종목 6/26~7/3 즉시 백필·compute_exit_levels 회귀 검증(LS 최고 종가 263,500 유지). **이로써 본 리포트 안건 10건 전부 구현 완료 — 일 20시 policy_review 는 사후 추인(v2.21 1~3차분) + heat 초과 해소 방안(breakeven_ratchet 승격 심사 등) 심의로 전환.**
 
 ---
 

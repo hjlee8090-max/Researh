@@ -182,6 +182,25 @@ def fetch_one(ticker: str, name: str, now: datetime) -> tuple[dict[str, Any], bo
     return entry, has_any
 
 
+def detect_duplicated_consensus(fresh: dict[str, dict[str, Any]], min_group: int = 3) -> set[str]:
+    """서로 다른 종목이 '동일 target_price' 를 공유하면, 파서가 종목별 실데이터가 아니라
+    고정 템플릿/오류 페이지를 긁은 것이다 (2026-07-06 사고: 17종목 전부 target 505,625 →
+    카카오 목표가 +684% 폭발). 다수(과반 또는 min_group 이상)가 공유하는 target 값의
+    종목군을 '오염'으로 반환한다. 정상 수집이면 종목마다 target 이 달라 빈 집합.
+    """
+    from collections import Counter
+
+    counts = Counter(
+        e.get("target_price") for e in fresh.values() if e.get("target_price") is not None
+    )
+    if not counts:
+        return set()
+    n_valued = sum(counts.values())
+    threshold = max(min_group, n_valued // 2 + 1)
+    bad_values = {tp for tp, c in counts.items() if c >= threshold}
+    return {t for t, e in fresh.items() if e.get("target_price") in bad_values}
+
+
 def probe(tickers: dict[str, str]) -> int:
     """실제 접근성·구조 진단 — 첫 GH Actions 실행에서 파서 확정용."""
     tk = next(iter(tickers)) if tickers else "005930"
@@ -231,23 +250,41 @@ def main(argv: list[str] | None = None) -> int:
         return probe(tickers)
 
     prior = load_json("state/consensus.json", {})
+    _CONSENSUS_FIELDS = ("target_price", "eps_consensus", "per_consensus",
+                         "opinion_score", "n_estimates", "opinion_text", "consensus_date")
+
+    def keep_prior_or_strip(ticker: str, entry: dict[str, Any], reason: str) -> dict[str, Any]:
+        """오염·실패 종목 — 직전 정상값이 있으면 stale 로 보존, 없으면 컨센 값만 제거(결측 처리)."""
+        if ticker in prior.get("tickers", {}):
+            kept = dict(prior["tickers"][ticker])
+            kept["stale"] = True
+            kept["parse_warning"] = reason
+            return kept
+        stripped = {k: v for k, v in entry.items() if k not in _CONSENSUS_FIELDS}
+        stripped["parse_warning"] = reason
+        return stripped
+
+    fresh: dict[str, Any] = {}  # 이번에 실제로 파싱 성공한 항목(오염 감지 후 확정)
     data: dict[str, Any] = {}
-    ok = 0
     for idx, (ticker, name) in enumerate(tickers.items()):
         if idx:
             time.sleep(0.8)  # FnGuide 순차요청 SSL EOF 완화
         entry, is_ok = fetch_one(ticker, name, now)
         if is_ok:
-            data[ticker] = entry
-            ok += 1
+            fresh[ticker] = entry
         else:
-            # 실패 종목은 직전 값 보존(stale)
-            if ticker in prior.get("tickers", {}):
-                kept = dict(prior["tickers"][ticker])
-                kept["stale"] = True
-                data[ticker] = kept
-            else:
-                data[ticker] = entry
+            data[ticker] = keep_prior_or_strip(ticker, entry, "fetch 실패 — 직전값 보존")
+
+    # 오염 감지 — 동일 target 이 다수 종목에 복제됐으면 파싱 실패로 간주해 이번 fetch 를 폐기한다
+    # (fetched_ok 오집계 → estimate_target_price 앵커 폭발을 원천 차단, 2026-07-06 사고).
+    dup = detect_duplicated_consensus(fresh)
+    for ticker, entry in fresh.items():
+        if ticker in dup:
+            data[ticker] = keep_prior_or_strip(
+                ticker, entry, "동일 target 다수 복제 — 파싱 오류로 이번 fetch 폐기")
+        else:
+            data[ticker] = entry
+    ok = len(fresh) - len(dup)
 
     result = {
         "as_of": now.isoformat(timespec="seconds"),
@@ -257,6 +294,13 @@ def main(argv: list[str] | None = None) -> int:
         "fetched_ok": ok,
         "tickers": data,
     }
+    if dup:
+        result["corruption_detected"] = {
+            "kind": "duplicated_target_price",
+            "n_tickers": len(dup),
+            "note": "동일 target 이 다수 종목에 복제됨 — FnGuide 파싱 실패. 해당 종목은 직전값 보존/결측 처리.",
+        }
+        print(f"::warning::consensus corruption detected — {len(dup)} tickers shared identical target, discarded")
     out_path.parent.mkdir(exist_ok=True)
     out_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"consensus: wrote {out_path.relative_to(ROOT)} tickers={len(tickers)} ok={ok}")

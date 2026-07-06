@@ -17,14 +17,26 @@
   G. 배치 — 주식비중 vs 레짐 목표 밴드, heat 잔여
   H. 청산 오버레이 백테스트 판정 — backtest_exit_overlay verdict 인용
 
-출력: state/self_audit.json(히스토리 누적) + reports/YYYY-MM-DD-self-audit.md + stdout 요약.
-종료코드: 항상 0(어드바이저리 — 하드 차단은 check_trade_log_gate/lessons-gate 몫).
+검사 후 '보완'까지 닫는 findings 수명 관리 (2026-07-07 사용자 요청):
+  경고를 보고만 하면 처분이 조용히 이월된다(감사 발견: '금요일 ORANGE 룰' 4주 방치).
+  그래서 ⚠️ 항목마다 안정 ID 를 부여해 state/self_audit_findings.json 에 수명을 기록한다 —
+  · 신규(open) → sunday_policy_review 가 disposition{action: patch|defer|observe, note}을 기입
+  · 다음 감사가 자동 검증: 지표가 해소되면 status=resolved(보완 확인),
+    'patch' 처분인데 다음 주에도 재발하면 처분을 무효화하고 재상정(효과 없는 패치 감지)
+  · 처분 없이 2주(기본) 경과한 open finding = overdue — `--followup-only` 모드(AUDIT_ENFORCE=1)가
+    exit 1 로 주간 워크플로를 FAIL 시킨다(방치 불가능).
+
+출력: state/self_audit.json(히스토리) + state/self_audit_findings.json(수명·처분)
+      + reports/YYYY-MM-DD-self-audit.md + stdout 요약.
+종료코드: 기본 0(어드바이저리). `--followup-only` + AUDIT_ENFORCE=1 이고 overdue 존재 시 1.
 표준 라이브러리만 사용. weekly_self_audit.yml(일요일 17:00 KST)이 실행하며,
-sunday_policy_review 프롬프트가 이 산출을 의무 인용한다.
+sunday_policy_review 프롬프트가 이 산출을 의무 인용·처분한다.
 """
 from __future__ import annotations
 
+import argparse
 import json
+import os
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -34,7 +46,10 @@ import check_trade_log_gate as tlg  # 게이트 위반 집계 재사용
 ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 STATE_PATH = ROOT / "state" / "self_audit.json"
+FINDINGS_PATH = ROOT / "state" / "self_audit_findings.json"
 INCEPTION = "2026-05-20"  # 계좌 가동일 — vs KOSPI 기준점
+OVERDUE_WEEKS = 2          # open + 무처분 이 주수 이상이면 overdue(강제 모드 FAIL)
+DISPOSITION_STALE_DAYS = 14  # 처분 후에도 finding 이 이 일수 넘게 살아 있으면 재처분 요구
 
 
 def load_json(path: Path, default):
@@ -205,6 +220,158 @@ def audit_deployment(portfolio: dict, alloc: dict, policy: dict) -> dict:
     return out
 
 
+# ── findings 수명 관리 (검사 → 처분 → 보완 검증 닫힌 루프) ─────────────────────
+def extract_findings(m: dict, prev_metrics: dict | None) -> list[dict]:
+    """이번 감사에서 트리거된 finding 목록 — 안정 ID + 사람이 읽는 title + 지표 스냅샷."""
+    a, c, d, e, f, g = (m[k] for k in ("ledger", "benchmark", "whipsaw", "gates",
+                                       "patch_vs_validation", "deployment"))
+    out: list[dict] = []
+    if not a["ok"]:
+        out.append({
+            "id": "ledger-mismatch",
+            "title": "원장 불일치 — 다른 모든 지표가 오염되므로 최우선 수정",
+            "detail": "; ".join(a["reconcile_issues"] + a["pnl_mismatch_trips"]),
+            "severity": "hard",
+        })
+    if (d.get("whipsaw_rate_pct") or 0) >= 50:
+        out.append({
+            "id": "whipsaw-high",
+            "title": f"스톱 휩쏘율 {d.get('whipsaw_rate_pct')}% — 노이즈 저점 매도 반복",
+            "detail": f"손실 스톱 t+5 일실 합계 {d.get('t5_forgone_sum_krw')}원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
+            "severity": "warn",
+        })
+    if (e.get("total") or 0) > 0:
+        out.append({
+            "id": "gate-violations",
+            "title": f"하드 게이트 위반 {e.get('total')}건",
+            "detail": f"provenance {e.get('provenance')} · timing {e.get('timing')} · chase {e.get('chase')} · shock {e.get('index_shock')} · card {e.get('decision_card')}",
+            "severity": "hard",
+        })
+    if f.get("warning"):
+        out.append({
+            "id": "patch-without-validation",
+            "title": "검증 표본 없는 정책 패치 — 패치 동결 규칙 발동",
+            "detail": f.get("warning"),
+            "severity": "warn",
+        })
+    if g.get("warning"):
+        out.append({
+            "id": "deployment-below-band",
+            "title": f"주식비중 {g.get('stock_pct')}% < 목표 하한 {(g.get('target_band') or ['?'])[0]}% — 만성 미배치",
+            "detail": g.get("warning"),
+            "severity": "warn",
+        })
+    # 벤치마크 격차가 직전 감사 대비 2%p 이상 추가 악화
+    prev_gap = ((prev_metrics or {}).get("benchmark") or {}).get("gap_pp")
+    cur_gap = c.get("gap_pp")
+    if isinstance(prev_gap, (int, float)) and isinstance(cur_gap, (int, float)) and cur_gap < prev_gap - 2:
+        out.append({
+            "id": "benchmark-gap-widening",
+            "title": f"vs KOSPI 격차 악화 {prev_gap}%p → {cur_gap}%p",
+            "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
+            "severity": "warn",
+        })
+    return out
+
+
+def merge_findings(triggered: list[dict], today: str) -> dict:
+    """이번 트리거를 기존 findings 원장과 병합 — 수명 갱신·자동 해소·무효 패치 재상정.
+
+    규칙:
+    · 같은 id 가 다시 트리거 → last_seen/weeks_seen 갱신. 이때 기존 disposition 이
+      action=patch 였다면 '패치했는데 재발'이므로 disposition 을 disposition_history 로
+      밀고 재처분 요구(효과 없는 보완 감지 — 이것이 '보완 검증'의 핵심).
+      defer/observe 처분도 DISPOSITION_STALE_DAYS 를 넘기면 동일하게 만료.
+    · 트리거되지 않은 open finding → status=resolved (지표가 실제로 나아짐 = 보완 확인).
+    """
+    ledger = load_json(FINDINGS_PATH, {})
+    findings: list[dict] = ledger.get("findings") or []
+    by_id = {f.get("id"): f for f in findings if isinstance(f, dict)}
+    triggered_ids = set()
+
+    for t in triggered:
+        triggered_ids.add(t["id"])
+        cur = by_id.get(t["id"])
+        if cur is None or cur.get("status") == "resolved":
+            entry = {
+                "id": t["id"], "title": t["title"], "detail": t.get("detail"),
+                "severity": t.get("severity", "warn"),
+                "first_seen": today, "last_seen": today, "weeks_seen": 1,
+                "status": "open", "disposition": None, "disposition_history": (cur or {}).get("disposition_history", []),
+            }
+            if cur is None:
+                findings.append(entry)
+                by_id[t["id"]] = entry
+            else:  # 해소됐다가 재발 — 새 수명으로 재오픈하되 이력 보존
+                entry["disposition_history"] = cur.get("disposition_history", [])
+                if cur.get("disposition"):
+                    entry["disposition_history"] = entry["disposition_history"] + [cur["disposition"]]
+                cur.clear()
+                cur.update(entry)
+            continue
+        # 계속 open 인 기존 finding
+        cur["title"], cur["detail"] = t["title"], t.get("detail")
+        cur["last_seen"] = today
+        cur["weeks_seen"] = int(cur.get("weeks_seen", 1)) + 1
+        disp = cur.get("disposition")
+        if isinstance(disp, dict):
+            expire = False
+            reason = None
+            if disp.get("action") == "patch":
+                expire, reason = True, "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+            else:
+                d0 = str(disp.get("date") or "")[:10]
+                try:
+                    age = (datetime.fromisoformat(today) - datetime.fromisoformat(d0)).days
+                except ValueError:
+                    age = None
+                if age is not None and age > DISPOSITION_STALE_DAYS:
+                    expire, reason = True, f"처분 {age}일 경과에도 지속 — 재처분 요구"
+            if expire:
+                disp["expired"] = reason
+                cur.setdefault("disposition_history", []).append(disp)
+                cur["disposition"] = None
+
+    for f in findings:
+        if f.get("status") == "open" and f.get("id") not in triggered_ids:
+            f["status"] = "resolved"
+            f["resolved_date"] = today
+
+    overdue = [
+        f for f in findings
+        if f.get("status") == "open" and not f.get("disposition")
+        and int(f.get("weeks_seen", 1)) >= OVERDUE_WEEKS
+    ]
+    return {
+        "as_of": today,
+        "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. "
+                "patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. "
+                f"무처분 {OVERDUE_WEEKS}주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
+        "findings": findings,
+        "open": [f["id"] for f in findings if f.get("status") == "open"],
+        "overdue": [f["id"] for f in overdue],
+    }
+
+
+def check_followup_only() -> int:
+    """--followup-only — findings 원장만 읽어 overdue 존재 시 exit 1 (AUDIT_ENFORCE=1 일 때).
+
+    lessons-gate 와 같은 패턴: 산출은 본 실행이 하고, 강제는 별도 게이트 스텝이 한다."""
+    ledger = load_json(FINDINGS_PATH, {})
+    overdue_ids = ledger.get("overdue") or []
+    enforce = os.environ.get("AUDIT_ENFORCE", "").strip().lower() in ("1", "true", "yes", "on")
+    findings = {f.get("id"): f for f in ledger.get("findings") or []}
+    for fid in overdue_ids:
+        f = findings.get(fid, {})
+        print(f"[OVERDUE 무처분] {fid} ({f.get('weeks_seen')}주째): {f.get('title')}")
+    print(f"self_audit followup: open={len(ledger.get('open') or [])} overdue={len(overdue_ids)} enforce={enforce}")
+    if enforce and overdue_ids:
+        print(f"AUDIT_ENFORCE — 무처분 {OVERDUE_WEEKS}주 이상 finding {len(overdue_ids)}건으로 FAIL "
+              "(sunday_policy_review 가 state/self_audit_findings.json 의 disposition 을 기입해야 한다)")
+        return 1
+    return 0
+
+
 # ── H. 청산 오버레이 백테스트 판정 ─────────────────────────────────────────────
 def audit_overlay() -> dict:
     bt = load_json(ROOT / "state" / "backtest_exit_overlay.json", {})
@@ -237,16 +404,34 @@ def render_markdown(m: dict) -> str:
         f"| H. 오버레이 백테스트 | {'판정 있음(아래)' if h.get('available') else '미실행'} |",
         "",
     ]
-    warnings = [w for w in (
-        f.get("warning"), g.get("warning"),
-        None if a["ok"] else "⚠️ 원장 불일치 — 다른 모든 지표가 오염되므로 최우선 수정",
-        None if (d.get("whipsaw_rate_pct") or 0) < 50 else
-        f"⚠️ 휩쏘율 {d.get('whipsaw_rate_pct')}% — 스톱이 노이즈 저점에서 팔고 있다(오버레이 백테스트 H 판정과 대조할 것)",
-        None if (e.get("total") or 0) == 0 else "⚠️ 하드 게이트 위반 존재 — check_trade_log_gate 출력 확인",
-    ) if w]
-    if warnings:
-        lines += ["## ⚠️ 이번 주 조치 필요", ""]
-        lines += [f"- {w}" for w in warnings]
+    ledger = m.get("findings_ledger") or {}
+    open_findings = [x for x in ledger.get("findings") or [] if x.get("status") == "open"]
+    resolved_now = [x for x in ledger.get("findings") or [] if x.get("resolved_date") == today]
+    if open_findings:
+        lines += [
+            "## ⚠️ 이번 주 조치 필요 (findings — 처분 의무)",
+            "",
+            "> 각 항목의 처분은 `state/self_audit_findings.json` 의 `disposition` 에 기입한다"
+            " (`{\"action\": \"patch|defer|observe\", \"note\": \"...\", \"date\": \"...\"}`)."
+            f" 무처분 {OVERDUE_WEEKS}주 이상은 주간 워크플로 FAIL. patch 처분 후 재발은 자동 재상정.",
+            "",
+            "| id | 항목 | 경과 | 처분 상태 |",
+            "|---|---|---|---|",
+        ]
+        for x in open_findings:
+            disp = x.get("disposition")
+            if isinstance(disp, dict):
+                disp_str = f"{disp.get('action')} — {str(disp.get('note') or '')[:60]}"
+            else:
+                hist = x.get("disposition_history") or []
+                expired = next((h.get("expired") for h in reversed(hist) if isinstance(h, dict) and h.get("expired")), None)
+                disp_str = f"**무처분**{' (' + expired + ')' if expired and x.get('weeks_seen', 1) > 1 else ''}"
+            overdue_mark = " 🔴overdue" if x.get("id") in (ledger.get("overdue") or []) else ""
+            lines.append(f"| `{x.get('id')}` | {x.get('title')} | {x.get('weeks_seen')}주째{overdue_mark} | {disp_str} |")
+        lines.append("")
+    if resolved_now:
+        lines += ["## ✅ 이번 주 해소 확인 (보완 검증)", ""]
+        lines += [f"- `{x.get('id')}` {x.get('title')} — 지표 정상화로 자동 해소" for x in resolved_now]
         lines.append("")
     if h.get("available") and h.get("verdict"):
         lines += ["## H. 청산 오버레이 백테스트 판정 (요약 인용)", ""]
@@ -267,6 +452,15 @@ def render_markdown(m: dict) -> str:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="주간 자기감사 — 측정 + findings 수명 관리")
+    parser.add_argument(
+        "--followup-only", action="store_true",
+        help="findings 원장만 검사(산출물 미생성) — AUDIT_ENFORCE=1 이고 무처분 overdue 존재 시 exit 1",
+    )
+    args = parser.parse_args()
+    if args.followup_only:
+        return check_followup_only()
+
     policy = load_json(ROOT / "config" / "policy.json", {})
     portfolio = load_json(ROOT / "config" / "portfolio.json", {})
     alloc = load_json(ROOT / "state" / "allocation.json", {})
@@ -288,8 +482,14 @@ def main() -> int:
         "policy_version": str(policy.get("version", "?")),
     }
 
+    # findings 수명 병합 — 검사가 '보완 요구'로, 다음 검사가 '보완 검증'으로 이어진다.
+    today = now.date().isoformat()
+    ledger = merge_findings(extract_findings(metrics, prev), today)
+    FINDINGS_PATH.write_text(json.dumps(ledger, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    metrics["findings_ledger"] = ledger
+
     history = state.get("history") or []
-    history.append(metrics)
+    history.append({k: v for k, v in metrics.items() if k != "findings_ledger"})
     STATE_PATH.write_text(
         json.dumps({"as_of": metrics["as_of"], "history": history[-26:]}, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -298,7 +498,8 @@ def main() -> int:
     report_path = ROOT / "reports" / f"{now.date().isoformat()}-self-audit.md"
     report_path.write_text(md, encoding="utf-8")
     print(md)
-    print(f"\nself_audit → {report_path.relative_to(ROOT)} + {STATE_PATH.relative_to(ROOT)}")
+    print(f"\nself_audit → {report_path.relative_to(ROOT)} + {FINDINGS_PATH.relative_to(ROOT)} "
+          f"(open {len(ledger.get('open') or [])}·overdue {len(ledger.get('overdue') or [])})")
     return 0
 
 

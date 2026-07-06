@@ -8,9 +8,14 @@
 ## 0-1. 최신 상태 동기화
 - `git pull --rebase origin main || git pull --rebase origin master`
 
-## 0-0. 주간 자기감사 의무 인용 (v2.22 — 리뷰의 1차 입력)
-- 17:00 KST `weekly_self_audit.yml` 이 만든 **오늘자(또는 최신) `reports/*-self-audit.md` + `state/self_audit.json`** 을 읽는다. 없으면 `python scripts/self_audit.py` 를 직접 실행한다.
-- 감사의 **"⚠️ 이번 주 조치 필요"** 항목은 이번 리뷰 안건에 전부 등재하고, 항목마다 **패치 / 보류(사유) / 관측 지속** 중 하나로 처분을 남긴다 — 무응답 이월 금지.
+## 0-0. 주간 자기감사 의무 인용 + findings 처분 (v2.22 — 리뷰의 1차 입력)
+- 17:00 KST `weekly_self_audit.yml` 이 만든 **오늘자(또는 최신) `reports/*-self-audit.md` + `state/self_audit_findings.json`** 을 읽는다. 없으면 `python scripts/self_audit.py` 를 직접 실행한다.
+- **처분 의무(기계 강제)**: `state/self_audit_findings.json` 의 `status:"open"` finding 각각에 대해 `disposition` 필드를 직접 기입하고 커밋한다:
+  `{"action": "patch" | "defer" | "observe", "note": "<무엇을 했는지/왜 미루는지 — 사람이 읽는 한 문장>", "date": "YYYY-MM-DD", "by": "sunday_policy_review"}`
+  - `patch` = 이번 리뷰에서 policy/스크립트를 실제로 고쳤다(커밋 해시나 파일 경로를 note 에). **다음 감사에서 같은 finding 이 재발하면 처분이 자동 무효화·재상정된다** — '고쳤다'는 주장이 지표로 검증된다.
+  - `defer` = 사유와 재검토 시점을 note 에. `observe` = 관측 지속 사유. 둘 다 **14일 넘게 finding 이 살아 있으면 자동 만료**되어 재처분해야 한다.
+  - **무처분 2주 이상 = 다음 주 `weekly_self_audit` 워크플로 FAIL** (`self_audit.py --followup-only`, AUDIT_ENFORCE=1). 처분을 쓰지 않으면 파이프라인이 빨간불이 된다 — 무응답 이월은 구조적으로 불가능.
+- 처분 후 `python scripts/self_audit.py --followup-only` 를 실행해 overdue=0 을 확인하고, findings 파일 변경을 리뷰 커밋에 포함한다.
 - **패치 동결 규칙(감사 처방⑤)**: `patch_vs_validation` 이 "직전 감사 이후 버전 증가 + 신규 왕복 0건" 경고를 내면, 이번 리뷰의 정책 패치는 **버그 수정·게이트 강화만 허용**하고 전략 파라미터 변경(사이징·임계·목표 등)은 검증 표본이 쌓일 때까지 동결한다 — 패치 속도가 검증 속도를 앞지르면 어떤 패치가 효과였는지 영원히 알 수 없다(2026-07-06 감사: 47일간 31버전 vs 왕복 9건).
 - 휩쏘·오버레이 판정(감사 D·H)이 악화 방향이면 청산 룰(트레일링·스톱)의 shadow 강등을 안건으로 상정한다.
 

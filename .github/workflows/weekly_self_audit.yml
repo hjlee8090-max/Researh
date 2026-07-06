@@ -34,14 +34,21 @@ jobs:
         run: |
           git config user.name "kospi-autoflow-bot"
           git config user.email "hjlee8090@gmail.com"
-          git add reports/ state/self_audit.json state/trade_cards.md state/rule_attribution.json state/exit_tracking.json
+          git add reports/ state/self_audit.json state/self_audit_findings.json state/trade_cards.md state/rule_attribution.json state/exit_tracking.json
           if git diff --cached --quiet; then
             echo "no self-audit changes"
             exit 0
           fi
           git commit -m "audit(self): $(date -u +%Y-%m-%d) weekly self-audit report"
           for i in 1 2 3; do
-            if git push; then exit 0; fi
+            if git push; then break; fi
             git pull --rebase origin main || true
           done
-          git push
+      # 보완 강제 게이트 (커밋 후 실행 — 게이트가 실패해도 이번 주 리포트는 커밋된다).
+      # 무처분 2주 이상 finding 이 있으면 워크플로 FAIL. sunday_policy_review(20:00)가
+      # state/self_audit_findings.json 의 disposition 을 기입해야 다음 주 통과한다 —
+      # '검사만 하고 보완이 조용히 이월'되는 구조(감사 실측: 금요일 ORANGE 룰 4주 방치)를 기계로 차단.
+      - name: Follow-up gate (undispositioned findings block)
+        env:
+          AUDIT_ENFORCE: "1"
+        run: python scripts/self_audit.py --followup-only

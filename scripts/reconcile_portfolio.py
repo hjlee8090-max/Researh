@@ -73,8 +73,18 @@ def compute_expected(trade_log: list[dict], initial_capital: float) -> dict:
             trade_count += 1
         elif _is_sell(action):
             qty = int(num(e.get("shares")))
+            # 매도대금: net_proceeds 가 없는 라인(2026-07-06 LS ELECTRIC — execution_price 만 기록)은
+            # 체결가×주수로 폴백. 폴백까지 없으면 0(기존 동작)이라 cash 불일치로 표면화된다.
             net = num(e.get("net_proceeds"))
-            pnl = num(e.get("realized_pnl"))
+            if not net:
+                per_share = num(e.get("execution_price")) or num(e.get("net_price_per_share")) or num(e.get("price"))
+                net = per_share * qty
+            # 왕복 실현손익: realized_delta(신 스키마, 왕복분) 우선 — realized_pnl 은 2026-07-06
+            # 라인부터 '누적치'로 의미가 바뀌어 그대로 합산하면 이중계상된다(-77,928 을 왕복분으로
+            # 오인 → 계좌 실현손익 65,070원 과대계상, 2026-07-06 감사 발견). rule_attribution 과 동일 규약.
+            pnl = num(e.get("realized_delta"))
+            if pnl == 0.0 and e.get("realized_delta") is None:
+                pnl = num(e.get("realized_pnl"))
             cash += net
             shares[ticker] = shares.get(ticker, 0) - qty
             realized_pnl += pnl

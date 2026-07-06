@@ -1,0 +1,4353 @@
+{
+  "as_of": "2026-07-07T01:30:54+09:00",
+  "purpose": "2026-07-06 감사 처방② — 라이브 청산 오버레이(ATR 스톱·트레일링·부분익절)가 검증된 월간 리밸런스 듀얼모멘텀 대비 가치를 더하는지/파괴하는지 정량화",
+  "data_window": {
+    "start": "2024-01-02",
+    "end": "2026-07-06",
+    "trading_days": 610
+  },
+  "params": {
+    "cost_buy": 0.002,
+    "cost_sell": 0.0038,
+    "stop_atr_mult": 2.0,
+    "floor_pct": 3.0,
+    "first_mult": 1.5,
+    "resid_mult": 2.0,
+    "activate_at_target_progress_pct": 70.0,
+    "simple_target_return_pct": 10.0,
+    "activation_effective_gain_pct": 7.0,
+    "atr_period": 14,
+    "atr_method": "TR(고저·전종가 갭 최대) 14일 단순평균 / 당일 종가 ×100 — Wilder 평활 아님",
+    "whipsaw_definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05",
+    "fill_rule": "종가 트리거 → 당일 종가 체결(risk.exit_execution.close_trigger_fill_rule)",
+    "reentry_discipline": "스톱아웃 현금은 다음 월간 리밸런스까지 대기(라이브 규율 일치)",
+    "simplifications": [
+      "목표가 = 진입가×1.10 고정(dynamic_exit_model 미재현) — 활성화 문턱 +7%",
+      "orange/red 단계 경보(재량 원인분류)는 기계 재현 불가로 제외 — 하드스톱·트레일링만",
+      "트레일 ATR 은 평가일 롤링, 하드스톱 ATR 은 진입 시점 고정",
+      "리밸런스 당일은 리밸런스가 청산을 대신(동일 종가 이중 체결 방지)"
+    ],
+    "configs": {
+      "권장 Top10·월간리밸 (backtest_strategy 검증 설정)": {
+        "top_n": 10,
+        "rebal_days": 42,
+        "mom_fast": 60,
+        "mom_slow": 120,
+        "trend_ma": 200
+      },
+      "라이브 Top6·21일리밸 (policy momentum_strategy 설정)": {
+        "top_n": 6,
+        "rebal_days": 21,
+        "mom_fast": 60,
+        "mom_slow": 120,
+        "trend_ma": 200
+      }
+    }
+  },
+  "variants_legend": {
+    "A_baseline": "월간 리밸런스만 — backtest_strategy 권장 전략(월중 청산 없음)",
+    "B_overlay_full": "A + 하드 ATR 스톱 + 트레일링(1차 50% 부분익절→잔여 샹들리에)",
+    "C_stop_only": "A + 하드 ATR 스톱만(트레일링 없음 — 휩쏘 컴포넌트 분리)"
+  },
+  "results": {
+    "권장 Top10·월간리밸 (backtest_strategy 검증 설정)": {
+      "full": {
+        "A_baseline": {
+          "total_return_pct": 322.2,
+          "cagr_pct": 142.9,
+          "sharpe": 2.21,
+          "max_drawdown_pct": -21.3,
+          "n_trades": 76,
+          "turnover_x": 7.07,
+          "intra_month_exits": {
+            "hard_atr_stop": 0,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 0,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          }
+        },
+        "B_overlay_full": {
+          "total_return_pct": 55.1,
+          "cagr_pct": 31.0,
+          "sharpe": 1.17,
+          "max_drawdown_pct": -20.1,
+          "n_trades": 234,
+          "turnover_x": 17.99,
+          "intra_month_exits": {
+            "hard_atr_stop": 34,
+            "trail_first_partial_50": 56,
+            "trail_residual_exit": 53
+          },
+          "whipsaw": {
+            "hard_atr_stop": 25,
+            "trail_residual_exit": 34,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": -267.1
+        },
+        "C_stop_only": {
+          "total_return_pct": 283.0,
+          "cagr_pct": 128.7,
+          "sharpe": 2.21,
+          "max_drawdown_pct": -19.7,
+          "n_trades": 94,
+          "turnover_x": 8.9,
+          "intra_month_exits": {
+            "hard_atr_stop": 20,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 12,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": -39.2
+        },
+        "attribution_pp": {
+          "hard_stop_component": -39.2,
+          "trailing_component": -227.9,
+          "overlay_total": -267.1
+        },
+        "exit_events_overlay_full": [
+          {
+            "date": "2024-11-05",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "hard_atr_stop",
+            "exit_price": 171700.0,
+            "entry": 187400.0,
+            "ret_pct": -8.38,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-13",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 247000.0,
+            "entry": 251000.0,
+            "ret_pct": -1.59,
+            "whipsaw": null
+          },
+          {
+            "date": "2024-11-15",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 240000.0,
+            "entry": 251000.0,
+            "ret_pct": -4.38,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-11-15",
+            "ticker": "207940",
+            "name": "삼성바이오로직스",
+            "rule": "hard_atr_stop",
+            "exit_price": 1379024.0,
+            "entry": 1517368.0,
+            "ret_pct": -9.12,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-15",
+            "ticker": "373220",
+            "name": "LG에너지솔루션",
+            "rule": "hard_atr_stop",
+            "exit_price": 371000.0,
+            "entry": 411500.0,
+            "ret_pct": -9.84,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-19",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 375172.0,
+            "entry": 369757.0,
+            "ret_pct": 1.46,
+            "whipsaw": null
+          },
+          {
+            "date": "2024-11-21",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 351047.0,
+            "entry": 369757.0,
+            "ret_pct": -5.06,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-26",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "hard_atr_stop",
+            "exit_price": 52100.0,
+            "entry": 63800.0,
+            "ret_pct": -18.34,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-11-28",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 347000.0,
+            "entry": 343000.0,
+            "ret_pct": 1.17,
+            "whipsaw": null
+          },
+          {
+            "date": "2024-12-02",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_residual_exit",
+            "exit_price": 335000.0,
+            "entry": 343000.0,
+            "ret_pct": -2.33,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-02",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_first_partial_50",
+            "exit_price": 195500.0,
+            "entry": 186800.0,
+            "ret_pct": 4.66,
+            "whipsaw": null
+          },
+          {
+            "date": "2024-12-02",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_residual_exit",
+            "exit_price": 195500.0,
+            "entry": 186800.0,
+            "ret_pct": 4.66,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-04",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 19000.0,
+            "entry": 21400.0,
+            "ret_pct": -11.21,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-12-04",
+            "ticker": "105560",
+            "name": "KB금융",
+            "rule": "trail_first_partial_50",
+            "exit_price": 95400.0,
+            "entry": 93900.0,
+            "ret_pct": 1.6,
+            "whipsaw": null
+          },
+          {
+            "date": "2024-12-05",
+            "ticker": "105560",
+            "name": "KB금융",
+            "rule": "hard_atr_stop",
+            "exit_price": 85800.0,
+            "entry": 93900.0,
+            "ret_pct": -8.63,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-01-08",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 235500.0,
+            "entry": 220500.0,
+            "ret_pct": 6.8,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-01-10",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 222500.0,
+            "entry": 220500.0,
+            "ret_pct": 0.91,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-01-20",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 385000.0,
+            "entry": 382000.0,
+            "ret_pct": 0.79,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 295500.0,
+            "entry": 287500.0,
+            "ret_pct": 2.78,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 295500.0,
+            "entry": 287500.0,
+            "ret_pct": 2.78,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_first_partial_50",
+            "exit_price": 226000.0,
+            "entry": 228000.0,
+            "ret_pct": -0.88,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_residual_exit",
+            "exit_price": 226000.0,
+            "entry": 228000.0,
+            "ret_pct": -0.88,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 12730.0,
+            "entry": 11300.0,
+            "ret_pct": 12.65,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-05",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_residual_exit",
+            "exit_price": 391500.0,
+            "entry": 382000.0,
+            "ret_pct": 2.49,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-02-10",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 12590.0,
+            "entry": 11300.0,
+            "ret_pct": 11.42,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-02-27",
+            "ticker": "035420",
+            "name": "NAVER",
+            "rule": "trail_first_partial_50",
+            "exit_price": 219000.0,
+            "entry": 198900.0,
+            "ret_pct": 10.11,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-28",
+            "ticker": "035420",
+            "name": "NAVER",
+            "rule": "trail_residual_exit",
+            "exit_price": 207000.0,
+            "entry": 198900.0,
+            "ret_pct": 4.07,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-02-28",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 584915.0,
+            "entry": 321506.0,
+            "ret_pct": 81.93,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-28",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_first_partial_50",
+            "exit_price": 78200.0,
+            "entry": 49700.0,
+            "ret_pct": 57.34,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-28",
+            "ticker": "207940",
+            "name": "삼성바이오로직스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 1642466.0,
+            "entry": 1396685.0,
+            "ret_pct": 17.6,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-03-12",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_first_partial_50",
+            "exit_price": 71000.0,
+            "entry": 37350.0,
+            "ret_pct": 90.09,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-03-12",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_residual_exit",
+            "exit_price": 71000.0,
+            "entry": 37350.0,
+            "ret_pct": 90.09,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-14",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 276000.0,
+            "entry": 319000.0,
+            "ret_pct": -13.48,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-21",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 618395.0,
+            "entry": 321506.0,
+            "ret_pct": 92.34,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-27",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "hard_atr_stop",
+            "exit_price": 276500.0,
+            "entry": 315500.0,
+            "ret_pct": -12.36,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-27",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "hard_atr_stop",
+            "exit_price": 196400.0,
+            "entry": 233500.0,
+            "ret_pct": -15.89,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-04-02",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_residual_exit",
+            "exit_price": 99000.0,
+            "entry": 49700.0,
+            "ret_pct": 99.2,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-04-02",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 34300.0,
+            "entry": 43300.0,
+            "ret_pct": -20.79,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-04-04",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 23050.0,
+            "entry": 26350.0,
+            "ret_pct": -12.52,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-04-07",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "hard_atr_stop",
+            "exit_price": 12720.0,
+            "entry": 14860.0,
+            "ret_pct": -14.4,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-04-07",
+            "ticker": "011200",
+            "name": "HMM",
+            "rule": "hard_atr_stop",
+            "exit_price": 18250.0,
+            "entry": 21650.0,
+            "ret_pct": -15.7,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-05-12",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "hard_atr_stop",
+            "exit_price": 108300.0,
+            "entry": 125400.0,
+            "ret_pct": -13.64,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-05-29",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "trail_first_partial_50",
+            "exit_price": 29550.0,
+            "entry": 26950.0,
+            "ret_pct": 9.65,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-10",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "trail_residual_exit",
+            "exit_price": 27450.0,
+            "entry": 26950.0,
+            "ret_pct": 1.86,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-06-20",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 16870.0,
+            "entry": 14840.0,
+            "ret_pct": 13.68,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-24",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 554000.0,
+            "entry": 402000.0,
+            "ret_pct": 37.81,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 856000.0,
+            "entry": 864571.0,
+            "ret_pct": -0.99,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 856000.0,
+            "entry": 864571.0,
+            "ret_pct": -0.99,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_first_partial_50",
+            "exit_price": 82500.0,
+            "entry": 79800.0,
+            "ret_pct": 3.38,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 527000.0,
+            "entry": 402000.0,
+            "ret_pct": 31.09,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_first_partial_50",
+            "exit_price": 364000.0,
+            "entry": 283500.0,
+            "ret_pct": 28.4,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 16530.0,
+            "entry": 14840.0,
+            "ret_pct": 11.39,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-06-26",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_residual_exit",
+            "exit_price": 80300.0,
+            "entry": 79800.0,
+            "ret_pct": 0.63,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-06-26",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 423500.0,
+            "entry": 413000.0,
+            "ret_pct": 2.54,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-07-02",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 407500.0,
+            "entry": 413000.0,
+            "ret_pct": -1.33,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-07-02",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_residual_exit",
+            "exit_price": 344000.0,
+            "entry": 283500.0,
+            "ret_pct": 21.34,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-07-03",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 55300.0,
+            "entry": 43900.0,
+            "ret_pct": 25.97,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-07-04",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_first_partial_50",
+            "exit_price": 60000.0,
+            "entry": 27850.0,
+            "ret_pct": 115.44,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-07-04",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 52400.0,
+            "entry": 43900.0,
+            "ret_pct": 19.36,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-07-17",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "hard_atr_stop",
+            "exit_price": 269500.0,
+            "entry": 297000.0,
+            "ret_pct": -9.26,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-07-28",
+            "ticker": "086790",
+            "name": "하나금융지주",
+            "rule": "hard_atr_stop",
+            "exit_price": 84300.0,
+            "entry": 92200.0,
+            "ret_pct": -8.57,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-01",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_residual_exit",
+            "exit_price": 61400.0,
+            "entry": 27850.0,
+            "ret_pct": 120.47,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-08-01",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "hard_atr_stop",
+            "exit_price": 161700.0,
+            "entry": 177900.0,
+            "ret_pct": -9.11,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-07",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 932000.0,
+            "entry": 853000.0,
+            "ret_pct": 9.26,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-08-08",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 513000.0,
+            "entry": 591000.0,
+            "ret_pct": -13.2,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-08",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 881000.0,
+            "entry": 853000.0,
+            "ret_pct": 3.28,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-11",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "trail_first_partial_50",
+            "exit_price": 39000.0,
+            "entry": 37250.0,
+            "ret_pct": 4.7,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-08-18",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 57200.0,
+            "entry": 55600.0,
+            "ret_pct": 2.88,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-08-18",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 57200.0,
+            "entry": 55600.0,
+            "ret_pct": 2.88,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-19",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "trail_residual_exit",
+            "exit_price": 37350.0,
+            "entry": 37250.0,
+            "ret_pct": 0.27,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-09-01",
+            "ticker": "035720",
+            "name": "카카오",
+            "rule": "trail_first_partial_50",
+            "exit_price": 61200.0,
+            "entry": 60800.0,
+            "ret_pct": 0.66,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-09-02",
+            "ticker": "035720",
+            "name": "카카오",
+            "rule": "trail_residual_exit",
+            "exit_price": 59300.0,
+            "entry": 60800.0,
+            "ret_pct": -2.47,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-09-19",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "hard_atr_stop",
+            "exit_price": 35550.0,
+            "entry": 38100.0,
+            "ret_pct": -6.69,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-09-26",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_first_partial_50",
+            "exit_price": 212500.0,
+            "entry": 193900.0,
+            "ret_pct": 9.59,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-10-14",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_residual_exit",
+            "exit_price": 202000.0,
+            "entry": 193900.0,
+            "ret_pct": 4.18,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-10-23",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_first_partial_50",
+            "exit_price": 76300.0,
+            "entry": 62200.0,
+            "ret_pct": 22.67,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-04",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 567000.0,
+            "entry": 504000.0,
+            "ret_pct": 12.5,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_residual_exit",
+            "exit_price": 83600.0,
+            "entry": 62200.0,
+            "ret_pct": 34.41,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_first_partial_50",
+            "exit_price": 428500.0,
+            "entry": 414000.0,
+            "ret_pct": 3.5,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_residual_exit",
+            "exit_price": 428500.0,
+            "entry": 414000.0,
+            "ret_pct": 3.5,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 528000.0,
+            "entry": 504000.0,
+            "ret_pct": 4.76,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 27450.0,
+            "entry": 21050.0,
+            "ret_pct": 30.4,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 868000.0,
+            "entry": 516000.0,
+            "ret_pct": 68.22,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-06",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_first_partial_50",
+            "exit_price": 123000.0,
+            "entry": 110000.0,
+            "ret_pct": 11.82,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-06",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 26150.0,
+            "entry": 21050.0,
+            "ret_pct": 24.23,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-11-07",
+            "ticker": "051910",
+            "name": "LG화학",
+            "rule": "trail_first_partial_50",
+            "exit_price": 382000.0,
+            "entry": 293000.0,
+            "ret_pct": 30.38,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-07",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_residual_exit",
+            "exit_price": 818000.0,
+            "entry": 516000.0,
+            "ret_pct": 58.53,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-14",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 560000.0,
+            "entry": 288000.0,
+            "ret_pct": 94.44,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "051910",
+            "name": "LG화학",
+            "rule": "trail_residual_exit",
+            "exit_price": 367000.0,
+            "entry": 293000.0,
+            "ret_pct": 25.26,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 521000.0,
+            "entry": 288000.0,
+            "ret_pct": 80.9,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "hard_atr_stop",
+            "exit_price": 751000.0,
+            "entry": 866000.0,
+            "ret_pct": -13.28,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "hard_atr_stop",
+            "exit_price": 288500.0,
+            "entry": 334500.0,
+            "ret_pct": -13.75,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "003670",
+            "name": "포스코퓨처엠",
+            "rule": "hard_atr_stop",
+            "exit_price": 192500.0,
+            "entry": 220500.0,
+            "ret_pct": -12.7,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-24",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 72500.0,
+            "entry": 83100.0,
+            "ret_pct": -12.76,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-12-17",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 94800.0,
+            "entry": 96700.0,
+            "ret_pct": -1.96,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-12-18",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 92300.0,
+            "entry": 96700.0,
+            "ret_pct": -4.55,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-12-23",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_first_partial_50",
+            "exit_price": 240500.0,
+            "entry": 225000.0,
+            "ret_pct": 6.89,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-01-27",
+            "ticker": "000270",
+            "name": "기아",
+            "rule": "trail_first_partial_50",
+            "exit_price": 153500.0,
+            "entry": 152500.0,
+            "ret_pct": 0.66,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-01-30",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 29450.0,
+            "entry": 26500.0,
+            "ret_pct": 11.13,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 150400.0,
+            "entry": 102800.0,
+            "ret_pct": 46.3,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 27400.0,
+            "entry": 26500.0,
+            "ret_pct": 3.4,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 830000.0,
+            "entry": 749000.0,
+            "ret_pct": 10.81,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 478000.0,
+            "entry": 422000.0,
+            "ret_pct": 13.27,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 187100.0,
+            "entry": 180000.0,
+            "ret_pct": 3.94,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "hard_atr_stop",
+            "exit_price": 133600.0,
+            "entry": 148900.0,
+            "ret_pct": -10.28,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-02-06",
+            "ticker": "000270",
+            "name": "기아",
+            "rule": "trail_residual_exit",
+            "exit_price": 151900.0,
+            "entry": 152500.0,
+            "ret_pct": -0.39,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 195100.0,
+            "entry": 102800.0,
+            "ret_pct": 89.79,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_residual_exit",
+            "exit_price": 317000.0,
+            "entry": 225000.0,
+            "ret_pct": 40.89,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 939000.0,
+            "entry": 749000.0,
+            "ret_pct": 25.37,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 142800.0,
+            "entry": 105200.0,
+            "ret_pct": 35.74,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 987000.0,
+            "entry": 892000.0,
+            "ret_pct": 10.65,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_residual_exit",
+            "exit_price": 987000.0,
+            "entry": 892000.0,
+            "ret_pct": 10.65,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 501000.0,
+            "entry": 422000.0,
+            "ret_pct": 18.72,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 125200.0,
+            "entry": 105200.0,
+            "ret_pct": 19.01,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 259000.0,
+            "entry": 180000.0,
+            "ret_pct": 43.89,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 94200.0,
+            "entry": 109600.0,
+            "ret_pct": -14.05,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "hard_atr_stop",
+            "exit_price": 251000.0,
+            "entry": 309500.0,
+            "ret_pct": -18.9,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "hard_atr_stop",
+            "exit_price": 807000.0,
+            "entry": 1007000.0,
+            "ret_pct": -19.86,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 143600.0,
+            "entry": 177200.0,
+            "ret_pct": -18.96,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "hard_atr_stop",
+            "exit_price": 167200.0,
+            "entry": 199400.0,
+            "ret_pct": -16.15,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "000270",
+            "name": "기아",
+            "rule": "hard_atr_stop",
+            "exit_price": 145200.0,
+            "entry": 168500.0,
+            "ret_pct": -13.83,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 611000.0,
+            "entry": 661000.0,
+            "ret_pct": -7.56,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-04-21",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 1391000.0,
+            "entry": 1320000.0,
+            "ret_pct": 5.38,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-04-28",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 1395000.0,
+            "entry": 1320000.0,
+            "ret_pct": 5.68,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-08",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 840000.0,
+            "entry": 661000.0,
+            "ret_pct": 27.08,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-12",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_first_partial_50",
+            "exit_price": 629000.0,
+            "entry": 400500.0,
+            "ret_pct": 57.05,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_residual_exit",
+            "exit_price": 614000.0,
+            "entry": 400500.0,
+            "ret_pct": 53.31,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 604000.0,
+            "entry": 517000.0,
+            "ret_pct": 16.83,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-29",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 801000.0,
+            "entry": 862000.0,
+            "ret_pct": -7.08,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-01",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 776000.0,
+            "entry": 862000.0,
+            "ret_pct": -9.98,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-02",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_first_partial_50",
+            "exit_price": 602000.0,
+            "entry": 616000.0,
+            "ret_pct": -2.27,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-05",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 2070000.0,
+            "entry": 1940000.0,
+            "ret_pct": 6.7,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-05",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_residual_exit",
+            "exit_price": 568000.0,
+            "entry": 616000.0,
+            "ret_pct": -7.79,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-06-05",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "hard_atr_stop",
+            "exit_price": 956000.0,
+            "entry": 1136000.0,
+            "ret_pct": -15.85,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 1911000.0,
+            "entry": 1940000.0,
+            "ret_pct": -1.49,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 208000.0,
+            "entry": 271500.0,
+            "ret_pct": -23.39,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 295500.0,
+            "entry": 299500.0,
+            "ret_pct": -1.34,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 295500.0,
+            "entry": 299500.0,
+            "ret_pct": -1.34,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "hard_atr_stop",
+            "exit_price": 253500.0,
+            "entry": 332500.0,
+            "ret_pct": -23.76,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_first_partial_50",
+            "exit_price": 408500.0,
+            "entry": 418500.0,
+            "ret_pct": -2.39,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_residual_exit",
+            "exit_price": 408500.0,
+            "entry": 418500.0,
+            "ret_pct": -2.39,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005490",
+            "name": "POSCO홀딩스",
+            "rule": "hard_atr_stop",
+            "exit_price": 359000.0,
+            "entry": 443500.0,
+            "ret_pct": -19.05,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-10",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 602000.0,
+            "entry": 517000.0,
+            "ret_pct": 16.44,
+            "whipsaw": true
+          }
+        ],
+        "exit_events_stop_only": [
+          {
+            "date": "2024-11-05",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "hard_atr_stop",
+            "exit_price": 171700.0,
+            "entry": 187400.0,
+            "ret_pct": -8.38,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-15",
+            "ticker": "207940",
+            "name": "삼성바이오로직스",
+            "rule": "hard_atr_stop",
+            "exit_price": 1379024.0,
+            "entry": 1517368.0,
+            "ret_pct": -9.12,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-15",
+            "ticker": "373220",
+            "name": "LG에너지솔루션",
+            "rule": "hard_atr_stop",
+            "exit_price": 371000.0,
+            "entry": 411500.0,
+            "ret_pct": -9.84,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-21",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 222500.0,
+            "entry": 251000.0,
+            "ret_pct": -11.35,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-11-26",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "hard_atr_stop",
+            "exit_price": 52100.0,
+            "entry": 63800.0,
+            "ret_pct": -18.34,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-11-26",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "hard_atr_stop",
+            "exit_price": 314613.0,
+            "entry": 369757.0,
+            "ret_pct": -14.91,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-04",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 19000.0,
+            "entry": 21400.0,
+            "ret_pct": -11.21,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-12-05",
+            "ticker": "105560",
+            "name": "KB금융",
+            "rule": "hard_atr_stop",
+            "exit_price": 85800.0,
+            "entry": 93900.0,
+            "ret_pct": -8.63,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-04-02",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 34300.0,
+            "entry": 43300.0,
+            "ret_pct": -20.79,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-04-04",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 23050.0,
+            "entry": 26350.0,
+            "ret_pct": -12.52,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-04-07",
+            "ticker": "011200",
+            "name": "HMM",
+            "rule": "hard_atr_stop",
+            "exit_price": 18250.0,
+            "entry": 21650.0,
+            "ret_pct": -15.7,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-07-17",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "hard_atr_stop",
+            "exit_price": 269500.0,
+            "entry": 297000.0,
+            "ret_pct": -9.26,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-07-28",
+            "ticker": "086790",
+            "name": "하나금융지주",
+            "rule": "hard_atr_stop",
+            "exit_price": 84300.0,
+            "entry": 92200.0,
+            "ret_pct": -8.57,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-01",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "hard_atr_stop",
+            "exit_price": 161700.0,
+            "entry": 177900.0,
+            "ret_pct": -9.11,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "hard_atr_stop",
+            "exit_price": 288500.0,
+            "entry": 334500.0,
+            "ret_pct": -13.75,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "003670",
+            "name": "포스코퓨처엠",
+            "rule": "hard_atr_stop",
+            "exit_price": 192500.0,
+            "entry": 220500.0,
+            "ret_pct": -12.7,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "hard_atr_stop",
+            "exit_price": 133600.0,
+            "entry": 148900.0,
+            "ret_pct": -10.28,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 94200.0,
+            "entry": 109600.0,
+            "ret_pct": -14.05,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-05",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "hard_atr_stop",
+            "exit_price": 956000.0,
+            "entry": 1136000.0,
+            "ret_pct": -15.85,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005490",
+            "name": "POSCO홀딩스",
+            "rule": "hard_atr_stop",
+            "exit_price": 359000.0,
+            "entry": 443500.0,
+            "ret_pct": -19.05,
+            "whipsaw": true
+          }
+        ],
+        "period": "2024-10-30~2026-07-06"
+      },
+      "recent_2026": {
+        "A_baseline": {
+          "total_return_pct": 78.5,
+          "cagr_pct": 224.8,
+          "sharpe": 2.24,
+          "max_drawdown_pct": -22.5,
+          "n_trades": 20,
+          "turnover_x": 1.9,
+          "intra_month_exits": {
+            "hard_atr_stop": 0,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 0,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          }
+        },
+        "B_overlay_full": {
+          "total_return_pct": 32.5,
+          "cagr_pct": 77.2,
+          "sharpe": 1.98,
+          "max_drawdown_pct": -14.2,
+          "n_trades": 79,
+          "turnover_x": 5.59,
+          "intra_month_exits": {
+            "hard_atr_stop": 5,
+            "trail_first_partial_50": 23,
+            "trail_residual_exit": 23
+          },
+          "whipsaw": {
+            "hard_atr_stop": 3,
+            "trail_residual_exit": 18,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": -46.0
+        },
+        "C_stop_only": {
+          "total_return_pct": 74.7,
+          "cagr_pct": 210.8,
+          "sharpe": 2.3,
+          "max_drawdown_pct": -22.2,
+          "n_trades": 25,
+          "turnover_x": 2.37,
+          "intra_month_exits": {
+            "hard_atr_stop": 4,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 3,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": -3.8
+        },
+        "attribution_pp": {
+          "hard_stop_component": -3.8,
+          "trailing_component": -42.2,
+          "overlay_total": -46.0
+        },
+        "exit_events_overlay_full": [
+          {
+            "date": "2026-01-26",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 169500.0,
+            "entry": 144500.0,
+            "ret_pct": 17.3,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-01-30",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 29450.0,
+            "entry": 24150.0,
+            "ret_pct": 21.95,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 830000.0,
+            "entry": 677000.0,
+            "ret_pct": 22.6,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 150400.0,
+            "entry": 128500.0,
+            "ret_pct": 17.04,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 836000.0,
+            "entry": 819000.0,
+            "ret_pct": 2.08,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 478000.0,
+            "entry": 298500.0,
+            "ret_pct": 60.13,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 27400.0,
+            "entry": 24150.0,
+            "ret_pct": 13.46,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-02-06",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_first_partial_50",
+            "exit_price": 289500.0,
+            "entry": 245000.0,
+            "ret_pct": 18.16,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 939000.0,
+            "entry": 677000.0,
+            "ret_pct": 38.7,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 195100.0,
+            "entry": 128500.0,
+            "ret_pct": 51.83,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 142800.0,
+            "entry": 98500.0,
+            "ret_pct": 44.97,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_residual_exit",
+            "exit_price": 987000.0,
+            "entry": 819000.0,
+            "ret_pct": 20.51,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_residual_exit",
+            "exit_price": 317000.0,
+            "entry": 245000.0,
+            "ret_pct": 29.39,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_first_partial_50",
+            "exit_price": 408000.0,
+            "entry": 262500.0,
+            "ret_pct": 55.43,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_residual_exit",
+            "exit_price": 408000.0,
+            "entry": 262500.0,
+            "ret_pct": 55.43,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 125200.0,
+            "entry": 98500.0,
+            "ret_pct": 27.11,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 259000.0,
+            "entry": 144500.0,
+            "ret_pct": 79.24,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 501000.0,
+            "entry": 298500.0,
+            "ret_pct": 67.84,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "003670",
+            "name": "포스코퓨처엠",
+            "rule": "trail_first_partial_50",
+            "exit_price": 185200.0,
+            "entry": 176900.0,
+            "ret_pct": 4.69,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "003670",
+            "name": "포스코퓨처엠",
+            "rule": "trail_residual_exit",
+            "exit_price": 185200.0,
+            "entry": 176900.0,
+            "ret_pct": 4.69,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-23",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 186300.0,
+            "entry": 173500.0,
+            "ret_pct": 7.38,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-23",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 640000.0,
+            "entry": 796000.0,
+            "ret_pct": -19.6,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-26",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 933000.0,
+            "entry": 836000.0,
+            "ret_pct": 11.6,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-26",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 180100.0,
+            "entry": 173500.0,
+            "ret_pct": 3.8,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-26",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 490000.0,
+            "entry": 507000.0,
+            "ret_pct": -3.35,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-27",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_first_partial_50",
+            "exit_price": 98100.0,
+            "entry": 96200.0,
+            "ret_pct": 1.98,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 873000.0,
+            "entry": 836000.0,
+            "ret_pct": 4.43,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 469500.0,
+            "entry": 507000.0,
+            "ret_pct": -7.4,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 155000.0,
+            "entry": 136200.0,
+            "ret_pct": 13.8,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 872000.0,
+            "entry": 907000.0,
+            "ret_pct": -3.86,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_residual_exit",
+            "exit_price": 872000.0,
+            "entry": 907000.0,
+            "ret_pct": -3.86,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_residual_exit",
+            "exit_price": 94200.0,
+            "entry": 96200.0,
+            "ret_pct": -2.08,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 143600.0,
+            "entry": 136200.0,
+            "ret_pct": 5.43,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-04-21",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 1391000.0,
+            "entry": 1434000.0,
+            "ret_pct": -3.0,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-04-28",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 1395000.0,
+            "entry": 1434000.0,
+            "ret_pct": -2.72,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-12",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_first_partial_50",
+            "exit_price": 629000.0,
+            "entry": 389000.0,
+            "ret_pct": 61.7,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_residual_exit",
+            "exit_price": 614000.0,
+            "entry": 389000.0,
+            "ret_pct": 57.84,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 259000.0,
+            "entry": 313000.0,
+            "ret_pct": -17.25,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "hard_atr_stop",
+            "exit_price": 1179000.0,
+            "entry": 1403000.0,
+            "ret_pct": -15.97,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "005490",
+            "name": "POSCO홀딩스",
+            "rule": "hard_atr_stop",
+            "exit_price": 467500.0,
+            "entry": 525000.0,
+            "ret_pct": -10.95,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-05-18",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 317000.0,
+            "entry": 305000.0,
+            "ret_pct": 3.93,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 288000.0,
+            "entry": 305000.0,
+            "ret_pct": -5.57,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 1745000.0,
+            "entry": 1686000.0,
+            "ret_pct": 3.5,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 604000.0,
+            "entry": 613000.0,
+            "ret_pct": -1.47,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "hard_atr_stop",
+            "exit_price": 380500.0,
+            "entry": 422500.0,
+            "ret_pct": -9.94,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-29",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 801000.0,
+            "entry": 840000.0,
+            "ret_pct": -4.64,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-01",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 776000.0,
+            "entry": 840000.0,
+            "ret_pct": -7.62,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 1911000.0,
+            "entry": 1686000.0,
+            "ret_pct": 13.35,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 295500.0,
+            "entry": 268500.0,
+            "ret_pct": 10.06,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 295500.0,
+            "entry": 268500.0,
+            "ret_pct": 10.06,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-10",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 602000.0,
+            "entry": 613000.0,
+            "ret_pct": -1.79,
+            "whipsaw": true
+          }
+        ],
+        "exit_events_stop_only": [
+          {
+            "date": "2026-03-23",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 640000.0,
+            "entry": 796000.0,
+            "ret_pct": -19.6,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "005490",
+            "name": "POSCO홀딩스",
+            "rule": "hard_atr_stop",
+            "exit_price": 467500.0,
+            "entry": 525000.0,
+            "ret_pct": -10.95,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "hard_atr_stop",
+            "exit_price": 380500.0,
+            "entry": 422500.0,
+            "ret_pct": -9.94,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 696000.0,
+            "entry": 840000.0,
+            "ret_pct": -17.14,
+            "whipsaw": true
+          }
+        ],
+        "period": "2026-01-02~2026-07-06"
+      }
+    },
+    "라이브 Top6·21일리밸 (policy momentum_strategy 설정)": {
+      "full": {
+        "A_baseline": {
+          "total_return_pct": 227.7,
+          "cagr_pct": 107.8,
+          "sharpe": 1.73,
+          "max_drawdown_pct": -23.8,
+          "n_trades": 86,
+          "turnover_x": 13.86,
+          "intra_month_exits": {
+            "hard_atr_stop": 0,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 0,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          }
+        },
+        "B_overlay_full": {
+          "total_return_pct": 62.2,
+          "cagr_pct": 34.7,
+          "sharpe": 0.98,
+          "max_drawdown_pct": -28.4,
+          "n_trades": 219,
+          "turnover_x": 29.37,
+          "intra_month_exits": {
+            "hard_atr_stop": 31,
+            "trail_first_partial_50": 45,
+            "trail_residual_exit": 40
+          },
+          "whipsaw": {
+            "hard_atr_stop": 24,
+            "trail_residual_exit": 25,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": -165.5
+        },
+        "C_stop_only": {
+          "total_return_pct": 177.4,
+          "cagr_pct": 87.5,
+          "sharpe": 1.57,
+          "max_drawdown_pct": -21.9,
+          "n_trades": 104,
+          "turnover_x": 16.88,
+          "intra_month_exits": {
+            "hard_atr_stop": 22,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 16,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": -50.3
+        },
+        "attribution_pp": {
+          "hard_stop_component": -50.3,
+          "trailing_component": -115.2,
+          "overlay_total": -165.5
+        },
+        "exit_events_overlay_full": [
+          {
+            "date": "2024-11-13",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 247000.0,
+            "entry": 251000.0,
+            "ret_pct": -1.59,
+            "whipsaw": null
+          },
+          {
+            "date": "2024-11-15",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 240000.0,
+            "entry": 251000.0,
+            "ret_pct": -4.38,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-11-15",
+            "ticker": "207940",
+            "name": "삼성바이오로직스",
+            "rule": "hard_atr_stop",
+            "exit_price": 1379024.0,
+            "entry": 1517368.0,
+            "ret_pct": -9.12,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-19",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 375172.0,
+            "entry": 369757.0,
+            "ret_pct": 1.46,
+            "whipsaw": null
+          },
+          {
+            "date": "2024-11-21",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 351047.0,
+            "entry": 369757.0,
+            "ret_pct": -5.06,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-26",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "hard_atr_stop",
+            "exit_price": 52100.0,
+            "entry": 63800.0,
+            "ret_pct": -18.34,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-12-06",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "hard_atr_stop",
+            "exit_price": 189300.0,
+            "entry": 211500.0,
+            "ret_pct": -10.5,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-06",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "hard_atr_stop",
+            "exit_price": 10630.0,
+            "entry": 11840.0,
+            "ret_pct": -10.22,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-09",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "hard_atr_stop",
+            "exit_price": 274732.0,
+            "entry": 320029.0,
+            "ret_pct": -14.15,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-09",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "hard_atr_stop",
+            "exit_price": 44450.0,
+            "entry": 52600.0,
+            "ret_pct": -15.49,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-01-02",
+            "ticker": "035420",
+            "name": "NAVER",
+            "rule": "hard_atr_stop",
+            "exit_price": 193800.0,
+            "entry": 204500.0,
+            "ret_pct": -5.23,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-01-20",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 385000.0,
+            "entry": 382000.0,
+            "ret_pct": 0.79,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 295500.0,
+            "entry": 225500.0,
+            "ret_pct": 31.04,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 295500.0,
+            "entry": 225500.0,
+            "ret_pct": 31.04,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_first_partial_50",
+            "exit_price": 226000.0,
+            "entry": 228000.0,
+            "ret_pct": -0.88,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-01-23",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_residual_exit",
+            "exit_price": 226000.0,
+            "entry": 228000.0,
+            "ret_pct": -0.88,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-02-17",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 326500.0,
+            "entry": 309500.0,
+            "ret_pct": 5.49,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-20",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 305500.0,
+            "entry": 309500.0,
+            "ret_pct": -1.29,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-02-20",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 13590.0,
+            "entry": 13400.0,
+            "ret_pct": 1.42,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-26",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_first_partial_50",
+            "exit_price": 27600.0,
+            "entry": 23950.0,
+            "ret_pct": 15.24,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-27",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 50200.0,
+            "entry": 44100.0,
+            "ret_pct": 13.83,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-02-28",
+            "ticker": "035420",
+            "name": "NAVER",
+            "rule": "hard_atr_stop",
+            "exit_price": 207000.0,
+            "entry": 229000.0,
+            "ret_pct": -9.61,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-02-28",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_residual_exit",
+            "exit_price": 25400.0,
+            "entry": 23950.0,
+            "ret_pct": 6.05,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-06",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 45000.0,
+            "entry": 44100.0,
+            "ret_pct": 2.04,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-03-12",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_first_partial_50",
+            "exit_price": 71000.0,
+            "entry": 37350.0,
+            "ret_pct": 90.09,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-03-12",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_residual_exit",
+            "exit_price": 71000.0,
+            "entry": 37350.0,
+            "ret_pct": 90.09,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-14",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 276000.0,
+            "entry": 319000.0,
+            "ret_pct": -13.48,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-27",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_first_partial_50",
+            "exit_price": 103400.0,
+            "entry": 89700.0,
+            "ret_pct": 15.27,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-03-27",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "hard_atr_stop",
+            "exit_price": 276500.0,
+            "entry": 315500.0,
+            "ret_pct": -12.36,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-04-02",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_residual_exit",
+            "exit_price": 99000.0,
+            "entry": 89700.0,
+            "ret_pct": 10.37,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-04-02",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 34300.0,
+            "entry": 43300.0,
+            "ret_pct": -20.79,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-04-29",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_first_partial_50",
+            "exit_price": 78500.0,
+            "entry": 62500.0,
+            "ret_pct": 25.6,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-04-29",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_residual_exit",
+            "exit_price": 78500.0,
+            "entry": 62500.0,
+            "ret_pct": 25.6,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-05-12",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 807458.0,
+            "entry": 719820.0,
+            "ret_pct": 12.17,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-05-22",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_first_partial_50",
+            "exit_price": 394000.0,
+            "entry": 275500.0,
+            "ret_pct": 43.01,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-24",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 554000.0,
+            "entry": 402000.0,
+            "ret_pct": 37.81,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_residual_exit",
+            "exit_price": 856000.0,
+            "entry": 719820.0,
+            "ret_pct": 18.92,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_first_partial_50",
+            "exit_price": 191800.0,
+            "entry": 90400.0,
+            "ret_pct": 112.17,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_first_partial_50",
+            "exit_price": 82500.0,
+            "entry": 79800.0,
+            "ret_pct": 3.38,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-06-25",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 527000.0,
+            "entry": 402000.0,
+            "ret_pct": 31.09,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-06-26",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "trail_residual_exit",
+            "exit_price": 80300.0,
+            "entry": 79800.0,
+            "ret_pct": 0.63,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-07-02",
+            "ticker": "329180",
+            "name": "HD현대중공업",
+            "rule": "trail_residual_exit",
+            "exit_price": 407500.0,
+            "entry": 275500.0,
+            "ret_pct": 47.91,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-07-04",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_residual_exit",
+            "exit_price": 180600.0,
+            "entry": 90400.0,
+            "ret_pct": 99.78,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-07-04",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_first_partial_50",
+            "exit_price": 60000.0,
+            "entry": 51100.0,
+            "ret_pct": 17.42,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-07-28",
+            "ticker": "086790",
+            "name": "하나금융지주",
+            "rule": "hard_atr_stop",
+            "exit_price": 84300.0,
+            "entry": 92200.0,
+            "ret_pct": -8.57,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-01",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_residual_exit",
+            "exit_price": 61400.0,
+            "entry": 51100.0,
+            "ret_pct": 20.16,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-08-07",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 932000.0,
+            "entry": 853000.0,
+            "ret_pct": 9.26,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-08-11",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 503000.0,
+            "entry": 591000.0,
+            "ret_pct": -14.89,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-11",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "trail_first_partial_50",
+            "exit_price": 39000.0,
+            "entry": 37250.0,
+            "ret_pct": 4.7,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-08-12",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "hard_atr_stop",
+            "exit_price": 104000.0,
+            "entry": 117700.0,
+            "ret_pct": -11.64,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-08-19",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "trail_residual_exit",
+            "exit_price": 37350.0,
+            "entry": 37250.0,
+            "ret_pct": 0.27,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-19",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 59500.0,
+            "entry": 66400.0,
+            "ret_pct": -10.39,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-09-19",
+            "ticker": "015760",
+            "name": "한국전력",
+            "rule": "hard_atr_stop",
+            "exit_price": 35550.0,
+            "entry": 38100.0,
+            "ret_pct": -6.69,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-09-26",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_first_partial_50",
+            "exit_price": 212500.0,
+            "entry": 193900.0,
+            "ret_pct": 9.59,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-10-14",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "trail_residual_exit",
+            "exit_price": 202000.0,
+            "entry": 193900.0,
+            "ret_pct": 4.18,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-10-23",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_first_partial_50",
+            "exit_price": 76300.0,
+            "entry": 62200.0,
+            "ret_pct": 22.67,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-04",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 104900.0,
+            "entry": 95000.0,
+            "ret_pct": 10.42,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "trail_residual_exit",
+            "exit_price": 83600.0,
+            "entry": 62200.0,
+            "ret_pct": 34.41,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_first_partial_50",
+            "exit_price": 428500.0,
+            "entry": 414000.0,
+            "ret_pct": 3.5,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "trail_residual_exit",
+            "exit_price": 428500.0,
+            "entry": 414000.0,
+            "ret_pct": 3.5,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_first_partial_50",
+            "exit_price": 868000.0,
+            "entry": 668000.0,
+            "ret_pct": 29.94,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-05",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 100600.0,
+            "entry": 95000.0,
+            "ret_pct": 5.89,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-11-07",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "trail_residual_exit",
+            "exit_price": 818000.0,
+            "entry": 668000.0,
+            "ret_pct": 22.46,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-14",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 560000.0,
+            "entry": 422500.0,
+            "ret_pct": 32.54,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 521000.0,
+            "entry": 422500.0,
+            "ret_pct": 23.31,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "hard_atr_stop",
+            "exit_price": 751000.0,
+            "entry": 866000.0,
+            "ret_pct": -13.28,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "051910",
+            "name": "LG화학",
+            "rule": "hard_atr_stop",
+            "exit_price": 367000.0,
+            "entry": 419500.0,
+            "ret_pct": -12.51,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "hard_atr_stop",
+            "exit_price": 288500.0,
+            "entry": 334500.0,
+            "ret_pct": -13.75,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-24",
+            "ticker": "034020",
+            "name": "두산에너빌리티",
+            "rule": "hard_atr_stop",
+            "exit_price": 72500.0,
+            "entry": 83100.0,
+            "ret_pct": -12.76,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-12-16",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "hard_atr_stop",
+            "exit_price": 102800.0,
+            "entry": 108900.0,
+            "ret_pct": -5.6,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-12-17",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 94800.0,
+            "entry": 96700.0,
+            "ret_pct": -1.96,
+            "whipsaw": null
+          },
+          {
+            "date": "2025-12-18",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 92300.0,
+            "entry": 96700.0,
+            "ret_pct": -4.55,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-12-18",
+            "ticker": "003670",
+            "name": "포스코퓨처엠",
+            "rule": "hard_atr_stop",
+            "exit_price": 195500.0,
+            "entry": 221500.0,
+            "ret_pct": -11.74,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-12-18",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "hard_atr_stop",
+            "exit_price": 277000.0,
+            "entry": 308000.0,
+            "ret_pct": -10.06,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-12-18",
+            "ticker": "267260",
+            "name": "HD현대일렉트릭",
+            "rule": "hard_atr_stop",
+            "exit_price": 790000.0,
+            "entry": 866000.0,
+            "ret_pct": -8.78,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 830000.0,
+            "entry": 571000.0,
+            "ret_pct": 45.36,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 478000.0,
+            "entry": 422000.0,
+            "ret_pct": 13.27,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 150400.0,
+            "entry": 143900.0,
+            "ret_pct": 4.52,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 187100.0,
+            "entry": 180000.0,
+            "ret_pct": 3.94,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "hard_atr_stop",
+            "exit_price": 133600.0,
+            "entry": 148900.0,
+            "ret_pct": -10.28,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 939000.0,
+            "entry": 571000.0,
+            "ret_pct": 64.45,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 195100.0,
+            "entry": 143900.0,
+            "ret_pct": 35.58,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 142800.0,
+            "entry": 105200.0,
+            "ret_pct": 35.74,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_first_partial_50",
+            "exit_price": 317000.0,
+            "entry": 318000.0,
+            "ret_pct": -0.31,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_residual_exit",
+            "exit_price": 317000.0,
+            "entry": 318000.0,
+            "ret_pct": -0.31,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 501000.0,
+            "entry": 422000.0,
+            "ret_pct": 18.72,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 125200.0,
+            "entry": 105200.0,
+            "ret_pct": 19.01,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 259000.0,
+            "entry": 180000.0,
+            "ret_pct": 43.89,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "hard_atr_stop",
+            "exit_price": 251000.0,
+            "entry": 309500.0,
+            "ret_pct": -18.9,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "hard_atr_stop",
+            "exit_price": 807000.0,
+            "entry": 1007000.0,
+            "ret_pct": -19.86,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 143600.0,
+            "entry": 177200.0,
+            "ret_pct": -18.96,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "hard_atr_stop",
+            "exit_price": 167200.0,
+            "entry": 199400.0,
+            "ret_pct": -16.15,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-07",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 866000.0,
+            "entry": 921000.0,
+            "ret_pct": -5.97,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-08",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 840000.0,
+            "entry": 921000.0,
+            "ret_pct": -8.79,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-12",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_first_partial_50",
+            "exit_price": 629000.0,
+            "entry": 400500.0,
+            "ret_pct": 57.05,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_residual_exit",
+            "exit_price": 614000.0,
+            "entry": 400500.0,
+            "ret_pct": 53.31,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 259000.0,
+            "entry": 184200.0,
+            "ret_pct": 40.61,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-18",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 253500.0,
+            "entry": 184200.0,
+            "ret_pct": 37.62,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-18",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 317000.0,
+            "entry": 287000.0,
+            "ret_pct": 10.45,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 1745000.0,
+            "entry": 1166000.0,
+            "ret_pct": 49.66,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 288000.0,
+            "entry": 287000.0,
+            "ret_pct": 0.35,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-29",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 801000.0,
+            "entry": 862000.0,
+            "ret_pct": -7.08,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-01",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 776000.0,
+            "entry": 862000.0,
+            "ret_pct": -9.98,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 1911000.0,
+            "entry": 1166000.0,
+            "ret_pct": 63.89,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 295500.0,
+            "entry": 214500.0,
+            "ret_pct": 37.76,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 295500.0,
+            "entry": 214500.0,
+            "ret_pct": 37.76,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 208000.0,
+            "entry": 271500.0,
+            "ret_pct": -23.39,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "hard_atr_stop",
+            "exit_price": 253500.0,
+            "entry": 332500.0,
+            "ret_pct": -23.76,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 639000.0,
+            "entry": 666000.0,
+            "ret_pct": -4.05,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-10",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 602000.0,
+            "entry": 666000.0,
+            "ret_pct": -9.61,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 2187000.0,
+            "entry": 2555000.0,
+            "ret_pct": -14.4,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 2187000.0,
+            "entry": 2555000.0,
+            "ret_pct": -14.4,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 286000.0,
+            "entry": 310000.0,
+            "ret_pct": -7.74,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 286000.0,
+            "entry": 310000.0,
+            "ret_pct": -7.74,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_first_partial_50",
+            "exit_price": 406500.0,
+            "entry": 455000.0,
+            "ret_pct": -10.66,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-07-06",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 217000.0,
+            "entry": 232500.0,
+            "ret_pct": -6.67,
+            "whipsaw": null
+          }
+        ],
+        "exit_events_stop_only": [
+          {
+            "date": "2024-11-15",
+            "ticker": "207940",
+            "name": "삼성바이오로직스",
+            "rule": "hard_atr_stop",
+            "exit_price": 1379024.0,
+            "entry": 1517368.0,
+            "ret_pct": -9.12,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-11-21",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 222500.0,
+            "entry": 251000.0,
+            "ret_pct": -11.35,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-11-26",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "hard_atr_stop",
+            "exit_price": 52100.0,
+            "entry": 63800.0,
+            "ret_pct": -18.34,
+            "whipsaw": false
+          },
+          {
+            "date": "2024-11-26",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "hard_atr_stop",
+            "exit_price": 314613.0,
+            "entry": 369757.0,
+            "ret_pct": -14.91,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-06",
+            "ticker": "009540",
+            "name": "HD한국조선해양",
+            "rule": "hard_atr_stop",
+            "exit_price": 189300.0,
+            "entry": 211500.0,
+            "ret_pct": -10.5,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-06",
+            "ticker": "010140",
+            "name": "삼성중공업",
+            "rule": "hard_atr_stop",
+            "exit_price": 10630.0,
+            "entry": 11840.0,
+            "ret_pct": -10.22,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-09",
+            "ticker": "012450",
+            "name": "한화에어로스페이스",
+            "rule": "hard_atr_stop",
+            "exit_price": 274732.0,
+            "entry": 320029.0,
+            "ret_pct": -14.15,
+            "whipsaw": true
+          },
+          {
+            "date": "2024-12-09",
+            "ticker": "064350",
+            "name": "현대로템",
+            "rule": "hard_atr_stop",
+            "exit_price": 44450.0,
+            "entry": 52600.0,
+            "ret_pct": -15.49,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-01-02",
+            "ticker": "035420",
+            "name": "NAVER",
+            "rule": "hard_atr_stop",
+            "exit_price": 193800.0,
+            "entry": 204500.0,
+            "ret_pct": -5.23,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-02-28",
+            "ticker": "035420",
+            "name": "NAVER",
+            "rule": "hard_atr_stop",
+            "exit_price": 207000.0,
+            "entry": 229000.0,
+            "ret_pct": -9.61,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-14",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 276000.0,
+            "entry": 319000.0,
+            "ret_pct": -13.48,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-03-24",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "hard_atr_stop",
+            "exit_price": 38180.0,
+            "entry": 44100.0,
+            "ret_pct": -13.42,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-07-28",
+            "ticker": "086790",
+            "name": "하나금융지주",
+            "rule": "hard_atr_stop",
+            "exit_price": 84300.0,
+            "entry": 92200.0,
+            "ret_pct": -8.57,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-08-12",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "hard_atr_stop",
+            "exit_price": 104000.0,
+            "entry": 117700.0,
+            "ret_pct": -11.64,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "051910",
+            "name": "LG화학",
+            "rule": "hard_atr_stop",
+            "exit_price": 367000.0,
+            "entry": 419500.0,
+            "ret_pct": -12.51,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-11-21",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "hard_atr_stop",
+            "exit_price": 288500.0,
+            "entry": 334500.0,
+            "ret_pct": -13.75,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-12-16",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "hard_atr_stop",
+            "exit_price": 102800.0,
+            "entry": 108900.0,
+            "ret_pct": -5.6,
+            "whipsaw": true
+          },
+          {
+            "date": "2025-12-18",
+            "ticker": "003670",
+            "name": "포스코퓨처엠",
+            "rule": "hard_atr_stop",
+            "exit_price": 195500.0,
+            "entry": 221500.0,
+            "ret_pct": -11.74,
+            "whipsaw": false
+          },
+          {
+            "date": "2025-12-18",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "hard_atr_stop",
+            "exit_price": 277000.0,
+            "entry": 308000.0,
+            "ret_pct": -10.06,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-02-02",
+            "ticker": "042660",
+            "name": "한화오션",
+            "rule": "hard_atr_stop",
+            "exit_price": 133600.0,
+            "entry": 148900.0,
+            "ret_pct": -10.28,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "hard_atr_stop",
+            "exit_price": 272000.0,
+            "entry": 318000.0,
+            "ret_pct": -14.47,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-01",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 776000.0,
+            "entry": 921000.0,
+            "ret_pct": -15.74,
+            "whipsaw": true
+          }
+        ],
+        "period": "2024-10-30~2026-07-06"
+      },
+      "recent_2026": {
+        "A_baseline": {
+          "total_return_pct": 74.0,
+          "cagr_pct": 208.1,
+          "sharpe": 2.04,
+          "max_drawdown_pct": -26.8,
+          "n_trades": 20,
+          "turnover_x": 3.21,
+          "intra_month_exits": {
+            "hard_atr_stop": 0,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 0,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          }
+        },
+        "B_overlay_full": {
+          "total_return_pct": 76.4,
+          "cagr_pct": 216.8,
+          "sharpe": 2.72,
+          "max_drawdown_pct": -16.9,
+          "n_trades": 73,
+          "turnover_x": 8.63,
+          "intra_month_exits": {
+            "hard_atr_stop": 1,
+            "trail_first_partial_50": 22,
+            "trail_residual_exit": 21
+          },
+          "whipsaw": {
+            "hard_atr_stop": 1,
+            "trail_residual_exit": 15,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": 2.4
+        },
+        "C_stop_only": {
+          "total_return_pct": 66.0,
+          "cagr_pct": 180.2,
+          "sharpe": 1.94,
+          "max_drawdown_pct": -26.4,
+          "n_trades": 23,
+          "turnover_x": 3.65,
+          "intra_month_exits": {
+            "hard_atr_stop": 2,
+            "trail_first_partial_50": 0,
+            "trail_residual_exit": 0
+          },
+          "whipsaw": {
+            "hard_atr_stop": 1,
+            "trail_residual_exit": 0,
+            "definition": "전량 청산 후 10거래일 내 종가 ≥ 청산가×1.05"
+          },
+          "delta_vs_baseline_pp": -8.0
+        },
+        "attribution_pp": {
+          "hard_stop_component": -8.0,
+          "trailing_component": 10.4,
+          "overlay_total": 2.4
+        },
+        "exit_events_overlay_full": [
+          {
+            "date": "2026-01-26",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 169500.0,
+            "entry": 144500.0,
+            "ret_pct": 17.3,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-02-06",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_first_partial_50",
+            "exit_price": 289500.0,
+            "entry": 245000.0,
+            "ret_pct": 18.16,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 939000.0,
+            "entry": 677000.0,
+            "ret_pct": 38.7,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 939000.0,
+            "entry": 677000.0,
+            "ret_pct": 38.7,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 195100.0,
+            "entry": 128500.0,
+            "ret_pct": 51.83,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 195100.0,
+            "entry": 128500.0,
+            "ret_pct": 51.83,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "028260",
+            "name": "삼성물산",
+            "rule": "trail_residual_exit",
+            "exit_price": 317000.0,
+            "entry": 245000.0,
+            "ret_pct": 29.39,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 595000.0,
+            "entry": 478000.0,
+            "ret_pct": 24.48,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "000270",
+            "name": "기아",
+            "rule": "trail_first_partial_50",
+            "exit_price": 182300.0,
+            "entry": 150100.0,
+            "ret_pct": 21.45,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-03",
+            "ticker": "000270",
+            "name": "기아",
+            "rule": "trail_residual_exit",
+            "exit_price": 182300.0,
+            "entry": 150100.0,
+            "ret_pct": 21.45,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 259000.0,
+            "entry": 144500.0,
+            "ret_pct": 79.24,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-04",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 501000.0,
+            "entry": 478000.0,
+            "ret_pct": 4.81,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-23",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 186300.0,
+            "entry": 173500.0,
+            "ret_pct": 7.38,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-23",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 640000.0,
+            "entry": 796000.0,
+            "ret_pct": -19.6,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-26",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 933000.0,
+            "entry": 836000.0,
+            "ret_pct": 11.6,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-26",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 180100.0,
+            "entry": 173500.0,
+            "ret_pct": 3.8,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-26",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 490000.0,
+            "entry": 507000.0,
+            "ret_pct": -3.35,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 873000.0,
+            "entry": 836000.0,
+            "ret_pct": 4.43,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 469500.0,
+            "entry": 507000.0,
+            "ret_pct": -7.4,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-03-30",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 155000.0,
+            "entry": 136200.0,
+            "ret_pct": 13.8,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-03-31",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 143600.0,
+            "entry": 136200.0,
+            "ret_pct": 5.43,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-07",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 866000.0,
+            "entry": 827000.0,
+            "ret_pct": 4.72,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-12",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_first_partial_50",
+            "exit_price": 629000.0,
+            "entry": 456500.0,
+            "ret_pct": 37.79,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 259000.0,
+            "entry": 157600.0,
+            "ret_pct": 64.34,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "006400",
+            "name": "삼성SDI",
+            "rule": "trail_residual_exit",
+            "exit_price": 614000.0,
+            "entry": 456500.0,
+            "ret_pct": 34.5,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-15",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 834000.0,
+            "entry": 827000.0,
+            "ret_pct": 0.85,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-18",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 317000.0,
+            "entry": 305000.0,
+            "ret_pct": 3.93,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-05-18",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_residual_exit",
+            "exit_price": 253500.0,
+            "entry": 157600.0,
+            "ret_pct": 60.85,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 288000.0,
+            "entry": 305000.0,
+            "ret_pct": -5.57,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-05-19",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 1745000.0,
+            "entry": 1686000.0,
+            "ret_pct": 3.5,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 295500.0,
+            "entry": 196500.0,
+            "ret_pct": 50.38,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 295500.0,
+            "entry": 196500.0,
+            "ret_pct": 50.38,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-08",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 1911000.0,
+            "entry": 1686000.0,
+            "ret_pct": 13.35,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-19",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_first_partial_50",
+            "exit_price": 852000.0,
+            "entry": 790000.0,
+            "ret_pct": 7.85,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-19",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_first_partial_50",
+            "exit_price": 295000.0,
+            "entry": 270000.0,
+            "ret_pct": 9.26,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-23",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_first_partial_50",
+            "exit_price": 310000.0,
+            "entry": 302500.0,
+            "ret_pct": 2.48,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-23",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_first_partial_50",
+            "exit_price": 511000.0,
+            "entry": 602000.0,
+            "ret_pct": -15.12,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-06-23",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "trail_residual_exit",
+            "exit_price": 511000.0,
+            "entry": 602000.0,
+            "ret_pct": -15.12,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-06-23",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "trail_residual_exit",
+            "exit_price": 809000.0,
+            "entry": 790000.0,
+            "ret_pct": 2.41,
+            "whipsaw": false
+          },
+          {
+            "date": "2026-06-23",
+            "ticker": "042700",
+            "name": "한미반도체",
+            "rule": "trail_residual_exit",
+            "exit_price": 258000.0,
+            "entry": 270000.0,
+            "ret_pct": -4.44,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-26",
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "rule": "trail_first_partial_50",
+            "exit_price": 203000.0,
+            "entry": 236000.0,
+            "ret_pct": -13.98,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_first_partial_50",
+            "exit_price": 2187000.0,
+            "entry": 2048000.0,
+            "ret_pct": 6.79,
+            "whipsaw": null
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "000660",
+            "name": "SK하이닉스",
+            "rule": "trail_residual_exit",
+            "exit_price": 2187000.0,
+            "entry": 2048000.0,
+            "ret_pct": 6.79,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-07-02",
+            "ticker": "005930",
+            "name": "삼성전자",
+            "rule": "trail_residual_exit",
+            "exit_price": 286000.0,
+            "entry": 302500.0,
+            "ret_pct": -5.45,
+            "whipsaw": true
+          }
+        ],
+        "exit_events_stop_only": [
+          {
+            "date": "2026-03-23",
+            "ticker": "079550",
+            "name": "LIG넥스원",
+            "rule": "hard_atr_stop",
+            "exit_price": 640000.0,
+            "entry": 796000.0,
+            "ret_pct": -19.6,
+            "whipsaw": true
+          },
+          {
+            "date": "2026-06-26",
+            "ticker": "005380",
+            "name": "현대차",
+            "rule": "hard_atr_stop",
+            "exit_price": 480500.0,
+            "entry": 602000.0,
+            "ret_pct": -20.18,
+            "whipsaw": false
+          }
+        ],
+        "period": "2026-01-02~2026-07-06"
+      }
+    }
+  },
+  "verdict": "판정: 혼재 — 4개 설정·구간 중 3개에서 오버레이가 가치를 파괴했다(구간·설정 의존). [권장 Top10·월간리밸 (backtest_strategy 검증 설정) · full] 오버레이 B−A -267.1%p(하드스톱 -39.2 / 트레일링 -227.9), MDD 개선 +1.2%p, 전량청산 87건 중 휩쏘 59건 / [권장 Top10·월간리밸 (backtest_strategy 검증 설정) · recent_2026] 오버레이 B−A -46.0%p(하드스톱 -3.8 / 트레일링 -42.2), MDD 개선 +8.3%p, 전량청산 28건 중 휩쏘 21건 / [라이브 Top6·21일리밸 (policy momentum_strategy 설정) · full] 오버레이 B−A -165.5%p(하드스톱 -50.3 / 트레일링 -115.2), MDD 개선 -4.6%p, 전량청산 71건 중 휩쏘 49건 / [라이브 Top6·21일리밸 (policy momentum_strategy 설정) · recent_2026] 오버레이 B−A +2.4%p(하드스톱 -8.0 / 트레일링 +10.4), MDD 개선 +9.9%p, 전량청산 22건 중 휩쏘 16건",
+  "baseline_cross_check": "A_baseline(권장 Top10·42일, full)은 backtest_strategy.json strategies_full '★권장'(+304.3%)과 같은 로직의 포지션 단위 재구현 — 방향·규모가 일치해야 정상",
+  "note": "학습·시뮬레이션 목적. 과거 성과는 미래 수익을 보장하지 않는다."
+}

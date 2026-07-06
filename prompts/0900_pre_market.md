@@ -227,6 +227,8 @@
    - `ok` → 스냅샷 가격으로 booking (`price_source:"snapshot_fresh"`).
    - **(v2.17) 세션 웹 검증 차단(이그레스 403) 시**: `pre_trade_check` 가 `web_egress=blocked` + 권위 스냅샷(`authoritative_same_day_snapshot=true`)을 감지하면 `live_verify_required` 를 자동으로 `ok`(`web_verify_unavailable_fallback_applied=true`)로 전환 → 웹 교차확인 없이 **`price_source:"snapshot_fresh"`** 로 booking 한다(불가능한 웹 재검증을 흉내낸 `web_verified` 기록 금지). 스냅샷이 단일출처·medium·전일자면 폴백 미적용 → `medium_new_entry_rule`(축소비중) 집행 또는 보류 (`policy.price_data_quality.web_verify_unavailable_fallback`).
 - **금지: 묵은 스냅샷 가격 선체결 후 재확인(booking-then-verify).** 검증이 체결을 선행한다 (`policy.price_data_quality.new_entry_freshness_rule`). 단 위 v2.17 폴백은 '묵은 가격 선체결'이 아니라 '오늘자 2출처 권위 가격을 검증 불능 상황에서 채택'이라 원칙과 충돌하지 않는다.
+4. **(v2.22 추격 필터)** 신규 매수 전 `python scripts/pre_trade_check.py --tickers <매수예정,쉼표구분>` 로 `ticker_gates` 를 확인 — `chase_blocked=true`(직전 5거래일 +10% 초과 급등) 종목은 **진입 금지**. 예외 진입은 명확한 사유를 trade_log BUY 라인의 `chase_exception` 에 기록하고 계획 비중의 50% 이하로 축소한다 (`policy.risk.chase_entry_filter` — 6/4 삼성전자·6/30 LS ELECTRIC 급등 추격 즉시 손실 재발 방지. CI `check_trade_log_gate` 가 사후 하드 차단).
+5. **(v2.22 판단 카드 — 의무)** 모든 BUY 라인에 `decision_card` 객체를 기록한다: `thesis`(왜 '지금' 이 종목인가, 한 문단) · `evidence`(근거 리스트 ≥2, 각각 데이터/출처) · `invalidation`(이 판단이 틀렸다고 인정할 구체 조건 — 손절가와 별개의 thesis 무효화) · `horizon_days`(정수). SELL 라인에는 `trigger`(발동 룰+수치) · `human_summary`(사람에게 설명하는 한 문단 — 홀드 대안과 비교). 누락 시 CI FAIL (`policy.price_data_quality.decision_card_gate`). 카드는 `scripts/render_trade_cards.py` 가 `state/trade_cards.md` 로 렌더링해 사람이 검토한다 — **네가 쓰는 카드의 독자는 기계가 아니라 사람이다.**
 
 ### A. watchlist가 비어있는 경우 (첫 가동)
 1. 위 매크로 뉴스 + 시총 상위 30위 종목 중심으로 **후보 3~4종목을 선정**한다 (`policy.position_sizing.max_positions`=4 이내).

@@ -138,6 +138,12 @@ def main() -> int:
         default="auto",
         help="세션 웹 검증 통로 상태. auto=env SESSION_WEB_EGRESS 또는 자동 프로브(기본).",
     )
+    parser.add_argument(
+        "--tickers",
+        default="",
+        help="매수 예정 종목(쉼표 구분) — 급등 추격 필터(policy.risk.chase_entry_filter) 사전 판정. "
+        "chase_blocked=true 종목은 booking 금지(예외 시 chase_exception 사유 + 50%% 축소).",
+    )
     args = parser.parse_args()
 
     policy = load_json("config/policy.json", {})
@@ -210,9 +216,44 @@ def main() -> int:
         verdict = "ok"
         fallback_applied = True
 
+    # 급등 추격 필터 사전 판정 (2026-07-06 감사 처방③ — booking 전 확인용 어드바이저리.
+    # 하드 차단은 check_trade_log_gate 의 chase_entry_gate 가 사후 CI 에서 수행).
+    ticker_gates: dict[str, dict] = {}
+    chase_cfg = (policy.get("risk", {}) or {}).get("chase_entry_filter", {}) if isinstance(policy, dict) else {}
+    req_tickers = [t.strip() for t in args.tickers.split(",") if t.strip()]
+    if req_tickers and chase_cfg.get("enabled", True):
+        lookback = int(chase_cfg.get("lookback_trading_days", 5))
+        max_runup = float(chase_cfg.get("max_runup_pct", 10.0))
+        hist = load_json("state/price_history.json", {})
+        for t in req_tickers:
+            bars = ((hist.get("tickers") or {}).get(t) or {}).get("bars") or []
+            closes = [(b["date"], float(b["close"])) for b in bars if isinstance(b, dict) and b.get("close")]
+            closes.sort()
+            cur = None
+            snap_t = ts.get(t) if isinstance(ts, dict) else None
+            if isinstance(snap_t, dict) and isinstance(snap_t.get("last_close"), (int, float)):
+                cur = float(snap_t["last_close"])
+            elif closes:
+                cur = closes[-1][1]
+            if cur is None or len(closes) < lookback + 1:
+                ticker_gates[t] = {"chase_blocked": False, "runup_pct": None,
+                                   "note": "가격 이력/현재가 부족 — 판정 불가(수동 확인)"}
+                continue
+            ref = closes[-lookback][1] if closes[-1][0] >= today else closes[-lookback][1]
+            runup = round((cur / ref - 1) * 100, 2)
+            ticker_gates[t] = {
+                "chase_blocked": runup > max_runup,
+                "runup_pct": runup,
+                "lookback_trading_days": lookback,
+                "max_runup_pct": max_runup,
+                "ref_close": ref,
+                "current_price": cur,
+            }
+
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "verdict": verdict,
+        "ticker_gates": ticker_gates,
         "snapshot_as_of": snap_as_of,
         "snapshot_age_min": age_min,
         "freshness": freshness,

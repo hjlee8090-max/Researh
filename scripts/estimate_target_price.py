@@ -151,6 +151,56 @@ def horizon_discount(horizon: str | None, horizon_months: int) -> float:
     return round(min(1.0, horizon_months / mid_months), 3)
 
 
+# 컨센서스 타당성 가드 (2026-07-06 사고) — fetch_consensus 파싱 실패로 17종목 전부에
+# 동일 target(505,625)이 써지자, 밸류밴드 없는 저가주(카카오 현재가 36,100)의 앵커가
+# 컨센×0.5 로 부풀어 목표가 +684% 로 폭발했다. 목표주가가 현재가 대비 상식 밖 배수면
+# 컨센을 결측 처리 → 앵커·천장 캡 양쪽에서 제외되고 data_layers.consensus_target=False 로
+# 등급이 하향된다(오염 입력에 대한 fail-safe — 모델 파라미터가 아닌 입력 검증).
+CONSENSUS_MAX_RATIO = 3.0   # 목표주가 > 현재가×3 = 비상식(액면분할·파싱오류 의심)
+CONSENSUS_MIN_RATIO = 0.33  # 목표주가 < 현재가×1/3 도 동일
+
+
+def sanitize_consensus_target(
+    cons_target: float | None, current: float | None
+) -> tuple[float | None, str | None]:
+    """컨센서스 목표가의 현재가 대비 타당성 검증. 비상식이면 (None, 사유), 정상이면 (값, None).
+
+    현재가가 없으면 검증 불가 — 값을 그대로 둔다(결측 래칫 방지).
+    """
+    if not cons_target or not current:
+        return cons_target, None
+    ratio = cons_target / current
+    if ratio > CONSENSUS_MAX_RATIO or ratio < CONSENSUS_MIN_RATIO:
+        return None, (
+            f"컨센 목표가 {cons_target:,.0f} 이 현재가 {current:,.0f} 대비 "
+            f"{ratio:.1f}배 — 타당성 밖으로 제외(오염 의심)"
+        )
+    return cons_target, None
+
+
+def duplicated_consensus_tickers(consensus: dict, min_group: int = 3) -> set[str]:
+    """consensus.json 에서 '동일 target_price' 를 다수 종목이 공유하면 파싱 오염이므로
+    그 종목군을 반환한다. 비율 가드(sanitize)가 못 잡는 '현재가의 3배 이내' 중간가 종목의
+    복제 오염까지 앵커·캡에서 통째로 배제하기 위함. fetch_consensus 의 감지와 동형 —
+    수집 실패가 이미 파일에 써진 경우를 읽는 쪽에서도 방어한다(2026-07-06 사고).
+    """
+    from collections import Counter
+
+    counts = Counter(
+        _num(v.get("target_price")) for v in consensus.values()
+        if isinstance(v, dict) and _num(v.get("target_price")) is not None
+    )
+    if not counts:
+        return set()
+    n_valued = sum(counts.values())
+    threshold = max(min_group, n_valued // 2 + 1)
+    bad_values = {tp for tp, c in counts.items() if c >= threshold}
+    return {
+        t for t, v in consensus.items()
+        if isinstance(v, dict) and _num(v.get("target_price")) in bad_values
+    }
+
+
 def anchor_price(
     val_cfg: dict, consensus_target: float | None, current: float | None
 ) -> tuple[float | None, str, bool]:
@@ -778,6 +828,9 @@ def main() -> int:
     regime_tier = (snapshot.get("regime") or {}).get("tier")  # v1.5 신규진입 상한가 R/R 하한 조회용
     policy = load_json("config/policy.json", {})
     consensus = load_json("state/consensus.json", {}).get("tickers", {})
+    # 오염 컨센 방어 — 다수 종목이 동일 target 을 공유하면(fetch_consensus 파싱 실패가
+    # 이미 파일에 반영된 경우) 그 종목들의 컨센을 앵커·캡에서 통째로 배제한다(2026-07-06 사고).
+    corrupt_consensus = duplicated_consensus_tickers(consensus) if isinstance(consensus, dict) else set()
     fundamentals = load_json("state/fundamentals.json", {}).get("tickers", {})
     val_checks = load_json("state/valuation_check.json", {}).get("tickers", {})
     sector_rotation = load_json("state/universe_screen.json", {}).get("sector_rotation", [])
@@ -807,7 +860,14 @@ def main() -> int:
         mom = ts.get("momentum", {}) if isinstance(ts.get("momentum"), dict) else {}
         ret60 = _num(mom.get("ret_60d_pct"))
         cons = consensus.get(ticker, {}) if isinstance(consensus, dict) else {}
-        cons_target = _num(cons.get("target_price"))
+        cons_target_raw = _num(cons.get("target_price"))
+        if ticker in corrupt_consensus:
+            cons_target, cons_reject = None, (
+                f"컨센 오염(동일 target {cons_target_raw:,.0f} 다수 종목 복제) — 앵커·캡에서 제외"
+                if cons_target_raw else "컨센 오염(동일 target 다수 복제) — 제외"
+            )
+        else:
+            cons_target, cons_reject = sanitize_consensus_target(cons_target_raw, current)
         fund = fundamentals.get(ticker, {}) if isinstance(fundamentals, dict) else {}
         earnings_signal = fund.get("earnings_signal")
         val_cfg = valuation.get(ticker, {}) if isinstance(valuation, dict) else {}
@@ -910,6 +970,7 @@ def main() -> int:
             "current_price": current,
             "anchor_price": round(anchor, -2) if anchor else None,
             "anchor_basis": anchor_basis,
+            "consensus_rejected": cons_reject,
             "premium_pct": {
                 "theme": theme_pct, "news": news_pct, "sector": sector_pct,
                 "momentum": tilt_pct, "total": total_premium_pct,

@@ -193,6 +193,10 @@ def simulate(tickers, dates, cfg, variant, start_idx, end_idx):
                 if tk in positions:  # 유지 종목 — 무비용 재조정(baseline 관례), 청산 상태 승계
                     cash -= tv - positions[tk]["units"] * p
                     positions[tk]["units"] = tv / p
+                    # 리밸런스 당일 종가도 최고종가 추적에 반영 — 누락 시 트레일 레벨이
+                    # 그날의 신고가를 놓쳐 한 박자 늦게/느슨하게 잡힌다(2026-07-08 검증
+                    # 감사 발견: 143건 중 1건 영향, 051910 잔여선 370,455 vs 정정 372,676).
+                    positions[tk]["highest"] = max(positions[tk]["highest"], p)
                 else:  # 신규 진입 — 진입가·ATR 고정 스톱·트레일 상태 초기화
                     atr0 = atr_at(tickers, tk, dates, i) or FLOOR_PCT
                     cash -= tv * (1.0 + COST_BUY)
@@ -433,6 +437,8 @@ def main():
                 "orange/red 단계 경보(재량 원인분류)는 기계 재현 불가로 제외 — 하드스톱·트레일링만",
                 "트레일 ATR 은 평가일 롤링, 하드스톱 ATR 은 진입 시점 고정",
                 "리밸런스 당일은 리밸런스가 청산을 대신(동일 종가 이중 체결 방지)",
+                "'라이브 Top6' 설정은 policy momentum_strategy 의 min_score=30·tracked_only 필터를 생략(score>0 전체 유니버스) — 라벨 충실도 한계, B−A 변형 간 비교는 동일 조건이라 유효",
+                "기말 보유 포지션은 종가 마킹만(매도비용 0.38% 미차감) — 완전투자 상태인 A 에 최대 ~1-2%p 유리, 오버레이 손상 추정을 보수적으로 만드는 방향",
             ],
             "configs": {label: cfg for label, cfg in CONFIGS},
         },

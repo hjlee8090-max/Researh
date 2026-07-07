@@ -18,6 +18,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # 교훈 반영 강제 게이트 (2026-07-06 감사 처방⑤) — check_lessons_applied 는 그동안
+  # audit_pipeline 안에서 어드바이저리(WARN)로만 돌아 hard 미반영 교훈이 4주씩 방치됐다
+  # (예: 금요일 ORANGE 사전청산 룰). 별도 job 으로 LESSONS_ENFORCE=1 을 걸어 hard 미반영이
+  # 있으면 워크플로를 FAIL 시킨다. audit job 과 분리한 이유: 게이트 실패가 일일 감사
+  # 리포트·카톡 발송(모니터링 경로)까지 죽이면 안 되기 때문.
+  lessons-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Enforce lessons applied (hard markers block)
+        env:
+          LESSONS_ENFORCE: "1"
+        run: python scripts/check_lessons_applied.py
+
   audit:
     runs-on: ubuntu-latest
     environment:
@@ -34,6 +51,8 @@ jobs:
         run: pip install --quiet markdown
       - name: Rule attribution
         run: python scripts/rule_attribution.py || true
+      - name: Render trade cards
+        run: python scripts/render_trade_cards.py || true
       - name: Write audit report
         run: python scripts/write_audit_report.py || true
       - name: Commit audit report
@@ -41,7 +60,7 @@ jobs:
         run: |
           git config user.name "kospi-autoflow-bot"
           git config user.email "hjlee8090@gmail.com"
-          git add reports/ state/audit_log.jsonl state/rule_attribution.json state/exit_tracking.json config/weekly_plan.json
+          git add reports/ state/audit_log.jsonl state/rule_attribution.json state/exit_tracking.json state/trade_cards.md config/weekly_plan.json
           if git diff --cached --quiet; then
             echo "No audit changes"
             echo "message=audit: $(date -u +%Y-%m-%d) pipeline health report" >> "$GITHUB_OUTPUT"

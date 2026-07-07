@@ -36,6 +36,9 @@ OUT_PATH = ROOT / "state" / "rule_attribution.json"
 TRACK_PATH = ROOT / "state" / "exit_tracking.json"
 
 BUY_ACTIONS = {"BUY"}
+# 재계산 손익 vs 로그 손익 허용 오차 — 반올림(net/주수 2dp) 잡음은 무시하고
+# 실제 이중계상(누적치 혼입)만 잡는다.
+PNL_MISMATCH_TOLERANCE_KRW = 50
 # SELL 계열 — reconcile_portfolio 분류와 동일한 관점(체결 액션만, EVAL/CHECK 류 제외).
 SELL_PREFIXES = ("SELL", "TRAILING_STOP")
 BLOCKED_DECISIONS = {"BLOCKED", "DEFERRED", "DEFERRED_12H"}
@@ -190,12 +193,31 @@ def build_round_trips(entries: list[dict]) -> tuple[list[dict], list[dict]]:
             hold_days = None
             if entry_date and d:
                 hold_days = (datetime.fromisoformat(d) - datetime.fromisoformat(entry_date)).days
+            # 실현손익은 원장 필드를 신뢰하지 않고 체결가로 재계산한다 — trade_log 의
+            # realized_pnl 필드 의미가 중간에 바뀌었다(구 SELL 라인 = 왕복분, 2026-07-06
+            # LS ELECTRIC 라인 = 누적 -77,928 + 왕복분은 realized_delta -12,858). 이 스키마
+            # 드리프트를 왕복분으로 읽는 바람에 손실 65,070원 과대계상(2026-07-06 감사 발견).
+            # 로그값은 realized_delta 우선으로 읽어 logged_realized_pnl 로 보존하고,
+            # 재계산값과 어긋나면 pnl_mismatch 로 표면화한다(원장 정합성 경보).
+            logged_pnl = _num(e.get("realized_delta"))
+            if logged_pnl is None:
+                logged_pnl = _num(e.get("realized_pnl"))
+            computed_pnl = None
+            if remain <= 0 and entry_date is not None:
+                computed_pnl = round(exit_px * sh - entry_cost, 0)
+            realized = computed_pnl if computed_pnl is not None else logged_pnl
+            mismatch = (
+                computed_pnl is not None and logged_pnl is not None
+                and abs(computed_pnl - logged_pnl) > PNL_MISMATCH_TOLERANCE_KRW
+            )
             trips.append({
                 "ticker": t, "name": e.get("name") or t,
                 "entry_date": entry_date, "exit_date": d,
                 "entry_cost": round(entry_cost, 0), "exit_price": exit_px,
                 "shares": sh, "hold_days": hold_days,
-                "realized_pnl": _num(e.get("realized_pnl")),
+                "realized_pnl": realized,
+                "logged_realized_pnl": logged_pnl,
+                "pnl_mismatch": mismatch,
                 "exit_rule": action,
                 # 선제추론 P&L 결합(v2.21 안건⑥→구현): trade_log SELL 항목의 inference_id 를
                 # 라운드트립에 전파 — score_inferences 가 rt.inference_id 로 결합 손익·PF 를 집계한다
@@ -393,6 +415,17 @@ def render_markdown(out: dict) -> str:
     lines.append("")
     lines.append("> t1/t5 일실(forgone) = (청산 후 N번째 관측 종가 − 청산가) × 매도주수. "
                  "양수 = 조기청산 비용(팔고 올랐다), 음수 = 청산이 손실 방어.")
+    mismatches = [tr for tr in out["round_trips"] if tr.get("pnl_mismatch")]
+    if mismatches:
+        lines.append("")
+        lines.append("#### ⚠️ 원장 불일치 (trade_log realized_pnl ≠ 체결가 재계산)")
+        for tr in mismatches:
+            lines.append(
+                f"- {tr['exit_date']} {tr['name']}({tr['ticker']}) {tr['exit_rule']}: "
+                f"로그 {tr['logged_realized_pnl']:+,.0f}원 vs 재계산 {tr['realized_pnl']:+,.0f}원 "
+                f"(차이 {tr['logged_realized_pnl'] - tr['realized_pnl']:+,.0f}원) — "
+                f"집계는 재계산값 사용. trade_log 라인 점검 필요(누적치 혼입/스키마 드리프트 의심)."
+            )
     return "\n".join(lines)
 
 

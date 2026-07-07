@@ -1,0 +1,54 @@
+name: Weekly Self Audit
+
+# 주간 자기감사 (2026-07-06 감사 → 정기화) — 수동 감사가 한 번 발견한 것들
+# (원장 이중계상·vs KOSPI 격차·스톱 휩쏘·패치>검증 속도·미배치)을 매주 기계로
+# 재측정한다. 일요일 17:00 KST — 20:00 sunday_policy_review 가 이 산출을 의무
+# 인용하도록 시점을 앞세운다.
+
+on:
+  schedule:
+    - cron: "0 8 * * 0" # 08:00 UTC 일요일 = 17:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  self-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      # 채점 → 카드 → 감사 순서 — self_audit 이 rule_attribution 산출을 읽는다.
+      - name: Rule attribution (fresh)
+        run: python scripts/rule_attribution.py || true
+      - name: Render trade cards
+        run: python scripts/render_trade_cards.py || true
+      - name: Self audit
+        run: python scripts/self_audit.py
+      - name: Commit self-audit outputs
+        run: |
+          git config user.name "kospi-autoflow-bot"
+          git config user.email "hjlee8090@gmail.com"
+          git add reports/ state/self_audit.json state/self_audit_findings.json state/trade_cards.md state/rule_attribution.json state/exit_tracking.json
+          if git diff --cached --quiet; then
+            echo "no self-audit changes"
+            exit 0
+          fi
+          git commit -m "audit(self): $(date -u +%Y-%m-%d) weekly self-audit report"
+          for i in 1 2 3; do
+            if git push; then break; fi
+            git pull --rebase origin main || true
+          done
+      # 보완 강제 게이트 (커밋 후 실행 — 게이트가 실패해도 이번 주 리포트는 커밋된다).
+      # 무처분 2주 이상 finding 이 있으면 워크플로 FAIL. sunday_policy_review(20:00)가
+      # state/self_audit_findings.json 의 disposition 을 기입해야 다음 주 통과한다 —
+      # '검사만 하고 보완이 조용히 이월'되는 구조(감사 실측: 금요일 ORANGE 룰 4주 방치)를 기계로 차단.
+      - name: Follow-up gate (undispositioned findings block)
+        env:
+          AUDIT_ENFORCE: "1"
+        run: python scripts/self_audit.py --followup-only

@@ -1,12 +1,12 @@
 {
-  "version": "2.21",
-  "last_updated": "2026-07-05",
+  "version": "2.22",
+  "last_updated": "2026-07-06",
   "changelog": [
+    "2.22: 2026-07-06 종합 감사 반영 — ①원장 이중계상 수정(realized_delta 우선+체결가 재계산, 65,070원 과대계상·pre_trade block 해소) ②risk.chase_entry_filter(직전 5거래일 +10% 초과 급등 진입 금지) ③risk.index_shock_stop_deferral(KOSPI |일간|≥5% 쇼크일 스톱은 익일 종가 재확인) ④decision_card_gate(BUY thesis/근거/무효화·SELL trigger/human_summary 의무, trade_cards.md 렌더링) ⑤backtest_exit_overlay(청산 오버레이 전기간 -166~-267%p 가치 파괴 실증) ⑥self_audit.py+weekly_self_audit.yml(주간 자기감사·패치 동결 규칙) ⑦lessons-gate LESSONS_ENFORCE=1 하드 강제. 전문: docs/policy_changelog.md",
     "2.21: 종가 트리거 체결가 규약 명문화(risk.exit_execution 신설, 근거: reports/2026-07-05-pipeline-counterfactual-research.md 안건③) — closing_auction(당일 확정 종가, 6/23 삼성전자 SELL_STOP 선례) 규약과 pending_orders '익일 09시 게이트 후 집행' 문구가 병존해 반사실 검증에서 동일 트리거의 체결가가 1주당 11,457원(235,601 vs 247,058) 갈리는 비결정성 확인. ①close_trigger_fill_rule: 손절·트레일링(1차/잔여)·목표가의 종가 이탈/도달 판정 확정 시 당일 closing_auction(확정 종가)로 가상 체결(trading_cost 적용). ②missed_eod_fallback: 18시 EOD 미발화 등으로 당일 판정을 놓쳐 익일 발견 시에만 익일 09시 시가 체결 + trade_log reason 에 지연 사유 명기. ③no_intraday_fill: 장중 트리거 터치는 체결 사유 아님 — check_intraday_alerts 신호(종가 확인 대기)로만 취급(7/3 LS ELECTRIC 저가 218,000<222,117 터치·종가 225,000 미이탈 실측). 부속: scripts/sync_pending_orders.py 신설(안건② — 트레일링 SELL po 트리거값을 exit_levels 산출값과 09/18시 동기화, 고정 222,117 vs 재산출 224,647 괴리 실측), audit_pipeline 에 portfolio heat 게이지 WARN 신설(안건① — 6/30 10.14%·7/1 10.51% > strong_bull 예산 9.0% 무경보 통과 실측). [2차분 동일 버전] ④선제추론 P&L 결합 배선: rule_attribution round_trip 에 trade_log SELL 의 inference_id 전파 + 0900/1800 booking 계약에 'pending_orders 주문의 inference_id 를 trade_log 라인에 복사' 명문화(pnl_linked_n=0 고착 해소 — PF 산출·Tier2 개방 평가의 전제). ⑤스키마 게이트: 09시 예측 3건(6/30·7/2·7/3) ts/slot/subject 소급 보정(confidence 는 사후 부여 금지·null) → 09:00 슬롯 채점보류 해제(n=6·적중률 66.7% 최초 공표), proactive_inference.schema_gate 신설(10영업일 무위반 시 --strict 승격 심사·backfill_discipline 명문화). ⑥12/15시 슬롯에 check_intraday_alerts 재산출 + '장중 터치 — 종가 확인 대기' 명기 의무 + 15시 sync_pending_orders 추가(7/3 저가 218,000<222,117 터치 무언급 통과 재발 방지). [3차분 동일 버전] ⑦12시 exit 수치 손계산 금지 명문화(09시 exit_levels 인용 슬롯 — 7/3 12시 제3값 ≈221,340 재발 방지). ⑧price_data_quality.settlement_close_source 신설 — 판정용 확정 종가 = 스냅샷 당일자 교차확인 종가, 사후 price_history ±0.5% 초과 괴리는 소급 기록만·판정 번복 금지(7/3 LS 225,000/229,500 3원화 해소). ⑨무체결 날도 EOD_MARK 1줄 의무(2026-07-06 발효) + audit_trade_log_daily_mark WARN(6/26·6/29·7/1·7/3 기록 공백 실측). ⑩scripts/update_exit_tracking.py 신설 — 보유 종목 일별 종가를 exit_tracking 에 영속 적재(five_day_history 6일 창 제약 해소, 기존 값 불변·low 보류), 보유 6종목 6/26~7/3 백필 완료.",
     "2.20: 포지션 유동 운영 진단 반영 3종(근거: reports/2026-07-02-position-management-research.md — 매도 8건 전부 룰 실행 vs SCALE_IN 6주 0건의 매수측 마비 비대칭). ①position_sizing.max_positions 5→6 — momentum top_n(6)과 불일치로 바스켓 만석 시 compute_allocation vacant_slots 가 영구 0이 되어 09시 §2-C deploy 경로가 사문화되던 정합 오류 수정(6/30 top_n 10→6 축소 때 미동기화). ②risk.breakeven_ratchet 신설(mode=shadow — 관측 전용·체결 변화 0): 이익 +1.0×ATR 도달 시 스톱→본전+왕복비용, +2.0×ATR 시 본전+0.5×ATR 로 올리는 래칫을 그림자 채점. 목적 = 트레일링 활성화(목표진행 70%) 전 사각지대의 open_risk 인플레이션 해소로 히트 예산 재활용(7/2 실측: LIG넥스원 1종목 open_risk 186,857원=strong_bull 예산 42%, deploy 1,372,090원 권고 vs 히트 잔여 0원·현금 41% 잠금) + 6/23 보호손절(+25,369원) 실증의 규칙화. 부작용(본전 노이즈 체결 — 5/28 KB금융 give-back -13,598원·t5 forgone +164,798원 교훈) 검증을 위해 scripts/track_ratchet_shadow.py(18시 EOD)→state/ratchet_shadow.json, scripts/score_ratchet_shadow.py(일 20시 0-E)→state/ratchet_shadow_scorecard.json 로 반사실 채점 후 promotion_criteria 충족 시에만 sunday_policy_review §1-8 이 live 전환을 심사. ③risk.time_stop.precedence_over_min_hold + horizon.min_hold_precedence — min_hold(5일)는 이익·중립 종목 회전마찰 방지용, '평가손실+모멘텀 소멸(score<10)' 종목엔 time_stop(목요일 리뷰)·회전아웃이 우선(W27 화·수 진입 주의 목요일 리뷰 충돌 해소). 히트 예산 자체 재보정(9→14%)·승자 증량(SCALE_IN winners_only)은 백테스트 오버레이 검증 후 별도 상정(연구 P2·P4).",
     "2.19: 수익형 전략 엔진 채택(momentum_strategy) — 현금 마비 구조 결함의 근본 해소. 진단: 직전 구간 KOSPI +198% 강세장인데 계좌 -1.3% — web_verify(403) 차단 시 재량 진입이 confidence 게이트에 막혀 자동 현금화되던 것이 단일 패배 원인(docs/strategy_momentum.md). 해법: ①scripts/backtest_strategy.py 로 그리드+walk-forward 검증된 듀얼모멘텀 로테이션(Top10·월간리밸·MA200추세필터·항시투자)을 1순위 진입 엔진으로 등록 — 전구간 +313%/Sharpe 2.34 로 벤치(+198%/2.24) 상회. ②scripts/momentum_signal.py 가 계좌 크기 정수주 바스켓 산출(state/momentum_signal.json) — 종목당 30% 상한·최소현금 10% 준수. ③cash_trap_fix: 사전 계산된 바스켓의 게이트 통과 체결은 묵은가격 추격이 아니므로, web_verify 차단 시 커밋된 momentum_signal·snapshot 을 medium 신뢰 출처로 인정해 배치를 진행(low 만 차단). ④레짐필터 OFF — 강세장 현금화는 전구간 수익을 깎음, 개별 추세필터(가격>MA200)로 대체. fetch_history.yml 가 신호 자동 재생성.",
-    "2.18: 09시 개장 점검 '매일 가격 신뢰도 low' 구조 버그 3종 해소(2026-06-26 사용자 진단 — 개장 직후 후보 전종목이 confidence=low 로 신규매수 봉쇄, 6/23~ 5영업일 반복). fetch_market_data.py: ①fetch_yahoo 가 meta.regularMarketPrice/Time(당일 실시간 체결가)로 마지막 봉 보강 — 일봉이 개장 직후 전일자로 들어오는 Yahoo 지연을 메워 naver(당일)와 거래일 정렬. ②compute_confidence 를 '동일 거래일(date) cohort' 교차검증으로 재작성 — naver 당일 현재가 vs yahoo 전일 종가를 '출처 불일치 2%'로 오판해 low 로 강등하던 버그 제거(가장 신선한 날짜를 공유하는 출처끼리만 괴리 판정; 단일 당일치 출처는 medium). confidence_levels '동일 시각대 2개 이상' 정의를 코드가 실제로 준수. ③fetch_krx EOD 백스톱 호출 조건 확장(naver·yahoo 동시 실패 → 둘 중 하나라도 빈손, 또는 장 마감 후 당일치 교차확인 < 2; KRX 는 EOD 전용이라 마감 후에만 보강 의미). medium 부터 신규매수 허용(min_confidence_for_new_entry=medium)이라 개장 직후에도 진입 게이트 통과. screen_universe.py 동일 시그니처 반영. 단위·통합 테스트 18건 통과.",
-    "2.17: 세션 웹 검증 차단(이그레스 403) 폴백 — live_verify_required 가 세션 웹 차단으로 영구 미충족되어 신규 매수만 봉쇄되던 비대칭 해소(2026-06-23~ '가격조회 다 실패'의 원인). price_data_quality.web_verify_unavailable_fallback + pre_trade_check.py --egress 신설. 전문: docs/policy_changelog.md·docs/network_egress_allowlist.md."
+    "2.18: 09시 개장 점검 '매일 가격 신뢰도 low' 구조 버그 3종 해소(2026-06-26 사용자 진단 — 개장 직후 후보 전종목이 confidence=low 로 신규매수 봉쇄, 6/23~ 5영업일 반복). fetch_market_data.py: ①fetch_yahoo 가 meta.regularMarketPrice/Time(당일 실시간 체결가)로 마지막 봉 보강 — 일봉이 개장 직후 전일자로 들어오는 Yahoo 지연을 메워 naver(당일)와 거래일 정렬. ②compute_confidence 를 '동일 거래일(date) cohort' 교차검증으로 재작성 — naver 당일 현재가 vs yahoo 전일 종가를 '출처 불일치 2%'로 오판해 low 로 강등하던 버그 제거(가장 신선한 날짜를 공유하는 출처끼리만 괴리 판정; 단일 당일치 출처는 medium). confidence_levels '동일 시각대 2개 이상' 정의를 코드가 실제로 준수. ③fetch_krx EOD 백스톱 호출 조건 확장(naver·yahoo 동시 실패 → 둘 중 하나라도 빈손, 또는 장 마감 후 당일치 교차확인 < 2; KRX 는 EOD 전용이라 마감 후에만 보강 의미). medium 부터 신규매수 허용(min_confidence_for_new_entry=medium)이라 개장 직후에도 진입 게이트 통과. screen_universe.py 동일 시그니처 반영. 단위·통합 테스트 18건 통과."
   ],
   "momentum_strategy": {
     "enabled": true,
@@ -104,6 +104,24 @@
       "residual_trail_rule": "잔여 50% 는 샹들리에 트레일 -2.0×ATR%(최고 종가 기준)로 추세 추종. 이탈 시 잔여 전량 청산.",
       "levels_logging": "트레일링 활성화 시 watchlist 코멘트에 trailing_first_level(고점×(1−max(3,1.5×ATR%)/100))·trailing_residual_level(최고 종가×(1−2.0×ATR%/100)) 두 레벨을 기록한다.",
       "note": "v2.14(2026-06-14 sunday_policy_review) — 1.0×ATR%→1.5×ATR% 확대. 근거: W23 삼성전자 354,290원 조기청산 후 t1 +232,186원(ATR 7~8% 구간에서 -max(3%,7%)=-7% 폭이 노이즈 체결 반복). 1.5배 확대 시 동일 구간 -max(3%,10.5%)=-10.5%로 상승 추세 노이즈 체결 횟수 감소 기대. 잔여 2단(-2.0×ATR%) 현행 유지로 tail-risk 방어. 평시 ATR 2~3%에선 first trail -max(3%,3~4.5%)=-3~4.5%로 기존 대비 소폭 확대. 이전: v2.11 — 고정 -3%(0.5×ATR) 전량 청산 교정(+236,000원 일실 근거)."
+    },
+    "chase_entry_filter": {
+      "enabled": true,
+      "enforced_since": "2026-07-07",
+      "lookback_trading_days": 5,
+      "max_runup_pct": 10.0,
+      "rule": "신규 매수 종목의 직전 5거래일 종가 수익률이 +10% 초과면 진입 금지(급등 추격 차단). 예외 진입하려면 trade_log BUY 항목에 chase_exception(사유 서술)을 기록하고 비중을 계획의 50% 이하로 축소한다 — 예외 없는 위반은 check_trade_log_gate 가 CI 에서 차단.",
+      "purpose": "v2.22(2026-07-06 감사 처방③) — 고ATR 종목을 단기 급등 직후 사는 패턴이 즉시 손실로 반복 전환(6/4 삼성전자 3거래일 +13.7% 후 진입→orange/red 양분 손절 -82,480원, 6/30 LS ELECTRIC 2거래일 +13% 후 진입→7/6 트레일 손실 청산, 한미반도체 진입 2일 뒤 -15%). 검증: scripts/pre_trade_check.py --tickers 가 booking 전 판정, scripts/check_trade_log_gate.py 가 사후 하드 차단.",
+      "note": "reentry_discipline(52주 고점 97% probe 룰)과 별개의 게이트 — 이건 '종목 자신의 최근 5일 기울기'만 본다. 기준가는 price_history.json 의 매수일 직전 5번째 거래일 종가."
+    },
+    "index_shock_stop_deferral": {
+      "enabled": true,
+      "enforced_since": "2026-07-07",
+      "kospi_abs_daily_move_pct": 5.0,
+      "rule": "KOSPI 일간 |등락|≥5% 인 날의 종목 손절/트레일링 '종가 이탈' 확정은 당일 체결하지 않고 익일 종가 재확인 후 체결한다(2일 연속 이탈 시 익일 closing_auction 체결). 즉시 체결 예외: ①종가가 유효 임계를 추가로 1.0×ATR% 이상 관통(급락 가속) ②개별 악재로 thesis 무효화 판정 동반 — 예외 체결 시 trade_log SELL 항목에 shock_deferral_ack(어느 예외인지 + 수치)를 기록한다.",
+      "purpose": "v2.22(2026-07-06 감사 처방④) — 실현 손실 청산 6건 전부가 지수 급락일(-3.25%/-5.4%/-8.4%/-9.99% 등)에 격발됐고 6건 전부 청산 후 15거래일 내 +8~16% 회복(개별 thesis 훼손 0건). 종목 스톱이 지수 일중 변동에 격발되는 휩쏘를 '이틀 연속 종가 이탈' 요구로 완충한다. 반대 위험(진짜 폭락 방치)은 ATR 관통 예외 + red 하드 플로어(-20%)가 방어.",
+      "ack_field": "shock_deferral_ack",
+      "note": "check_trade_log_gate 의 index_shock_stop_gate 가 검증: 쇼크일 SELL 스톱 체결인데 deferral 이력(reason 에 '익일 재확인' 또는 shock_deferral_ack)이 없으면 위반. 쇼크일 판정은 price_history.json 지수 종가 기준."
     },
     "exit_execution": {
       "close_trigger_fill_rule": "종가 트리거(손절·트레일링 1차/잔여·목표가)의 '종가 이탈/도달' 판정이 18시 EOD 에서 확정되면 당일 closing_auction(확정 종가)로 가상 체결한다 — 6/23 삼성전자 SELL_STOP(closing_auction) 선례의 표준화. 거래비용은 trading_cost 적용.",
@@ -350,6 +368,22 @@
       "enabled": true,
       "purpose": "v2.17 — 조직 정책이 금융 호스트를 막아(이그레스 403) 세션 웹 교차확인 불가면 live_verify_required 영구 미충족으로 신규 매수만 봉쇄되던 비대칭 해소(2026-06-23~ '가격조회 다 실패'의 원인; 정기 수집 GitHub Actions 는 정상이라 스냅샷이 권위 가격). 배경·CLI·근본해결: docs/network_egress_allowlist.md.",
       "rule": "pre_trade_check(--egress {auto|blocked|open}, auto=env SESSION_WEB_EGRESS→프로브) 가 verdict=live_verify_required 이고 (a)세션 웹 검증 막힘(이그레스 403) (b)스냅샷 '오늘자 ≥2출처 일치 high'(authoritative_same_day) 둘 다면 NEW_ENTRY/SCALE_IN 을 snapshot_fresh 로 booking(web_verified 흉내 금지; check_trade_log_gate 그대로 통과). 제외(→기존 보수 동작): block/resync, 단일출처·medium·전일자(→medium_new_entry_rule 또는 보류; 2026-06-08 갭업 도용 차단 유지), 임계 근접(±3%/±2%) 청산, 이그레스 open/unknown."
+    },
+    "decision_card_gate": {
+      "enabled": true,
+      "enforced_since": "2026-07-07",
+      "purpose": "v2.22(2026-07-06 감사) — 매수·매도 판단을 사람이 읽고 공감/반박할 수 있게 만든다. 기존 reason 한 줄은 서사·수치가 섞여 검증 불가능했고(5/20 첫날 3종 매수는 무효화 조건 자체가 없었음), 판단의 질을 사후 채점하려면 구조화된 카드가 필요하다. scripts/render_trade_cards.py 가 이 카드를 state/trade_cards.md 로 렌더링해 사람이 매 거래를 검토한다.",
+      "buy_required_fields": {
+        "thesis": "왜 '지금' 이 종목인가 — 한 문단(최소 20자). 테마 나열이 아니라 가격을 움직일 인과.",
+        "evidence": "근거 리스트(최소 2개) — 각각 데이터/출처가 있는 사실(모멘텀 수치, 밸류에이션, 수급, 촉매 일정 등).",
+        "invalidation": "이 판단이 틀렸다고 인정할 구체 조건(최소 10자) — 가격(손절과 별개의 thesis 무효화)·사건·데이터 중 하나 이상.",
+        "horizon_days": "예상 보유 기간(정수, 거래일)."
+      },
+      "sell_required_fields": {
+        "trigger": "발동 룰과 수치(최소 10자, 숫자 포함) — 예: '트레일 1차선 222,117 < 종가 218,500'.",
+        "human_summary": "사람에게 설명하는 한 문단(최소 20자) — 왜 지금 파는 게 옳은가, 홀드 대안과 비교."
+      },
+      "note": "check_trade_log_gate 의 decision_card_gate 가 enforced_since 이후 BUY/SELL 에 decision_card 객체 필수 필드를 하드 검증(exit 1). 이전 체결은 grandfather — render_trade_cards 가 reason 폴백으로 렌더링."
     },
     "pre_trade_gate": {
       "enabled": true,

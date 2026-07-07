@@ -288,13 +288,164 @@ def find_recycled_value_violations(entries: list[dict], gate_cfg: dict) -> tuple
     return violations, checked, since
 
 
+# ── (4) 급등 추격 차단 — policy.risk.chase_entry_filter (2026-07-06 감사 처방③) ─────
+def _load_price_series() -> dict[str, dict]:
+    """price_history.json → {ticker: {"dates": [...], "closes": {date: close}}} (지수 포함 아님)."""
+    hist = load_json("state/price_history.json", {})
+    out: dict[str, dict] = {}
+    for tk, v in (hist.get("tickers") or {}).items():
+        bars = v.get("bars") or []
+        closes = {b["date"]: float(b["close"]) for b in bars if isinstance(b, dict) and b.get("close")}
+        if closes:
+            out[tk] = {"dates": sorted(closes), "closes": closes}
+    return out
+
+
+def find_chase_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
+    """BUY 종목의 직전 N거래일 수익률이 상한 초과인데 chase_exception 사유가 없으면 위반.
+
+    근거(2026-07-06 감사): 6/4 삼성전자(3거래일 +13.7% 후 진입→즉시 orange/red 양분 손절
+    -82,480원)·6/30 LS ELECTRIC(2거래일 +13% 후 진입→트레일 손실 청산) — 급등 추격 진입이
+    반복적으로 즉시 손실 전환. 기준가는 price_history 의 매수일 '직전' 5번째 거래일 종가
+    (매수일 종가는 미확정이므로 매수가 자체와 비교 — 룩어헤드 없음).
+    """
+    since = str(gate_cfg.get("enforced_since", "2026-07-07"))[:10]
+    lookback = int(gate_cfg.get("lookback_trading_days", 5))
+    max_runup = float(gate_cfg.get("max_runup_pct", 10.0))
+    series = _load_price_series()
+    violations: list[str] = []
+    checked = 0
+    for e in entries:
+        if not isinstance(e, dict) or not rp._is_buy(e.get("action")):
+            continue
+        ts = str(e.get("ts", ""))
+        if ts[:10] < since:
+            continue  # grandfather
+        t = e.get("ticker")
+        buy_px = e.get("price")
+        s = series.get(t)
+        if not s or not isinstance(buy_px, (int, float)) or buy_px <= 0:
+            continue  # 히스토리 없는 종목은 검증 불가 — pre_trade_check 의 사전 판정에 위임
+        prior = [d for d in s["dates"] if d < ts[:10]]
+        if len(prior) < lookback:
+            continue
+        ref_close = s["closes"][prior[-lookback]]
+        runup = (buy_px / ref_close - 1) * 100
+        checked += 1
+        if runup > max_runup and not e.get("chase_exception"):
+            violations.append(
+                f"[추격진입] {ts} BUY {t}: 직전 {lookback}거래일 수익률 {runup:+.1f}% > 상한 +{max_runup:.0f}% "
+                f"(기준가 {ref_close:,.0f}→매수가 {buy_px:,.0f}) — 급등 추격 차단. "
+                "예외 진입이면 chase_exception 사유 + 50% 축소 비중 기록 필요"
+            )
+    return violations, checked, since
+
+
+# ── (5) 지수 급변동일 스톱 유예 — policy.risk.index_shock_stop_deferral (감사 처방④) ──
+_STOP_SELL_MARKERS = ("STOP", "TRAILING")
+
+
+def find_index_shock_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
+    """KOSPI |일간등락|≥임계 인 날의 스톱/트레일 SELL 체결에 유예 이력이 없으면 위반.
+
+    근거(2026-07-06 감사): 실현 손실 청산 6건 전부 지수 급락일 격발 후 15거래일 내 +8~16% 회복
+    (개별 thesis 훼손 0건). 쇼크일 스톱은 익일 종가 재확인이 기본 — 즉시 체결은 shock_deferral_ack
+    (ATR 관통/thesis 무효화 예외) 또는 reason 의 '익일 재확인' 이력을 요구한다.
+    """
+    since = str(gate_cfg.get("enforced_since", "2026-07-07"))[:10]
+    threshold = float(gate_cfg.get("kospi_abs_daily_move_pct", 5.0))
+    ack_field = str(gate_cfg.get("ack_field", "shock_deferral_ack"))
+    hist = load_json("state/price_history.json", {})
+    idx_bars = ((hist.get("index") or {}).get("bars")) or []
+    idx_closes = {b["date"]: float(b["close"]) for b in idx_bars if isinstance(b, dict) and b.get("close")}
+    idx_dates = sorted(idx_closes)
+    day_move: dict[str, float] = {}
+    for i in range(1, len(idx_dates)):
+        prev, cur = idx_closes[idx_dates[i - 1]], idx_closes[idx_dates[i]]
+        if prev > 0:
+            day_move[idx_dates[i]] = (cur / prev - 1) * 100
+    violations: list[str] = []
+    checked = 0
+    for e in entries:
+        if not isinstance(e, dict):
+            continue
+        action = str(e.get("action") or "")
+        if not rp._is_sell(action) or not any(m in action.upper() for m in _STOP_SELL_MARKERS):
+            continue  # 스톱/트레일 계열 SELL 만 대상(목표 익절·재량 매도 제외)
+        ts = str(e.get("ts", ""))
+        d = ts[:10]
+        if d < since:
+            continue  # grandfather
+        move = day_move.get(d)
+        if move is None or abs(move) < threshold:
+            continue  # 쇼크일 아님
+        checked += 1
+        reason = str(e.get("reason") or "")
+        deferred = ("익일 재확인" in reason) or ("2일 연속" in reason) or ("이틀 연속" in reason)
+        if not deferred and not e.get(ack_field):
+            violations.append(
+                f"[지수쇼크스톱] {ts} {action} {e.get('ticker')}: KOSPI 일간 {move:+.2f}% 쇼크일의 스톱 체결인데 "
+                f"유예 이력(reason '익일 재확인'/'2일 연속') 또는 {ack_field}(ATR 관통·thesis 무효화 예외) 없음 "
+                "— 쇼크일 스톱은 익일 종가 재확인이 기본"
+            )
+    return violations, checked, since
+
+
+# ── (6) 판단 카드 — policy.price_data_quality.decision_card_gate (감사: 사람이 읽는 매매 논리) ──
+def find_decision_card_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
+    """BUY/SELL 항목에 구조화된 decision_card 필수 필드가 없으면 위반 (enforced_since 이후)."""
+    since = str(gate_cfg.get("enforced_since", "2026-07-07"))[:10]
+    violations: list[str] = []
+    checked = 0
+    for e in entries:
+        if not isinstance(e, dict):
+            continue
+        action = e.get("action")
+        is_buy, is_sell = rp._is_buy(action), rp._is_sell(action)
+        if not (is_buy or is_sell):
+            continue
+        ts = str(e.get("ts", ""))
+        if ts[:10] < since:
+            continue  # grandfather — 이전 체결은 render_trade_cards 가 reason 폴백
+        checked += 1
+        tag = f"{ts} {action} {e.get('ticker')}"
+        card = e.get("decision_card")
+        if not isinstance(card, dict):
+            violations.append(f"[판단카드] {tag}: decision_card 객체 없음 — 사람이 검증 가능한 매매 논리 기록 의무")
+            continue
+        missing: list[str] = []
+        if is_buy:
+            if len(str(card.get("thesis") or "")) < 20:
+                missing.append("thesis(≥20자)")
+            ev = card.get("evidence")
+            if not isinstance(ev, list) or len(ev) < 2:
+                missing.append("evidence(리스트 ≥2개)")
+            if len(str(card.get("invalidation") or "")) < 10:
+                missing.append("invalidation(≥10자)")
+            if not isinstance(card.get("horizon_days"), int):
+                missing.append("horizon_days(정수)")
+        else:
+            trig = str(card.get("trigger") or "")
+            if len(trig) < 10 or not any(c.isdigit() for c in trig):
+                missing.append("trigger(≥10자·수치 포함)")
+            if len(str(card.get("human_summary") or "")) < 20:
+                missing.append("human_summary(≥20자)")
+        if missing:
+            violations.append(f"[판단카드] {tag}: decision_card 필수 필드 미충족 — {', '.join(missing)}")
+    return violations, checked, since
+
+
 def main() -> int:
     policy = load_json("config/policy.json", {})
     pdq = policy.get("price_data_quality", {}) if isinstance(policy, dict) else {}
     mh = policy.get("market_hours", {}) if isinstance(policy, dict) else {}
+    risk = policy.get("risk", {}) if isinstance(policy, dict) else {}
     prov_gate = pdq.get("trade_provenance_gate", {}) if isinstance(pdq.get("trade_provenance_gate"), dict) else {}
     timing_gate = mh.get("trade_timing_gate", {}) if isinstance(mh.get("trade_timing_gate"), dict) else {}
     source_gate = pdq.get("source_provenance_gate", {}) if isinstance(pdq.get("source_provenance_gate"), dict) else {}
+    chase_gate = risk.get("chase_entry_filter", {}) if isinstance(risk.get("chase_entry_filter"), dict) else {}
+    shock_gate = risk.get("index_shock_stop_deferral", {}) if isinstance(risk.get("index_shock_stop_deferral"), dict) else {}
+    card_gate = pdq.get("decision_card_gate", {}) if isinstance(pdq.get("decision_card_gate"), dict) else {}
 
     entries = rp.load_trade_log()
 
@@ -319,33 +470,66 @@ def main() -> int:
         source_date_violations, source_checked, source_since = find_source_date_violations(entries, source_gate)
         recycled_violations, recycled_checked, source_since = find_recycled_value_violations(entries, source_gate)
 
+    chase_violations: list[str] = []
+    chase_checked = 0
+    chase_since = None
+    if chase_gate.get("enabled", True):
+        chase_violations, chase_checked, chase_since = find_chase_violations(entries, chase_gate)
+
+    shock_violations: list[str] = []
+    shock_checked = 0
+    shock_since = None
+    if shock_gate.get("enabled", True):
+        shock_violations, shock_checked, shock_since = find_index_shock_violations(entries, shock_gate)
+
+    card_violations: list[str] = []
+    card_checked = 0
+    card_since = None
+    if card_gate.get("enabled", True):
+        card_violations, card_checked, card_since = find_decision_card_violations(entries, card_gate)
+
     source_violations = source_date_violations + recycled_violations
-    # audit_pipeline 이 읽는 통합 목록(셋 중 하나라도 FAIL)
-    violations = prov_violations + timing_violations + source_violations
+    # audit_pipeline 이 읽는 통합 목록(하나라도 FAIL)
+    violations = (
+        prov_violations + timing_violations + source_violations
+        + chase_violations + shock_violations + card_violations
+    )
     out = {
         "enabled": True,
         "price_source_required_since": prov_since,
         "timing_enforced_since": timing_since,
         "source_enforced_since": source_since,
+        "chase_enforced_since": chase_since,
+        "shock_enforced_since": shock_since,
+        "decision_card_enforced_since": card_since,
         "checked": prov_checked,
         "timing_checked": timing_checked,
         "source_checked": source_checked,
         "recycled_checked": recycled_checked,
+        "chase_checked": chase_checked,
+        "shock_checked": shock_checked,
+        "decision_card_checked": card_checked,
         "provenance_violations": prov_violations,
         "timing_violations": timing_violations,
         "source_date_violations": source_date_violations,
         "recycled_value_violations": recycled_violations,
+        "chase_violations": chase_violations,
+        "index_shock_violations": shock_violations,
+        "decision_card_violations": card_violations,
         "violations": violations,
         "ok": not violations,
     }
     print(json.dumps(out, ensure_ascii=False, indent=2))  # stdout = 순수 JSON (audit 가 subprocess 로 파싱)
     summary = (
         f"TRADE_LOG_GATE=FAIL (provenance {len(prov_violations)} + timing {len(timing_violations)} "
-        f"+ source {len(source_violations)} violation) — 묵은/미검증 가격·장중 시간 밖·묵은 출처 booking 차단"
+        f"+ source {len(source_violations)} + chase {len(chase_violations)} + shock {len(shock_violations)} "
+        f"+ card {len(card_violations)} violation) — 묵은/미검증 가격·장외 체결·묵은 출처·추격 진입·"
+        "쇼크일 스톱·판단카드 누락 booking 차단"
         if violations
         else (
             f"TRADE_LOG_GATE=PASS (provenance {prov_checked}건 + timing {timing_checked}건 "
-            f"+ source {source_checked + recycled_checked}건 검증)"
+            f"+ source {source_checked + recycled_checked}건 + chase {chase_checked}건 "
+            f"+ shock {shock_checked}건 + card {card_checked}건 검증)"
         )
     )
     print(summary, file=sys.stderr)  # 사람용 요약은 stderr 로(stdout JSON 오염 방지)

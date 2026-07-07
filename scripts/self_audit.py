@@ -356,15 +356,24 @@ def merge_findings(triggered: list[dict], today: str) -> dict:
 def check_followup_only() -> int:
     """--followup-only — findings 원장만 읽어 overdue 존재 시 exit 1 (AUDIT_ENFORCE=1 일 때).
 
-    lessons-gate 와 같은 패턴: 산출은 본 실행이 하고, 강제는 별도 게이트 스텝이 한다."""
+    lessons-gate 와 같은 패턴: 산출은 본 실행이 하고, 강제는 별도 게이트 스텝이 한다.
+
+    overdue 는 저장된 배열이 아니라 findings 에서 **실시간 재계산**한다 — 20시 리뷰가
+    disposition 을 기입한 직후 이 모드로 확인할 때, 17시에 저장된 낡은 overdue 배열을
+    읽으면 처분이 반영 안 된 것처럼 FAIL 이 나기 때문(2026-07-08 재점검에서 발견)."""
     ledger = load_json(FINDINGS_PATH, {})
-    overdue_ids = ledger.get("overdue") or []
     enforce = os.environ.get("AUDIT_ENFORCE", "").strip().lower() in ("1", "true", "yes", "on")
-    findings = {f.get("id"): f for f in ledger.get("findings") or []}
-    for fid in overdue_ids:
-        f = findings.get(fid, {})
-        print(f"[OVERDUE 무처분] {fid} ({f.get('weeks_seen')}주째): {f.get('title')}")
-    print(f"self_audit followup: open={len(ledger.get('open') or [])} overdue={len(overdue_ids)} enforce={enforce}")
+    findings = [f for f in ledger.get("findings") or [] if isinstance(f, dict)]
+    open_ids = [f["id"] for f in findings if f.get("status") == "open"]
+    overdue = [
+        f for f in findings
+        if f.get("status") == "open" and not f.get("disposition")
+        and int(f.get("weeks_seen", 1)) >= OVERDUE_WEEKS
+    ]
+    overdue_ids = [f["id"] for f in overdue]
+    for f in overdue:
+        print(f"[OVERDUE 무처분] {f['id']} ({f.get('weeks_seen')}주째): {f.get('title')}")
+    print(f"self_audit followup: open={len(open_ids)} overdue={len(overdue_ids)} enforce={enforce}")
     if enforce and overdue_ids:
         print(f"AUDIT_ENFORCE — 무처분 {OVERDUE_WEEKS}주 이상 finding {len(overdue_ids)}건으로 FAIL "
               "(sunday_policy_review 가 state/self_audit_findings.json 의 disposition 을 기입해야 한다)")

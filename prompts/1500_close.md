@@ -31,6 +31,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 1. `git pull --rebase origin main || git pull --rebase origin master`.
 2. `python scripts/fetch_market_data.py && python scripts/score_candidates.py && python scripts/compute_allocation.py` 재실행(현재 스냅샷과 동기화).
 3. `python scripts/pre_trade_check.py` 의 `verdict` 를 따른다 — `block`/`resync_required` 면 매매 보류, `live_verify_required` 면 실시간가 웹 교차확인 후 재계산해 booking, `ok` 면 스냅샷 가격으로 booking. **묵은 가격 선체결(조건부 체결) 금지** (`new_entry_freshness_rule`). **(v2.17)** 세션 웹 검증 차단(이그레스 403)+권위 스냅샷(오늘자 ≥2출처 high)이면 게이트가 자동 `ok`(폴백)로 전환돼 신규 매수를 `price_source:"snapshot_fresh"` 로 booking 한다(임계 근접 청산은 폴백 제외·보수 즉시판정) (`web_verify_unavailable_fallback`).
+4. **(v2.22 — 모든 BUY/SELL booking 공통 계약, 위반 시 CI FAIL)**: ①신규 매수 전 `pre_trade_check.py --tickers <매수예정>` 의 `ticker_gates` 확인 — `chase_blocked=true`(직전 5거래일 +10% 초과 급등)면 진입 금지, 예외는 `chase_exception` 사유+비중 50% 이하 (`risk.chase_entry_filter`). ②모든 BUY 에 `decision_card`(thesis·evidence≥2·invalidation·horizon_days), 모든 SELL 에 `decision_card`(trigger 수치·human_summary) (`decision_card_gate`). ③KOSPI 일간 |등락|≥5% 쇼크일의 손절/트레일 체결은 익일 종가 재확인 기본 — 즉시 체결 예외는 `shock_deferral_ack` (`risk.index_shock_stop_deferral`). ④청산 왕복분 손익은 `realized_delta`, 누적은 `realized_pnl`(혼용 금지).
 
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`

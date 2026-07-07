@@ -235,11 +235,15 @@ def main() -> int:
                 cur = float(snap_t["last_close"])
             elif closes:
                 cur = closes[-1][1]
-            if cur is None or len(closes) < lookback + 1:
+            # 기준가는 '오늘 이전' 마지막 lookback 번째 거래일 종가 — check_trade_log_gate
+            # 의 사후 판정(매수일 strictly 이전 봉)과 동일 규약. 이력에 오늘 봉이 이미
+            # 있으면(장 마감 후 실행) 그대로 -lookback 을 쓰면 창이 하루 밀린다.
+            prior = [c for c in closes if c[0] < today]
+            if cur is None or len(prior) < lookback:
                 ticker_gates[t] = {"chase_blocked": False, "runup_pct": None,
                                    "note": "가격 이력/현재가 부족 — 판정 불가(수동 확인)"}
                 continue
-            ref = closes[-lookback][1] if closes[-1][0] >= today else closes[-lookback][1]
+            ref = prior[-lookback][1]
             runup = round((cur / ref - 1) * 100, 2)
             ticker_gates[t] = {
                 "chase_blocked": runup > max_runup,

@@ -41,9 +41,10 @@ jobs:
           fi
           git commit -m "audit(self): $(date -u +%Y-%m-%d) weekly self-audit report"
           for i in 1 2 3; do
-            if git push; then break; fi
+            if git push; then exit 0; fi
             git pull --rebase origin main || true
           done
+          git push  # 3회 재시도 실패 시 여기서 스텝 FAIL — 리포트 유실을 침묵시키지 않는다
       # 보완 강제 게이트 (커밋 후 실행 — 게이트가 실패해도 이번 주 리포트는 커밋된다).
       # 무처분 2주 이상 finding 이 있으면 워크플로 FAIL. sunday_policy_review(20:00)가
       # state/self_audit_findings.json 의 disposition 을 기입해야 다음 주 통과한다 —

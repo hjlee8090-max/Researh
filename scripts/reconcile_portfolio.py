@@ -17,7 +17,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TRADE_ACTIONS_BUY = {"BUY"}
+# SCALE_IN(추가매수, v2.20~) 포함 — 누락 시 추가매수가 buy/sell 어느 쪽으로도 분류되지 않아
+# 장부 대사와 check_trade_log_gate 전 게이트(출처·시간·추격·판단카드)를 통과 없이 우회한다
+# (2026-07-08 재점검 발견 — 아직 실제 SCALE_IN 체결 0건이라 소급 영향 없음).
+TRADE_ACTIONS_BUY = {"BUY", "SCALE_IN"}
 TRADE_ACTIONS_SELL = {"SELL", "TRAILING_STOP", "SCALE_OUT"}
 
 

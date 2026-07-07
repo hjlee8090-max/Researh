@@ -54,6 +54,11 @@
    - `live_verify_required` → 신규/추가 매수·**임계 근접 청산(orange/red 경계 ±3%)**은 해당 종목 실시간가를 웹으로 1회 교차확인해 단계·진입가·R/R·사이징을 재계산한 뒤 booking(`trade_log` 에 `price_source:"web_verified"`+URL). **(v2.17)** 세션 웹 검증 차단(이그레스 403, `web_egress=blocked`)+권위 스냅샷(`authoritative_same_day_snapshot=true`)이면 게이트가 자동 `ok`(폴백)로 전환 → 신규 매수는 `price_source:"snapshot_fresh"` booking, **임계 근접 청산은 폴백 대상이 아님**(보수 즉시판정) (`web_verify_unavailable_fallback`).
    - `ok` → 스냅샷 가격으로 booking.
 - **금지**: 묵은 스냅샷 가격으로 먼저 체결하고 다음 회차에 재확인하는 조건부 체결. 검증이 체결을 선행한다 (`new_entry_freshness_rule`).
+4. **(v2.22 — 모든 BUY/SELL booking 공통 계약, 위반 시 CI FAIL)**:
+   - 신규 매수 전 `python scripts/pre_trade_check.py --tickers <매수예정,쉼표구분>` 로 `ticker_gates` 확인 — `chase_blocked=true`(직전 5거래일 +10% 초과 급등)면 진입 금지, 예외는 `chase_exception` 사유 + 계획 비중 50% 이하 (`policy.risk.chase_entry_filter`).
+   - 모든 BUY 라인에 `decision_card`: `thesis`(왜 지금)·`evidence`(근거 ≥2)·`invalidation`(무효화 조건)·`horizon_days`. 모든 SELL 라인에 `decision_card`: `trigger`(발동 룰+수치)·`human_summary`(사람의 말 한 문단) (`policy.price_data_quality.decision_card_gate`).
+   - 오늘 KOSPI 일간 |등락|≥5% 쇼크일의 손절/트레일 이탈 체결은 익일 종가 재확인이 기본 — 즉시 체결 예외는 `shock_deferral_ack` 기록 (`policy.risk.index_shock_stop_deferral`).
+   - 청산의 왕복분 손익은 `realized_delta`, 계좌 누적은 `realized_pnl` (필드 의미 혼용 금지 — 7/6 이중계상 사고 재발 방지).
 
 ## 2. 단계 경보 산정 (모든 보유 종목 의무)
 각 종목마다 **진입가 대비 현재가 변동률**로 단계를 결정한다 (`policy.risk.tiered_alerts` 기준).

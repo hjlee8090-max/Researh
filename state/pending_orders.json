@@ -322,6 +322,46 @@
       "status": "active",
       "note": "잔여 1주 샹들리에/손절 205,003(exit_levels stop_price, 잔여 트레일 200,787보다 높아 binding) 종가 이탈 시 잔여 전량 청산. 7/7 종가 206,000 +0.49% 초근접 사수 — 전력기기→반도체 로테이션 아웃 지속 시 익일 이탈 위험. 도달 전 선매도 금지 — 카톡 신호만, 체결은 익일 routine §2-PRE 게이트 후.",
       "note_0600": "7/8 06:00 마감 확정 — 전력기기 관련 미국 마감 신규 재료 없음(반도체 약세·이란 유가 악화는 간접). 손절/샹들리에 트리거 205,003 유지(KRW 기준·미국 마감 무관, 트리거 이동 없음). 전일 종가 206,000 +0.49% 초근접 — 09시 개장 종가 205,003 이탈 확정 시 잔여 청산, 재상회 시 홀드. 최우선 감시."
+    },
+    {
+      "id": "po-20260708-1",
+      "created_slot": "18:00",
+      "ticker": "006400",
+      "name": "삼성SDI",
+      "action": "SELL",
+      "trigger": {
+        "type": "price_below",
+        "value": 417500
+      },
+      "size_shares": 1,
+      "size_hint": "shock_deferral_reconfirm",
+      "tier": 1,
+      "price_source_required": "snapshot_or_web",
+      "valid_until": "2026-07-09T18:00:00+09:00",
+      "strategy": "dual_momentum_w27",
+      "inference_id": "inf-20260708-1800-2",
+      "status": "active",
+      "note": "index_shock_stop_deferral 이연 — 7/8 종가 412,000<손절 417,500이나 쇼크일 미체결. 7/9 종가 재차 하회(2일 연속) 시 closing_auction 청산, 재상회 시 취소."
+    },
+    {
+      "id": "po-20260708-2",
+      "created_slot": "18:00",
+      "ticker": "042700",
+      "name": "한미반도체",
+      "action": "SELL",
+      "trigger": {
+        "type": "price_below",
+        "value": 199143
+      },
+      "size_shares": 2,
+      "size_hint": "stop_or_timestop",
+      "tier": 1,
+      "price_source_required": "snapshot_or_web",
+      "valid_until": "2026-07-09T18:00:00+09:00",
+      "strategy": "dual_momentum_w27",
+      "inference_id": "inf-20260708-1800-3",
+      "status": "active",
+      "note": "손절 199,143 +57원 razor 사수(7/8). 7/9 종가 손절 하회 시 청산, 또는 7/9 15시 time_stop 판정(momentum<10+평가손실) 회전아웃."
     }
   ],
   "as_of": "2026-07-08T06:33:00+09:00"

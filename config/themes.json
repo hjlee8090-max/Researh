@@ -1,6 +1,6 @@
 {
-  "version": "1.2",
-  "last_updated": "2026-06-24",
+  "version": "1.3",
+  "last_updated": "2026-07-12",
   "purpose": "선행 산업 메가트렌드 레지스트리. score_candidates.py 가 candidate.theme_exposure(0~1) × theme.strength(0~1) 로 thematic_score 를 산출한다. strength 는 향후 전망 강도이며 sunday_policy_review 에서 주기적으로 재검토·감쇠한다. 후보의 theme_exposure 는 0900/sunday_strategy 가 근거(evidence)+출처(source URL)와 함께 채운다.",
   "scoring_note": "thematic_score = min(1.0, Σ(theme.strength × exposure)). theme_exposure 가 없으면 0.3(중립-하). momentum 을 게이트로 유지하므로 전망이 좋아도 급락 종목은 차단된다.",
   "holdings_use": "보유종목에도 테마를 반영하되 '느린 신호'로만 쓴다(회전율 방지). 주간(sunday_strategy)이 1차 — 보유종목이 노출된 테마의 strength 가 직전 대비 크게 하향됐거나(예: 정책 폐기·사이클 둔화) 연결 thesis 가 무효화되면 다음 주 비중 축소·교체 후보로 표시한다. 테마 약화 단독으로 당일 단발 매도는 하지 않고, 손절·트레일링스톱·펀더멘털 신호와 함께 판단한다. strength 상향·테마 강세는 홀드 컨빅션 보강 근거.",
@@ -40,10 +40,10 @@
     {
       "id": "defense_export",
       "label": "방산 수출",
-      "strength": 0.7,
+      "strength": 0.75,
       "horizon": "3-5y",
       "keywords": ["방산", "K-방산", "방산 수출", "자주포", "미사일", "유럽 재무장"],
-      "note": "지정학 리스크·유럽 재무장. 한화에어로스페이스·현대로템·LIG넥스원."
+      "note": "지정학 리스크·유럽 재무장. 한화에어로스페이스·현대로템·LIG넥스원. 2026-07-12: 이란-이스라엘-미국 정전 붕괴·재교전(2026-07-08~09, CNN/Al Jazeera 확인)으로 지정학 프리미엄 재부각 — strength 0.70→0.75 소폭 상향(유럽 재무장 구조적 수요에 중동 리스크 프리미엄 추가)."
     },
     {
       "id": "value_up",

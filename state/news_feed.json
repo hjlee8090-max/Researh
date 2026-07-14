@@ -1,160 +1,202 @@
 {
-  "as_of": "2026-07-14T08:26:33+09:00",
+  "as_of": "2026-07-14T16:25:58+09:00",
   "source": "Google News RSS(국문+영문) + 네이버 종목뉴스 (fetch_news.yml — Actions 러너)",
   "keyword_registry": "config/news_keywords.json (news_impact.news_type_impact_pct 와 1:1)",
   "usage_note": "하이브리드 분류: ①키워드(fetch_news) 1차 → ②LLM 2차(routine 이 llm_review_queue 를 news_type 으로 분류해 manual_news 승격=즉시반영 또는 키워드 보강=sunday_policy_review). estimate_target_price 가 classified 를 가산점으로 반영.",
   "classification_summary": {
-    "classified": 116,
-    "unclassified": 1311,
-    "classified_rate_pct": 8.1,
+    "classified": 142,
+    "unclassified": 1280,
+    "classified_rate_pct": 10.0,
     "llm_review_pending": 80,
     "note": "classified_rate 가 낮으면 llm_review_queue 를 routine 이 처리해야 함. 키워드 보강분은 차주 재현율로 회수."
   },
   "ticker_count": 15,
   "fetched_ok": 15,
-  "classified_total": 116,
-  "unclassified_total": 1311,
+  "classified_total": 142,
+  "unclassified_total": 1280,
   "global_total": 39,
   "llm_review_queue": [
     {
       "ticker": "005930",
       "name": "삼성전자",
-      "title": "삼성전자, 레드닷 디자인 어워드 '2026 최고상' 등 8개 수상",
+      "title": "삼성전자, 자사주 3천228억 처분…임원 성과급 지급 목적 - 연합인포맥스",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9HWUhKSFV1QXZfU3RFOGd2QnhxVGtJTE12b1cxMURadVhXSS1vdzZNVGJpUC1CN29XaURkMWRJR2VXQ050SUt5blVyS1RzTVg2MlpLRUJJRFVRMGNsZUpuWm81R2Z4Skg5b1RwQXZoOEU?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "title": "삼성전자-삼성D, 유리 인터포저 협력 추진...대만에 도전장 - 디일렉",
+      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9nYWhpUU5jQUkxT1hiVVhGQzdPVk9TeWkxX3dXNm1zRnFNdzFVa2szUl9IcVZuMmZYeENWaHFKRm1qRHI5R3NaWVVZODFzNTVlaEpSZzRVWU1EWUtBWFJacWw1MG5IQQ?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "title": "삼성전자 노조 “조합원 84% ‘호남 반도체’ 반대…내년 교섭의제” - 한겨레",
+      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE04NnpiVU9BQXJLb2d4RWR3c29hcmhfS1lfV0hVS3lHZ2ltblkzcDhPS3VjeEFFYTQ0ZlV5OWtRZkxfUllGaTRYbmQwZGxWRkE0a0dHRXhuUWdaMnJCV1pfTjZpQk8?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "title": "삼성전자·SK하이닉스 주춤한 사이 중국 반도체는 ‘재평가’...ETF도 질주 - 조선일보",
+      "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOSktIMjNTWlQ1RV9GUU9xMk90ODZpeDNMbnRLZExnLU1JQ2VrVnMyOTRybDcwaF93MFdqVzBkSHh6QlRza2FnM2RHdTVOYUlHSGVBcGI2UHhncnQzeXVwbFhYUzFncUJ5UThrcnZ6dUtuUVlQZlB3djZES25xeDJVUnpaUnlSYXZ4MC1V?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "title": "[단독] 삼성전자, 메모리값 급등에 스마트폰 사전예약 ‘더블 스토리지’ 혜택 손질… 용량 업그레이드 절반만 지원 - 조선비즈 - Chosunbiz",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOZmZ6aWdVY2VLR1NkS0k4LURsVzAzRUJ1Zl85R3VnRWlTdjRzWFZHdHF0cnNBSWhzMF91bERyWHRqanl1LVVhV2VZRHJjdDZTaWlaMG9XTEluaTlqbWF0LWJzSkJDaDZKLXVQdl9VM1VlWm9heXJ5TzRwMVIyMHRPNktn0gGWAUFVX3lxTE1DQndydW1iaDNNd1FvUEkwRi1LYVd0VzdFSEszZE9GWS1ocmkybTBxZlpidlQ0c19lVDFyS0FTZWtoMWRZS0lIYUpUeUZxNGJSZUZHTzU4Vk5IdGs2MnpIUndvc1FzZ3dGWElBbVVfSk9BbkF5V3hRc1dPekNhSldEX3VQa2hVdVloZjFsNXBza1l6TWdWdw?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "title": "[단독] 삼성전자, 82개 직군 뽑는데 ’전력반도체’는 0명…전영현 부회장 등 삼성전자 경영진도 포기 수순 - Investing.com 한국어",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5PdjBzUWdObnVaMjFtd0dyc0tZM0p3ZThEekxZTjVJMC1lMkhtSmFORXVNdV9icXVOOFpkekdORHpwVlJvazV6eDVhTnZYc19haWlzT2cxb1JfbVhrTkFkNk5SMHQxcjdSOUl6Tjllejk?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "title": "HBM 부족 대비한다…SK하이닉스, 용인 첫 팹 장비 발주 시작",
       "url": "https://finance.naver.com/item/news_news.naver?code=005930",
       "published": "2026-07-14"
     },
     {
       "ticker": "005930",
       "name": "삼성전자",
-      "title": "삼성전자, '레드닷 어워드' 8관왕…디자인 경쟁력 입증",
+      "title": "“9개 다 맞아야 ‘300만닉스’ 간다” 빙고판 등장…“강한 감동 필....",
       "url": "https://finance.naver.com/item/news_news.naver?code=005930",
       "published": "2026-07-14"
     },
     {
       "ticker": "005930",
       "name": "삼성전자",
-      "title": "삼성전자, 레드닷 디자인 어워드 2026 최고상 2개 포함 8개 수상",
+      "title": "불안해진 투심…코스피, 오르락내리락 끝에 0.7% 찔끔 상승(종합)",
       "url": "https://finance.naver.com/item/news_news.naver?code=005930",
       "published": "2026-07-14"
     },
     {
       "ticker": "005930",
       "name": "삼성전자",
-      "title": "[단독] “드러누워 막았어야” 말한 금감원장, 이번엔 “명확한 답 안....",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "title": "美 증시 급락 여파…프리장서 삼전닉스 4% 하락 출발 [마켓시그널]",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "title": "총수 주식재산 29조 증가…이재용 28조↑·최태원 첫 '10조 클럽'",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "title": "[속보] 삼성전자·SK하이닉스 프리마켓서 5%대 급락세",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "title": "나스닥선 흥행·코스피선 폭락한 SK하이닉스…코스피 흔드는 레버리지...",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "title": "美 반도체 쇼크 되돌아왔다…삼전·SK하닉, 프리마켓서 급락",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "title": "\"中반도체 가격 파괴 우려\"...키옥시아 40% 급락 경고[도쿄나우]",
+      "title": "삼성, 업무용 AI로 '제미나이' 택한 이유…구글 \"성능·보안·비용 다...",
       "url": "https://finance.naver.com/item/news_news.naver?code=005930",
       "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "K조선 3사, LNG선 호황 속 연간 영업이익 10조 넘본다",
+      "title": "HD한국조선해양, VLAC 3척 추가 수주…압도적 1위 굳히기 - v.daum.net",
+      "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1fRlA2aDZzUWZybEdSOXVhbmF5ZEFxR3AtZU5OSDMzaHRXTVVsbGxNNlRiVElGbWo5YjNZdWpEV1hRaDlJZnc?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "009540",
+      "name": "HD한국조선해양",
+      "title": "'반세기 인연' 잇는 英 왕실…앤 공주, HD현대重 울산 본사 방문",
       "url": "https://finance.naver.com/item/news_news.naver?code=009540",
       "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "HD한국조선해양, 수주 목표 70% 돌파…6년 연속 초과 달성 '순항' - 블로터",
-      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5FTjFPaGswRFAxYUMweDBsRHZIV2x0Z0cwV3kwZms2dXE1Ykx2U1hvN2tRZWRWYVM3YWRiWlREZVlmT2NVMXc5VkpHQ3F4eVN2TjZIVENNejBjbHRhX3dhUWNrQ3czSHZz0gFsQVVfeXFMTk93UFFsS0Q4Sy1Idkd3YUxMcXV4NE1XY0pwbm9ZWC1Eb2g3T1JwbUFvOGlPSDNPTWFiRGpqbE9OUlpLSDI1OUlaVnJrZGYxR0t2eFJwSUxaN0ladTZwN0xrOW5nc1V5MkdoN25J?oc=5",
-      "published": "2026-07-13"
+      "title": "조선 3사, 2분기 영업익 53% '껑충'…고선가 수주 효과",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "HD한국조선해양, VLAC 3척 추가 수주…올해 목표 70% 돌파 - 해사신문",
-      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1udWFCTDROOWhndkxPMEtway1BdTVOTk4xZVhfRlU1OGt3NjZiVXBObXFaclRhMXpOUS1SX1YtOWxNbmlJdmdSLUl5Rjl5VVBCbjFfN3hsTEdkOEdBVXZCcFVRUlRkQUV1Z1FN?oc=5",
-      "published": "2026-07-13"
+      "title": "HD현대重 울산조선소 찾은 英 앤 공주, 정기선 회장과 협력 논의",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "HD한국조선해양, 유럽서 암모니아 운반선 3척 수주…5천456억원 - 연합인포맥스",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE95cGtkWWUwejl4VmM5cDhKeVI5NXNOV0w2QXBjX1FJcHRJa0NKUnZ6ZExTZ1JXVUlOcUd5dVVLSkxiM2RzUEw5N0h2RmlkUkt5UHBRRE5JRVM3Uk93LURhaEQ0RnBUSlk0TkNZSHVyZjM?oc=5",
-      "published": "2026-07-13"
+      "title": "英 왕실 앤 공주, HD현대重 방문…협력 방안 논의",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "HD한국조선해양, 5456억원 규모 '초대형 암모니아 운반선' 3척 수주 - 뉴스핌",
-      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBIVzZsU3RVeVVpVVdOWm41a1Z6UlliQS1JejFkT3JySzdzT2lzS20xeEpLWmRHaXJrSU1jYloyZ0Y2SkxEUEFrR2xVenB6bzlUc3NHZUhxbjBBSmFi?oc=5",
-      "published": "2026-07-13"
+      "title": "정주영 500원으로 英과 인연... 앤 공주, 울산 조선소 방문했다",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "HD한국조선해양, 초대형 암모니아 운반선 3척 수주…목표 70% 달성 - 아시아경제",
-      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1NOWZmQzlpMGNSTV9iNThyR0ctNDdXUzZrQmdVci1CTGhEbHc1aWRqRmxOY2pHSS1Ca25ld0dscC01amJuUHo1VXhTa1FDc3l3STJnUDNmazlzTVNDUXY5Qg?oc=5",
-      "published": "2026-07-13"
+      "title": "영국 앤 공주, HD현대重 방문…조선·해양 협력 강화 모색",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "HD한국조선해양, 초대형 암모니아 운반선 3척 수주…5456억원 규모 - 글로벌이코노믹",
-      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQQWp3Ni04RFMxNHZtZWRtaG1BV0tHQ2NaQVE1VXBCUkZaaGMtRWtfcVFlbk1jd3RBeEstSnZoZE1WVVdpb19IblhFd3RublJTX3pqdmNLcTJpY1VVN3lNMGxsQWxTa196Unc0bWNZZmp1bnB3ay15dUJIeE04aHJNTUhSMHJpZw?oc=5",
-      "published": "2026-07-13"
+      "title": "英 앤 공주, HD현대重 울산 본사 방문…정기선 “영국 조선·해양 산...",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "HD한국조선해양, 초대형 암모니아 운반선 3척 5456억원에 수주 - 조선비즈 - Chosunbiz",
-      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQdTNmSWROajdRb2wtSk1QMkZYbEdxMXhTVlR5V0ExM05KU3g2UlRLcHVRN0pRUXZaZ2VoTThIOF9CM1dpSnNOOXNPVkZpMjdVc0RwZEZHSDNBaWw3UGpuV1UxM29Ga3RxbUNRaUFCUm1YVUJBTHRneVpmNWxGV0tNSF91MnrSAZgBQVVfeXFMT25xMV9BdXJYbjFtU0VMdjNicGplcXRhWTlMOVNQbllQNlhrWG5wUHRXMWFKMHF1Y1RyT3pfZ3hleTY3SlJCUm5Lenc4Y0ViY2lsXzFUcFpnMVlOcnRlLVFkSmdpdlMtcGxDS2hwbmJWYWIxeUlDWjhNVVVoWEt1S2JORmtRaURsdlA1bjA1d1JIYWtVZEpiUTU?oc=5",
-      "published": "2026-07-13"
+      "title": "英 앤 공주, HD현대重 방문…한·영 조선 협력 논의",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "title": "[오늘의 주요공시] 현대차·HD한국조선해양·코오롱인더 등 - 이투데이",
-      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE5DbFdraGxad1U1UTc3cy1Tc0hhQjJWaEpWNXJ2ZDZCeEY4eHRQUElROFpPTnljaGN5S3ByaG9KOGk4aXdoODhtN1FJZzlFQ2F2bWQ2Zg?oc=5",
-      "published": "2026-07-13"
+      "title": "\"대를 이어온 인연\" 영국 왕실 앤 공주, HD현대重 울산 본사 방문",
+      "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+      "published": "2026-07-14"
     },
     {
-      "ticker": "009540",
-      "name": "HD한국조선해양",
-      "title": "HD한국조선해양, 유럽서 5456억 규모 초대형 암모니아 운반선 3척 수주 - 녹색경제신문",
-      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE4zeHVUbnRkX1doVElvVzlWZy1RQkZ2WWU5SEotem45SGxLdDhFMVRHalZWQ19nQjRYMzN6VEZGUkIxSXY1V0VPcndPa3JxU2xMTXgyOTRwenkwMWNfRlB4SGRSUzhEcEJG?oc=5",
-      "published": "2026-07-13"
+      "ticker": "010140",
+      "name": "삼성중공업",
+      "title": "국민연금, 2분기 삼전·닉스 비중 확대…식음료·통신·제약 축소",
+      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "010140",
+      "name": "삼성중공업",
+      "title": "조선 3사, 2분기 영업익 53% '껑충'…고선가 수주 효과",
+      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "010140",
+      "name": "삼성중공업",
+      "title": "국민연금, 5% 이상 국내주식 지분평가액 462조…절반이 삼전·닉스",
+      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "010140",
+      "name": "삼성중공업",
+      "title": "HD한국조선해양, VLAC 3척 추가 수주…압도적 1위 굳히기",
+      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "010140",
+      "name": "삼성중공업",
+      "title": "거제 하이엔드 브랜드 '센트레빌 아스테리움 거제' 7월 분양",
+      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "010140",
+      "name": "삼성중공업",
+      "title": "'가교 연료' LNG 전성기 길어진다…HD현대·한화 수주 훈풍",
+      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+      "published": "2026-07-14"
     },
     {
       "ticker": "010140",
@@ -185,116 +227,109 @@
       "published": "2026-07-14"
     },
     {
-      "ticker": "010140",
-      "name": "삼성중공업",
-      "title": "[조선ㆍ방산 후발주자 역습] (1)삼성중공업, FLNG 수주 풍년…해양플랜트 독주 굳히기 - 대한경제",
-      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5mSjBPeGVCNVdmaTVzN1NwdXQ2bjRIV0M5OVFMSVJLd1lVeDRERmtMNWxkVjROTVBoQ0F5Ull5R0JPT29UWHhHTWNSc0pHMGZZQnpzcGNlSHZJVjFxLUMydTF4LU1mQUwwYmRrVlFBdXpEV3kx?oc=5",
-      "published": "2026-07-13"
-    },
-    {
-      "ticker": "010140",
-      "name": "삼성중공업",
-      "title": "[버핏 리포트] 삼성중공업, 하반기 FDC 수주 기대...해양플랜트 경쟁력 부각 - 유안타 - 버핏연구소",
-      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1lankyNnRRS3NYM1k1NXBBN0N3YzlTQzNxaDFrQ2lPZGYxTTdjbjhJdmFhMUxDbWdaWGliUFdRLWRJX2FJVkxzU0VveHJleFZrMWt5ZGF4Q3lJUDdJ?oc=5",
-      "published": "2026-07-13"
-    },
-    {
-      "ticker": "010140",
-      "name": "삼성중공업",
-      "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
-      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-      "published": "2026-07-13"
-    },
-    {
-      "ticker": "010140",
-      "name": "삼성중공업",
-      "title": "조선업 첫 노사정 협의체…원·하청 상생기금 논의할 듯",
-      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-      "published": "2026-07-13"
-    },
-    {
-      "ticker": "010140",
-      "name": "삼성중공업",
-      "title": "국내 첫 조선업 노사정 협의체 출범…'K-조선 르네상스' 이끈다",
-      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-      "published": "2026-07-13"
-    },
-    {
-      "ticker": "010140",
-      "name": "삼성중공업",
-      "title": "조선업 첫 노사정 대화협의체 출범…양대 노총 모두 참여",
-      "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-      "published": "2026-07-13"
+      "ticker": "373220",
+      "name": "LG에너지솔루션",
+      "title": "[리포트 브리핑]LG에너지솔루션, '시차는 있으나, 오차는 작을것' 목표가 550,000원 - 대신증권 - 뉴스핌",
+      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE41UHNrZnItdndMZHF6cDE5VVpzMUFHbTJ0WjV2Z2l1TDZlT2FRc193TTd0SmxYb1duUS1vSm8wMHhVa3RlU2xFbTRxYmdfM2ZHSHJUTzR4anpwZUpM?oc=5",
+      "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "중복상장 '모범사례' 덕산하이메탈...주목받는 대신증권",
+      "title": "[오늘증시] 코스피 6850선 마감…개인 매도에도 외인·기관이 상승 견...",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
       "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "엘앤에프, 이원화 우려 주가 '발목'…신규 고객 확보가 반등 열쇠-NH",
+      "title": "[마감시황] 코스피, 6,856.83로 반등 마감…외국인·기관 매수에 ...",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
       "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "중동 전쟁 재점화 우려에도…에너지·해운株 살아남았다 [종목+]",
+      "title": "개인 5.5조 '팔자' vs 기관 3.9조 '사자'…코스피, 수급 공방...",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
       "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "배터리셀 파는 삼성, 전력망까지 돌리는 LG…ESS 공략법 갈렸다",
+      "title": "\"'그냥 손절할까?' 하루 종일 고민\"?코스피 '기사회생', 코스닥은 ...",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
       "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "“그간 번 돈 다 토해내게 생겼다”블랙먼데이 정리",
+      "title": "코스피 상승 전환했지만…코스닥 연중 최저 마감",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
       "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "[리포트 브리핑]LG에너지솔루션, '하반기 ESS 수주 모멘텀 기대' 목표가 570,000원 - DB증권 - 뉴스핌",
-      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBsTzRwSC1CSkJrSFdUYzVrcWJ2eDBHaFdHYzRrWEEwTHRPNTJBOWYxR3BWbDk3bGVqM2FnSE1SRXY4VWNOQzZNT2NLVl9kUjRmUXE0ekZGRm9hZEIx?oc=5",
-      "published": "2026-07-13"
+      "title": "장중 6500 깨진 코스피, 0.7% 상승 마감…외국인·기관 4.1조 ...",
+      "url": "https://finance.naver.com/item/news_news.naver?code=373220",
+      "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
+      "title": "코스피, 6500선 붕괴 딛고 반등 마감…코스닥 783p '연저점' [...",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "반도체 산단發 전력 수요 폭증…국내 ESS도 판 커진다",
+      "title": "기관·외인 ‘사자’에 코스피 반등…‘삼전닉스’ 3%대 동반 상승",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "title": "반도체 업황 꺾였나…삼성전자 10%·하이닉스 15% 급락 마감",
+      "title": "코스피, 0.73% 오른 6856.83 마감…삼전 26만3000원·닉스...",
       "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
-      "ticker": "373220",
-      "name": "LG에너지솔루션",
-      "title": "미국 AI 데이터센터 건설 급증에 BESS 전환 추진 'K배터리' 수혜",
-      "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-      "published": "2026-07-13"
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "title": "SK하이닉스 4% 하락에 코스피 2%대 약세...코스닥은 매도 사이드카 - 조선일보",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQUlRtSjY1WW50OXlwa1E1dTBtTzk3U01Xdks4UWRTLWVYNmZ3LTlFTjlNMzN6MFNNNWNicThCRElzU2RndnQ5Y0h1WnFZZFFRb0ZwNU5yUjFXdkJERXB3X3VhM0lhMGhzT09DS05iRlR0c1RjSkhFRW9uQmRnNFdvOQ?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "title": "SK하이닉스 대규모 달러 현물환 매도물량 출회…환전 전략 가동 추정 - 연합인포맥스",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5GbkNhU0VldElxSVVyMjZBeDdXcmRONGNuVXF4akd3RjNuQ0h1TEF5YmtUelNNXzdoUTczTHRyd016Qm94X2pjZllwZl9KWDFDNW40dnV5YTZieVIyVE5GeTlCQ1o2TnNaUjFVb3BhcXU?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "title": "평가손실만 21억, SK하이닉스 레버리지 21만주 개미 \"그래도 버틴다\" - 머니투데이 - 머니투데이",
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9ZMDJDd0QxQmZjVHE4TGpVcDZTZmNLYW1wSjEzMkl5VFZGTTlkNW9HNHM1bU5ZZGxWd19WaU1OdjR1SVN2UmZmbjBzaFlIMFJNSVJXemVJRlBUVWs2eEFFYXhPR3Q5SDdH0gFuQVVfeXFMTk5lY3B3MHNPSlozOXNXbTFuTkFZQ2xwSDk2bmllck1zX3FDZnZuRVdMYWVqbHhzOGdjZUstY3Q1SGlDTjZKU0ExbEF2eHMxdW9VVjNVazVQbDJYYlh0cDJRUE1yRVVPd01Fbl9OY0E?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "title": "SK하이닉스 실적전망 또 하향...\"이미 주가 급락, 저점 매수 기회\" - 머니투데이 - 머니투데이",
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBVV2ZNOUstODBJRElIaF9QbWJXSWJLMm9IcW54c0syd0h2UU5fNVp0bEJ6Mlg3TldWdWlPdUF0a1h1aVBWb2dkOUIwVjlYZVNGS0VsZXFvVzZDeWdicXp5TmpmdzNFcnRE0gFuQVVfeXFMUDg2emZTbDNHZGhCUHVfWE9FQi1lTlVhSHNCUWg1VnNCU19ySVcweU5SLWoxckxzNFo3OEp2RG9OUFdiTlp6Vjh4TDJLak9VbEVOUUl4a19JN19iTW9VejlTNHNPcGRaaV94RXJqUEE?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "title": "SK하이닉스, 용인 'Y1' 팹 구축 본격화…장비 발주 시작 - 지디넷코리아",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1HUmJPUHd6NFhxT09DdE93cUNkOWFyNldDNWd2MXNROTY4UEprQWNiT1dxeXZBX1JqSHJhZHNhamVmQ0tDSXRNUDVJeHRzZUtta1d3Z0ZR?oc=5",
+      "published": "2026-07-14"
     },
     {
       "ticker": "000660",
@@ -306,64 +341,43 @@
     {
       "ticker": "000660",
       "name": "SK하이닉스",
-      "title": "[단독] “드러누워 막았어야” 말한 금감원장, 이번엔 “명확한 답 안....",
+      "title": "한미 반도체주 함께 흔들렸다…SK하이닉스 15%·마이크론 4.4%↓ - 뉴시스",
+      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFB5MW9QYnMxN0FCNnJpaGlBX2h4b0FWU0J6OFBaUFQydmZ5dTZMZlphaWp3ZDFSSWtlb2VkWU5FWnBEQ2pFanVGNGRiUkZCTzJ5VHFxTTJXUmtnWVYzdHU1ctIBeEFVX3lxTE1zLTh4cUptcXRYRi1FY1VWR1N1bHRBamtfZklKM3lRZmlPRzNnLWpIOUpDSlRCTnlFTXdQek52R3U5QkpzSVRaNk1JdDByTkZhdHYtcGFhdF9fMHl1eDcwV3NIeWpkVmxCdFZ1d0tEcXZTYzk4Z05XLQ?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "title": "HBM 부족 대비한다…SK하이닉스, 용인 첫 팹 장비 발주 시작",
       "url": "https://finance.naver.com/item/news_news.naver?code=000660",
       "published": "2026-07-14"
     },
     {
       "ticker": "000660",
       "name": "SK하이닉스",
-      "title": "美 증시 급락 여파…프리장서 삼전닉스 4% 하락 출발 [마켓시그널]",
+      "title": "수출업체 달러 매도세에…환율, 10.4원 하락해 1493원",
       "url": "https://finance.naver.com/item/news_news.naver?code=000660",
       "published": "2026-07-14"
     },
     {
       "ticker": "000660",
       "name": "SK하이닉스",
-      "title": "나스닥선 흥행·코스피선 폭락한 SK하이닉스…코스피 흔드는 레버리지...",
+      "title": "“9개 다 맞아야 ‘300만닉스’ 간다” 빙고판 등장…“강한 감동 필....",
       "url": "https://finance.naver.com/item/news_news.naver?code=000660",
       "published": "2026-07-14"
     },
     {
-      "ticker": "000660",
-      "name": "SK하이닉스",
-      "title": "미래에셋證 \"SK하닉, 2분기 영업익 12% 하향…비중확대 유효\"",
-      "url": "https://finance.naver.com/item/news_news.naver?code=000660",
+      "ticker": "005380",
+      "name": "현대차",
+      "title": "현대차 노조 \"사측 추가 제시안 없으면 파업 수위 높인다\" - 조선일보",
+      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5VRXE4UzlyXzFydy1mUHJRNmpSc2hOMmp5ekdJZHJKeHBtSDRzeFQ2X1hCSDRLeGRhbTg3LXM0TEs2WDByM1AxbzZlWnJiTVdRT2h3M1NjUTItTEZtU2diTnc3dEUzNE9Bb3FRcjJBVUcxenJiek9PUG9MWUNvajg?oc=5",
       "published": "2026-07-14"
     },
     {
-      "ticker": "000660",
-      "name": "SK하이닉스",
-      "title": "[속보] 삼성전자·SK하이닉스 프리마켓서 5%대 급락세",
-      "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "000660",
-      "name": "SK하이닉스",
-      "title": "[굿모닝 증시]뉴욕증시 일제히 하락 마감…韓, 약세 출발 전망",
-      "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "000660",
-      "name": "SK하이닉스",
-      "title": "\"中반도체 가격 파괴 우려\"...키옥시아 40% 급락 경고[도쿄나우]",
-      "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "000660",
-      "name": "SK하이닉스",
-      "title": "美 반도체 쇼크 되돌아왔다…삼전·SK하닉, 프리마켓서 급락",
-      "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "000660",
-      "name": "SK하이닉스",
-      "title": "삼성전자·SK하이닉스 주춤한 사이 중국 반도체는 ‘재평가’...ETF도...",
-      "url": "https://finance.naver.com/item/news_news.naver?code=000660",
+      "ticker": "005380",
+      "name": "현대차",
+      "title": "현대차, ‘2027 넥쏘’ 출시 - Hyundai Motor Group",
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBSdmQ1VkZtY0FvcTNlMGNKcjdCXzNJdVZhZVJaaldZOXE2X1dEdHBNT3Q2UGtPeE1FMEttQWRzRWFWcjVjVG9qSE5lVGFYOXk1TDhBMGFNMXN5Tzk4MGwwVGQxck40Sy1lVHR1OTNsTjdVQXM?oc=5",
       "published": "2026-07-14"
     },
     {
@@ -376,135 +390,135 @@
     {
       "ticker": "005380",
       "name": "현대차",
-      "title": "GV90·아반떼·투싼 ‘게임체인저’ 등장 눈 앞인데… 현대차, 夏鬪 전운에 시름 - 조선비즈 - Chosunbiz",
-      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE01OGRFc0NoSDhzN1RBQUhwck8xVE9leWF6TkRXeDRIbHk0VkkwUHFpUGNjYktHTVEteXBleUFvNWJhM3BibEJUR3BCWU1IZzAyWHZFOS01UG13Q0ZSM0htOEZLTDgtRk9sTXc0MG9CcmlZcmI5dEJFaDRJeU1SU0HSAZMBQVVfeXFMT0dZM3pRTjRWMkZrMzZqWUZjUC1yVnZhUURHZG1IZFA1NU5WNEpoaS1JN0EzRzhURWV5c2pHay1OLTUtUUk5a0MyMklEUEduSVdSQzhLcllfSWR6UU9WM1hjSllmaFdBZW5FNTFkZEwyZ2VCMFBvaWU4dmRlVHBXVVdnYlQtVzZOS2VwVVJpa0xBRVNB?oc=5",
+      "title": "‘핫해치’ 넘어 실력 증명한 현대차, 중국 국적 꺼내고 속도 내는 지리차…TCR서 한중 진검승부 - 전기신문",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9VNXlFSDJVQ09IQU9yVG9rX0tuMWdtQ0c0b1YzbVRFdzJXV1hoYl80NmNrLTRobkN1bjVBRE15NzNYNHhRdFlFa3ZtcWJWd2kxN2l4TVQ4QnpLcENNWW1HYzc5bGhkdHNJQkZCT1VBQWrSAXBBVV95cUxPVTV5RUgyVUNPSEFPclRva19LbjFnbUNHNG9WM21URXcyV1dYaGJfNDZjay00aG5DdW41QURNeTczWDR4UXRZRWt2bXFiVndpMTdpeE1UOEJ6S3BDTVltR2M3OWxoZHRzSUJGQk9VQUFq?oc=5",
       "published": "2026-07-14"
     },
     {
       "ticker": "005380",
       "name": "현대차",
-      "title": "[사설] 현대차 이익 30% 요구 파업, ‘N% 성과급 주총 의무’ 서둘러야 - 조선일보",
-      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQakM0SjB3RDRDNFNHQlZmMFg0dmRtY3AwakZycU5pbXNFTW0yaEdPaTdLaXpmUGU3bGlsaFpCWEp2SlhITlltVmt1TmNFQUJLeVU3MmlPcGJJNzNPSEVDWkpMTjF1OUJzVkoyS3BMbXhORWNKbUlVUHp2eXk4NDJfWFRIbTN4UQ?oc=5",
+      "title": "현대차·기아, 레드닷 어워드서 최우수상 등 6개 상 수상 - 연합뉴스",
+      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5TTzk2bXhiRE40dTloUUNIOWYwczAtY21mdDJodW9URFZ0X3A5aWdYS2RqUDIwZXJNc2NwRWpHOUVpUjVZMmFwWTNkZGdfZ3d4UkNiOEFvSExmMHQ4QmMtMtIBYEFVX3lxTE5TTzk2bXhiRE40dTloUUNIOWYwczAtY21mdDJodW9URFZ0X3A5aWdYS2RqUDIwZXJNc2NwRWpHOUVpUjVZMmFwWTNkZGdfZ3d4UkNiOEFvSExmMHQ4QmMtMg?oc=5",
       "published": "2026-07-14"
     },
     {
       "ticker": "005380",
       "name": "현대차",
-      "title": "총수 주식재산 29조 증가…이재용 28조↑·최태원 첫 '10조 클럽'",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+      "title": "현대차, 수소차 넥쏘 연식변경 모델 출시…상품성 강화 - 연합뉴스",
+      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBmRHNoeW5zRGgzbjNUX1FRWFpjQkpVRjNYSks4dDd6TVZpRURKUndkS001cVdBVHRWUEY5ZVA4MG1kanpYMnRWRmZYaGRkVDNPWWFTT3JjNUEzMUlYeHoyd9IBYEFVX3lxTFBmRHNoeW5zRGgzbjNUX1FRWFpjQkpVRjNYSks4dDd6TVZpRURKUndkS001cVdBVHRWUEY5ZVA4MG1kanpYMnRWRmZYaGRkVDNPWWFTT3JjNUEzMUlYeHoydw?oc=5",
       "published": "2026-07-14"
     },
     {
       "ticker": "005380",
       "name": "현대차",
-      "title": "28조 늘고 10조 넘고…이재용·최태원, 불장에 웃었다",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+      "title": "현대자동차, ‘더 뉴 그랜저 테크 팝업 스토어’ 개최 - Hyundai Motor Group",
+      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPQUVEaVA5NUpNVV96MEpCaFZ3anVmc1JuY19DaUFwNXhMR1VGV3FVdVBQNzcwbXRxZDR5VG1tMkxiTUhuMGIyb2JpNnhRQWRzOGlEdW1PLUhMbUY3MHVIZWs4YURXeWtRc0pzUjBNa1hjSm9OQkphMERpbkNpTThkMU1SMFdPWUFhdjdKdG9qQUlRZw?oc=5",
       "published": "2026-07-14"
     },
     {
       "ticker": "005380",
       "name": "현대차",
-      "title": "2분기 이재용 주식가치 28조 넘게 늘어나…최태원은 ‘10조 클럽’ ...",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+      "title": "현대차, 넥쏘 연식변경 모델 공개…루프랙 등 상품성 강화 - 연합인포맥스",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1DSTd3bkxxRW5aQm9MMWl6eEhnRk1jaUxkXzZlSHV2V0dIQjFKY2RRbXlDUC1NSS0zaFhzZ21TUWlwSDZ0STVXN21rUHdrbDRKNE9makcwQzQ4NnZkMWtUMkpvMDM4aGdXcHI2TGNLSmI?oc=5",
       "published": "2026-07-14"
     },
     {
       "ticker": "005380",
       "name": "현대차",
-      "title": "이재용, 2분기 주식평가액 28조원 증가…최태원, 총액 10조원 넘어",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+      "title": "현대차, 수소차 '2027 넥쏘' 시판...3600만원대 구매 가능 - 뉴스;트리",
+      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9nZ3V4SldHR3NkSnQ1WjkycWV2cF9QS19ydTE3dDZTcEhOdlMyQVA1OHJyU3d4b2NXd0VnWjlqTlRidUcyTHdDYWwyWF96ZEtrR2lqZUVJSEVvY1g2?oc=5",
       "published": "2026-07-14"
     },
     {
       "ticker": "005380",
       "name": "현대차",
-      "title": "이재용·최태원만 싱글벙글?… 나머지 그룹 총수들 주식재산 줄었다 .....",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005380",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005380",
-      "name": "현대차",
-      "title": "2분기 이재용 주식가치 28조↑…최태원은 '10조클럽' 가입",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005380",
-      "published": "2026-07-14"
-    },
-    {
-      "ticker": "005380",
-      "name": "현대차",
-      "title": "2분기 랠리에 회장님 '활짝'...이재용·최태원 얼마 벌었나",
-      "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+      "title": "현대차, 2027 넥쏘 출시…엔트리 트림 상품성 강화 - dt.co.kr",
+      "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE5Vbzc4WXVEaDlHTzY5T0ZkWktRTkFEaG9ZX0R0elJnODFBUGp6YmF4UllnSE1KMHFqMkIxVDBYXzhNOVhuTkVSSGMzem9aUQ?oc=5",
       "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
-      "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "title": "한화에어로스페이스 주가 급락, 7개월 만에 80만 원대 진입 - 2news.co.kr",
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFAwRW9JcEFMM1E1aFN3bGI0a3JucFA3MjlfaTdIQW5QZjRkVVZJeHRyeGlXR1Q0U056Qk5iTWJoODZkaDQtYVk1ZHZfeFNZeWVVVEZnb25IQ2JPd0FvRVdkNXVTNVRLRWVZ?oc=5",
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "한화, 폴란드 합작법인 미사일 공장 첫삽",
-      "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "title": "한화에어로스페이스 주가, 방산 3중 호재 - v.daum.net",
+      "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE1ranpNWFFMSV85M2dYUG9ZRGdGelNyalhJZXdMZ01QOUFIbzVsZ19WNUdhd25LQlRoMFN2YnpNbm1kOFVfelZWUlR2Zw?oc=5",
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "한화, 폴란드에 '합작 미사일 공장' 첫 삽… 유럽 심장부 '정조준'",
+      "title": "국민연금, 2분기 삼전·닉스 비중 확대…식음료·통신·제약 축소",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "10조원 美 자주포 사업…한화에어로 품에 안기나",
+      "title": "국민연금, 5% 이상 국내주식 지분평가액 462조…절반이 삼전·닉스",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "유럽서 ‘나토 밀어주기’에 고배 마신 한화에어로… 美 자주포 사업.....",
+      "title": "코스피, 반도체 중심 상승 마감…코스닥은 바이오발 약세",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "반도체 던지더니 '이것' 담았다…외국인 뭉칫돈 몰린 종목은",
+      "title": "코스피, 6600선 털썩…코스닥은 매도 사이드카 발동",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "H7, KISS 2026 참가… 친환경 기능성 안전장갑 기술 선보여",
+      "title": "한화 인적분할 주총 D-1…3세 경영체제, 장남 김동관 승계 선명",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "[특징주] 방산주, '미-이란 긴장'에 상승출발했다 하락(종합)",
+      "title": "[서울데이터랩]코스피 시총 상위주 일제히 약세…반도체·자동차·방산...",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "맥 못 추는 삼전닉스, 7천피 '와르르'…외인·기관 무섭게 팔아 치운다",
+      "title": "정부, 방산 기술도 기업과 나눈다…IP 공동소유 허용 [하반기 경제전....",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
-      "title": "[인터뷰] 이주연 성남산업진흥원장 “AI·반도체·방산 연결···성남.....",
+      "title": "SK하이닉스 4%대 하락…코스피, 2%대 밀려",
       "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-      "published": "2026-07-13"
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "267260",
+      "name": "HD현대일렉트릭",
+      "title": "HD현대일렉트릭, '멈추지 않는' 이익률 개선세 '주목'…\"신규 수주 기반 전 영역 확대 진행\" - 프라임경제",
+      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9HNG5vdXVYSmpCQVJWWUxua0stOFNVcmtmQkhRYTR1NTlOWUw4UmtRQWVRbVFrc2Rfb1JpSlhSMmVJakhYMnZnM2hIWFpSWmpqdzE4TzBxRzNhcG9zcVhlS0R4ZVVfOWF2MnpGakRYaERzZw?oc=5",
+      "published": "2026-07-14"
+    },
+    {
+      "ticker": "267260",
+      "name": "HD현대일렉트릭",
+      "title": "[리포트 브리핑]HD현대일렉트릭, '성장 축 확장, 실적 가시성 유효' 목표가 1,450,000원 - 유안타증권 - 뉴스핌",
+      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9LaFU0QXYxVVNmcVFwZlpxSjVldDZVQmNhVVlIYjMzM241VHRiWnkyaUdweGNtNkF3Y1hxMFI4NTlVbWJXcUFaRGJZb3UzNldRWXZNbzB4M29kci1x?oc=5",
+      "published": "2026-07-14"
     },
     {
       "ticker": "267260",
@@ -561,27 +575,13 @@
       "title": "HD현대일렉·LG이노텍 '황제주' 복귀 시동",
       "url": "https://finance.naver.com/item/news_news.naver?code=267260",
       "published": "2026-07-12"
-    },
-    {
-      "ticker": "267260",
-      "name": "HD현대일렉트릭",
-      "title": "삼성SDI, 기후부 ‘AI 배전망 ESS’ 사업 66% 수주",
-      "url": "https://finance.naver.com/item/news_news.naver?code=267260",
-      "published": "2026-07-12"
-    },
-    {
-      "ticker": "267260",
-      "name": "HD현대일렉트릭",
-      "title": "삼성SDI ‘차세대 AI 배전망’ 공급전 완승…ESS 시장 공략 본격...",
-      "url": "https://finance.naver.com/item/news_news.naver?code=267260",
-      "published": "2026-07-12"
     }
   ],
   "tickers": {
     "005930": {
       "name": "삼성전자",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 118,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 111,
       "classified": [
         {
           "title": "[단독]삼성전자, '용인 1호팹' 양산 2년 더 빨리…SK, 미국 신규 투자 - 머니투데이 - 머니투데이",
@@ -593,22 +593,6 @@
           "impact_pct": 3.0,
           "matched_keywords": [
             "신규투자"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "capex_expansion"
-          ]
-        },
-        {
-          "title": "아산시 '삼성전자 46조 투자' 인허가 절차 본격화…실행 단계 - 연합뉴스",
-          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFA0S3BSNFI3N2l1cGFnZzdXeWtEcXVKOUVoOHM1akY2UF94XzBiS2g2LVVRbXBWcFo1cGxhWkFsM2VXUEVSNzlFYzZwS1gyOWFYODRLdE1LVGhrNGPSAWBBVV95cUxPcjgyV2h3dVZDWnRETGo3cXI1SGdDMzFyLTRXWWJpeG5LRUx2Q2Z4WmlHUEM4WkR6TFdsUkZSeUpZZGdKc3EwV1RYLXpMZFpHZEI2WFcycDNNSTFxVUxGc0M?oc=5",
-          "published": "2026-07-10",
-          "source": "연합뉴스",
-          "feed": "google_rss",
-          "type": "capex_expansion",
-          "impact_pct": 3.0,
-          "matched_keywords": [
-            "조투자"
           ],
           "confidence": "keyword",
           "all_types": [
@@ -694,180 +678,179 @@
           "all_types": [
             "earnings_surprise_beat"
           ]
+        },
+        {
+          "title": "삼성전자, 2분기 '어닝 서프라이즈'에도 5%대 급락 - 한국경제",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE4tbGxUa3AxMXBKOTBXRVY3UnZOZDV1b0s4Z1RHU1JRN29GRk84eHRGQW44bUJaU3RWQ0pnMnIyZEgzZVZZQjJsQ05MSXo4TFNMSVV1cjRidDZfd9IBVEFVX3lxTE5HNDRRNVRtVDhrRTR4ZEdmdWhOZ294bWpEZjJkNWlQRThyR0ZRak54dkRHaWdHb1ZQSlFVejFBMTJRRVlLd1dTLUdBSENpX1BxZDdIbg?oc=5",
+          "published": "2026-07-07",
+          "source": "한국경제",
+          "feed": "google_rss",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "어닝서프라이즈"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
         }
       ],
       "unclassified": [
         {
-          "title": "삼성전자, 레드닷 디자인 어워드 '2026 최고상' 등 8개 수상",
+          "title": "삼성전자, 자사주 3천228억 처분…임원 성과급 지급 목적 - 연합인포맥스",
+          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9HWUhKSFV1QXZfU3RFOGd2QnhxVGtJTE12b1cxMURadVhXSS1vdzZNVGJpUC1CN29XaURkMWRJR2VXQ050SUt5blVyS1RzTVg2MlpLRUJJRFVRMGNsZUpuWm81R2Z4Skg5b1RwQXZoOEU?oc=5",
+          "published": "2026-07-14",
+          "source": "연합인포맥스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성전자-삼성D, 유리 인터포저 협력 추진...대만에 도전장 - 디일렉",
+          "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9nYWhpUU5jQUkxT1hiVVhGQzdPVk9TeWkxX3dXNm1zRnFNdzFVa2szUl9IcVZuMmZYeENWaHFKRm1qRHI5R3NaWVVZODFzNTVlaEpSZzRVWU1EWUtBWFJacWw1MG5IQQ?oc=5",
+          "published": "2026-07-14",
+          "source": "디일렉",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성전자 노조 “조합원 84% ‘호남 반도체’ 반대…내년 교섭의제” - 한겨레",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE04NnpiVU9BQXJLb2d4RWR3c29hcmhfS1lfV0hVS3lHZ2ltblkzcDhPS3VjeEFFYTQ0ZlV5OWtRZkxfUllGaTRYbmQwZGxWRkE0a0dHRXhuUWdaMnJCV1pfTjZpQk8?oc=5",
+          "published": "2026-07-14",
+          "source": "한겨레",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성전자·SK하이닉스 주춤한 사이 중국 반도체는 ‘재평가’...ETF도 질주 - 조선일보",
+          "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOSktIMjNTWlQ1RV9GUU9xMk90ODZpeDNMbnRLZExnLU1JQ2VrVnMyOTRybDcwaF93MFdqVzBkSHh6QlRza2FnM2RHdTVOYUlHSGVBcGI2UHhncnQzeXVwbFhYUzFncUJ5UThrcnZ6dUtuUVlQZlB3djZES25xeDJVUnpaUnlSYXZ4MC1V?oc=5",
+          "published": "2026-07-14",
+          "source": "조선일보",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[단독] 삼성전자, 메모리값 급등에 스마트폰 사전예약 ‘더블 스토리지’ 혜택 손질… 용량 업그레이드 절반만 지원 - 조선비즈 - Chosunbiz",
+          "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOZmZ6aWdVY2VLR1NkS0k4LURsVzAzRUJ1Zl85R3VnRWlTdjRzWFZHdHF0cnNBSWhzMF91bERyWHRqanl1LVVhV2VZRHJjdDZTaWlaMG9XTEluaTlqbWF0LWJzSkJDaDZKLXVQdl9VM1VlWm9heXJ5TzRwMVIyMHRPNktn0gGWAUFVX3lxTE1DQndydW1iaDNNd1FvUEkwRi1LYVd0VzdFSEszZE9GWS1ocmkybTBxZlpidlQ0c19lVDFyS0FTZWtoMWRZS0lIYUpUeUZxNGJSZUZHTzU4Vk5IdGs2MnpIUndvc1FzZ3dGWElBbVVfSk9BbkF5V3hRc1dPekNhSldEX3VQa2hVdVloZjFsNXBza1l6TWdWdw?oc=5",
+          "published": "2026-07-14",
+          "source": "Chosunbiz",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[단독] 삼성전자, 82개 직군 뽑는데 ’전력반도체’는 0명…전영현 부회장 등 삼성전자 경영진도 포기 수순 - Investing.com 한국어",
+          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5PdjBzUWdObnVaMjFtd0dyc0tZM0p3ZThEekxZTjVJMC1lMkhtSmFORXVNdV9icXVOOFpkekdORHpwVlJvazV6eDVhTnZYc19haWlzT2cxb1JfbVhrTkFkNk5SMHQxcjdSOUl6Tjllejk?oc=5",
+          "published": "2026-07-14",
+          "source": "Investing.com 한국어",
+          "feed": "google_rss"
+        },
+        {
+          "title": "HBM 부족 대비한다…SK하이닉스, 용인 첫 팹 장비 발주 시작",
           "url": "https://finance.naver.com/item/news_news.naver?code=005930",
           "published": "2026-07-14",
-          "source": "이데일리",
+          "source": "조세일보",
           "feed": "naver_item_news"
         },
         {
-          "title": "삼성전자, '레드닷 어워드' 8관왕…디자인 경쟁력 입증",
+          "title": "“9개 다 맞아야 ‘300만닉스’ 간다” 빙고판 등장…“강한 감동 필....",
           "url": "https://finance.naver.com/item/news_news.naver?code=005930",
           "published": "2026-07-14",
-          "source": "더팩트",
+          "source": "서울신문",
           "feed": "naver_item_news"
         },
         {
-          "title": "삼성전자, 레드닷 디자인 어워드 2026 최고상 2개 포함 8개 수상",
+          "title": "불안해진 투심…코스피, 오르락내리락 끝에 0.7% 찔끔 상승(종합)",
           "url": "https://finance.naver.com/item/news_news.naver?code=005930",
           "published": "2026-07-14",
           "source": "연합뉴스",
           "feed": "naver_item_news"
         },
         {
-          "title": "[단독] “드러누워 막았어야” 말한 금감원장, 이번엔 “명확한 답 안....",
+          "title": "삼성, 업무용 AI로 '제미나이' 택한 이유…구글 \"성능·보안·비용 다...",
           "url": "https://finance.naver.com/item/news_news.naver?code=005930",
           "published": "2026-07-14",
-          "source": "조선일보",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "美 증시 급락 여파…프리장서 삼전닉스 4% 하락 출발 [마켓시그널]",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-          "published": "2026-07-14",
-          "source": "서울경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "총수 주식재산 29조 증가…이재용 28조↑·최태원 첫 '10조 클럽'",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-          "published": "2026-07-14",
-          "source": "경기일보",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "[속보] 삼성전자·SK하이닉스 프리마켓서 5%대 급락세",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-          "published": "2026-07-14",
-          "source": "파이낸셜뉴스",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "나스닥선 흥행·코스피선 폭락한 SK하이닉스…코스피 흔드는 레버리지...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-          "published": "2026-07-14",
-          "source": "MBN",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "美 반도체 쇼크 되돌아왔다…삼전·SK하닉, 프리마켓서 급락",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-          "published": "2026-07-14",
-          "source": "디지털타임스",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "\"中반도체 가격 파괴 우려\"...키옥시아 40% 급락 경고[도쿄나우]",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005930",
-          "published": "2026-07-14",
-          "source": "한국경제",
+          "source": "뉴시스",
           "feed": "naver_item_news"
         }
       ]
     },
     "009540": {
       "name": "HD한국조선해양",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 125,
-      "classified": [
-        {
-          "title": "\"수입 의존 끊었다\" HD한국조선해양, LNG 고압펌프 '독자 개발' - 프라임경제",
-          "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE9NVG9JcTJrS1Vwbnl1OTMxd3ZzVHhreDAtSUVLcElmM2JxRXoyWUVMNWc0ZlgyRFdSOW1aRm9lNlAyVTFSc210MmYzQlpOVnBsRHVlVUd0cWYwazhPQkp3d2RVcw?oc=5",
-          "published": "2026-06-30",
-          "source": "프라임경제",
-          "feed": "google_rss",
-          "type": "tech_breakthrough",
-          "impact_pct": 6.0,
-          "matched_keywords": [
-            "독자개발"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "tech_breakthrough"
-          ]
-        }
-      ],
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 116,
+      "classified": [],
       "unclassified": [
         {
-          "title": "K조선 3사, LNG선 호황 속 연간 영업이익 10조 넘본다",
+          "title": "HD한국조선해양, VLAC 3척 추가 수주…압도적 1위 굳히기 - v.daum.net",
+          "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1fRlA2aDZzUWZybEdSOXVhbmF5ZEFxR3AtZU5OSDMzaHRXTVVsbGxNNlRiVElGbWo5YjNZdWpEV1hRaDlJZnc?oc=5",
+          "published": "2026-07-14",
+          "source": "v.daum.net",
+          "feed": "google_rss"
+        },
+        {
+          "title": "'반세기 인연' 잇는 英 왕실…앤 공주, HD현대重 울산 본사 방문",
           "url": "https://finance.naver.com/item/news_news.naver?code=009540",
           "published": "2026-07-14",
-          "source": "국민일보",
+          "source": "데일리안",
           "feed": "naver_item_news"
         },
         {
-          "title": "HD한국조선해양, 수주 목표 70% 돌파…6년 연속 초과 달성 '순항' - 블로터",
-          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5FTjFPaGswRFAxYUMweDBsRHZIV2x0Z0cwV3kwZms2dXE1Ykx2U1hvN2tRZWRWYVM3YWRiWlREZVlmT2NVMXc5VkpHQ3F4eVN2TjZIVENNejBjbHRhX3dhUWNrQ3czSHZz0gFsQVVfeXFMTk93UFFsS0Q4Sy1Idkd3YUxMcXV4NE1XY0pwbm9ZWC1Eb2g3T1JwbUFvOGlPSDNPTWFiRGpqbE9OUlpLSDI1OUlaVnJrZGYxR0t2eFJwSUxaN0ladTZwN0xrOW5nc1V5MkdoN25J?oc=5",
-          "published": "2026-07-13",
-          "source": "블로터",
-          "feed": "google_rss"
+          "title": "조선 3사, 2분기 영업익 53% '껑충'…고선가 수주 효과",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
+          "source": "이데일리",
+          "feed": "naver_item_news"
         },
         {
-          "title": "HD한국조선해양, VLAC 3척 추가 수주…올해 목표 70% 돌파 - 해사신문",
-          "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1udWFCTDROOWhndkxPMEtway1BdTVOTk4xZVhfRlU1OGt3NjZiVXBObXFaclRhMXpOUS1SX1YtOWxNbmlJdmdSLUl5Rjl5VVBCbjFfN3hsTEdkOEdBVXZCcFVRUlRkQUV1Z1FN?oc=5",
-          "published": "2026-07-13",
-          "source": "해사신문",
-          "feed": "google_rss"
+          "title": "HD현대重 울산조선소 찾은 英 앤 공주, 정기선 회장과 협력 논의",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
+          "source": "디지털데일리",
+          "feed": "naver_item_news"
         },
         {
-          "title": "HD한국조선해양, 유럽서 암모니아 운반선 3척 수주…5천456억원 - 연합인포맥스",
-          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE95cGtkWWUwejl4VmM5cDhKeVI5NXNOV0w2QXBjX1FJcHRJa0NKUnZ6ZExTZ1JXVUlOcUd5dVVLSkxiM2RzUEw5N0h2RmlkUkt5UHBRRE5JRVM3Uk93LURhaEQ0RnBUSlk0TkNZSHVyZjM?oc=5",
-          "published": "2026-07-13",
-          "source": "연합인포맥스",
-          "feed": "google_rss"
+          "title": "英 왕실 앤 공주, HD현대重 방문…협력 방안 논의",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
+          "source": "전자신문",
+          "feed": "naver_item_news"
         },
         {
-          "title": "HD한국조선해양, 5456억원 규모 '초대형 암모니아 운반선' 3척 수주 - 뉴스핌",
-          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBIVzZsU3RVeVVpVVdOWm41a1Z6UlliQS1JejFkT3JySzdzT2lzS20xeEpLWmRHaXJrSU1jYloyZ0Y2SkxEUEFrR2xVenB6bzlUc3NHZUhxbjBBSmFi?oc=5",
-          "published": "2026-07-13",
-          "source": "뉴스핌",
-          "feed": "google_rss"
+          "title": "정주영 500원으로 英과 인연... 앤 공주, 울산 조선소 방문했다",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
+          "source": "조선일보",
+          "feed": "naver_item_news"
         },
         {
-          "title": "HD한국조선해양, 초대형 암모니아 운반선 3척 수주…목표 70% 달성 - 아시아경제",
-          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1NOWZmQzlpMGNSTV9iNThyR0ctNDdXUzZrQmdVci1CTGhEbHc1aWRqRmxOY2pHSS1Ca25ld0dscC01amJuUHo1VXhTa1FDc3l3STJnUDNmazlzTVNDUXY5Qg?oc=5",
-          "published": "2026-07-13",
+          "title": "영국 앤 공주, HD현대重 방문…조선·해양 협력 강화 모색",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
           "source": "아시아경제",
-          "feed": "google_rss"
+          "feed": "naver_item_news"
         },
         {
-          "title": "HD한국조선해양, 초대형 암모니아 운반선 3척 수주…5456억원 규모 - 글로벌이코노믹",
-          "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQQWp3Ni04RFMxNHZtZWRtaG1BV0tHQ2NaQVE1VXBCUkZaaGMtRWtfcVFlbk1jd3RBeEstSnZoZE1WVVdpb19IblhFd3RublJTX3pqdmNLcTJpY1VVN3lNMGxsQWxTa196Unc0bWNZZmp1bnB3ay15dUJIeE04aHJNTUhSMHJpZw?oc=5",
-          "published": "2026-07-13",
-          "source": "글로벌이코노믹",
-          "feed": "google_rss"
+          "title": "英 앤 공주, HD현대重 울산 본사 방문…정기선 “영국 조선·해양 산...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
+          "source": "헤럴드경제",
+          "feed": "naver_item_news"
         },
         {
-          "title": "HD한국조선해양, 초대형 암모니아 운반선 3척 5456억원에 수주 - 조선비즈 - Chosunbiz",
-          "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQdTNmSWROajdRb2wtSk1QMkZYbEdxMXhTVlR5V0ExM05KU3g2UlRLcHVRN0pRUXZaZ2VoTThIOF9CM1dpSnNOOXNPVkZpMjdVc0RwZEZHSDNBaWw3UGpuV1UxM29Ga3RxbUNRaUFCUm1YVUJBTHRneVpmNWxGV0tNSF91MnrSAZgBQVVfeXFMT25xMV9BdXJYbjFtU0VMdjNicGplcXRhWTlMOVNQbllQNlhrWG5wUHRXMWFKMHF1Y1RyT3pfZ3hleTY3SlJCUm5Lenc4Y0ViY2lsXzFUcFpnMVlOcnRlLVFkSmdpdlMtcGxDS2hwbmJWYWIxeUlDWjhNVVVoWEt1S2JORmtRaURsdlA1bjA1d1JIYWtVZEpiUTU?oc=5",
-          "published": "2026-07-13",
-          "source": "Chosunbiz",
-          "feed": "google_rss"
+          "title": "英 앤 공주, HD현대重 방문…한·영 조선 협력 논의",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
+          "source": "서울경제",
+          "feed": "naver_item_news"
         },
         {
-          "title": "[오늘의 주요공시] 현대차·HD한국조선해양·코오롱인더 등 - 이투데이",
-          "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE5DbFdraGxad1U1UTc3cy1Tc0hhQjJWaEpWNXJ2ZDZCeEY4eHRQUElROFpPTnljaGN5S3ByaG9KOGk4aXdoODhtN1FJZzlFQ2F2bWQ2Zg?oc=5",
-          "published": "2026-07-13",
-          "source": "이투데이",
-          "feed": "google_rss"
-        },
-        {
-          "title": "HD한국조선해양, 유럽서 5456억 규모 초대형 암모니아 운반선 3척 수주 - 녹색경제신문",
-          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE4zeHVUbnRkX1doVElvVzlWZy1RQkZ2WWU5SEotem45SGxLdDhFMVRHalZWQ19nQjRYMzN6VEZGUkIxSXY1V0VPcndPa3JxU2xMTXgyOTRwenkwMWNfRlB4SGRSUzhEcEJG?oc=5",
-          "published": "2026-07-13",
-          "source": "녹색경제신문",
-          "feed": "google_rss"
+          "title": "\"대를 이어온 인연\" 영국 왕실 앤 공주, HD현대重 울산 본사 방문",
+          "url": "https://finance.naver.com/item/news_news.naver?code=009540",
+          "published": "2026-07-14",
+          "source": "머니투데이",
+          "feed": "naver_item_news"
         }
       ]
     },
     "010140": {
       "name": "삼성중공업",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 129,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 110,
       "classified": [
         {
           "title": "[IB토마토]삼성중공업, AI 조선소 전환 시동…10조 투자 재원은 어디서 - 뉴스토마토",
@@ -1000,6 +983,48 @@
       ],
       "unclassified": [
         {
+          "title": "국민연금, 2분기 삼전·닉스 비중 확대…식음료·통신·제약 축소",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+          "published": "2026-07-14",
+          "source": "더팩트",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "조선 3사, 2분기 영업익 53% '껑충'…고선가 수주 효과",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+          "published": "2026-07-14",
+          "source": "이데일리",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "국민연금, 5% 이상 국내주식 지분평가액 462조…절반이 삼전·닉스",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+          "published": "2026-07-14",
+          "source": "뉴시스",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "HD한국조선해양, VLAC 3척 추가 수주…압도적 1위 굳히기",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+          "published": "2026-07-14",
+          "source": "아시아경제",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "거제 하이엔드 브랜드 '센트레빌 아스테리움 거제' 7월 분양",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+          "published": "2026-07-14",
+          "source": "한경비즈니스",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "'가교 연료' LNG 전성기 길어진다…HD현대·한화 수주 훈풍",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
+          "published": "2026-07-14",
+          "source": "지디넷코리아",
+          "feed": "naver_item_news"
+        },
+        {
           "title": "[경제 단신] 조선업 사상 첫 노사정협의체 발족 외",
           "url": "https://finance.naver.com/item/news_news.naver?code=010140",
           "published": "2026-07-14",
@@ -1026,62 +1051,20 @@
           "published": "2026-07-14",
           "source": "국민일보",
           "feed": "naver_item_news"
-        },
-        {
-          "title": "[조선ㆍ방산 후발주자 역습] (1)삼성중공업, FLNG 수주 풍년…해양플랜트 독주 굳히기 - 대한경제",
-          "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5mSjBPeGVCNVdmaTVzN1NwdXQ2bjRIV0M5OVFMSVJLd1lVeDRERmtMNWxkVjROTVBoQ0F5Ull5R0JPT29UWHhHTWNSc0pHMGZZQnpzcGNlSHZJVjFxLUMydTF4LU1mQUwwYmRrVlFBdXpEV3kx?oc=5",
-          "published": "2026-07-13",
-          "source": "대한경제",
-          "feed": "google_rss"
-        },
-        {
-          "title": "[버핏 리포트] 삼성중공업, 하반기 FDC 수주 기대...해양플랜트 경쟁력 부각 - 유안타 - 버핏연구소",
-          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1lankyNnRRS3NYM1k1NXBBN0N3YzlTQzNxaDFrQ2lPZGYxTTdjbjhJdmFhMUxDbWdaWGliUFdRLWRJX2FJVkxzU0VveHJleFZrMWt5ZGF4Q3lJUDdJ?oc=5",
-          "published": "2026-07-13",
-          "source": "버핏연구소",
-          "feed": "google_rss"
-        },
-        {
-          "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-          "published": "2026-07-13",
-          "source": "매경이코노미",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "조선업 첫 노사정 협의체…원·하청 상생기금 논의할 듯",
-          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-          "published": "2026-07-13",
-          "source": "한국경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "국내 첫 조선업 노사정 협의체 출범…'K-조선 르네상스' 이끈다",
-          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-          "published": "2026-07-13",
-          "source": "디지털데일리",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "조선업 첫 노사정 대화협의체 출범…양대 노총 모두 참여",
-          "url": "https://finance.naver.com/item/news_news.naver?code=010140",
-          "published": "2026-07-13",
-          "source": "더팩트",
-          "feed": "naver_item_news"
         }
       ]
     },
     "373220": {
       "name": "LG에너지솔루션",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 110,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 111,
       "classified": [
         {
-          "title": "LG화학, 석화 방어·배터리 개선에 2분기 흑자전환 기대",
-          "url": "https://finance.naver.com/item/news_news.naver?code=373220",
+          "title": "[버핏 리포트] LG에너지솔루션, 2분기 '흑자전환' 성공…하반기 개선세 이어질 것 - 대신 - 버핏연구소",
+          "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBKS3pWMFRWclNCak5WRmdyOFBZRllJWW1EX05KdURGckMzaThUSWJvMHQ4TVZNR1dNSkhOeTRMVEh0SjBfRVRSWUFCTHk4MExBVTYwVkV4aFNOOU8xc3pYeGFR?oc=5",
           "published": "2026-07-14",
-          "source": "데일리안",
-          "feed": "naver_item_news",
+          "source": "버핏연구소",
+          "feed": "google_rss",
           "type": "earnings_surprise_beat",
           "impact_pct": 6.0,
           "matched_keywords": [
@@ -1113,6 +1096,22 @@
           "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5sNVJfQjVBenZwTWxha0JlUWlRVGg1SFJsUS04UHFhMXJSZ2cxbFFHT2RLcU5GQU9DT1pNdnA4dVpMb3pLNXVsU0RsVVVuTnJoQjlWd052SVhRQnhDcVVZMXVBb2tQNC14X093UNIBcEFVX3lxTE5BZ09mLXlrRWZQWmk0cmljUndGN25sS2c0UmdDRVZKRVhNRVZlVnBxTzdlZXNFeE1leVBGSUVTcWhfVF8zWnd6d09BTnRWYjRPVTlqZlJiV3d3Q2dlYTRxYW1YUlM1TUhxWlBOY2NabTM?oc=5",
           "published": "2026-07-08",
           "source": "전기신문",
+          "feed": "google_rss",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "흑자전환"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "LG에너지솔루션(373220), 2분기 영업이익 1,133억원…3개 분기 만에 흑자 전환 - 한국투데이",
+          "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE45TXR5U2xlSFVxT1NHQTE3NmY1S3E4cXdKWHZuTW5XRVdMWmhZNGx2VTN5Y05LV3p4aU5yZ2JicWJ1UjFVbVFkWXF4OERDanE0WnR6N0tnUTM2THIyamlEdGl6Uk81Q21lN1HSAW5BVV95cUxOUVlINzRaQlRnUFQzM05sZnlTdEduTFk5QjNDUUlTQUhmQi1ISG12N2NsMXdVYWctLUNoNFo1R0lpTUxTZHN3RHpxY0NzdHRveS1aS21ROTRVSF8zSG1nUEZ0cXgtbTA1Mktud2dUdw?oc=5",
+          "published": "2026-07-08",
+          "source": "한국투데이",
           "feed": "google_rss",
           "type": "earnings_surprise_beat",
           "impact_pct": 6.0,
@@ -1237,10 +1236,10 @@
           ]
         },
         {
-          "title": "LG에너지솔루션, 2분기 영업이익 1133억원…전분기 대비 흑자전환 - 아시아경제",
-          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE42OHR1VEVrMlVFczBtYnFGSVRubm5qbXF3YUQ0SlNTUW5leTN2bzlZcVpFNm1mMTNFdzVYRktucDU3ajVkQ0dxY2NsTXNZc3NuU0RVaWxkUkF5bTVOZWpBRA?oc=5",
+          "title": "LG엔솔 2분기 흑자전환 성공…반등 신호탄 쐈다 - v.daum.net",
+          "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE4zV0xMZHpLR2NJMElvLThTUlNOZkU3aEp2NWVLck9ad0doY0VldFdBSkx6T1FlMmRuMG1LUU1DYy1ldlZad2E4VEZrRQ?oc=5",
           "published": "2026-07-07",
-          "source": "아시아경제",
+          "source": "v.daum.net",
           "feed": "google_rss",
           "type": "earnings_surprise_beat",
           "impact_pct": 6.0,
@@ -1253,10 +1252,10 @@
           ]
         },
         {
-          "title": "LG엔솔 2분기 흑자전환 성공…반등 신호탄 쐈다 - v.daum.net",
-          "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE4zV0xMZHpLR2NJMElvLThTUlNOZkU3aEp2NWVLck9ad0doY0VldFdBSkx6T1FlMmRuMG1LUU1DYy1ldlZad2E4VEZrRQ?oc=5",
+          "title": "LG에너지솔루션, 2분기 영업이익 1133억원…전분기 대비 흑자전환 - 아시아경제",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE42OHR1VEVrMlVFczBtYnFGSVRubm5qbXF3YUQ0SlNTUW5leTN2bzlZcVpFNm1mMTNFdzVYRktucDU3ajVkQ0dxY2NsTXNZc3NuU0RVaWxkUkF5bTVOZWpBRA?oc=5",
           "published": "2026-07-07",
-          "source": "v.daum.net",
+          "source": "아시아경제",
           "feed": "google_rss",
           "type": "earnings_surprise_beat",
           "impact_pct": 6.0,
@@ -1301,22 +1300,6 @@
           ]
         },
         {
-          "title": "LG엔솔, '보조금 없이도 흑자' 목표했지만… - 비즈워치",
-          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5mWmNtOXBDQ3BXZjNEQWlrWVJnOUppXy1lQVNGbEtkUlVLN2x0Vnh2alIzWThUUVRFYlllckdHSVpzNG1IRGllNlI3VFhTNHplOUVlNTRZRERpbXJ4QW82SGhOLUthODdNQ2Jzeg?oc=5",
-          "published": "2026-07-07",
-          "source": "비즈워치",
-          "feed": "google_rss",
-          "type": "policy_support",
-          "impact_pct": 3.0,
-          "matched_keywords": [
-            "보조금"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "policy_support"
-          ]
-        },
-        {
           "title": "[속보]LG엔솔, 2분기 매출 7.56조…‘흑자 전환’ 했다지만 영업이익은 급감 - v.daum.net",
           "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE5HR3I0Y0xEaXNQa1l3VXhUYUliSFRwT3pxVFVndzc5WTJGSG1Ccm10ZkxSRGhSU2hnYWgyMVBwOE5mc0h6RXpraVhJTQ?oc=5",
           "published": "2026-07-07",
@@ -1333,10 +1316,42 @@
           ]
         },
         {
+          "title": "LG엔솔, '보조금 없이도 흑자' 목표했지만… - 비즈워치",
+          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5mWmNtOXBDQ3BXZjNEQWlrWVJnOUppXy1lQVNGbEtkUlVLN2x0Vnh2alIzWThUUVRFYlllckdHSVpzNG1IRGllNlI3VFhTNHplOUVlNTRZRERpbXJ4QW82SGhOLUthODdNQ2Jzeg?oc=5",
+          "published": "2026-07-07",
+          "source": "비즈워치",
+          "feed": "google_rss",
+          "type": "policy_support",
+          "impact_pct": 3.0,
+          "matched_keywords": [
+            "보조금"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "policy_support"
+          ]
+        },
+        {
           "title": "[속보]LG엔솔, 2분기 매출 7.56조…‘흑자 전환’ 했다지만 영업이익은 급감 - 경향신문",
           "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFA4WE5JRzJtWVJveTU4WlZJSExkTUhvbnhTZDFQeGRiSTA0MTFCSXBQUWZjTFotVm9ndVhtdlI1QlVNcVV2azBqc1Z1NEdTNC12UWFLbUlaTDE5Z9IBX0FVX3lxTE9JWkdPMUVmaGpidXdxeGVySW1GMDR6a2VuUkpTUzBOTnNOX0htUVpvV29PX1QwQzdUYXlmR0ZkWkJYYmNVN2ZBN3lLOVktdGNKM1RDN1RwMDkwdXl3SkZZ?oc=5",
           "published": "2026-07-07",
           "source": "경향신문",
+          "feed": "google_rss",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "흑자전환"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "LG에너지솔루션, 2분기 영업익 1133억 기록..전분기 대비 흑자 전환 - dailycar.co.kr",
+          "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5BLWNyYTVGU1IxYzdvSEdlQUJPVHNndWFUV1M3VnBxRTFVVGVZMjA1VWtVdFZHLVZtUEZUbW5ScllsblRwTmpsWTFlLW4yc3lYY25Fa1NjeDVSUHgxcHlIbDhDbEpHOEsxLTYwZGFBc1VSU2U2MUE?oc=5",
+          "published": "2026-07-07",
+          "source": "dailycar.co.kr",
           "feed": "google_rss",
           "type": "earnings_surprise_beat",
           "impact_pct": 6.0,
@@ -1367,81 +1382,81 @@
       ],
       "unclassified": [
         {
-          "title": "중복상장 '모범사례' 덕산하이메탈...주목받는 대신증권",
+          "title": "[리포트 브리핑]LG에너지솔루션, '시차는 있으나, 오차는 작을것' 목표가 550,000원 - 대신증권 - 뉴스핌",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE41UHNrZnItdndMZHF6cDE5VVpzMUFHbTJ0WjV2Z2l1TDZlT2FRc193TTd0SmxYb1duUS1vSm8wMHhVa3RlU2xFbTRxYmdfM2ZHSHJUTzR4anpwZUpM?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴스핌",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[오늘증시] 코스피 6850선 마감…개인 매도에도 외인·기관이 상승 견...",
           "url": "https://finance.naver.com/item/news_news.naver?code=373220",
           "published": "2026-07-14",
-          "source": "비즈워치",
+          "source": "동행미디어 시대",
           "feed": "naver_item_news"
         },
         {
-          "title": "엘앤에프, 이원화 우려 주가 '발목'…신규 고객 확보가 반등 열쇠-NH",
+          "title": "[마감시황] 코스피, 6,856.83로 반등 마감…외국인·기관 매수에 ...",
           "url": "https://finance.naver.com/item/news_news.naver?code=373220",
           "published": "2026-07-14",
-          "source": "이데일리",
+          "source": "서울신문",
           "feed": "naver_item_news"
         },
         {
-          "title": "중동 전쟁 재점화 우려에도…에너지·해운株 살아남았다 [종목+]",
+          "title": "개인 5.5조 '팔자' vs 기관 3.9조 '사자'…코스피, 수급 공방...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=373220",
+          "published": "2026-07-14",
+          "source": "뉴시스",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "\"'그냥 손절할까?' 하루 종일 고민\"?코스피 '기사회생', 코스닥은 ...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=373220",
+          "published": "2026-07-14",
+          "source": "아이뉴스24",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "코스피 상승 전환했지만…코스닥 연중 최저 마감",
           "url": "https://finance.naver.com/item/news_news.naver?code=373220",
           "published": "2026-07-14",
           "source": "한국경제",
           "feed": "naver_item_news"
         },
         {
-          "title": "배터리셀 파는 삼성, 전력망까지 돌리는 LG…ESS 공략법 갈렸다",
+          "title": "장중 6500 깨진 코스피, 0.7% 상승 마감…외국인·기관 4.1조 ...",
           "url": "https://finance.naver.com/item/news_news.naver?code=373220",
           "published": "2026-07-14",
-          "source": "중앙일보",
+          "source": "매일경제",
           "feed": "naver_item_news"
         },
         {
-          "title": "“그간 번 돈 다 토해내게 생겼다”블랙먼데이 정리",
+          "title": "코스피, 6500선 붕괴 딛고 반등 마감…코스닥 783p '연저점' [...",
           "url": "https://finance.naver.com/item/news_news.naver?code=373220",
           "published": "2026-07-14",
-          "source": "문화일보",
+          "source": "뉴스1",
           "feed": "naver_item_news"
         },
         {
-          "title": "[리포트 브리핑]LG에너지솔루션, '하반기 ESS 수주 모멘텀 기대' 목표가 570,000원 - DB증권 - 뉴스핌",
-          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBsTzRwSC1CSkJrSFdUYzVrcWJ2eDBHaFdHYzRrWEEwTHRPNTJBOWYxR3BWbDk3bGVqM2FnSE1SRXY4VWNOQzZNT2NLVl9kUjRmUXE0ekZGRm9hZEIx?oc=5",
-          "published": "2026-07-13",
-          "source": "뉴스핌",
-          "feed": "google_rss"
-        },
-        {
-          "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
+          "title": "기관·외인 ‘사자’에 코스피 반등…‘삼전닉스’ 3%대 동반 상승",
           "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-          "published": "2026-07-13",
-          "source": "매경이코노미",
+          "published": "2026-07-14",
+          "source": "디지털타임스",
           "feed": "naver_item_news"
         },
         {
-          "title": "반도체 산단發 전력 수요 폭증…국내 ESS도 판 커진다",
+          "title": "코스피, 0.73% 오른 6856.83 마감…삼전 26만3000원·닉스...",
           "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-          "published": "2026-07-13",
-          "source": "지디넷코리아",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "반도체 업황 꺾였나…삼성전자 10%·하이닉스 15% 급락 마감",
-          "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-          "published": "2026-07-13",
-          "source": "디지털데일리",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "미국 AI 데이터센터 건설 급증에 BESS 전환 추진 'K배터리' 수혜",
-          "url": "https://finance.naver.com/item/news_news.naver?code=373220",
-          "published": "2026-07-13",
-          "source": "머니투데이",
+          "published": "2026-07-14",
+          "source": "강원도민일보",
           "feed": "naver_item_news"
         }
       ]
     },
     "000660": {
       "name": "SK하이닉스",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 110,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 112,
       "classified": [
         {
           "title": "나스닥이 16% 비싸다…'잭팟' 하이닉스, 국장서도 터지나 - 한국경제",
@@ -1492,8 +1507,8 @@
           ]
         },
         {
-          "title": "하이닉스 '7배 뭉칫돈' 잭팟…최태원, 나스닥 '오프닝 벨' 울린다 - 한국경제",
-          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFAtSlk3WWR5Mmo4Z25CRXR5ZEJldGhCZWxkR25mNXlROWhtenpMRkg3Q3BGbXdJRWJoN0J6aDktaWlLMUxQalZKYnQxaDJRTFR5WmthNU9qYmx6UdIBVEFVX3lxTFB2cmdCNTR0TlJldVJoSVhtczZEVGZtSFg0OXJteHhvaG1Yb3M2YnpjSHdONk1LZkVINE5oX3dvdTMxLV9KemZBRDRsaFZicFVHZTBzYQ?oc=5",
+          "title": "월가 큰손들 '260조' 베팅…나스닥 잭팟에 하이닉스 주가 급반등 - 한국경제",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE41S21YbEVOR3FZb3B3RC1BUDdyMXZhNjJ6ZGJmTTJXaDV0cWpxOS1lU3lING1GMklxdmRHMzdoSFZfa3RVSkg4aFBreUlJYVFfZ05yVlk1OWI2UQ?oc=5",
           "published": "2026-07-09",
           "source": "한국경제",
           "feed": "google_rss",
@@ -1508,8 +1523,8 @@
           ]
         },
         {
-          "title": "월가 큰손들 '260조' 베팅…나스닥 잭팟에 하이닉스 주가 급반등 - 한국경제",
-          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE41S21YbEVOR3FZb3B3RC1BUDdyMXZhNjJ6ZGJmTTJXaDV0cWpxOS1lU3lING1GMklxdmRHMzdoSFZfa3RVSkg4aFBreUlJYVFfZ05yVlk1OWI2UQ?oc=5",
+          "title": "하이닉스 '7배 뭉칫돈' 잭팟…최태원, 나스닥 '오프닝 벨' 울린다 - 한국경제",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFAtSlk3WWR5Mmo4Z25CRXR5ZEJldGhCZWxkR25mNXlROWhtenpMRkg3Q3BGbXdJRWJoN0J6aDktaWlLMUxQalZKYnQxaDJRTFR5WmthNU9qYmx6UdIBVEFVX3lxTFB2cmdCNTR0TlJldVJoSVhtczZEVGZtSFg0OXJteHhvaG1Yb3M2YnpjSHdONk1LZkVINE5oX3dvdTMxLV9KemZBRDRsaFZicFVHZTBzYQ?oc=5",
           "published": "2026-07-09",
           "source": "한국경제",
           "feed": "google_rss",
@@ -1558,6 +1573,41 @@
       ],
       "unclassified": [
         {
+          "title": "SK하이닉스 4% 하락에 코스피 2%대 약세...코스닥은 매도 사이드카 - 조선일보",
+          "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQUlRtSjY1WW50OXlwa1E1dTBtTzk3U01Xdks4UWRTLWVYNmZ3LTlFTjlNMzN6MFNNNWNicThCRElzU2RndnQ5Y0h1WnFZZFFRb0ZwNU5yUjFXdkJERXB3X3VhM0lhMGhzT09DS05iRlR0c1RjSkhFRW9uQmRnNFdvOQ?oc=5",
+          "published": "2026-07-14",
+          "source": "조선일보",
+          "feed": "google_rss"
+        },
+        {
+          "title": "SK하이닉스 대규모 달러 현물환 매도물량 출회…환전 전략 가동 추정 - 연합인포맥스",
+          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5GbkNhU0VldElxSVVyMjZBeDdXcmRONGNuVXF4akd3RjNuQ0h1TEF5YmtUelNNXzdoUTczTHRyd016Qm94X2pjZllwZl9KWDFDNW40dnV5YTZieVIyVE5GeTlCQ1o2TnNaUjFVb3BhcXU?oc=5",
+          "published": "2026-07-14",
+          "source": "연합인포맥스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "평가손실만 21억, SK하이닉스 레버리지 21만주 개미 \"그래도 버틴다\" - 머니투데이 - 머니투데이",
+          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9ZMDJDd0QxQmZjVHE4TGpVcDZTZmNLYW1wSjEzMkl5VFZGTTlkNW9HNHM1bU5ZZGxWd19WaU1OdjR1SVN2UmZmbjBzaFlIMFJNSVJXemVJRlBUVWs2eEFFYXhPR3Q5SDdH0gFuQVVfeXFMTk5lY3B3MHNPSlozOXNXbTFuTkFZQ2xwSDk2bmllck1zX3FDZnZuRVdMYWVqbHhzOGdjZUstY3Q1SGlDTjZKU0ExbEF2eHMxdW9VVjNVazVQbDJYYlh0cDJRUE1yRVVPd01Fbl9OY0E?oc=5",
+          "published": "2026-07-14",
+          "source": "머니투데이",
+          "feed": "google_rss"
+        },
+        {
+          "title": "SK하이닉스 실적전망 또 하향...\"이미 주가 급락, 저점 매수 기회\" - 머니투데이 - 머니투데이",
+          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBVV2ZNOUstODBJRElIaF9QbWJXSWJLMm9IcW54c0syd0h2UU5fNVp0bEJ6Mlg3TldWdWlPdUF0a1h1aVBWb2dkOUIwVjlYZVNGS0VsZXFvVzZDeWdicXp5TmpmdzNFcnRE0gFuQVVfeXFMUDg2emZTbDNHZGhCUHVfWE9FQi1lTlVhSHNCUWg1VnNCU19ySVcweU5SLWoxckxzNFo3OEp2RG9OUFdiTlp6Vjh4TDJLak9VbEVOUUl4a19JN19iTW9VejlTNHNPcGRaaV94RXJqUEE?oc=5",
+          "published": "2026-07-14",
+          "source": "머니투데이",
+          "feed": "google_rss"
+        },
+        {
+          "title": "SK하이닉스, 용인 'Y1' 팹 구축 본격화…장비 발주 시작 - 지디넷코리아",
+          "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1HUmJPUHd6NFhxT09DdE93cUNkOWFyNldDNWd2MXNROTY4UEprQWNiT1dxeXZBX1JqSHJhZHNhamVmQ0tDSXRNUDVJeHRzZUtta1d3Z0ZR?oc=5",
+          "published": "2026-07-14",
+          "source": "지디넷코리아",
+          "feed": "google_rss"
+        },
+        {
           "title": "SK하이닉스 미 ADR 9.3% 급락…공모가 소폭 웃돌아 - 연합뉴스TV",
           "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE11Rnh4RGZyeXRLRUlYWlo0VzdZVGlHWTZzRGxBbTk3bWc4UUxlNFJpUDh0bS1lTm1VOExXaVdiM2dwOGkwN1RNZHVFbnFYRXRTTkFXc1AtTzMzaWFzY3d0bEhFTzVqYUE?oc=5",
           "published": "2026-07-14",
@@ -1565,75 +1615,88 @@
           "feed": "google_rss"
         },
         {
-          "title": "[단독] “드러누워 막았어야” 말한 금감원장, 이번엔 “명확한 답 안....",
+          "title": "한미 반도체주 함께 흔들렸다…SK하이닉스 15%·마이크론 4.4%↓ - 뉴시스",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFB5MW9QYnMxN0FCNnJpaGlBX2h4b0FWU0J6OFBaUFQydmZ5dTZMZlphaWp3ZDFSSWtlb2VkWU5FWnBEQ2pFanVGNGRiUkZCTzJ5VHFxTTJXUmtnWVYzdHU1ctIBeEFVX3lxTE1zLTh4cUptcXRYRi1FY1VWR1N1bHRBamtfZklKM3lRZmlPRzNnLWpIOUpDSlRCTnlFTXdQek52R3U5QkpzSVRaNk1JdDByTkZhdHYtcGFhdF9fMHl1eDcwV3NIeWpkVmxCdFZ1d0tEcXZTYzk4Z05XLQ?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴시스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "HBM 부족 대비한다…SK하이닉스, 용인 첫 팹 장비 발주 시작",
           "url": "https://finance.naver.com/item/news_news.naver?code=000660",
           "published": "2026-07-14",
-          "source": "조선일보",
+          "source": "조세일보",
           "feed": "naver_item_news"
         },
         {
-          "title": "美 증시 급락 여파…프리장서 삼전닉스 4% 하락 출발 [마켓시그널]",
+          "title": "수출업체 달러 매도세에…환율, 10.4원 하락해 1493원",
           "url": "https://finance.naver.com/item/news_news.naver?code=000660",
           "published": "2026-07-14",
-          "source": "서울경제",
+          "source": "SBS Biz",
           "feed": "naver_item_news"
         },
         {
-          "title": "나스닥선 흥행·코스피선 폭락한 SK하이닉스…코스피 흔드는 레버리지...",
+          "title": "“9개 다 맞아야 ‘300만닉스’ 간다” 빙고판 등장…“강한 감동 필....",
           "url": "https://finance.naver.com/item/news_news.naver?code=000660",
           "published": "2026-07-14",
-          "source": "MBN",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "미래에셋證 \"SK하닉, 2분기 영업익 12% 하향…비중확대 유효\"",
-          "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-          "published": "2026-07-14",
-          "source": "뉴스1",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "[속보] 삼성전자·SK하이닉스 프리마켓서 5%대 급락세",
-          "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-          "published": "2026-07-14",
-          "source": "파이낸셜뉴스",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "[굿모닝 증시]뉴욕증시 일제히 하락 마감…韓, 약세 출발 전망",
-          "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-          "published": "2026-07-14",
-          "source": "아시아경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "\"中반도체 가격 파괴 우려\"...키옥시아 40% 급락 경고[도쿄나우]",
-          "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-          "published": "2026-07-14",
-          "source": "한국경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "美 반도체 쇼크 되돌아왔다…삼전·SK하닉, 프리마켓서 급락",
-          "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-          "published": "2026-07-14",
-          "source": "디지털타임스",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "삼성전자·SK하이닉스 주춤한 사이 중국 반도체는 ‘재평가’...ETF도...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=000660",
-          "published": "2026-07-14",
-          "source": "조선일보",
+          "source": "서울신문",
           "feed": "naver_item_news"
         }
       ]
     },
     "005380": {
       "name": "현대차",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 122,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 112,
       "classified": [
+        {
+          "title": "보조금 받으면 3천만원대…현대차 '2027 넥쏘' 출시 - 경제타임스",
+          "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE03Q2lQVHAyMTU3cWZ1enJJWjhYcC1VZ0FUbmpkTHJBZUpucElDcGotRGNVSnRqZmtEdFFiOXhBZnh5Qk1uajJlenVDTjdHRld6OGhB?oc=5",
+          "published": "2026-07-14",
+          "source": "경제타임스",
+          "feed": "google_rss",
+          "type": "policy_support",
+          "impact_pct": 3.0,
+          "matched_keywords": [
+            "보조금"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "policy_support"
+          ]
+        },
+        {
+          "title": "현대차, ＇2027 넥쏘＇ 출시…보조금 최대 적용시 3천만원대 - 한국경제TV",
+          "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTFAtc1IzVDROVUJSX0c2aXM3eVZKNTFXZW9OMlNiYldqV3VXYjktU0FPNUVQZGJNMzY5bUZNdmRVWFhvYVNpWDNBM3JLVDFWbHJSOWFNQXprXzNmNkJzWEZaYjlYNXN3THlCOUxNdHM3cTFhOS1VNzRj?oc=5",
+          "published": "2026-07-14",
+          "source": "한국경제TV",
+          "feed": "google_rss",
+          "type": "policy_support",
+          "impact_pct": 3.0,
+          "matched_keywords": [
+            "보조금"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "policy_support"
+          ]
+        },
+        {
+          "title": "현대차 노조, 임협 난항으로 파업 돌입…생산 차질 현실화 - 연합뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBTdFRiTnhWR1FQdGVoTjRNTEZFZG1WWHA0cXJ3SDc1OHpuVFl1RFZGQlozdkdkOWhCdFQwNWUzcmZZMG81YVVzbFNwM2ZDNk1ybV9PNFhSdl9BYUHSAWBBVV95cUxQeVVwUDhKZlljOElFMVp3NnFudEN0SkZiT3owQndWZUlCNWtGTHNVMkFVUHlYQ1ZQRGwxZEoxaE9OZFh0cVR6MVJBdGh6aTZTd2tDWThmVlJQeHhTZkk2YVU?oc=5",
+          "published": "2026-07-13",
+          "source": "연합뉴스",
+          "feed": "google_rss",
+          "type": "labor_dispute",
+          "impact_pct": -3.0,
+          "matched_keywords": [
+            "파업돌입"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "labor_dispute"
+          ]
+        },
         {
           "title": "현대차 노조, 임금협상 난항에 부분 파업 돌입 - 경향신문",
           "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9ISTRWUW1zY1dYMHo0VmdPWHQ5bWZNeDRueF9oZ0ZUclVrT0R5OXRTYmN0VGJJSC1rVjNNeXM4ek1aMEc2YkV4N3AtQkZjdUdpSWVUUFFWS2w5QdIBX0FVX3lxTE9YOHNQZHFTa2NXVjFnekdva1YyYkhUOVZhMFktdnpKTi0xQVhXOXJtMmtVSjlEbWI3Um5UOE82Mm9IQmZWekZDU3RSTDlVa2dhZkQxaFNmNDluZ3pyeTE0?oc=5",
@@ -1651,10 +1714,10 @@
           ]
         },
         {
-          "title": "현대차 노조, 부분파업 돌입…로봇 도입에 고용불안? - 뉴스;트리",
-          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9MODJ6bmc3cG04VXFhZF9iWWI4OW5tcVdYck80Q09sRVBCUm9qX0VCMUxCMlpHNGhqZ2lFTUlNQ0tVcDc3di1yRWVuUG5UVklPMDNOcElQTFhERmJn?oc=5",
+          "title": "부분파업 돌입한 현대차 노조 - 연합뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE05TVFqbGtWUzVJTFlULUdCeU5QRmZkVzlobDlnTjc2bEJhQ2l3QXVmZlNBOFlEY1hGd0prV0VKWHhQNmllTjFWV2FiQXIwaFptX0tvZXFQQ3p6dW45a1pkMtIBYEFVX3lxTE05TVFqbGtWUzVJTFlULUdCeU5QRmZkVzlobDlnTjc2bEJhQ2l3QXVmZlNBOFlEY1hGd0prV0VKWHhQNmllTjFWV2FiQXIwaFptX0tvZXFQQ3p6dW45a1pkMg?oc=5",
           "published": "2026-07-13",
-          "source": "뉴스;트리",
+          "source": "연합뉴스",
           "feed": "google_rss",
           "type": "labor_dispute",
           "impact_pct": -3.0,
@@ -1683,10 +1746,42 @@
           ]
         },
         {
-          "title": "\"순이익 30% 내놔라\"…현대차 노조, 성과급 갈등에 부분파업 돌입 - 한경매거진&북",
-          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5iWENfY0lXM25qNWhRXzhFbllrMjVoaDFlbFVJREVwN1k2U3Jyd3NyYlZ3dGZkSzNWZGtndFJEQWRvRVhheVgzQU9oRHdlNHlyVWFmX1BYeHdGTzJwZG9SQ2pNQnBoVFhsTEhBVQ?oc=5",
+          "title": "현대차 노조, 부분파업 돌입…로봇 도입에 고용불안? - 뉴스;트리",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9MODJ6bmc3cG04VXFhZF9iWWI4OW5tcVdYck80Q09sRVBCUm9qX0VCMUxCMlpHNGhqZ2lFTUlNQ0tVcDc3di1yRWVuUG5UVklPMDNOcElQTFhERmJn?oc=5",
           "published": "2026-07-13",
-          "source": "한경매거진&북",
+          "source": "뉴스;트리",
+          "feed": "google_rss",
+          "type": "labor_dispute",
+          "impact_pct": -3.0,
+          "matched_keywords": [
+            "파업돌입"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "labor_dispute"
+          ]
+        },
+        {
+          "title": "현대차 부분파업 돌입…생산라인 절반 영향권 - 아주경제",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE50clpabFIxLWNjc1F1a3VWVmE1bGZCQ294aGZMZlNDbkpydTNhczJXNEx1WHFCT1dzeTZQeGRHeUdIRFBYWHNMMHVVTmFkY3RranA0aXJiWjZ4UdIBWEFVX3lxTE9QM01lZVF5a19ILVF2cm1paTdDRExYWGR0eGVhY0lRMlRjWlkzNEw1WWhYcGRFTVM3SW1vTS10WW8xdXhvZ1NTRmhPSXYxdnlZcExNa3dRd2w?oc=5",
+          "published": "2026-07-13",
+          "source": "아주경제",
+          "feed": "google_rss",
+          "type": "labor_dispute",
+          "impact_pct": -3.0,
+          "matched_keywords": [
+            "파업돌입"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "labor_dispute"
+          ]
+        },
+        {
+          "title": "현대차 노사 임금협상 난항···15일까지 부분파업 돌입 - 경향신문",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1DSkdJRmJYb2t5NzdDLWRBZ2ZaekhXU3JZWFdzZkRESVJtVWw5blNPMlBBWWl0OHVXMmtpbWlldGRLdnRpUzZ3LV9KTGtTWm9qR0Y3aUlkNThDd9IBX0FVX3lxTE52NW1KMWVYX0k5SWhuNjRyZUNFUWFuOEk3RF93azRleVFmc2pjRmtQY04yWFdyWGszR29NMzNRZEZrUkEyRVczc3FEb1RDVDBmYmgybnNscE1lX1FmMDdN?oc=5",
+          "published": "2026-07-13",
+          "source": "경향신문",
           "feed": "google_rss",
           "type": "labor_dispute",
           "impact_pct": -3.0,
@@ -1715,26 +1810,10 @@
           ]
         },
         {
-          "title": "현대차·기아, 아이오닉5·EV6·EV9 미국서 리콜...배터리 결함 추정 - 더구루",
-          "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5FY3E1NXZMcUJNMWlWTFZIOWRQNzh1bzJVQUdaLWZiNnhIcFYybE81ZmlVZWR0WDNXM1p5dWVhektid1NtVm5xM1pwcFlaWkpRd2NZS1pZRW9URndqQmpFOGVYVQ?oc=5",
+          "title": "\"순이익 30% 내놔라\"…현대차 노조, 성과급 갈등에 부분파업 돌입 - 한경매거진&북",
+          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5iWENfY0lXM25qNWhRXzhFbllrMjVoaDFlbFVJREVwN1k2U3Jyd3NyYlZ3dGZkSzNWZGtndFJEQWRvRVhheVgzQU9oRHdlNHlyVWFmX1BYeHdGTzJwZG9SQ2pNQnBoVFhsTEhBVQ?oc=5",
           "published": "2026-07-13",
-          "source": "더구루",
-          "feed": "google_rss",
-          "type": "regulation_or_tariff",
-          "impact_pct": -4.0,
-          "matched_keywords": [
-            "리콜"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "regulation_or_tariff"
-          ]
-        },
-        {
-          "title": "현대차 노조, 2년 연속 파업 돌입…\"전 차종 부분적 생산차질\" - v.daum.net",
-          "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBpSk1aN3dlRkprRW52QS1kWHNrMDdlaEcybXRoOU1wRVNJdVItRnJfVVRrZ2s1dWM5blA0YktXSkJVM3g2MU5XU0ZpOUtQbVU?oc=5",
-          "published": "2026-07-13",
-          "source": "v.daum.net",
+          "source": "한경매거진&북",
           "feed": "google_rss",
           "type": "labor_dispute",
           "impact_pct": -3.0,
@@ -1764,25 +1843,9 @@
         },
         {
           "title": "판매 부진에 관세 부담까지…현대차 2분기 영업익 두자릿수 감소 전망 - v.daum.net",
-          "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1jRV9oX25NVkFKWlB5cHdnYjVkY21HZkFXMzhXVDZQbUxEdktLZU5GemNjRjZTMEE3T1QzTGpoX1BUWnB5U1E?oc=5",
+          "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9xaFFtNFNHLXpyUW5XQU9UYUFFVUV4U3pPZ3RJRE9sN2NpczNoLXJFUWFhVVI2OEM4bmtUTng5bFp4STM3LU1qcGg5N21PcUU?oc=5",
           "published": "2026-07-12",
           "source": "v.daum.net",
-          "feed": "google_rss",
-          "type": "regulation_or_tariff",
-          "impact_pct": -4.0,
-          "matched_keywords": [
-            "관세"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "regulation_or_tariff"
-          ]
-        },
-        {
-          "title": "같은 관세, 다른 성적표… 기아 ‘웃고’ 현대차 ‘눈물’ - dt.co.kr",
-          "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFB0bGttVnJqblZpWUlQblhqU1BpblZtNTltYWhZbEtBbGlDd0lDNFZwai1fczZ5RkpyamRtMS1CblNVRnI4ZE1iczFBbFdHZw?oc=5",
-          "published": "2026-07-12",
-          "source": "dt.co.kr",
           "feed": "google_rss",
           "type": "regulation_or_tariff",
           "impact_pct": -4.0,
@@ -1813,6 +1876,20 @@
       ],
       "unclassified": [
         {
+          "title": "현대차 노조 \"사측 추가 제시안 없으면 파업 수위 높인다\" - 조선일보",
+          "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5VRXE4UzlyXzFydy1mUHJRNmpSc2hOMmp5ekdJZHJKeHBtSDRzeFQ2X1hCSDRLeGRhbTg3LXM0TEs2WDByM1AxbzZlWnJiTVdRT2h3M1NjUTItTEZtU2diTnc3dEUzNE9Bb3FRcjJBVUcxenJiek9PUG9MWUNvajg?oc=5",
+          "published": "2026-07-14",
+          "source": "조선일보",
+          "feed": "google_rss"
+        },
+        {
+          "title": "현대차, ‘2027 넥쏘’ 출시 - Hyundai Motor Group",
+          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBSdmQ1VkZtY0FvcTNlMGNKcjdCXzNJdVZhZVJaaldZOXE2X1dEdHBNT3Q2UGtPeE1FMEttQWRzRWFWcjVjVG9qSE5lVGFYOXk1TDhBMGFNMXN5Tzk4MGwwVGQxck40Sy1lVHR1OTNsTjdVQXM?oc=5",
+          "published": "2026-07-14",
+          "source": "Hyundai Motor Group",
+          "feed": "google_rss"
+        },
+        {
           "title": "현대차 노조 ’부분파업’ 돌입…완성차 ’하투’ 본격화 - 연합뉴스TV",
           "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5WckFMU3preE9rejVLX0ZMQU1ldndlR1RYc2diakJxeGU0WEpIckhzRnFjWlg2YXdhMjFRbUZ6TFpDeU9JVHhxQ2JYMWpEejRyWGFtdndtUWxWS2RPamd0QXVtM0Vra28?oc=5",
           "published": "2026-07-14",
@@ -1820,75 +1897,77 @@
           "feed": "google_rss"
         },
         {
-          "title": "GV90·아반떼·투싼 ‘게임체인저’ 등장 눈 앞인데… 현대차, 夏鬪 전운에 시름 - 조선비즈 - Chosunbiz",
-          "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE01OGRFc0NoSDhzN1RBQUhwck8xVE9leWF6TkRXeDRIbHk0VkkwUHFpUGNjYktHTVEteXBleUFvNWJhM3BibEJUR3BCWU1IZzAyWHZFOS01UG13Q0ZSM0htOEZLTDgtRk9sTXc0MG9CcmlZcmI5dEJFaDRJeU1SU0HSAZMBQVVfeXFMT0dZM3pRTjRWMkZrMzZqWUZjUC1yVnZhUURHZG1IZFA1NU5WNEpoaS1JN0EzRzhURWV5c2pHay1OLTUtUUk5a0MyMklEUEduSVdSQzhLcllfSWR6UU9WM1hjSllmaFdBZW5FNTFkZEwyZ2VCMFBvaWU4dmRlVHBXVVdnYlQtVzZOS2VwVVJpa0xBRVNB?oc=5",
+          "title": "‘핫해치’ 넘어 실력 증명한 현대차, 중국 국적 꺼내고 속도 내는 지리차…TCR서 한중 진검승부 - 전기신문",
+          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9VNXlFSDJVQ09IQU9yVG9rX0tuMWdtQ0c0b1YzbVRFdzJXV1hoYl80NmNrLTRobkN1bjVBRE15NzNYNHhRdFlFa3ZtcWJWd2kxN2l4TVQ4QnpLcENNWW1HYzc5bGhkdHNJQkZCT1VBQWrSAXBBVV95cUxPVTV5RUgyVUNPSEFPclRva19LbjFnbUNHNG9WM21URXcyV1dYaGJfNDZjay00aG5DdW41QURNeTczWDR4UXRZRWt2bXFiVndpMTdpeE1UOEJ6S3BDTVltR2M3OWxoZHRzSUJGQk9VQUFq?oc=5",
           "published": "2026-07-14",
-          "source": "Chosunbiz",
+          "source": "전기신문",
           "feed": "google_rss"
         },
         {
-          "title": "[사설] 현대차 이익 30% 요구 파업, ‘N% 성과급 주총 의무’ 서둘러야 - 조선일보",
-          "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQakM0SjB3RDRDNFNHQlZmMFg0dmRtY3AwakZycU5pbXNFTW0yaEdPaTdLaXpmUGU3bGlsaFpCWEp2SlhITlltVmt1TmNFQUJLeVU3MmlPcGJJNzNPSEVDWkpMTjF1OUJzVkoyS3BMbXhORWNKbUlVUHp2eXk4NDJfWFRIbTN4UQ?oc=5",
+          "title": "현대차·기아, 레드닷 어워드서 최우수상 등 6개 상 수상 - 연합뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5TTzk2bXhiRE40dTloUUNIOWYwczAtY21mdDJodW9URFZ0X3A5aWdYS2RqUDIwZXJNc2NwRWpHOUVpUjVZMmFwWTNkZGdfZ3d4UkNiOEFvSExmMHQ4QmMtMtIBYEFVX3lxTE5TTzk2bXhiRE40dTloUUNIOWYwczAtY21mdDJodW9URFZ0X3A5aWdYS2RqUDIwZXJNc2NwRWpHOUVpUjVZMmFwWTNkZGdfZ3d4UkNiOEFvSExmMHQ4QmMtMg?oc=5",
           "published": "2026-07-14",
-          "source": "조선일보",
+          "source": "연합뉴스",
           "feed": "google_rss"
         },
         {
-          "title": "총수 주식재산 29조 증가…이재용 28조↑·최태원 첫 '10조 클럽'",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+          "title": "현대차, 수소차 넥쏘 연식변경 모델 출시…상품성 강화 - 연합뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBmRHNoeW5zRGgzbjNUX1FRWFpjQkpVRjNYSks4dDd6TVZpRURKUndkS001cVdBVHRWUEY5ZVA4MG1kanpYMnRWRmZYaGRkVDNPWWFTT3JjNUEzMUlYeHoyd9IBYEFVX3lxTFBmRHNoeW5zRGgzbjNUX1FRWFpjQkpVRjNYSks4dDd6TVZpRURKUndkS001cVdBVHRWUEY5ZVA4MG1kanpYMnRWRmZYaGRkVDNPWWFTT3JjNUEzMUlYeHoydw?oc=5",
           "published": "2026-07-14",
-          "source": "경기일보",
-          "feed": "naver_item_news"
+          "source": "연합뉴스",
+          "feed": "google_rss"
         },
         {
-          "title": "28조 늘고 10조 넘고…이재용·최태원, 불장에 웃었다",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+          "title": "현대자동차, ‘더 뉴 그랜저 테크 팝업 스토어’ 개최 - Hyundai Motor Group",
+          "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPQUVEaVA5NUpNVV96MEpCaFZ3anVmc1JuY19DaUFwNXhMR1VGV3FVdVBQNzcwbXRxZDR5VG1tMkxiTUhuMGIyb2JpNnhRQWRzOGlEdW1PLUhMbUY3MHVIZWs4YURXeWtRc0pzUjBNa1hjSm9OQkphMERpbkNpTThkMU1SMFdPWUFhdjdKdG9qQUlRZw?oc=5",
           "published": "2026-07-14",
-          "source": "MBN",
-          "feed": "naver_item_news"
+          "source": "Hyundai Motor Group",
+          "feed": "google_rss"
         },
         {
-          "title": "2분기 이재용 주식가치 28조 넘게 늘어나…최태원은 ‘10조 클럽’ ...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+          "title": "현대차, 넥쏘 연식변경 모델 공개…루프랙 등 상품성 강화 - 연합인포맥스",
+          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1DSTd3bkxxRW5aQm9MMWl6eEhnRk1jaUxkXzZlSHV2V0dIQjFKY2RRbXlDUC1NSS0zaFhzZ21TUWlwSDZ0STVXN21rUHdrbDRKNE9makcwQzQ4NnZkMWtUMkpvMDM4aGdXcHI2TGNLSmI?oc=5",
           "published": "2026-07-14",
-          "source": "경향신문",
-          "feed": "naver_item_news"
+          "source": "연합인포맥스",
+          "feed": "google_rss"
         },
         {
-          "title": "이재용, 2분기 주식평가액 28조원 증가…최태원, 총액 10조원 넘어",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+          "title": "현대차, 수소차 '2027 넥쏘' 시판...3600만원대 구매 가능 - 뉴스;트리",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9nZ3V4SldHR3NkSnQ1WjkycWV2cF9QS19ydTE3dDZTcEhOdlMyQVA1OHJyU3d4b2NXd0VnWjlqTlRidUcyTHdDYWwyWF96ZEtrR2lqZUVJSEVvY1g2?oc=5",
           "published": "2026-07-14",
-          "source": "여성신문",
-          "feed": "naver_item_news"
+          "source": "뉴스;트리",
+          "feed": "google_rss"
         },
         {
-          "title": "이재용·최태원만 싱글벙글?… 나머지 그룹 총수들 주식재산 줄었다 .....",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005380",
+          "title": "현대차, 2027 넥쏘 출시…엔트리 트림 상품성 강화 - dt.co.kr",
+          "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE5Vbzc4WXVEaDlHTzY5T0ZkWktRTkFEaG9ZX0R0elJnODFBUGp6YmF4UllnSE1KMHFqMkIxVDBYXzhNOVhuTkVSSGMzem9aUQ?oc=5",
           "published": "2026-07-14",
-          "source": "서울신문",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 이재용 주식가치 28조↑…최태원은 '10조클럽' 가입",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005380",
-          "published": "2026-07-14",
-          "source": "SBS Biz",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 랠리에 회장님 '활짝'...이재용·최태원 얼마 벌었나",
-          "url": "https://finance.naver.com/item/news_news.naver?code=005380",
-          "published": "2026-07-14",
-          "source": "한국경제TV",
-          "feed": "naver_item_news"
+          "source": "dt.co.kr",
+          "feed": "google_rss"
         }
       ]
     },
     "012450": {
       "name": "한화에어로스페이스",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 112,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 111,
       "classified": [
+        {
+          "title": "셀트리온, 업계 유일 관세청 수출입안전관리 최고 등급… “글로벌 공.....",
+          "url": "https://finance.naver.com/item/news_news.naver?code=012450",
+          "published": "2026-07-14",
+          "source": "동아일보",
+          "feed": "naver_item_news",
+          "type": "regulation_or_tariff",
+          "impact_pct": -4.0,
+          "matched_keywords": [
+            "관세"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "regulation_or_tariff"
+          ]
+        },
         {
           "title": "[심층분석] 한화에어로스페이스, 항공엔진 국산화 가능할까 - 글로벌에픽",
           "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE03YU1kVi1hRjlLLU5HR2JTSEpJRTdiZlUyNHlnMzZ3VGNBbTh6aXZPcVdYMnFoaGhvSjVmZ2wyZmpBRnJkcFJOWXhqVE4zS090Mk1nMDdTOU1sWVByX3dGQzUtMUJjSDZUVUNlQVRGT1dodVFTLTRMMV9qX24?oc=5",
@@ -1906,10 +1985,42 @@
           ]
         },
         {
+          "title": "한화에어로, 항공엔진 국산화 위해 협력 생태계 강화 - 지디넷코리아",
+          "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE9INi1aRWxrRThIN00yQkJTSjRFZW1FSkZhdTJTMnYtQS1kQTkwRWVfS25PZDRqTGM0ZEZDMzdhTVU5SHA2Wk9UclNQam5KTzM2Qjl2MWdR?oc=5",
+          "published": "2026-07-09",
+          "source": "지디넷코리아",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "국산화"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
           "title": "비행기 ‘심장’ 국산화 첫발… 한화에어로, 무인기 엔진 공개 - 조선일보",
           "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQVGFJc0w2T2pYSVR1TUplSmlTQWdlRzVHYWVGNTM3YjB0M0o5enJTdXhSRFlHbHVYQ1o3Qng5aXlMT0ZaUVRGV1g2S0wzTzE4RlpuOXkweUY1SUEtc2hXMlFaY05Dal9VZjFVT2w2dDBqcGdEM2R5cjIzWU9iU3NPSm1WZ3NXQWkzNlJ2LVVLVQ?oc=5",
           "published": "2026-07-08",
           "source": "조선일보",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "국산화"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "항공엔진 국산화 첫발 한화에어로… ‘소재·시험·인력’ 3대 관문[백브리핑] - 문화일보",
+          "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE80Ql93WXFsVUN0bU1kdEtyUkpoRmExenNCV0tQbWNxTGRoeXVRdDZkT0p2T192Zk1ZTU1iRHR4SE1MRlpYRWpiU1p2RF9VNVQ4?oc=5",
+          "published": "2026-07-08",
+          "source": "문화일보",
           "feed": "google_rss",
           "type": "tech_breakthrough",
           "impact_pct": 6.0,
@@ -1970,98 +2081,98 @@
           ]
         },
         {
-          "title": "에이럭스, 한화에어로스페이스와 드론 모듈 공급 계약 체결 - 한경매거진&북",
-          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE01eW5zdGk1MkI0TnJTZXRJbWdrVTB1ZE1nRWZWNV93Ym9Qc0NzbE5kYTNVRm92cnBlRGpvZzJBY3Z0MHQ1WEMzX0xySGNvZl9sdFh4alkybGZqcTFURktXWTZCWG94aGV3?oc=5",
-          "published": "2026-07-02",
-          "source": "한경매거진&북",
+          "title": "‘전투기의 심장’ 항공 엔진 국산화 본궤도…한화에어로·국과연 지상시험 착수 - 한겨레",
+          "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBSUExGc1FDbTVCRXZwUU5YRUVqTVJ0eXlFT1BqT2FRWG1QaEt1Wmxza0daQl90VXEwMVd0UWI0ZmR4X3VRbWVJQ2hFME1MOUU3R25nMzNMMWdyU0Uwd1FaNVRvSzFDX1diV3c?oc=5",
+          "published": "2026-07-07",
+          "source": "한겨레",
           "feed": "google_rss",
-          "type": "supply_contract_major",
-          "impact_pct": 8.0,
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
           "matched_keywords": [
-            "공급계약"
+            "국산화"
           ],
           "confidence": "keyword",
           "all_types": [
-            "supply_contract_major"
+            "tech_breakthrough"
           ]
         }
       ],
       "unclassified": [
         {
-          "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
+          "title": "한화에어로스페이스 주가 급락, 7개월 만에 80만 원대 진입 - 2news.co.kr",
+          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFAwRW9JcEFMM1E1aFN3bGI0a3JucFA3MjlfaTdIQW5QZjRkVVZJeHRyeGlXR1Q0U056Qk5iTWJoODZkaDQtYVk1ZHZfeFNZeWVVVEZnb25IQ2JPd0FvRVdkNXVTNVRLRWVZ?oc=5",
+          "published": "2026-07-14",
+          "source": "2news.co.kr",
+          "feed": "google_rss"
+        },
+        {
+          "title": "한화에어로스페이스 주가, 방산 3중 호재 - v.daum.net",
+          "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE1ranpNWFFMSV85M2dYUG9ZRGdGelNyalhJZXdMZ01QOUFIbzVsZ19WNUdhd25LQlRoMFN2YnpNbm1kOFVfelZWUlR2Zw?oc=5",
+          "published": "2026-07-14",
+          "source": "v.daum.net",
+          "feed": "google_rss"
+        },
+        {
+          "title": "국민연금, 2분기 삼전·닉스 비중 확대…식음료·통신·제약 축소",
           "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "매경이코노미",
+          "published": "2026-07-14",
+          "source": "더팩트",
           "feed": "naver_item_news"
         },
         {
-          "title": "한화, 폴란드 합작법인 미사일 공장 첫삽",
+          "title": "국민연금, 5% 이상 국내주식 지분평가액 462조…절반이 삼전·닉스",
           "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "파이낸셜뉴스",
+          "published": "2026-07-14",
+          "source": "뉴시스",
           "feed": "naver_item_news"
         },
         {
-          "title": "한화, 폴란드에 '합작 미사일 공장' 첫 삽… 유럽 심장부 '정조준'",
+          "title": "코스피, 반도체 중심 상승 마감…코스닥은 바이오발 약세",
           "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "파이낸셜뉴스",
+          "published": "2026-07-14",
+          "source": "아시아경제",
           "feed": "naver_item_news"
         },
         {
-          "title": "10조원 美 자주포 사업…한화에어로 품에 안기나",
+          "title": "코스피, 6600선 털썩…코스닥은 매도 사이드카 발동",
           "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "매일경제",
+          "published": "2026-07-14",
+          "source": "아시아경제",
           "feed": "naver_item_news"
         },
         {
-          "title": "유럽서 ‘나토 밀어주기’에 고배 마신 한화에어로… 美 자주포 사업.....",
+          "title": "한화 인적분할 주총 D-1…3세 경영체제, 장남 김동관 승계 선명",
           "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "조선비즈",
+          "published": "2026-07-14",
+          "source": "디지털데일리",
           "feed": "naver_item_news"
         },
         {
-          "title": "반도체 던지더니 '이것' 담았다…외국인 뭉칫돈 몰린 종목은",
+          "title": "[서울데이터랩]코스피 시총 상위주 일제히 약세…반도체·자동차·방산...",
           "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "한국경제",
+          "published": "2026-07-14",
+          "source": "서울신문",
           "feed": "naver_item_news"
         },
         {
-          "title": "H7, KISS 2026 참가… 친환경 기능성 안전장갑 기술 선보여",
+          "title": "정부, 방산 기술도 기업과 나눈다…IP 공동소유 허용 [하반기 경제전....",
           "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
+          "published": "2026-07-14",
+          "source": "데일리안",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "SK하이닉스 4%대 하락…코스피, 2%대 밀려",
+          "url": "https://finance.naver.com/item/news_news.naver?code=012450",
+          "published": "2026-07-14",
           "source": "이데일리",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "[특징주] 방산주, '미-이란 긴장'에 상승출발했다 하락(종합)",
-          "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "연합뉴스",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "맥 못 추는 삼전닉스, 7천피 '와르르'…외인·기관 무섭게 팔아 치운다",
-          "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "머니투데이",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "[인터뷰] 이주연 성남산업진흥원장 “AI·반도체·방산 연결···성남.....",
-          "url": "https://finance.naver.com/item/news_news.naver?code=012450",
-          "published": "2026-07-13",
-          "source": "전자신문",
           "feed": "naver_item_news"
         }
       ]
     },
     "267260": {
       "name": "HD현대일렉트릭",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
+      "fetched_at": "2026-07-14T16:25:58+09:00",
       "raw_count": 111,
       "classified": [
         {
@@ -2276,6 +2387,22 @@
           ]
         },
         {
+          "title": "HD현대일렉트릭, 글로벌 빅테크 기업과 1조 규모 전력 인프라 공급 계약 - 경향신문",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9xeWpVM3JXSllMZVNFVXBhTU5kczBSWE5VdWxaaWw1Zm54dVNqci1GdjdpdlRrU3hLMGtLN1MtVDQxajRrT1dhV19JbVEzS2RXVFNUTTEwRF9xUdIBX0FVX3lxTE9kQWZVY2k0eHNjcmpPblYyemVQY05jRTgyR1VVQUVQU0czdVRDRTRqTHBpbU1tWHRualdXdzlrajhYaXNlcW9xNXl5R3Z1SElicTB2LTVwNS1Fb2NOdHlv?oc=5",
+          "published": "2026-07-02",
+          "source": "경향신문",
+          "feed": "google_rss",
+          "type": "supply_contract_major",
+          "impact_pct": 8.0,
+          "matched_keywords": [
+            "공급계약"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "supply_contract_major"
+          ]
+        },
+        {
           "title": "HD현대일렉트릭, 글로벌 빅테크와 1.1조 공급계약…AI 데이터센터 전력망 뚫었다 - v.daum.net",
           "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5OSmZIYUpnUnByYVRSY2NNYlZGSjhUTThIV21HaVNDZTUweWpyeVNkTUJDZHd4R19yZGJjd1hiLU1NcGJUQmRkU1U5dldVSWc?oc=5",
           "published": "2026-07-02",
@@ -2308,10 +2435,10 @@
           ]
         },
         {
-          "title": "HD현대일렉트릭, 글로벌 빅테크 기업과 1조 규모 전력 인프라 공급 계약 - 경향신문",
-          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9xeWpVM3JXSllMZVNFVXBhTU5kczBSWE5VdWxaaWw1Zm54dVNqci1GdjdpdlRrU3hLMGtLN1MtVDQxajRrT1dhV19JbVEzS2RXVFNUTTEwRF9xUdIBX0FVX3lxTE9kQWZVY2k0eHNjcmpPblYyemVQY05jRTgyR1VVQUVQU0czdVRDRTRqTHBpbU1tWHRualdXdzlrajhYaXNlcW9xNXl5R3Z1SElicTB2LTVwNS1Fb2NOdHlv?oc=5",
+          "title": "HD현대일렉트릭, 빅테크와 최대 1.1조 전력인프라 공급계약 체결 - 뉴스1",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBGS2tTT3hvWWc3QjRKNXFqTEtNakF6UzB4Z3liSk1DY09hMWlva3ZaNGRTeE41cURsN3pjNlpwUEFsYkVJc0NWUXlQN2lKTjlvSk1MMnlPU1cxSzNxenIxVkZ4WDU?oc=5",
           "published": "2026-07-02",
-          "source": "경향신문",
+          "source": "뉴스1",
           "feed": "google_rss",
           "type": "supply_contract_major",
           "impact_pct": 8.0,
@@ -2388,22 +2515,6 @@
           ]
         },
         {
-          "title": "HD현대일렉트릭, 빅테크와 최대 1.1조 전력인프라 공급계약 체결 - 뉴스1",
-          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBGS2tTT3hvWWc3QjRKNXFqTEtNakF6UzB4Z3liSk1DY09hMWlva3ZaNGRTeE41cURsN3pjNlpwUEFsYkVJc0NWUXlQN2lKTjlvSk1MMnlPU1cxSzNxenIxVkZ4WDU?oc=5",
-          "published": "2026-07-02",
-          "source": "뉴스1",
-          "feed": "google_rss",
-          "type": "supply_contract_major",
-          "impact_pct": 8.0,
-          "matched_keywords": [
-            "공급계약"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "supply_contract_major"
-          ]
-        },
-        {
           "title": "HD현대일렉트릭, 빅테크와 최대 1.1조 전력인프라 공급계약 체결 - v.daum.net",
           "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE9XYmFWdEVPd1F4ejJGTXBSV0VvWFd6cTd4MTFxb2ZJMVdaNl9NVUpyOEdLcl9DUVVydm1YTDdYUmV4Q1p4VWc?oc=5",
           "published": "2026-07-02",
@@ -2454,6 +2565,20 @@
         }
       ],
       "unclassified": [
+        {
+          "title": "HD현대일렉트릭, '멈추지 않는' 이익률 개선세 '주목'…\"신규 수주 기반 전 영역 확대 진행\" - 프라임경제",
+          "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9HNG5vdXVYSmpCQVJWWUxua0stOFNVcmtmQkhRYTR1NTlOWUw4UmtRQWVRbVFrc2Rfb1JpSlhSMmVJakhYMnZnM2hIWFpSWmpqdzE4TzBxRzNhcG9zcVhlS0R4ZVVfOWF2MnpGakRYaERzZw?oc=5",
+          "published": "2026-07-14",
+          "source": "프라임경제",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[리포트 브리핑]HD현대일렉트릭, '성장 축 확장, 실적 가시성 유효' 목표가 1,450,000원 - 유안타증권 - 뉴스핌",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9LaFU0QXYxVVNmcVFwZlpxSjVldDZVQmNhVVlIYjMzM241VHRiWnkyaUdweGNtNkF3Y1hxMFI4NTlVbWJXcUFaRGJZb3UzNldRWXZNbzB4M29kci1x?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴스핌",
+          "feed": "google_rss"
+        },
         {
           "title": "HD현대일렉트릭, 수주 가이던스 및 매출 성장 가시성 향상…'매수'-유...",
           "url": "https://finance.naver.com/item/news_news.naver?code=267260",
@@ -2509,46 +2634,22 @@
           "published": "2026-07-12",
           "source": "매일경제",
           "feed": "naver_item_news"
-        },
-        {
-          "title": "삼성SDI, 기후부 ‘AI 배전망 ESS’ 사업 66% 수주",
-          "url": "https://finance.naver.com/item/news_news.naver?code=267260",
-          "published": "2026-07-12",
-          "source": "문화일보",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "삼성SDI ‘차세대 AI 배전망’ 공급전 완승…ESS 시장 공략 본격...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=267260",
-          "published": "2026-07-12",
-          "source": "세계일보",
-          "feed": "naver_item_news"
         }
       ]
     },
     "035420": {
       "name": "NAVER",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 115,
-      "classified": [
-        {
-          "title": "[클릭 e종목]\"사업전략 바꾼 네이버, 지금이 기회…목표가↑\"",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
-          "published": "2026-07-14",
-          "source": "아시아경제",
-          "feed": "naver_item_news",
-          "type": "analyst_target_upgrade",
-          "impact_pct": 3.0,
-          "matched_keywords": [
-            "목표가↑"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "analyst_target_upgrade"
-          ]
-        }
-      ],
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 119,
+      "classified": [],
       "unclassified": [
+        {
+          "title": "[리포트 브리핑]NAVER, '2Q26 Preview: 매출은 견조. 이익률은 둔화' 목표가 290,000원 - 유안타증권 - 뉴스핌",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFAwRHkydVRWXzNkaTdxTXNVRzN6WE01czZiMUNscEFMeWVNNF8yV0dIWWtoaHRzOHNtLVp5VktjdktzdHhFYXIxNFpjUU1SMDRVSjZVOHl4aDVBaE52?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴스핌",
+          "feed": "google_rss"
+        },
         {
           "title": "Korea Investment & Securities Raises NAVER Target Price on AI Infrastructure Expansion - 알파경제",
           "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE05QUh2c0ktZDlKNno1RXVEMWJkRURaMy1tY3V5TkRoc3ZzdXB6ak5zRWtDUFhJT1NHWWpqbXRMTFFqZ0ZJQzN5QWFFUUg2QkVxZTQxLWlmQnpJVVJzeG1CbUVPQ1dSdHNaR0pkdDBR?oc=5",
@@ -2557,59 +2658,31 @@
           "feed": "google_rss"
         },
         {
-          "title": "네이버 '별점 리뷰' 부활에 소상공인계 \"생존권 위협하는 행위\"",
+          "title": "‘전세사기 위험’ 직방·다방·네이버부동산 등 민간플랫폼서도 확인...",
           "url": "https://finance.naver.com/item/news_news.naver?code=035420",
           "published": "2026-07-14",
-          "source": "뉴스1",
+          "source": "지디넷코리아",
           "feed": "naver_item_news"
         },
         {
-          "title": "2분기 이재용 주식가치 28조 넘게 늘어나…최태원은 ‘10조 클럽’ 가...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
-          "published": "2026-07-14",
-          "source": "경향신문",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "이재용·최태원만 싱글벙글?… 나머지 그룹 총수들 주식재산 줄었다 .....",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
-          "published": "2026-07-14",
-          "source": "서울신문",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 이재용 주식가치 28조↑…최태원은 '10조클럽' 가입",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
-          "published": "2026-07-14",
-          "source": "SBS Biz",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 랠리에 회장님 '활짝'...이재용·최태원 얼마 벌었나",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
-          "published": "2026-07-14",
-          "source": "한국경제TV",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "이재용 27조↑, 최태원 10조 클럽 가입에도… 방시혁 1.4조↓",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
-          "published": "2026-07-14",
-          "source": "한국경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 불장에 이재용 주식가치 28조↑…최태원은 10조클럽 가입",
+          "title": "티빙 해킹, 제휴 가입자까지 번졌다…피해 확산 우려",
           "url": "https://finance.naver.com/item/news_news.naver?code=035420",
           "published": "2026-07-14",
           "source": "연합뉴스",
           "feed": "naver_item_news"
         },
         {
-          "title": "삼성전자, 국민이 뽑은 AI 기업 1위…구글·오픈AI 앞서",
+          "title": "티빙 개인정보 유출, KT·네이버·카카오 제휴 이용자까지 확산",
           "url": "https://finance.naver.com/item/news_news.naver?code=035420",
           "published": "2026-07-14",
-          "source": "아이뉴스24",
+          "source": "데일리안",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "\"보상받으려다 다시 털렸다\"…통신사 제휴 피해자 41만명, 티빙서 '...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
+          "published": "2026-07-14",
+          "source": "뉴시스",
           "feed": "naver_item_news"
         },
         {
@@ -2618,12 +2691,33 @@
           "published": "2026-07-14",
           "source": "KBS",
           "feed": "naver_item_news"
+        },
+        {
+          "title": "이정헌 “티빙 해킹, KT·네이버·카카오 제휴 이용자도 피해”…KT ...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
+          "published": "2026-07-14",
+          "source": "이데일리",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "[서울데이터랩]마감 직후 인기 검색 종목 20選",
+          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
+          "published": "2026-07-14",
+          "source": "서울신문",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "AI 데이터센터 메가프로젝트 지원 정부 TF 가동…부지·전력·금융 총....",
+          "url": "https://finance.naver.com/item/news_news.naver?code=035420",
+          "published": "2026-07-14",
+          "source": "이데일리",
+          "feed": "naver_item_news"
         }
       ]
     },
     "035720": {
       "name": "카카오",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
+      "fetched_at": "2026-07-14T16:25:58+09:00",
       "raw_count": 127,
       "classified": [
         {
@@ -2640,6 +2734,22 @@
           "confidence": "keyword",
           "all_types": [
             "labor_dispute"
+          ]
+        },
+        {
+          "title": "네이버·카카오, 커머스·광고로 2분기 호실적…AI 수익성 증명은 '과제' - v.daum.net",
+          "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTFB4Y0kxck16bldJeGpmcEJvdDFfTVc4YkxaMmg5cW5MOXYzQlpWdEZ4dGU0UC1OZGVBXzNPaU5JbEdLV3ZJZlE?oc=5",
+          "published": "2026-07-13",
+          "source": "v.daum.net",
+          "feed": "google_rss",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "호실적"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
           ]
         },
         {
@@ -2691,10 +2801,10 @@
           ]
         },
         {
-          "title": "카카오, 노사 갈등 장기화 국면…노조 \"21일 사내 피켓팅 진행\" - 디지털데일리",
-          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFA0Q19PYzVTck5TSEZBblFBUUlqellNaUc5NUswZXZpQzVhcXplX1p2MHdhS0gwOTYxX1FrbFpLWlpTNHhpVGVRN2hncFJTcmU4TVR2UVNXSURzaXc0VXpiSlBMZ2c?oc=5",
+          "title": "카카오 노조, 21일 피켓팅 예고⋯ 노사 갈등에 AI 부진까지 ‘사면초가’ - 브릿지경제",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE02WXo2N0t1UlAtZjJXOWZub3BZUXZ4NklVNHFidmpqVGpuRG9hN25wc2hueFY5ZnplMjc2Zl9ia3FZaUE0aWlEdm5iRkt2dUFQdTg5eERDNjA5UQ?oc=5",
           "published": "2026-07-13",
-          "source": "디지털데일리",
+          "source": "브릿지경제",
           "feed": "google_rss",
           "type": "labor_dispute",
           "impact_pct": -3.0,
@@ -2707,10 +2817,10 @@
           ]
         },
         {
-          "title": "카카오 노조, 21일 피켓팅 예고⋯ 노사 갈등에 AI 부진까지 ‘사면초가’ - 브릿지경제",
-          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE02WXo2N0t1UlAtZjJXOWZub3BZUXZ4NklVNHFidmpqVGpuRG9hN25wc2hueFY5ZnplMjc2Zl9ia3FZaUE0aWlEdm5iRkt2dUFQdTg5eERDNjA5UQ?oc=5",
+          "title": "카카오, 노사 갈등 장기화 국면…노조 \"21일 사내 피켓팅 진행\" - 디지털데일리",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFA0Q19PYzVTck5TSEZBblFBUUlqellNaUc5NUswZXZpQzVhcXplX1p2MHdhS0gwOTYxX1FrbFpLWlpTNHhpVGVRN2hncFJTcmU4TVR2UVNXSURzaXc0VXpiSlBMZ2c?oc=5",
           "published": "2026-07-13",
-          "source": "브릿지경제",
+          "source": "디지털데일리",
           "feed": "google_rss",
           "type": "labor_dispute",
           "impact_pct": -3.0,
@@ -2737,46 +2847,63 @@
           "all_types": [
             "labor_dispute"
           ]
-        },
-        {
-          "title": "호실적에도 외면받는 카카오…스톡옵션·RSU 가치도 흔들 - 아시아투데이",
-          "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9NZE12bDhfZFJ1aXZNNF81S0hUbm1rNWlkZUUzak1GMzlVRHd5elVjclhPMkFPc3dzM2x6VG5hbDZtc1pxSXZaOHJBclJoUnJrRlk3WExNYUwxX2o5QWdDaUpLaE9nT3kza3hmZWhR?oc=5",
-          "published": "2026-07-10",
-          "source": "아시아투데이",
-          "feed": "google_rss",
-          "type": "earnings_surprise_beat",
-          "impact_pct": 6.0,
-          "matched_keywords": [
-            "호실적"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "earnings_surprise_beat"
-          ]
-        },
-        {
-          "title": "'개인정보 유출' 카카오 151억 과징금 불복 소송, 9월 항소심 시작 - 블로터",
-          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE16d0tybmFvbDNxZFg2clRqQTRmdjhqaEZDNnNjbnN1bGhhNEJBTmlFRjdkREtPMm5ZLTAtR2xTZUpLbmMyLXctLTVLYUd2RGRkMUY2WEp0cjNTeWJObUlNLWxyLVB2OThW0gFsQVVfeXFMTTYxNjA3RlJ1RjR2T0RWN1l5Mjc4N0F4Q1lsOVBtMDE2WHNwMXo4dTlubUNJUlkwVWx0M1BPRHNSdHlic0h4Q2FGaTJhZ2VWX1BkZ0xZR2FFY2w3THk3cEVjVDZVc0tiRXVmVzhS?oc=5",
-          "published": "2026-07-10",
-          "source": "블로터",
-          "feed": "google_rss",
-          "type": "regulation_or_tariff",
-          "impact_pct": -4.0,
-          "matched_keywords": [
-            "과징금"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "regulation_or_tariff"
-          ]
         }
       ],
       "unclassified": [
+        {
+          "title": "[안내] 카카오톡 이모티콘 [헤비는 오늘도 헤비해] 출시 안내 - Weverse",
+          "url": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE1aM1I1d3Vfc0ZTZU5ZaGtKQVY0UDJDNVp3eUhWU09KZ0xUbEhYZGNLVV8wWEY0aTBYUERwZTQ3Q250eFZJMmF2ZFRhdHM?oc=5",
+          "published": "2026-07-14",
+          "source": "Weverse",
+          "feed": "google_rss"
+        },
         {
           "title": "[분석] 본업 선방에도 목표가 릴레이 하향…카카오 발목 잡은 'AI 공백' - 알파경제",
           "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1xd0ZOZXlCUXJET3hpQVN6S0tLTERiZzgyM2ZKaGI3MHg5ejkxMDg4RmhMQmxtZ2tyOG1INmFwQVlIMnF0ZlcwREhPc3QyRV9yUXJBNHlWUVRycUtaZFZNT0lTVVRYMTA2SHd4UUln?oc=5",
           "published": "2026-07-14",
           "source": "알파경제",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[AI픽] 카카오워크 2.0 공개…AI 에이전트 품은 협업툴 진화 - 연합뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1pY1hKejVyT1VRcF9mYkJ5NU04NklVZnBZWUQ4TFBVQ0NYRUlaOW1KQjV2Y3ZDUzZwT094N0hjVWdxSFdfOTB0RlA1ckF2aVd4YTM1bUpfeUV6UGfSAWBBVV95cUxOb0ttT2JVQzRXTVNDemxEanpUNDRjSnloZlBFcHRGbk5mUDhudlNpNk1rdWRSWG1LWHoxWll3d0MyQmZpODRLMXJwcnM3cW1Ja1dCUUIzcndnNG9EdU5MV0I?oc=5",
+          "published": "2026-07-14",
+          "source": "연합뉴스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "카카오웹툰 `관계지침`, 8부작 미드폼 드라마로 영상화 - 디지털데일리",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBBSG9uTlVvVVZqNVQ2SFlrQ0o2Qi1yd2ltOFp4LXhYV1pjNkVfNDN3SzRFTEFXTE9lVF94SWFxcHRFV2xnSjJ0YV9mT1Zfb2hZaFVtLVdXSUxtUkJoeWhtdUdOS0g?oc=5",
+          "published": "2026-07-14",
+          "source": "디지털데일리",
+          "feed": "google_rss"
+        },
+        {
+          "title": "교보증권 \"카카오 목표주가 하향, AI 서비스의 수익화 가능성 증명해야\" - 비즈니스포스트",
+          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5wSXNobWZhR1VUN1lMOEVlVVdaem1acnFDckQwRWZMWkNVSVRWWTBmSlotYnptQlJnTEVyVWRtZWYyNDJUVkVNbzY5VUZXMWZPSFFYVGZ1dFlMR0QybUkyNUVqRVF3QUt0RGo1TXhCYWUzZTA?oc=5",
+          "published": "2026-07-14",
+          "source": "비즈니스포스트",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[초점] 2조 벌어도…카카오 목표價 25% 하향 이유 - 경제타임스",
+          "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTFBjSDFuMnpZTkhjbGZMa1dWa3lCNHAwZlJmNFVZcVVTMkV2SzdHVXh3eW9tbmE1Z3hIR3dSTHNUQURLTEZQUlV3QnZpbG5FQ3VYTnJ3?oc=5",
+          "published": "2026-07-14",
+          "source": "경제타임스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "디케이테크인, AI 협업툴 ‘카카오워크 2.0’ 공개 - 서울경제TV",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFB0YkUxRGh3eFFDZ1JUT1M5QzJRb21SU3I1OTF5UF9acTJlUFJZVkU5c1hfYmlpWTFXV2hEZll2aFYySDVqZGYtZW8yNndkV1FtdG41bWhBRG4tUEk1Tmc0TUo0eFc?oc=5",
+          "published": "2026-07-14",
+          "source": "서울경제TV",
+          "feed": "google_rss"
+        },
+        {
+          "title": "카카오페이증권, 투자매매업 인가 영토 확장...토스증권과 차별화 행보 - 녹색경제신문",
+          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBhS09oZWRmd21TZG5CaVhzajVGVGU5RmMwYTMzMmxwc1BuaVdRdmV3eVZ3Y3AtLTA1ZzJPTlZvMmNIbDgzUHR1RHpjRG9QWm1Tc3FyRU9BT3lrZE1Kd1plYWJzT3BEb2J1?oc=5",
+          "published": "2026-07-14",
+          "source": "녹색경제신문",
           "feed": "google_rss"
         },
         {
@@ -2787,68 +2914,35 @@
           "feed": "google_rss"
         },
         {
-          "title": "[오늘의신상]\"혈당 스파이크 막는다\"…'오!그래놀라 저당 카카오' - 아시아경제",
-          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE8wbXhnVEJBMkhudnp3akRkcHBXa1lZTmswb3k2eEpuVWlfLTVMV0Fjd2Y0OEZ5ZTUyMElfNnB3RXliZEk1eVV1cWZvMi1POUFNck9aRU9PeWRWQU96eFpZYg?oc=5",
+          "title": "카카오페이손해보험, ‘Kiro Day’ 개최 - 보험신보",
+          "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1RMXUtNm0tbERsSmR1bHdFU2hoYTI4V2pjZzVHbEZaNGl6bmNDcjdhR2t2bGtIc0U3cy1rWnFHWG9KTXYzaFBLcm8tX2xWWjJ5d0dUbThWTXprNW9rYS1vdVBfbVpxeElVcUlN?oc=5",
           "published": "2026-07-14",
-          "source": "아시아경제",
+          "source": "보험신보",
           "feed": "google_rss"
-        },
-        {
-          "title": "총수 주식재산 29조 증가…이재용 28조↑·최태원 첫 '10조 클럽'",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035720",
-          "published": "2026-07-14",
-          "source": "경기일보",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 이재용 주식가치 28조 넘게 늘어나…최태원은 ‘10조 클럽’ ...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035720",
-          "published": "2026-07-14",
-          "source": "경향신문",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 그룹 총수 10명 중 6명 주식가치↓…최태원 회장 '10조 클...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035720",
-          "published": "2026-07-14",
-          "source": "아시아경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "이재용, 2분기 주식평가액 28조원 증가…최태원, 총액 10조원 넘어",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035720",
-          "published": "2026-07-14",
-          "source": "여성신문",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "이재용·최태원만 싱글벙글?… 나머지 그룹 총수들 주식재산 줄었다 .....",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035720",
-          "published": "2026-07-14",
-          "source": "서울신문",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 이재용 주식가치 28조↑…최태원은 '10조클럽' 가입",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035720",
-          "published": "2026-07-14",
-          "source": "SBS Biz",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 랠리에 회장님 '활짝'...이재용·최태원 얼마 벌었나",
-          "url": "https://finance.naver.com/item/news_news.naver?code=035720",
-          "published": "2026-07-14",
-          "source": "한국경제TV",
-          "feed": "naver_item_news"
         }
       ]
     },
     "010120": {
       "name": "LS ELECTRIC",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 137,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 117,
       "classified": [
+        {
+          "title": "BNK證 “LS, 글로벌 전력 인프라 확충 수혜와 실적 호조… 목표가 ...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010120",
+          "published": "2026-07-14",
+          "source": "조선비즈",
+          "feed": "naver_item_news",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "실적호조"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
         {
           "title": "[리포트 브리핑]LS ELECTRIC, 'AI 데이터센터 수주증가로 실적 개선 가속화' 목표가 265,000원 - iM증권 - 뉴스핌",
           "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9VNkJ0Uy1iWklRZFBJQkE4Y1B2R2pLQkMycnlPeTJETDUyYlMyb0ZibGpwaThrMDRxTG9jWEJxMkxMUWcxOG80OWR6ZEpGbmZIWEYtU0FEUHNZTFkt?oc=5",
@@ -2864,120 +2958,108 @@
           "all_types": [
             "order_backlog_surprise"
           ]
-        },
-        {
-          "title": "LS일렉트릭, AI 데이터센터 수주 증가로 실적 개선 가속화...목표...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=010120",
-          "published": "2026-07-13",
-          "source": "파이낸셜뉴스",
-          "feed": "naver_item_news",
-          "type": "order_backlog_surprise",
-          "impact_pct": 5.0,
-          "matched_keywords": [
-            "수주증가"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "order_backlog_surprise"
-          ]
-        },
-        {
-          "title": "LS ELECTRIC, AI 데이터센터 수주증가…목표가↑-iM",
-          "url": "https://finance.naver.com/item/news_news.naver?code=010120",
-          "published": "2026-07-13",
-          "source": "머니투데이",
-          "feed": "naver_item_news",
-          "type": "order_backlog_surprise",
-          "impact_pct": 5.0,
-          "matched_keywords": [
-            "수주증가"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "order_backlog_surprise",
-            "analyst_target_upgrade"
-          ]
         }
       ],
       "unclassified": [
         {
-          "title": "총수 주식재산 29조 증가…이재용 28조↑·최태원 첫 '10조 클럽'",
+          "title": "[모닝 리포트] \"LS ELECTRIC, 수주 선순환…목표가 30만원 유지\" - 뉴스핌",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBnTVdyel9FZ1pIX0RwYkN4Rlh1aURlYWhpUklZQ0J1YVNRYjF5ZmdZaGlSOGoxMzJEU29McUdJTHBuel9wX0g3NGJUeWNPN0F5ZXQ5Yi14SHZxdmsy?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴스핌",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[리포트 브리핑]LS ELECTRIC, '수주 모멘텀 가속, 이익 레벨 상향' 목표가 300,000원 - 유안타증권 - 뉴스핌",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9xYkhMeEltMTRfTng5THZtVWc1bWstYmhXUXdNWjl0YWhvUVVTdnF3V015X3ZMb2ZIVV9KVnBlb1NGc2hMMXppS3dTcUpIeW1ZRkI3VzVHUV9RcjZY?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴스핌",
+          "feed": "google_rss"
+        },
+        {
+          "title": "LS ELECTRIC 주가, 7월 14일 장중 187,900원 1.84% 상승 - 톱스타뉴스",
+          "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE1NUWU5VjN3anYtVFR4cEFOQVRuc3A2NGVYNWxEVllxWndKU0hhRGRMUGhfRTV4Q2hRNXNlNlJER1owSzdMZkN1SGppbjBRTTZjbFhuQkJlUjBrZWV5N2EwRExyZ0FWY09CVWIzV2lIRTVGdw?oc=5",
+          "published": "2026-07-14",
+          "source": "톱스타뉴스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[서울데이터랩]마감 직후 인기 검색 종목 20選",
           "url": "https://finance.naver.com/item/news_news.naver?code=010120",
           "published": "2026-07-14",
-          "source": "경기일보",
+          "source": "서울신문",
           "feed": "naver_item_news"
         },
         {
-          "title": "대기업 총수 주식가치 29조원↑…이재용·최태원 평가액 급증",
+          "title": "AI 데이터센터 메가프로젝트 지원 정부 TF 가동…부지·전력·금융 총....",
           "url": "https://finance.naver.com/item/news_news.naver?code=010120",
           "published": "2026-07-14",
           "source": "이데일리",
           "feed": "naver_item_news"
         },
         {
-          "title": "그룹 총수 주식가치 29.2조 늘었지만…이재용·최태원 빼면 6조 줄어",
+          "title": "정부, AI 데이터센터 병목 해소한다…생태계 육성 논의",
           "url": "https://finance.naver.com/item/news_news.naver?code=010120",
           "published": "2026-07-14",
-          "source": "뉴스1",
+          "source": "지디넷코리아",
           "feed": "naver_item_news"
         },
         {
-          "title": "LS ELECTRIC, ‘임단협 무교섭’ 타결… 미래 성장에 집중한다 - 에너지데일리",
-          "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9lU2tDVWIxQ19MVDJFbkhWbk4xaHdJY1hNcUlScWloT2tCei0yS1RTalJmaWozWUNSLVdrSVpvMDZpM1JkVF9PWURMYUZZdHExQmgwLVdaMjdtVUdHNktoamhHLVlOTUFiVWIyMGRGWDUtQQ?oc=5",
-          "published": "2026-07-13",
-          "source": "에너지데일리",
-          "feed": "google_rss"
+          "title": "AI 데이터센터 국가 인프라로…정부, 공급망 전면 점검",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010120",
+          "published": "2026-07-14",
+          "source": "연합뉴스",
+          "feed": "naver_item_news"
         },
         {
-          "title": "iM증권 \"LS ELECTRIC, 올해 신규 수주 대폭적으로 확대될 것\" - 글로벌이코노믹",
-          "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxObG11QXNaQ2FPUjMzVWlxYXhYc1dTMFZmR041Z3AtT2FYd0JaWnFQd1doYXI3eHdxRDJUdU84QWRaeFlhODR0RUlTM0V5WkFIRjNaS3RrZUVlTk14VV9Ud1lXLUtvX2NkbG15YVJya3RhQklFekQ4OTNqZ0VGeEdkZkpWMWwtTmFl?oc=5",
-          "published": "2026-07-13",
-          "source": "글로벌이코노믹",
-          "feed": "google_rss"
+          "title": "[AI정책노트] 정부, ‘글로벌 AI 허브’ 협력 확대…“세계 난제 실...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010120",
+          "published": "2026-07-14",
+          "source": "디지털데일리",
+          "feed": "naver_item_news"
         },
         {
-          "title": "LS ELECTRIC, 북미 전력시장 영역 확대 맞물려 배전 인프라 수요 급증 - iM - 인포스탁데일리",
-          "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFAyV2pwbFE2dDRBdmtQRTVuQWJtdFJBVmFIdHNXdVBURDZadmtXZnRCazRFUmtKbFNWUEVzV0NDV2NpOHlab1RKV1poZlRkVjFLeDQ1RlNIWFZmRGd3RUJpcWxnU0RRelVVR1hZeWxOT3VTZEJfS2c?oc=5",
-          "published": "2026-07-13",
-          "source": "인포스탁데일리",
-          "feed": "google_rss"
+          "title": "반도체 초호황에 갈린 주식재산…이재용 28조·최태원 10조 클럽",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010120",
+          "published": "2026-07-14",
+          "source": "동행미디어 시대",
+          "feed": "naver_item_news"
         },
         {
-          "title": "LS ELECTRIC, 獨 인피니언과 직류 전력 솔루션 개발 ‘맞손’ - 에너지타임뉴스",
-          "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9nWUk3NWV3eHFTWnFxVGpnQ1JhdkhWM01iaDVaaUc4WVBCVE1JQjVsaXNDTHlCaXVxLVpjR01BNGFsVWVrWnJDalZra1BVbGhoMDlQUmJReFNqdkFkRGhFTnY3VC01TVJIam9DN1JfSUJnQdIBdkFVX3lxTE9qUXNsN1lIQ0xoWEVlYlUybnZrOGFFVFZEaWRnTEFvQVlSemJCZWYxcUk4cDJvLVhWaHhRUW9WS1BhbDlvNWY3d3M3ZDVMOGY5SUhJdTBHN3pZNFlWMElnSXJRZWxzZUNadG1qYUJNUzNMYTBlR2c?oc=5",
-          "published": "2026-07-13",
-          "source": "에너지타임뉴스",
-          "feed": "google_rss"
-        },
-        {
-          "title": "LS ELECTRIC Partners with Infineon to Develop Next-Generation DC Power Solutions for AI Data Centers and Future Grids - Korea IT Times",
-          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1pMHVEaTFsLVhVS1Bta2pEb0phdWdVeGZVWVdSNlVCdVpWVmNFN0VFSlU0SDJyUzJEZVJFWnlfRGpaSHpJbGZHanF6emdvUFBBTDE1dDBpUV96ZnltT0pNRzEyNFpITnRHR3J3ZE02Vm0?oc=5",
-          "published": "2026-07-13",
-          "source": "Korea IT Times",
-          "feed": "google_rss"
-        },
-        {
-          "title": "LS ELECTRIC, 북미향 매출 확대 및 환율효과 기대…'매수'-iM - edaily.co.kr",
-          "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQYkFhS0xPZ3RZODVTWFpaRTR1czJydlJReTFvbVNtTlg2UUtEaWJuU1gwOWJ2ZkNhT3pzalhma3pSYkF4dWVkZTBzRUJaSUpGem9CeEZ6VTk2aGo2V3l3NjZfeFJ3UXJaWl9uTmprcS1wSHBFbE03S203NEQxbUh0cQ?oc=5",
-          "published": "2026-07-13",
-          "source": "edaily.co.kr",
-          "feed": "google_rss"
-        },
-        {
-          "title": "LS ELECTRIC 주가, 7월 13일 장중 197,900원 2.27% 하락 - TopStarNews",
-          "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE53NDVfdnhnWk5PanhpYURSTUJyREQyak4wTmJvYUNqZFpna0xOSHRER0NrN3F6SVBsNS00YkNadW5pcnR3SUVpb25KekpEUV9ibFh2UDhCRWN0d3RORTdCM2VnNEZGOHRlSFFkY2VnckVyZw?oc=5",
-          "published": "2026-07-13",
-          "source": "TopStarNews",
-          "feed": "google_rss"
+          "title": "이재용·최태원만 웃었다… 나머지 총수들 주식은 오히려 증발",
+          "url": "https://finance.naver.com/item/news_news.naver?code=010120",
+          "published": "2026-07-14",
+          "source": "한국일보",
+          "feed": "naver_item_news"
         }
       ]
     },
     "079550": {
       "name": "LIG넥스원",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
+      "fetched_at": "2026-07-14T16:25:58+09:00",
       "raw_count": 49,
       "classified": [],
       "unclassified": [
+        {
+          "title": "정부, 방산 기술도 기업과 나눈다…IP 공동소유 허용 [하반기 경제전....",
+          "url": "https://finance.naver.com/item/news_news.naver?code=079550",
+          "published": "2026-07-14",
+          "source": "데일리안",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "한화에어로, 5% 하락 90만원 붕괴…올해 상승분 반납[핫종목]",
+          "url": "https://finance.naver.com/item/news_news.naver?code=079550",
+          "published": "2026-07-14",
+          "source": "뉴스1",
+          "feed": "naver_item_news"
+        },
+        {
+          "title": "[밀리테크]50년간 정밀타격무기 외길… 창사 이후 최대 매출",
+          "url": "https://finance.naver.com/item/news_news.naver?code=079550",
+          "published": "2026-07-14",
+          "source": "아시아경제",
+          "feed": "naver_item_news"
+        },
         {
           "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
           "url": "https://finance.naver.com/item/news_news.naver?code=079550",
@@ -3026,45 +3108,24 @@
           "published": "2026-07-12",
           "source": "한국경제",
           "feed": "naver_item_news"
-        },
-        {
-          "title": "밀덕·남초는 옛말… 20대·女 비중 커진 방산업계, 홍보도 ‘젊음·친....",
-          "url": "https://finance.naver.com/item/news_news.naver?code=079550",
-          "published": "2026-07-12",
-          "source": "조선비즈",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "무인함정도 스스로 학습하는 'AI 두뇌' 단다…피지컬 AI가 여는 미래...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=079550",
-          "published": "2026-07-11",
-          "source": "디지털데일리",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "방산 5대장에 80% 압축투자…방공 밸류체인까지 담았다[ETF언박싱]",
-          "url": "https://finance.naver.com/item/news_news.naver?code=079550",
-          "published": "2026-07-11",
-          "source": "이데일리",
-          "feed": "naver_item_news"
         }
       ]
     },
     "042700": {
       "name": "한미반도체",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 122,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 132,
       "classified": [
         {
-          "title": "\"한미반도체, 2분기 실적 컨센서스 상회 전망…목표가 38만원 유지”[클릭e종목] - 아시아경제",
-          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5hNkd2S0F2VkJzU3YyNk5FMlk4ZjllQmpVaEo4WDZjcDdwU29sUkRLU2pXZzYzYXk0dkEtbTBQS0gtXzRmT09sdlhEcldUODJsSnpYZ21XZ1NfYi1UM29NUg?oc=5",
-          "published": "2026-07-13",
-          "source": "아시아경제",
+          "title": "한미반도체, 2분기 영업익 전년비 51%↑…HBM 장비 수요 증가 '호실적' - 녹색경제신문",
+          "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFAydTB6VEV4LTVLVjBVUW1HbXJXUzJqRXU2X3RrWDM5MFpiaWswdmsxdGNPZHd5Y3paNTJ3RWxBTVlmSlpQRmhUMDl2RXpQV2lIQUhVMFhMSVFnckdCRVhLS1NaUQ?oc=5",
+          "published": "2026-07-14",
+          "source": "녹색경제신문",
           "feed": "google_rss",
           "type": "earnings_surprise_beat",
           "impact_pct": 6.0,
           "matched_keywords": [
-            "컨센서스상회"
+            "호실적"
           ],
           "confidence": "keyword",
           "all_types": [
@@ -3072,11 +3133,107 @@
           ]
         },
         {
-          "title": "\"한미반도체, 2분기 실적 컨센서스 상회 전망…목표가 38만원 유지”...",
+          "title": "‘V자 반등’ 한미반도체, 1분기 어닝쇼크 딛고 2분기 사상 최대 실적 - 블로터",
+          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1IMV85Yl9mWjU3dW5YZUN0T1ltejFsYi1mV2ZBbXpyOFR4djgyZ3k4enpXSXhmOXlobUZvUUtRZG02M1RubjNkdHVKazJIOHJLcmtPa3dHYjJTNnMyOVF0ejRmcTB1VXBX0gFsQVVfeXFMTl9tNG50N3lHNEdkRlVwcms3Y1F4SWhLSFEwV1Rid0ZnelB5R0k1NGZqTUw4QW51b2hLVWhGTTlXcF80cEZqSkF4TkpBWlBXZDNOZC1FUkZZLVY5c05Ocm43LVBqSW1rUl9VLTI3?oc=5",
+          "published": "2026-07-14",
+          "source": "블로터",
+          "feed": "google_rss",
+          "type": "earnings_miss_or_guidance_cut",
+          "impact_pct": -6.0,
+          "matched_keywords": [
+            "어닝쇼크"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_miss_or_guidance_cut"
+          ]
+        },
+        {
+          "title": "한미반도체, 'HBM 훈풍'에 2Q 사상 최대 실적…영업익 1303억 - 뉴스1",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBITmZ6VFJ5UDlyLTBGZzFLU08wY3FYdjlVbkotU196UUszeDhrX25Ud2pfVmQ4WW9RWlVpLXRRZ2M2OUlnbXdhWm4xY0tWM3ZHbVpiTFN2X1FaY21Ua0YyRDNfWUI?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴스1",
+          "feed": "google_rss",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "사상최대실적"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "'TC본더 1위' 한미반도체 \"2분기 사상 최대 실적 기록\" - 파이낸셜뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1KbERBNWNUWXU0dkpmSW5jWUc3NXEzVnpUdUJMYmZOVVNJME40M3h0eHVaM2h3MXk2MXM4X2lXMVRvMHBBUDZwREpRdVlxYzdNU3JjQ3RRMzBiZw?oc=5",
+          "published": "2026-07-14",
+          "source": "파이낸셜뉴스",
+          "feed": "google_rss",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "사상최대실적"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "'V자 반등' 한미반도체, 1분기 어닝쇼크 딛고 2분기 사상 최대 실...",
           "url": "https://finance.naver.com/item/news_news.naver?code=042700",
+          "published": "2026-07-14",
+          "source": "블로터",
+          "feed": "naver_item_news",
+          "type": "earnings_miss_or_guidance_cut",
+          "impact_pct": -6.0,
+          "matched_keywords": [
+            "어닝쇼크"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_miss_or_guidance_cut"
+          ]
+        },
+        {
+          "title": "한미반도체, 'HBM 훈풍'에 2Q 사상 최대 실적…영업익 1303억",
+          "url": "https://finance.naver.com/item/news_news.naver?code=042700",
+          "published": "2026-07-14",
+          "source": "뉴스1",
+          "feed": "naver_item_news",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "사상최대실적"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "'TC본더 1위' 한미반도체 \"2분기 사상 최대 실적 기록\"",
+          "url": "https://finance.naver.com/item/news_news.naver?code=042700",
+          "published": "2026-07-14",
+          "source": "파이낸셜뉴스",
+          "feed": "naver_item_news",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "사상최대실적"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "\"한미반도체, 2분기 실적 컨센서스 상회 전망…목표가 38만원 유지”[클릭e종목] - 아시아경제",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5hNkd2S0F2VkJzU3YyNk5FMlk4ZjllQmpVaEo4WDZjcDdwU29sUkRLU2pXZzYzYXk0dkEtbTBQS0gtXzRmT09sdlhEcldUODJsSnpYZ21XZ1NfYi1UM29NUg?oc=5",
           "published": "2026-07-13",
           "source": "아시아경제",
-          "feed": "naver_item_news",
+          "feed": "google_rss",
           "type": "earnings_surprise_beat",
           "impact_pct": 6.0,
           "matched_keywords": [
@@ -3106,99 +3263,82 @@
       ],
       "unclassified": [
         {
-          "title": "인천시 상장기업 시가총액, 삼성바이오·셀트리온·한미반도체 순...'상생협력 밸류체인' 시급 - 뉴데일리",
-          "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE81SlBSUFB6VEV3Ui1VcmQwcGZ4ZVBQdk9DMGFCS2RHeGtjeXNkT1JkbXZ0amtSNkJocjFRSFlJc2lnQU0wbnJfZHlnMFZ0aHpwZ2d2b3NXZktjTXJuM2tVQ2ZJV2lUOWFOaFRYcE9tVVAwQnB1LVhIak9n0gF_QVVfeXFMTmx3Ym8tTW5PMHNfRUg5Ql9OYlFDN0VJeElCeEtuY0lpNXRtRGVIOE9ablZYSVVQVmZDbHhGOGdMQXJaaktrNkU0c0FlX2tDbTFRUWdwSHFwQkt3Y29nU1VISWZiemtqYk5CaTEybHJETDdneHktZldWVlhIakRyRQ?oc=5",
+          "title": "한미반도체, 2분기 매출 2511억원…최대 분기 실적 경신 - 전자신문",
+          "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBPVEx1eldTb01vZ0VHRnE0TXUwT2cxcjdyY0FKY2FsNncxTDV4WXBQT2VDNnl0MUc1OHFLSlNrNkRsc1Y3em4tcWZhTXZLQQ?oc=5",
           "published": "2026-07-14",
-          "source": "뉴데일리",
+          "source": "전자신문",
           "feed": "google_rss"
         },
         {
-          "title": "4년새 700억 매수 '뚝심'…곽동신의 근거 '있는' 자신감",
-          "url": "https://finance.naver.com/item/news_news.naver?code=042700",
+          "title": "한미반도체, 2분기 영업이익 51%↑·매출 창사 이래 최대 | - 연합인포맥스",
+          "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5DVnpqUkR4TWI3a2R4RlFZOVhFaXJNcTBGS0VnNlBvOUdJVXhMU3F0c25IZDZFaFVZdHAySDNZMGpYbzVUeDZDejRIV3ZUX0pUcE5mdDNJSjJfSGNuWXZoWXhHWUVmLXpZSEdpaC00NlZzQUZJ?oc=5",
+          "published": "2026-07-14",
+          "source": "연합인포맥스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "한미반도체, 2분기 매출 2511억원 '역대 최대' - 지디넷코리아",
+          "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBnRUt5cUpvN2UxVkMxWm80XzhaV2gxaXZLSUl3eDdXRkJFcGtGanRtLVBGVTEyazhDUnpkSFp4TzZSWlJibUhsQmx2SWFqdXE3aUhUcGF3?oc=5",
+          "published": "2026-07-14",
+          "source": "지디넷코리아",
+          "feed": "google_rss"
+        },
+        {
+          "title": "한미반도체, 2분기 매출 2511억원 ‘역대 최대’… 영업이익률 51.9% - 조선비즈 - Chosunbiz",
+          "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPLVJoV0ozLWdrSW1nU1BhSUVCZTQ5NXhuTjdZLU5ZWFlYSl9RTGtKX2lWb1lYTzlvcEpNVjg1WFZCMS1VeHh1SVd5TkpoM0tCRmZYTmVhNXJlZTRlVGpqc3V3ZXp5VV9SQmx3M2duY2otQy1icXB4QmJFbDF1R1hReXJR0gGWAUFVX3lxTE1SY2dZSXFiSEFoSDVvemJuV0ZhN3RvcGtxZFltdVQ4Y0xlWWNKSUs2ZUlFR2M2SEtoRllVd2pkbFVBRUJMVkpFV21fSTdVR3MtUGtsTEZwUmtDUjhXUk5lRW01cEIyM3YtYlVGcGFQT3ZSWTFWeGRiTHE3bFV0amlqbnFBZGFTaEg5TEYtMVUzbi1tWG0ydw?oc=5",
+          "published": "2026-07-14",
+          "source": "Chosunbiz",
+          "feed": "google_rss"
+        },
+        {
+          "title": "한미반도체 2분기 영업이익 1천303억원…작년 동기 대비 51%↑ - 연합뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1qQzE4Ym94VXJud0pRNDdEenpXWldDS0c0UC1PSG9qWnBvbjFIQ0gzZ2l3OEV5ZWM4X01zZzBiZldzYnhZTmZfTlVBUS1qNC0taG9qTUVxVndKS0XSAWBBVV95cUxPVGVLOFVIdld4TGh1WlQ5U1J1UV84My1ERnBodVlpTTM0ZlBJTlE4WWc2ZkZ3Q09CVVFzRVV5dGxYcm5fNFhuT0tOR3Z0Z3N1OWdBZkxBaURtTHJPOFpoako?oc=5",
+          "published": "2026-07-14",
+          "source": "연합뉴스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "한미반도체, 2분기 영업익 51% 증가...HBM4 장비 본격 출하 - v.daum.net",
+          "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE51Y2phNEp5MkdVcFNZZFBTM2lqdUx4NmtPUmxfS0hiLTVJQ1EwN19wNHh0VVRJdkRIVmNzVUxWdGVBZGJ6VGFhYXhoUE54UEU?oc=5",
+          "published": "2026-07-14",
+          "source": "v.daum.net",
+          "feed": "google_rss"
+        },
+        {
+          "title": "HBM 슈퍼사이클 올라탄 한미반도체…분기 최대 실적 - 비즈워치",
+          "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFA0NGtNM3dxNzQ5QVJpTGZ2Undoc2JycHVVNVRYMGw1cEUyaFBsMHlDMDBYaUtwOXY4SlhjR1VXaXlzbWZINWt0bGU3Q3ktcGlRSlY5cEFPSWFvNHhyTnFwVG9NN2VZeW50SzZj?oc=5",
           "published": "2026-07-14",
           "source": "비즈워치",
-          "feed": "naver_item_news"
+          "feed": "google_rss"
         },
         {
-          "title": "“일은 늘었는데 수익은 제자리…” 삼전닉스 호황에 씁쓸한 ‘소부장...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=042700",
+          "title": "한미반도체 2분기 영업익 1303억…전년比 51% 증가 - IT조선",
+          "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBGVzVNUG1KTEJKclJ4Wm41YjA4WXJZei1JbnhDeGNibFNNOWRCZVRSSkYyaGdlUmhTWk1XM0hQS3NVWkVPVTU0REdia09pdjgwVWZQUnJDZEo5WHpaVV9LaUk1TndsN0s5SndVZ3J2dVpXTUhX0gF0QVVfeXFMUEZXNU1QbUpMQkpyUnhabjViMDhZcll6LUlueEN4Y2JsU005ZEJlVFJKRjJoZ2VSaFNaTVczSFBLc1VaRU9VNTRER2JrT2l2ODBVZlBSckNkSjlYelpVX0tpSTVOd2w3SzlKd1VncnZ1WldNSFc?oc=5",
           "published": "2026-07-14",
-          "source": "조선일보",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "상상인증권 \"한미반도체 2분기 최대 매출 추정, TC 본더 사용처 확대 중\" - 비즈니스포스트",
-          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9aZUVGR2hzTm4zZ04xWjI3cVZmeUNRXzF4MkN1OUlKLXd2MklqYXNZS3E4WVU1RlUtdV9oWmZqVVlLaFdZQkVla2duUWlQUDExS0N6Ri1JN1RRN1oxT2Q2dHFuT2xqcnlmUE1sVWdMWlprV00?oc=5",
-          "published": "2026-07-13",
-          "source": "비즈니스포스트",
+          "source": "IT조선",
           "feed": "google_rss"
         },
         {
-          "title": "인천 상장기업 시총 193조 삼성바이오·셀트리온·한미반도체 76% 독식 - 인천투데이",
-          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBXUlFVeTFqR3d5d1ZCQlRzSkROemIyQTRSeGM5OWtrY0J6ekVKUW5ubG84dzByNFdVSDRUbTdqRy1BQmdBSC1DUFJpbW5nR1dnLXM4WElBMUMtckREamY1dUJOSHVxQjgxNDlRMmVWMG8?oc=5",
-          "published": "2026-07-13",
-          "source": "인천투데이",
-          "feed": "google_rss"
-        },
-        {
-          "title": "인천 상장기업 시가총액 75%, ‘삼성바이오·셀트리온·한미반도체’ 3곳 차지 - KBS 뉴스",
-          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE04aFpmYmZtOFVCa3dieDByY2xVRi1vbUVHV2tOTzVsbUpmaFMtOF82a2JEV3Y2R0UydDBMcG5iazR3TTlxQ2hKOGs0UVFsRmtRZlczaVJuN0xILUE?oc=5",
-          "published": "2026-07-13",
-          "source": "KBS 뉴스",
-          "feed": "google_rss"
-        },
-        {
-          "title": "인천 상장기업 시가총액, 삼성바이오·셀트리온·한미반도체 순 - v.daum.net",
-          "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE04cGYyczNLR210SlZJMXF0cWpMS2xHT2Z3aGdsM3YyTi1kVnVzM0Nib3hIbFVfekFuM0lMbnVhcWtrbVlQTUUxc3dROA?oc=5",
-          "published": "2026-07-13",
-          "source": "v.daum.net",
-          "feed": "google_rss"
-        },
-        {
-          "title": "[소부장 온에어]한미반도체, HBM에 로직·낸드도…목표가 38만원 유지 - 블로터",
-          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE0xZ1oxdjc2SFpIdzUzNGpLUXpMSVpjcWw4Um11ZXl4TERvZWlxWnRiQWtKSk0xck5kMEstZ3RsYXZja05MblljM1ZjLTM5NjRXMmgwb05ScDNsNXhNUElJZ1BtUlo5YUpjYWlkX9IBbEFVX3lxTE0xZ1oxdjc2SFpIdzUzNGpLUXpMSVpjcWw4Um11ZXl4TERvZWlxWnRiQWtKSk0xck5kMEstZ3RsYXZja05MblljM1ZjLTM5NjRXMmgwb05ScDNsNXhNUElJZ1BtUlo5YUpjYWlkXw?oc=5",
-          "published": "2026-07-13",
-          "source": "블로터",
-          "feed": "google_rss"
-        },
-        {
-          "title": "한미반도체, 2분기 최대 실적 전망…로직·낸드·기판 확대 - v.daum.net",
-          "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFB3VEN3eWh0Q1dnQ1pHY2FDZkVpZ2JkZUozWl9WRjQwNzlQZGhBQ25qNTh5MVpaWnRXZTIwUDRFNTFsUXVMeU1NSi1ITlZzZURIOW5zTA?oc=5",
-          "published": "2026-07-13",
-          "source": "v.daum.net",
-          "feed": "google_rss"
-        },
-        {
-          "title": "[리포트 브리핑]한미반도체, '신기록 위에 신사업' 목표가 380,000원 - 상상인증권 - 뉴스핌",
-          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5HakpES3p5eUM1VWJ4QTNJWG5TNE1ySnJPQXhrWmZnYU1LSHpFbWVIX2x5WHVDR2JNbVk4QkNXamhWbHVaYmxneDdYQmd0Y2JISnQ3b2lGaERoQ3Jm?oc=5",
-          "published": "2026-07-13",
+          "title": "한미반도체, 2Q 영업익 1303억원…전년 比 51%↑ - 뉴스핌",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5Odko5eXJuS0JVS0Y5ZWRGMlAyQ1hwOVQwVzhjVXJsTjhhZjdrT19kM3EwOHk3Vkxaazg5S3RocVhrSlU5UU1fOGFpZEJndjlUYm5yYW45Qm5FMWJw?oc=5",
+          "published": "2026-07-14",
           "source": "뉴스핌",
+          "feed": "google_rss"
+        },
+        {
+          "title": "한미반도체, 2분기 영업익 1303억 '사상 최대' - 뉴시안",
+          "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBUQ0VWbjBGSEItMUpFWFVOVTM4OXV5OHlwRDBXRG83c1RiNmhJOU4zaHAzNzVMT0VWaTI1eWtQX0lvaHpfVWJDaWx2aTlFejdsM3A5cURxY1FfR2w4d2xUSmhjM09EQ2VxbUHSAW5BVV95cUxNaWpsY2lUU0ZsOWZuSFE5YnFkVjExZGNEOGpLWWQ1dlNmRFNIOUg4a1NiRE1lYUhsR01HbUhMUG5ma3lFQ2FfdWptNlFCMEpxMnpxQnNVOUNMSzJiRkl6aXd1RDdOSU9JWHl2aEs5QQ?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴시안",
           "feed": "google_rss"
         }
       ]
     },
     "028260": {
       "name": "삼성물산",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 121,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 125,
       "classified": [
-        {
-          "title": "삼성물산, 삼성전자 FCF 증가에 주주환원 확대 전망…관계사 배당수익 60~70% 환원 - CEO스코어데일리",
-          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBqTWFtcjh2bTFaSjgyUWV4a09EbDU2OVRCRHVXbVJ2eFhIall1TXdvTHRDTnFfNk0wNVlfOTh5X0RJOEl6R3lGMk1KV09hdGZxUnZtaEp1V1l0RGI1bk1nN2JDLVBROWFR?oc=5",
-          "published": "2026-07-10",
-          "source": "CEO스코어데일리",
-          "feed": "google_rss",
-          "type": "buyback_cancellation",
-          "impact_pct": 4.0,
-          "matched_keywords": [
-            "주주환원확대",
-            "주주환원"
-          ],
-          "confidence": "keyword",
-          "all_types": [
-            "buyback_cancellation"
-          ]
-        },
         {
           "title": "삼성물산, 혁신기술 보유한 스타트업 6곳과 실증 협업 - 연합뉴스",
           "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBITDVjeFBlcHNaVWZYWmxsU3ViT0x2VG0wdnhRMFJHdzNTVzdaa2d6M0VNbjd6NElmVDVFQzRWekJXc3hQamtRSkdJRlJPYUF6ZnVmbVBSWFV3S1HSAWBBVV95cUxNa01CSzdJYkh1NngzWnBwVjJzdlozQnlmWWZvNE9MVHBRRVA1SlFxY3NxZHJxVEU2M0lyQkpNQjh0Mjh5V3BQcTZPNVhQcE1BSjBpY2FqRW80TTFIMUdvUlA?oc=5",
@@ -3250,88 +3390,328 @@
       ],
       "unclassified": [
         {
-          "title": "총수 주식재산 29조 증가…이재용 28조↑·최태원 첫 '10조 클럽'",
+          "title": "삼성물산, 日 최대 전력발전사와 수소·암모니아 공급망 강화 위한 MOU 체결 - 더구루",
+          "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE9NdU9PYWxzQUxWV3JLSzRfRkhEOEp1RmlCaExaYW1MR1NkekZ2NXNWSU1XTGNNLXZsX2RBQnpFTHZQTHA1OTJCVm5xLVY5dVRqc0JZeXZtcV9lR083RFFNd2kyVQ?oc=5",
+          "published": "2026-07-14",
+          "source": "더구루",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성물산, 성수3지구 무혈입성 유력…2차 현장설명회 단독 참여 - 땅집고",
+          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE16Z2ZzRFhBSm1pbHk0X1VfdHdUZ3pEYVpCbVBMUXhac2hHLXlaVUdJWFhyUTVEaHY5dmRfQVVhMVg4OW81SWRkNVc1VXlkS2szbmZESXk0YlYtUC1XYjhKc3J4ZWFtUEprZlpBOGJzdU5LWE3SAXNBVV95cUxNemdmc0RYQUptaWx5NF9VX3R3VGd6RGFaQm1QTFF4WnNoRy15WlVHSVhYclE1RGh2OXZkX0FVYTFYODlvNUlkZDVXNVV5ZEtrM25mREl5NGJWLVAtV2I4SnNyeGVhbVBKa2ZaQThic3VOS1hN?oc=5",
+          "published": "2026-07-14",
+          "source": "땅집고",
+          "feed": "google_rss"
+        },
+        {
+          "title": "JERA와 삼성물산, 수소·암모니아 공급망 협력 MOU 체결 - 2news.co.kr",
+          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFB3eWJtTFk3clQ1NHcya3pHNHZDYXk2emFxb2RkSFFHaUVhdWRTMFNQcHVoN2Jnc0NndVNuT2JZMmFDQjBOc1VxUUVUd0hjSWJOYmpja1BhQTdSVzBjMHlYM3MxT1pxeHFT?oc=5",
+          "published": "2026-07-14",
+          "source": "2news.co.kr",
+          "feed": "google_rss"
+        },
+        {
+          "title": "[단독]삼성물산, 日 JERA와 수소·암모니아 협력 MOU - 더트래커",
+          "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBHNmJTYmJOeTAwTkZwQWlkUkJybXF5eUtVVjQ5ZmhtNDRMc2JGOEg0ZkhxdTJpSHhBT0RGVXY3a3J1VTNGdFNlYzc4WjlxMlVid0VMRjhUaTA?oc=5",
+          "published": "2026-07-14",
+          "source": "더트래커",
+          "feed": "google_rss"
+        },
+        {
+          "title": "개인 5.5조 '팔자' vs 기관 3.9조 '사자'…코스피, 수급 공방...",
           "url": "https://finance.naver.com/item/news_news.naver?code=028260",
           "published": "2026-07-14",
-          "source": "경기일보",
+          "source": "뉴시스",
           "feed": "naver_item_news"
         },
         {
-          "title": "2분기 이재용 주식가치 28조 넘게 늘어나…최태원은 ‘10조 클럽’ ...",
+          "title": "장중 6500 깨진 코스피, 0.7% 상승 마감…외국인·기관 4.1조 ...",
           "url": "https://finance.naver.com/item/news_news.naver?code=028260",
           "published": "2026-07-14",
-          "source": "경향신문",
+          "source": "매일경제",
           "feed": "naver_item_news"
         },
         {
-          "title": "2분기 그룹 총수 10명 중 6명 주식가치↓…최태원 회장 '10조 클...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=028260",
-          "published": "2026-07-14",
-          "source": "아시아경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "이재용, 2분기 주식평가액 28조원 증가…최태원, 총액 10조원 넘어",
-          "url": "https://finance.naver.com/item/news_news.naver?code=028260",
-          "published": "2026-07-14",
-          "source": "여성신문",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "2분기 이재용 주식가치 28조↑…최태원은 '10조클럽' 가입",
-          "url": "https://finance.naver.com/item/news_news.naver?code=028260",
-          "published": "2026-07-14",
-          "source": "SBS Biz",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "이재용 27조↑, 최태원 10조 클럽 가입에도… 방시혁 1.4조↓",
-          "url": "https://finance.naver.com/item/news_news.naver?code=028260",
-          "published": "2026-07-14",
-          "source": "한국경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "증시 달군 삼전닉스에…이재용 주식재산 60조 육박, 최태원은 '10조...",
+          "title": "“일 시키고 돈은 늦게” 하도급 늑장 결제 1위 이랜드",
           "url": "https://finance.naver.com/item/news_news.naver?code=028260",
           "published": "2026-07-14",
           "source": "한경비즈니스",
           "feed": "naver_item_news"
         },
         {
-          "title": "그룹 총수 주식가치 29.2조 늘었지만…이재용·최태원 빼면 6조 줄어",
+          "title": "하도급대금 1389억원 법정기한 넘긴 대기업…이랜드·대방건설 지연비....",
           "url": "https://finance.naver.com/item/news_news.naver?code=028260",
           "published": "2026-07-14",
-          "source": "뉴스1",
+          "source": "헤럴드경제",
           "feed": "naver_item_news"
         },
         {
-          "title": "2분기 불장에 이재용 주식가치 28조↑…최태원은 10조클럽 가입",
+          "title": "작년 하반기 법정기한 넘긴 하도급대금, 이랜드·대방건설 순(종합)",
           "url": "https://finance.naver.com/item/news_news.naver?code=028260",
           "published": "2026-07-14",
           "source": "연합뉴스",
           "feed": "naver_item_news"
         },
         {
-          "title": "'파산 카운트다운'…30년 홈플러스, 역사 속으로 사라지나",
+          "title": "이랜드·대방건설·SM, 하도급 대금 60일 넘겨 '늑장 지급'…교보생...",
           "url": "https://finance.naver.com/item/news_news.naver?code=028260",
           "published": "2026-07-14",
-          "source": "한국경제",
+          "source": "뉴스1",
           "feed": "naver_item_news"
         }
       ]
     },
     "006400": {
       "name": "삼성SDI",
-      "fetched_at": "2026-07-14T08:26:33+09:00",
-      "raw_count": 111,
+      "fetched_at": "2026-07-14T16:25:58+09:00",
+      "raw_count": 135,
       "classified": [
         {
-          "title": "뉴스 : 삼성SDI UPS용 배터리, 글로벌 '화재 안전' 테스트 통과…세계 최초 Indoor LSFT 기준 충족 - 삼성 SDI",
-          "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE5XS1EyWTlVOXJhd1ZhcVQzU2F2X2M0VEh2aXFVX3ZNcTNpZWpfNy1JRnNPLXNfeVE3bE1GUldQT2xJUE1Gallib2F4VEV4d0ZuM2JtUEw2eEJZR3Y3cE0wZHQtOGgyQQ?oc=5",
+          "title": "삼성SDI, 세계 최초 UPS 배터리 대형 화재 테스트 통과 - 경향신문",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBNSTZWaGZueGtDYTViWGZlNmQ3N3o1LUxIZ2I4NWRZQ2NjQjhXYzlMOHl6VlQ0SUxMU3d4ejlmMWFjWUZKeFcyWGpYeEdsbUsta0F4dmd1WExWQQ?oc=5",
           "published": "2026-07-14",
-          "source": "삼성 SDI",
+          "source": "경향신문",
           "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI가 개발한 UPS용 배터리… 글로벌 화재 안전 ‘세계 최초 인증’ - 문화일보",
+          "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9kYmg3OGktcXpnOXViZUVIVEQwVnJ6Tk5LY056NG1LUW5KbG9fRkR2TURhLWtkUXBFa1hCZ2ZKSGZRUmItUXoxMUw0Y1hJN0Nl?oc=5",
+          "published": "2026-07-14",
+          "source": "문화일보",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI, UPS 배터리 화재 안전성 입증…세계 최초 UL 시험 통과 - 이코노미톡뉴스",
+          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5YNHZsallMcWFWNm5TQkZpZ1BGd01PWFB4RjlYMWpwV280UXlMdEhNam0wQ2x0VVNDRk5wR1dzZ3lyRGRmbUpNMERGRlZ0WHB4VVp3Q2hDa3dCQ25BRGVWc1VXRWxBNUswZ0o0Yg?oc=5",
+          "published": "2026-07-14",
+          "source": "이코노미톡뉴스",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI UPS 배터리, 옥내 대형 화재 테스트 세계 최초 통과 - 머니투데이 - 머니투데이",
+          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFAtalZuRW0wX1dMWmRVc3lOTHJlSXdrd0p1N2V2WGZLaXo1RGtIT2t6WjdUdHRVcV9DWHNMRFRQZkZvVDJLcTJwM2czN1FMcmtIaGVrU0hwQmRhODlycEdwOFh0bXNwTzlsQ1NBX9IBckFVX3lxTE9LX3NMa1ZmUm85TkRtM0FqbGJ2SGtoNU5Hd0k5SmhwOGpKNE0tX2hVeGM5U1kyNk9uOUhPMXlpclhIdGV1NVNZMEJ1Q2lRbFVzdmF1WEREZElwMmN6N2VkX1E5T3FqX2RvMmhKeU4zNTJyZw?oc=5",
+          "published": "2026-07-14",
+          "source": "머니투데이",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI, 세계 최초 UPS 배터리 '옥내 대형 화재 테스트' 통과… AI 데이터센터 시장 공략 가속 - 기계신문",
+          "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBFLWR6d0x1elNFZWFCUk5ybHJ1aXo2NG1WRXEyUlVVWTZGdlZSb2tIdWhtOW5CeEFTQzBjamd6LV9ubDQ3T0N4VWlLdk9MN1J0akxhNFBoVHI5TkZmdWVwYnVkRWZ4TWc?oc=5",
+          "published": "2026-07-14",
+          "source": "기계신문",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "동서발전 AI ESS '국산화'···삼성SDI·현대플라스포 적용 - 녹색경제신문",
+          "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFB4ZEt1SklDMXpwYVNzM292akZhcm8zbVBqbEEtbFV4M3NibThQM0FHY0ZhRmhzSXlCc3FqMUctcEpOOXlYZVB3V1RxcDl1eWFvUkJCTFRBY1o4X01McDNUS3NxMmU2M2FJ?oc=5",
+          "published": "2026-07-14",
+          "source": "녹색경제신문",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "국산화"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "세계 최초 인도어 LSFT 충족…삼성SDI UPS용 배터리, ‘화재 ...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "매일경제",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI가 개발한 UPS용 배터리… 글로벌 화재 안전 ‘세계 최초 ...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "문화일보",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "'불 나도 폭발 차단' 삼성SDI, 세계 최초 UPS배터리 안정성 검...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "파이낸셜뉴스",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI, UPS 배터리 화재 차단 테스트 세계 최초 통과…\"스프링...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "디지털데일리",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "셀트리온, 업계 유일 관세청 수출입안전관리 최고 등급… “글로벌 공.....",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "동아일보",
+          "feed": "naver_item_news",
+          "type": "regulation_or_tariff",
+          "impact_pct": -4.0,
+          "matched_keywords": [
+            "관세"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "regulation_or_tariff"
+          ]
+        },
+        {
+          "title": "삼성SDI UPS용 배터리, 옥내 대형 화재 테스트 통과…세계 최초",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "한국경제TV",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI, 세계 최초 UPS 배터리 대형 화재 테스트 통과",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "경향신문",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI UPS용 배터리, 세계 최초 옥내 대형 화재 테스트 기준 ...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "동행미디어 시대",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "\"불붙어도 차단\"…삼성SDI, 세계 최초 UPS 배터리 대형 화재 테...",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "뉴시스",
+          "feed": "naver_item_news",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "세계최초"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
+          ]
+        },
+        {
+          "title": "삼성SDI UPS 배터리, 옥내 대형 화재 테스트 세계 최초 통과",
+          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "published": "2026-07-14",
+          "source": "머니투데이",
+          "feed": "naver_item_news",
           "type": "tech_breakthrough",
           "impact_pct": 6.0,
           "matched_keywords": [
@@ -3359,19 +3739,51 @@
           ]
         },
         {
-          "title": "정부 ESS도 잡았다…삼성SDI, 25조 투자 '승부수' - 데일리한국",
-          "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE1YYnEzcTJrM2s4cFVhdk5wV2d3SVBjN0NIRFczeTBxTEVUZnJ3MnBUdW8wUEcyWWJ5M0lINVlQYVo5Q1hkYjh0aWpkYkc4bWhxangwMlhfUjZwS1BWbFlWd2dENkNpc0RDSXVob0V6Z9IBc0FVX3lxTE4zeGRzODhoYm0xSkF1UEZyaG9PRllkZHh3SFg3Y1o2TER3ZUFrMHN2WHNUMW5GMlpONEUyRjZKUXhpRFM3M2h3OFp6cVF0UkJSVXFycTJqTU1BRkgyV3liWk00dDlDbFpTbU1KQ1NSaDB6Z1U?oc=5",
+          "title": "[특징주] 삼성SDI, 9%대 급등⋯AI 배전망 ESS 수주에 하반기 흑자전환 기대↑ - v.daum.net",
+          "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1VLUJrdGdLZWJsekdTLXVhNmtOaHl4MUlicU5xVlZQSWsyUTdxMzFIeXpYMFQtN1pJUG0tckx0cmlUeFpoUkV0a3dBMDJ6WlU?oc=5",
           "published": "2026-07-13",
-          "source": "데일리한국",
+          "source": "v.daum.net",
           "feed": "google_rss",
-          "type": "capex_expansion",
-          "impact_pct": 3.0,
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
           "matched_keywords": [
-            "조투자"
+            "흑자전환"
           ],
           "confidence": "keyword",
           "all_types": [
-            "capex_expansion"
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "[특징주] 삼성SDI, 9%대 급등⋯AI 배전망 ESS 수주에 하반기 흑자전환 기대↑ - 이투데이",
+          "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE16bmNwUUJnaHg0dGF5c0ZGZG90QUowWlppOXNJLXVrbUFETnE5Q1Vrb0xvTkVVMVVqSnB2aEV3akx0MGd1eHBpU3VDVzB4bjBUV0s3YQ?oc=5",
+          "published": "2026-07-13",
+          "source": "이투데이",
+          "feed": "google_rss",
+          "type": "earnings_surprise_beat",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "흑자전환"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "earnings_surprise_beat"
+          ]
+        },
+        {
+          "title": "첫 배전망 ESS 수주전 삼성SDI '66% 압승'…8월 2차전은 '신기술'이 가른다 - 중소기업신문",
+          "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5jZ25VZVNwdU96ZC1kRWdEXzZfMjlSeTEyZUZNakN4MmF6M1p1RkZyeVoxeXRhRVlCXy1LZmtkWWViSHlIakRaYXRuZWtMVGlncVl1MGRaRTYxUG1EUHlRNGdOQVBKdWNtcTcwRzNR?oc=5",
+          "published": "2026-07-12",
+          "source": "중소기업신문",
+          "feed": "google_rss",
+          "type": "tech_breakthrough",
+          "impact_pct": 6.0,
+          "matched_keywords": [
+            "신기술"
+          ],
+          "confidence": "keyword",
+          "all_types": [
+            "tech_breakthrough"
           ]
         },
         {
@@ -3520,132 +3932,113 @@
           ]
         },
         {
-          "title": "[단독] 삼성SDI 전고체 배터리, 밀도·안전성 고객사 호평 속 2027년 양산 순항…'휴머노이드·모바일까지 확장' - Korea JoongAng Daily",
-          "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPdWZHTm5fdVV2dTNfczVCQm9IVmNWSENUdS1UTVdSYlZSb3p1RGRvTGZJbXVvMGNMR24wd05XM1FrYzVTenJPRzhXNXlKd1hXVnU5SUs0YmszdTVnS3BUM09XRXlQdE83dm1XV2I2Ml96VENsWXc5clZYMzRHYW5yTXFvZFhnSmFJWTFaQmVvS0t4UHhuVHVoQTVyRHNDcXd0V2RrbFNZcmxfZll5U042ejNNV2dRX3JLUHdUTWdwd195bGRwMU9fRW1JeWFueHFiUjZQTVBCcW92WGJMaG1qYzJR?oc=5",
-          "published": "2026-07-02",
-          "source": "Korea JoongAng Daily",
+          "title": "삼성SDI, 울산에 16조 투자…차세대 배터리 양산 - 한국경제",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE52U01ucnR6UHFtb2tUUmpfZWFRVWNTckNYY3Q5aVIxX3g0Z0VvVUJhWTd4UktHbDMzUDJ5Y1lxdzJMRUZITW5wemlta3lNd3hBUlBxLVZIaHNFd9IBVEFVX3lxTE1VZWlUQTlqelA1V2ZyVXZ4a08wb3RENW5OazRNdWtjRU8yajJlQ3BuUVlVd082VFBsTVdFUkhScHA4R3JDVHhRU3d4RkpXV3d0QmRONw?oc=5",
+          "published": "2026-07-03",
+          "source": "한국경제",
           "feed": "google_rss",
-          "type": "tech_breakthrough",
-          "impact_pct": 6.0,
+          "type": "capex_expansion",
+          "impact_pct": 3.0,
           "matched_keywords": [
-            "전고체"
+            "조투자"
           ],
           "confidence": "keyword",
           "all_types": [
-            "tech_breakthrough"
+            "capex_expansion"
           ]
         },
         {
-          "title": "삼성SDI 전고체 배터리 출시 앞두고 은값 주목, 최주선 대량 은 조달 해결책은 광산 확보 - 비즈니스포스트",
-          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBuMTZEd0VkdnFObGtQR0tlbWJOTzdFei1zcXR4RWlocjFiZ3UwVkJZUVNlNWxMaDdIVTNuM2dDdTNXb3oweU51MUFjWEMyOHZhck1nQzUyXzBsektBZW4xcmdseURBajJtVms1THlOaXhuTFE?oc=5",
-          "published": "2026-07-01",
-          "source": "비즈니스포스트",
+          "title": "삼성SDI, 울산에 16조 투자해 차세대 배터리 양산 거점 건립 - 뉴스1",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE03bDY2N2psX25BWk54SUplWWNEVVp1akhpc21qd25lMkhtVEU4RkFpNk1MNHJLTTVBMDdhdllNbHZXc3JDR29DQXhPYlFyQkJyTUVWZlpZbkxKSDU2cHVmZzBpVFA?oc=5",
+          "published": "2026-07-03",
+          "source": "뉴스1",
           "feed": "google_rss",
-          "type": "tech_breakthrough",
-          "impact_pct": 6.0,
+          "type": "capex_expansion",
+          "impact_pct": 3.0,
           "matched_keywords": [
-            "전고체"
+            "조투자"
           ],
           "confidence": "keyword",
           "all_types": [
-            "tech_breakthrough"
+            "capex_expansion"
           ]
         }
       ],
       "unclassified": [
         {
-          "title": "글래스돔, 카테나엑스·탄소규제 대응 웨비나 개최…PCF 실무 전략 제....",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
-          "published": "2026-07-14",
-          "source": "이데일리",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "삼성SDI UPS용 배터리, 글로벌 인증기관 화재안전 테스트 통과",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "title": "삼성SDI UPS용 배터리, 글로벌 인증기관 화재안전 테스트 통과 - 연합뉴스",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE9jcUNFZlM0OUhDVmpZYnk1OGZsZXlfZEo3SzU0LW1nNVp1Q1pNWlNzTU9TVkE5OXhudkN1ME01TTJFWThDOUZtVEppVDFOeVlESE5CQlhhWGx4SlFOUEpsa9IBYEFVX3lxTE9jcUNFZlM0OUhDVmpZYnk1OGZsZXlfZEo3SzU0LW1nNVp1Q1pNWlNzTU9TVkE5OXhudkN1ME01TTJFWThDOUZtVEppVDFOeVlESE5CQlhhWGx4SlFOUEpsaw?oc=5",
           "published": "2026-07-14",
           "source": "연합뉴스",
-          "feed": "naver_item_news"
+          "feed": "google_rss"
         },
         {
-          "title": "韓서 매출 10배 '껑충', 페라리를 매료시킨 조현준의 ‘마법’",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "title": "삼성SDI, 데이터센터용 UPS 배터리 화재 안전성 인증 - 전기신문",
+          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1LdDB2MXQyM2NxV1RGQllXcFFUZTZuVWRURVNoWkt5TG5MdXREV25vbzM5LV9RM09iamdVal9NQUhJTjVudjVHOFFmOV9mS0FKS1pVWGFRb0kyWVVlRVZXdldyNHdjMVd5OWN5bkZhUFrSAXBBVV95cUxNS3QwdjF0MjNjcVdURkJZV3BRVGU2blVkVEVTaFpLeUxuTHV0RFdub28zOS1fUTNPYmpnVWpfTUFISU41bnY1RzhRZjlfZktBSktaVVhhUW9JMllVZUVWV3ZXcjR3YzFXeTljeW5GYVBa?oc=5",
           "published": "2026-07-14",
-          "source": "한경비즈니스",
-          "feed": "naver_item_news"
+          "source": "전기신문",
+          "feed": "google_rss"
         },
         {
-          "title": "중동 전쟁 재점화 우려에도…에너지·해운株 살아남았다 [종목+]",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
+          "title": "삼성SDI, UPS용 배터리 글로벌 '화재 안전' 테스트 통과 - 뉴데일리",
+          "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNOEF6dmNuYVJNUThyU1hzVU1lckdzZ1B6SzFJMDNoRDFhZzE0NDlfczZialZ0V001X1RBUEczbTBhN3hkOVQ0VTVlU0V4WmR1WkxEQkM3T3BjNGgyZGM5SDQ4OGpzYzdpbmZMMkxFM3R0WGlPUnpKT3F0MkxJNDlKV9IBgAFBVV95cUxNOEF6dmNuYVJNUThyU1hzVU1lckdzZ1B6SzFJMDNoRDFhZzE0NDlfczZialZ0V001X1RBUEczbTBhN3hkOVQ0VTVlU0V4WmR1WkxEQkM3T3BjNGgyZGM5SDQ4OGpzYzdpbmZMMkxFM3R0WGlPUnpKT3F0MkxJNDlKVw?oc=5",
+          "published": "2026-07-14",
+          "source": "뉴데일리",
+          "feed": "google_rss"
+        },
+        {
+          "title": "AI 데이터센터 안전성 경쟁…삼성SDI, 글로벌 화재 테스트 첫 통과 - 스트레이트뉴스",
+          "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9qaFRpeDc3cTdvWjVEX1ZwS0ZNUmRBeWpldTZVa1ZraURqWWNtTTY0Ul9zbTFsSVNaWUZKb2wzWWM4eEx2QmFETVp3Ni1vb2FYUTBtWk5TdFd1WXVEWnZvbEJYUWxaSFpnUi04WlM3RzFETGdlemQ00gF3QVVfeXFMT2poVGl4NzdxN29aNURfVnBLRk1SZEF5amV1NlVrVmtpRGpZY21NNjRSX3NtMWxJU1pZRkpvbDNZYzh4THZCYURNWnc2LW9vYVhRMG1aTlN0V3VZdURadm9sQlhRbFpIWmdSLThaUzdHMURMZ2V6ZDQ?oc=5",
+          "published": "2026-07-14",
+          "source": "스트레이트뉴스",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성SDI, UPS용 배터리 글로벌 '화재 안전' 테스트 통과 - 전자신문",
+          "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFB1ZmlrUE9rNVRKNWQ5VUJnWGtZX3ZleGp5UzU3azVyY0RyQklrTEE2Q0c5bWR3cFZucHB3OURWdGwxTUpPVHA5Ri1pZ2NyZw?oc=5",
+          "published": "2026-07-14",
+          "source": "전자신문",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성SDI UPS용 배터리, 글로벌 ‘화재 안전’ 테스트 통과 - 주간한국",
+          "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1PNEJKTTh2MlZ2RV9fYkhmQ2pYX2lRS19DVFFwUTVTdzNxRzVaQWV5S0p3WGtZUm1WeGhxUWJldVBORlByYUpEOWFaVEVqcVJRNzN2ZC1kQjlPYnR4Q2VXdlhuM1FhQ1BCSnozamdhMmtEaGFf0gF0QVVfeXFMTU80QkpNOHYyVnZFX19iSGZDalhfaVFLX0NUUXBRNVN3M3FHNVpBZXlLSndYa1lSbVZ4aHFRYmV1UE5GUHJhSkQ5YVpURWpxUlE3M3ZkLWRCOU9idHhDZVd2WG4zUWFDUEJKejNqZ2Eya0RoYV8?oc=5",
+          "published": "2026-07-14",
+          "source": "주간한국",
+          "feed": "google_rss"
+        },
+        {
+          "title": "AI 데이터센터가 따지는 ‘화재 안전’…삼성SDI UPS 배터리 세계 첫 인증 - 글로벌이코노믹",
+          "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPa0ZiT251d0lmTDRDZjhzM25YN2FGR3oycWk3ZkM3YkFaYlNnUF9MSlZIX1hrQVlhN0RFSDNwZElLMlBjb0pScm1VOW5TLVI2bF9iSmNtM0NPb3JycFZxbGR4QjFuazJGcmFvVzFzZWNKcklQVlBHTFJwTXk2NkdLWGFxT0FvUQ?oc=5",
+          "published": "2026-07-14",
+          "source": "글로벌이코노믹",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성SDI \"UPS 배터리, 글로벌 기관 '화재 차단' 테스트 통과\" - 지디넷코리아",
+          "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5rQ05IQ3BSZGxuUEtyRU43QW92TWVhd3pQZzdvb21sSDdBdkhZdkw2QU5kbmlXdDI3TTVyN3lwN2lMNG1ZU0Y4ejdjSTNXbUlCbGVyeDJB?oc=5",
+          "published": "2026-07-14",
+          "source": "지디넷코리아",
+          "feed": "google_rss"
+        },
+        {
+          "title": "삼성SDI UPS용 배터리, 글로벌 화재 안전성 검증…세계 첫 'Indoor LSFT' 충족 - ER 이코노믹리뷰",
+          "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9yMHN0VjZxTTJJU2M5MkJjWHVrVDlmZ1JQcXFHRVR4Nnk1QkdFcXhJU2liYWc5MjZ3c3NPTWJaVkc2U0hhZE5QamFiRm9mdlFlbzh5VEpCdDNZeWtJV0VtNnI1dlRIZkdNNlh3dw?oc=5",
+          "published": "2026-07-14",
+          "source": "ER 이코노믹리뷰",
+          "feed": "google_rss"
+        },
+        {
+          "title": "초고수들, 삼전닉스·현대차 팔았다…삼성SDI·에이피알은 매수 - 한국경제",
+          "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFB5UDlmNzdDZWNsWmlNaHh6ZFU5RTNJNk9WdUhwMVl3Q2o5MEhnVFNzbGp5OUtIbkpRMGE2end5R0dfUWlUak9qbmJSTnRQNGpjQWJQWnRnbDNEQQ?oc=5",
           "published": "2026-07-14",
           "source": "한국경제",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "울산시, 시내버스 정상화·제조산업 AX '속도'…부처·기업 방문",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
-          "published": "2026-07-14",
-          "source": "연합뉴스",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "배터리셀 파는 삼성, 전력망까지 돌리는 LG…ESS 공략법 갈렸다",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
-          "published": "2026-07-14",
-          "source": "중앙일보",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "삼성SDI, 2분기 영업적자 축소 예상…실적 바닥 찍나 - 연합인포맥스",
-          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5FRmFMbVd4ZmM2RmJkWEpCR3NfTEtkd0FqZWhSZ09XWVd5bjBCaUdEb0ZXbkZoZi1SS0hjbmVBM0VEVzRWTW4wQ1ZmamUzZTgxcWV3Q3VDTm1pT280NHBhTlJFUWs2bVBVcHNIaFpKWnI?oc=5",
-          "published": "2026-07-13",
-          "source": "연합인포맥스",
           "feed": "google_rss"
-        },
-        {
-          "title": "삼성SDI도 '테슬라 ESS 배터리' 전용라인 만든다 - 디일렉",
-          "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1XUUpvaExDdVJJN2ZQUlRYeVYxOGFsQ0JsYk5zeWRxcHg2dHVqNzJjTDBYT1QtY3FCbEJIZXpXYzZzTTNKalFUQldPT3FKSURWWE1OYlFjTk5mQU8xV09BWVplb2NmZw?oc=5",
-          "published": "2026-07-13",
-          "source": "디일렉",
-          "feed": "google_rss"
-        },
-        {
-          "title": "삼전닉스 GO or STOP…하반기 증시 핵심 포인트 5 [스페셜리포트...",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
-          "published": "2026-07-13",
-          "source": "매경이코노미",
-          "feed": "naver_item_news"
-        },
-        {
-          "title": "반도체 산단發 전력 수요 폭증…국내 ESS도 판 커진다",
-          "url": "https://finance.naver.com/item/news_news.naver?code=006400",
-          "published": "2026-07-13",
-          "source": "지디넷코리아",
-          "feed": "naver_item_news"
         }
       ]
     }
   },
   "global": [
-    {
-      "title": "Micron, GM sign long-term supply deal for auto memory chips - Investing.com",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNSE01S0FBeHQyc1NhQkpsRjNlRnFWbUtCYkNwaGhJRDN0V1lUSTN5RVJxSlBpUjNsZU5CeXI2dWg2b2haYVpTVjhweEpzQ0ZvTEMyRlJ4Vml2LVl4VnR0emw2MlJoYVVodWRLaWtGUDUxUlRhakhHeFZYMGVHM2hTcUNHT04wazVWckNFWmJIMjBxNmlOZ2RzR2lfZzlFZ2UzS2RLWW9nQW9CUElTOUFsTjlEX0g?oc=5",
-      "published": "2026-07-01",
-      "source": "Investing.com",
-      "feed": "google_rss",
-      "query_id": "semis_peer_signal",
-      "channel": "peer",
-      "affects_tickers": [
-        "005930",
-        "000660"
-      ],
-      "affects_group": "ai_memory_hbm",
-      "type": "global_customer_demand",
-      "impact_pct": 6.0,
-      "matched_keywords": [
-        "supply deal"
-      ]
-    },
     {
       "title": "[This Week's Outlook] Aftermath of the Sharp Drop in AI Hardware Stocks: FOMC Minutes and Memory Stock Listings as a Litmus Test - Moomoo",
       "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPXzJMN2Q3aWppZWFNSUR6M3F4SG1oX1NwaEFkS0ZpRGFDRXc1VUNueHVZNGdzSlAzRlowX2dBaEZ3SGt5dFJNaHE5cnpPeEplUWItbFpkbEk0MTJaTEtLLW1xeHFUV2tWeDdKNWxFVFowZGxacExfNGRkRmltRGRNandYblhmQ2s5MDJyZkNMbnVVbFFSRkpPejdwWUZnb1lMb0hjNTR5bw?oc=5",
@@ -3663,6 +4056,25 @@
       "impact_pct": 0.0,
       "matched_keywords": [
         "FOMC"
+      ]
+    },
+    {
+      "title": "Micron, GM sign long-term supply deal for auto memory chips - Investing.com Canada",
+      "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPRHVGamZFdWhSX1oxeVZYNnNmZUlyX05hTmxKYVE3R3FpZ2htOEkxOXNXRUE3MG1xejFlOTBBS2pKU3BQdTB2M3pKekJucFhqWUx6eWdScTFMbmRBbUpvbzByTlZEQ2dPREFxZ3RIZnMtZlFZX0tEd2p5Vm4wZHRPU2FNUHF1Q2h6VTVtcGNrMXJQQld2cmszZHRrUkJzZDhEMG9OamI4bHpKQnI0cS1qdVdfT2dyblk1dEE?oc=5",
+      "published": "2026-07-01",
+      "source": "Investing.com Canada",
+      "feed": "google_rss",
+      "query_id": "semis_peer_signal",
+      "channel": "peer",
+      "affects_tickers": [
+        "005930",
+        "000660"
+      ],
+      "affects_group": "ai_memory_hbm",
+      "type": "global_customer_demand",
+      "impact_pct": 6.0,
+      "matched_keywords": [
+        "supply deal"
       ]
     },
     {
@@ -3702,6 +4114,24 @@
       ]
     },
     {
+      "title": "Institutions: The continued price increase in wafer foundry marks a shift from a buyer's market, where customers compete, to a seller's market, where suppliers dominate pricing. - Bitget",
+      "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFB3UXk0Ml9JN3hQekt1WnRDS0ZtS2lXQmxYMl9Gc0txX09UNGtsWnJiOEdKaFQ4eTdZWEt2cWtlQXMwOGxyV193NWZhVkNNN3dEMGxDS3o4cGMtTnA0VDkyeEUxTdIBY0FVX3lxTFB3UXk0Ml9JN3hQekt1WnRDS0ZtS2lXQmxYMl9Gc0txX09UNGtsWnJiOEdKaFQ4eTdZWEt2cWtlQXMwOGxyV193NWZhVkNNN3dEMGxDS3o4cGMtTnA0VDkyeEUxTQ?oc=5",
+      "published": "2026-07-14",
+      "source": "Bitget",
+      "feed": "google_rss",
+      "query_id": "foundry_peer",
+      "channel": "peer",
+      "affects_tickers": [
+        "005930"
+      ],
+      "affects_group": null,
+      "type": "global_peer_pricing",
+      "impact_pct": 3.0,
+      "matched_keywords": [
+        "price increase"
+      ]
+    },
+    {
       "title": "TrendForce Consulting: AI component capacity crowding out other production and major manufacturers’ output cuts intensify; price increases in mature-node foundry services expected to persist through 2027. - Moomoo",
       "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOYjhXUGRZbXFqeVZJaHgxcVZNclF6aGxCcDB5cHV0bnl2MG5EX2NMNll6OGVtcjYyZjVicVFhVWxPbDg3ZGNvVEFXSXJjZHFsazJ1dTZrc3hhbkg1clBXeVNkSTNGNUR1M0xKa014NmhOVGJEMHRfM0k1Q1ZRRUtoTmdmcmhHTldEMGRORW1jR1k0NGJSc2hPZWNyZFU3a1Jfd3V1eTd0a0dXdlJ0cmplVjltZmtfaFIxeXJJ?oc=5",
       "published": "2026-06-30",
@@ -3738,10 +4168,10 @@
       ]
     },
     {
-      "title": "With AI Demand Surging, TSMC Wields Pricing Power to Defend Margins - ad-hoc-news.de",
+      "title": "With AI Demand Surging, TSMC Wields Pricing Power to Defend Margins - Ad Hoc News",
       "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQQ0gzWk1IU2VlRDdSeGtpLVdGMlVXZ1Z5VUc0X3JtLTczVFAxQ3BuRlB5V1BNUENNdi1LUWpVNU11Mnl2ZUw1UWlVM3NXSEdmMXdYMGM5MlB6cUhmd25YRDROM1VyV2NfUFZ3OWxuWVV0RVBTUkg2Yld0ZWV3cHFCNDd0UVM3ZUxKWmJBaGd3SnlwS2J3am44UlhqR2kxa0FxZk45SVNzWUc5VmRkZVI5aVVXNElDSGtqVTh5eTE4VUdUdTA?oc=5",
       "published": "2026-07-08",
-      "source": "ad-hoc-news.de",
+      "source": "Ad Hoc News",
       "feed": "google_rss",
       "query_id": "foundry_peer",
       "channel": "peer",
@@ -3753,6 +4183,27 @@
       "impact_pct": 3.0,
       "matched_keywords": [
         "pricing power"
+      ]
+    },
+    {
+      "title": "Tsakos Energy Navigation Expands LNG Fleet with Second Newbuilding Order at HD Hyundai - News and Statistics - IndexBox",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPa2drVHAtZzl4a01XRE5NbndSMlJ6S2ZmWTQ0WnZWUUlKVDgwUEdCZHFqejdydEVaTkhjNkM3ZnA2LWhFQXdlYmFQbzh0Tk5KVnJVRks3dEYzRE1nYkpyWkdKZjdCMFhURGNBUTI3d2FObVdMd1EzdGFkQkFlSDJNbTRDazYxYzBHbFRLZ2NFV0NrR1hMaU83aDBfNXY0aHcwbllJamhKNTEzckhDellDcg?oc=5",
+      "published": "2026-07-02",
+      "source": "IndexBox",
+      "feed": "google_rss",
+      "query_id": "shipbuilding_demand",
+      "channel": "demand",
+      "affects_tickers": [
+        "009540",
+        "010140",
+        "042660",
+        "329180"
+      ],
+      "affects_group": "shipbuilding_supercycle",
+      "type": "global_order_demand",
+      "impact_pct": 5.0,
+      "matched_keywords": [
+        "newbuilding order"
       ]
     },
     {
@@ -3885,8 +4336,8 @@
       ]
     },
     {
-      "title": "Fed holds interest rates steady at Kevin Warsh's first FOMC meeting - qz.com",
-      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNZFFxYXNoN2Z3UElKN2JvbnpTaVlmT2hfeDN5dmNBODN6Mm9wbUpvcG5SZUlOMWViV3JfU1JBNUw5bkI5MkN0Z0ZuZkFSM1NYNGEzVURKekZuSnJ6eFBaSklHMkFjRTQ2aUFCUmdtWV95bkJlOHNMdmtuaDZNRTRVZkRFUXVrLUFj?oc=5",
+      "title": "Kevin Warsh faces rate hike pressure at first FOMC meeting - qz.com",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPRFprLUVobTN4emtDZ1pwQ05NUjB2R0tfcHpXUXpBNFNVQVZBcWpnLW9ySGtURDZuTC1MSDBpa0dlaVZDa2V5bU9ySzN0NmxjeDRJY1lZUkhEZHRFSUVCM2s2aUdpc1QtdC1fN1RRZkM4dnhMUWk1RHkxeXJaYndyVGFDOA?oc=5",
       "published": "2026-07-03",
       "source": "qz.com",
       "feed": "google_rss",
@@ -3897,14 +4348,15 @@
       "type": "global_macro_event",
       "impact_pct": 0.0,
       "matched_keywords": [
-        "FOMC"
+        "FOMC",
+        "rate hike"
       ]
     },
     {
-      "title": "Kevin Warsh faces rate hike pressure at first FOMC meeting - qz.com",
-      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPRFprLUVobTN4emtDZ1pwQ05NUjB2R0tfcHpXUXpBNFNVQVZBcWpnLW9ySGtURDZuTC1MSDBpa0dlaVZDa2V5bU9ySzN0NmxjeDRJY1lZUkhEZHRFSUVCM2s2aUdpc1QtdC1fN1RRZkM4dnhMUWk1RHkxeXJaYndyVGFDOA?oc=5",
-      "published": "2026-07-03",
-      "source": "qz.com",
+      "title": "Markets Bet on Rate Hikes While Trump Pushes for Cuts, Warsh Faces First FOMC Test - economy.ac",
+      "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE1Rc0FJd1BHMjRIbWY2SndSakxvR3JmYVhzNkRfNnA1RFdqa3daaUllWnBWbVNvOWtURF9lTEpFNDJwX2xDRVZuWXIyM3FFRkxta2h2UUtqcw?oc=5",
+      "published": "2026-07-02",
+      "source": "economy.ac",
       "feed": "google_rss",
       "query_id": "macro_fed",
       "channel": "macro",
@@ -3931,39 +4383,6 @@
       "impact_pct": 0.0,
       "matched_keywords": [
         "FOMC"
-      ]
-    },
-    {
-      "title": "Markets Bet on Rate Hikes While Trump Pushes for Cuts, Warsh Faces First FOMC Test - economy.ac",
-      "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE1Rc0FJd1BHMjRIbWY2SndSakxvR3JmYVhzNkRfNnA1RFdqa3daaUllWnBWbVNvOWtURF9lTEpFNDJwX2xDRVZuWXIyM3FFRkxta2h2UUtqcw?oc=5",
-      "published": "2026-07-02",
-      "source": "economy.ac",
-      "feed": "google_rss",
-      "query_id": "macro_fed",
-      "channel": "macro",
-      "affects_tickers": [],
-      "affects_group": null,
-      "type": "global_macro_event",
-      "impact_pct": 0.0,
-      "matched_keywords": [
-        "FOMC",
-        "rate hike"
-      ]
-    },
-    {
-      "title": "Mark your calendar: July 2026 brings Fed rate decision, Q2 earnings reports, and key economic data releases - eciks.org",
-      "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBZdHRIcjlQcGVhbUlxVUwzajd0RkRCaEJZN29EUmIwUWN4R2pGdWt5YzN0TDRmTEZ5WHRGTFNjLURVQVBjaFF4VlNFc0Q4ZGNPTWRZWTFpb1I2ejJTbXNGRF8zbFpKai1xMDBBTEV5cw?oc=5",
-      "published": "2026-07-01",
-      "source": "eciks.org",
-      "feed": "google_rss",
-      "query_id": "macro_fed",
-      "channel": "macro",
-      "affects_tickers": [],
-      "affects_group": null,
-      "type": "global_macro_event",
-      "impact_pct": 0.0,
-      "matched_keywords": [
-        "rate decision"
       ]
     },
     {
@@ -4160,6 +4579,22 @@
       ]
     },
     {
+      "title": "First FOMC Meeting Under Fed Chair Kevin Warsh: What to Expect - CryptoRank",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPOEt4NS1rUk40U044cU0xVU15N3dWMDFZUjZyZS1DS2dzdHFVSW1JeUVMSldyUW84LW9MQ0hpeEY5VVpRWFdzTkJxMm5lMmIxRHZDbzlSM2dvLXpiNHhBMjFlTzJoTWVnQ3dZV1p2RUdha2dVUW51YUtFUE9jOFMyek5KbmR5b3M4SWJRa3NoVGFaakZCdEszenJFUk1LQU9n?oc=5",
+      "published": "2026-07-01",
+      "source": "CryptoRank",
+      "feed": "google_rss",
+      "query_id": "macro_fed",
+      "channel": "macro",
+      "affects_tickers": [],
+      "affects_group": null,
+      "type": "global_macro_event",
+      "impact_pct": 0.0,
+      "matched_keywords": [
+        "FOMC"
+      ]
+    },
+    {
       "title": "Bitcoin Cross-Exchange Trading Volume Spikes 136% Ahead Of Fed Rate Cut Decision - Stocktwits",
       "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQSGw4aHBSazgtZVExVG1xYzlZYjhfVjMxUldUcG1MS2RqSUhyVk9UZEJNbFRLZERVT2w0MEctaGRfZlpiQVNxUkdVNkpzeWdqMENPYnlRTGlCQ2Q3d2x2OEcwVTN3Qk03a3RXZjY3R3lSN1pBYW5VZzVkdjdXendDMWpSZVRZWjRrNVVVTm1QY2syY0RzLXpzNFRlUnB0clpVa01YZkF6T2dDOElBcncyaXVTb1YzTHJSQWU4N0txN0V3ZWFmeDZJ?oc=5",
       "published": "2026-07-10",
@@ -4173,22 +4608,6 @@
       "impact_pct": 0.0,
       "matched_keywords": [
         "rate cut"
-      ]
-    },
-    {
-      "title": "Non-Farm Payrolls report on July 2 may sway Fed rate decision in 2026 - Crypto Briefing",
-      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNY3haQWp4ZzJaMGUxQTZrWDRWb2tLT2NyN1FPSXpLdS1vYjIyd2hzRGo3Q0ZyTGpROTE4MGpWd3g4TFRMLU1Oc0VmeklhZkQ5OUxsM2pNS0pxVXFMV1N2d3g1Q1BvTE90aFlvc3VWYzd4elQ5V244Zmdvb3hfLTZmZ0xXSVl4SDQ2U08yeUNiM1VVbTN1bWdTby1sVElxdw?oc=5",
-      "published": "2026-06-30",
-      "source": "Crypto Briefing",
-      "feed": "google_rss",
-      "query_id": "macro_fed",
-      "channel": "macro",
-      "affects_tickers": [],
-      "affects_group": null,
-      "type": "global_macro_event",
-      "impact_pct": 0.0,
-      "matched_keywords": [
-        "rate decision"
       ]
     },
     {

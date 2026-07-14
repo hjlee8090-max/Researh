@@ -312,7 +312,14 @@ def merge_findings(triggered: list[dict], today: str) -> dict:
         # 계속 open 인 기존 finding
         cur["title"], cur["detail"] = t["title"], t.get("detail")
         cur["last_seen"] = today
-        cur["weeks_seen"] = int(cur.get("weeks_seen", 1)) + 1
+        # weeks_seen 은 실행 횟수가 아니라 first_seen 기준 경과 주차 — 같은 주 중복 실행(수동
+        # dispatch 포함)에도 불변이어야 overdue 게이트가 조기/오탐 FAIL 하지 않는다
+        try:
+            _days_open = (datetime.fromisoformat(today)
+                          - datetime.fromisoformat(str(cur.get("first_seen", today))[:10])).days
+        except ValueError:
+            _days_open = 0
+        cur["weeks_seen"] = max(1, _days_open // 7 + 1)
         disp = cur.get("disposition")
         if isinstance(disp, dict):
             expire = False

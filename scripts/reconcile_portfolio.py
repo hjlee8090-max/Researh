@@ -128,6 +128,14 @@ def compare(expected: dict, portfolio: dict) -> list[str]:
             f"realized_pnl 불일치: trade_log 기준 {expected['realized_pnl']:+,.0f} vs portfolio {actual_pnl:+,.0f}"
         )
 
+    # docstring 이 약속해 온 trade_count 대사 — 그동안 계산만 하고 비교하지 않아
+    # 2026-07-06 SELL_TRAILING_STOP 미반영(21 vs 22)이 무탐지로 지나갔다 (2026-07-08 보강)
+    actual_count = int(num(portfolio.get("trade_count")))
+    if expected["trade_count"] != actual_count:
+        issues.append(
+            f"trade_count 불일치: trade_log 기준 {expected['trade_count']} vs portfolio.trade_count {actual_count}"
+        )
+
     return issues
 
 

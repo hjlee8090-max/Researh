@@ -37,7 +37,8 @@ def check_inference_log(tail: int, violations: list[str]) -> int:
     if not path.exists():
         return 0
     lines = path.read_text(encoding="utf-8").splitlines()
-    start = max(0, len(lines) - tail)
+    # tail<=0 = 전 라인 스캔. 기본 창 30줄일 때 L1~창밖 라인은 영구 무검사였다(2026-07-08 보강).
+    start = max(0, len(lines) - tail) if tail > 0 else 0
     checked = 0
     for offset, raw in enumerate(lines[start:], start=start + 1):
         raw = raw.strip()
@@ -53,10 +54,22 @@ def check_inference_log(tail: int, violations: list[str]) -> int:
             violations.append(f"inference_log L{offset}: 객체 아님")
             continue
         if "prediction" in entry:
-            missing = [k for k in PREDICTION_REQUIRED if k not in entry]
+            # 키 존재만 보면 null 이 "정상"으로 통과한다 — 과거 WARN 라인이 confidence:null
+            # "보정"으로 검사를 우회한 실사례가 있어 값 검증을 추가 (2026-07-08).
+            missing = [k for k in PREDICTION_REQUIRED if entry.get(k) in (None, "")]
             if missing:
                 violations.append(
-                    f"inference_log L{offset}(예측 {entry.get('id', '?')}): 필수 필드 누락 {','.join(missing)} — 채점 스킵 위험"
+                    f"inference_log L{offset}(예측 {entry.get('id', '?')}): 필수 필드 누락/null {','.join(missing)} — 채점 스킵 위험"
+                )
+            conf = entry.get("confidence")
+            if isinstance(conf, (int, float)) and not isinstance(conf, bool):
+                if not 0 <= float(conf) <= 1:
+                    violations.append(
+                        f"inference_log L{offset}(예측 {entry.get('id', '?')}): confidence={conf} 범위 밖(0~1)"
+                    )
+            elif isinstance(conf, str) and conf not in ("low", "medium", "high"):
+                violations.append(
+                    f"inference_log L{offset}(예측 {entry.get('id', '?')}): confidence={conf!r} — 수치(0~1) 또는 low/medium/high 만 허용"
                 )
         elif "outcome" in entry:
             missing = [k for k in OUTCOME_REQUIRED if k not in entry]
@@ -88,11 +101,24 @@ def check_pending_orders(violations: list[str]) -> int:
         if not isinstance(order, dict):
             violations.append(f"pending_orders[{idx}]: 객체 아님")
             continue
-        missing = [k for k in ORDER_REQUIRED if k not in order]
+        oid = order.get("id", f"[{idx}]")
+        missing = [k for k in ORDER_REQUIRED if order.get(k) in (None, "")]
         if missing:
-            violations.append(
-                f"pending_orders {order.get('id', f'[{idx}]')}: 필수 필드 누락 {','.join(missing)}"
-            )
+            violations.append(f"pending_orders {oid}: 필수 필드 누락/null {','.join(missing)}")
+            continue
+        if order.get("status") not in ("active", "filled", "expired", "cancelled"):
+            violations.append(f"pending_orders {oid}: status={order.get('status')!r} — enum(active/filled/expired/cancelled) 밖")
+        trig = order.get("trigger")
+        if not isinstance(trig, dict) or not isinstance(trig.get("value"), (int, float)) or isinstance(trig.get("value"), bool):
+            violations.append(f"pending_orders {oid}: trigger.value 가 수치가 아님 — 장중 트리거 평가 불가")
+        vu = str(order.get("valid_until") or "")
+        if vu:
+            try:
+                parsed = datetime.fromisoformat(vu)
+                if parsed.tzinfo is None:
+                    violations.append(f"pending_orders {oid}: valid_until 타임존 누락(naive) — check_intraday_alerts 비교 크래시 위험")
+            except ValueError:
+                violations.append(f"pending_orders {oid}: valid_until={vu!r} ISO 파싱 불가")
     return len(orders)
 
 
@@ -118,7 +144,7 @@ def check_weekly_plan(violations: list[str]) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description="state 스키마 검증 (관측 전용)")
     parser.add_argument("--strict", action="store_true", help="위반 발견 시 종료 코드 1")
-    parser.add_argument("--tail", type=int, default=30, help="inference_log 검사 라인 수 (기본 최근 30줄)")
+    parser.add_argument("--tail", type=int, default=0, help="inference_log 검사 라인 수 (기본 0=전 라인 — 파일이 작아 전수 스캔 비용 무시 가능)")
     args = parser.parse_args()
 
     violations: list[str] = []

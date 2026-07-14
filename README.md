@@ -1,6 +1,6 @@
 # KOSPI 자기보완형 주식 오토플로우
 
-500만원 가상 포트폴리오로 KOSPI 대형주 3종목을 중장기 운용하는 시뮬레이션 파이프라인.
+500만원 가상 포트폴리오로 KOSPI 대형주 최대 6종목(`policy.position_sizing.max_positions`)을 중장기 운용하는 시뮬레이션 파이프라인.
 매일 여러 번(00/06/09/12/15/18시) 자동으로 뉴스를 조사하고 의사결정을 갱신하며,
 18시에 목표가 오차를 분석해 다음날 추천에 반영하는 **자기보완 루프**를 갖는다.
 
@@ -12,15 +12,15 @@
 - **목표 수익**: 종목당 +10%
 - **손절선**: 종목당 -10%
 - **섹터**: 제한 없음
-- **포트폴리오**: 500만원, 종목당 최대 30%, 현금 최소 10%
-- **거래비용**: 슬리피지 0.2% + 거래세 0.18% (시뮬레이션)
+- **포트폴리오**: 500만원, 최대 6종목(`policy.position_sizing.max_positions`), 종목당 최대 35%(`max_position_weight_pct`), 현금 최소 5%(`min_cash_weight_pct`)
+- **거래비용**: 슬리피지 0.2% + 거래세 0.18%(매도) + 수수료 0.015% (`policy.trading_cost`, 시뮬레이션)
 
 ## 디렉토리
 ```
 config/
   policy.json              정책 파라미터 (목표/손절/비중)
   portfolio.json           현금·보유종목·평가금액
-  watchlist.json           현재 추천 3종목 + 진입가·목표가·손절가·코멘트
+  watchlist.json           현재 추천 종목(최대 6종목 — policy.position_sizing.max_positions) + 진입가·목표가·손절가·코멘트
   weekly_plan.json         이번 주 thesis·watch_items·invalidation_triggers
   candidates.json          신규 진입 후보 목록 (fetch_market_data가 5거래일 추세 자동 수집 대상)
   universe.json            (v2.7) 신규 진입 후보의 모집단 — screen_universe.py가 상대강도+테마로 랭킹·승격/회전아웃 제안
@@ -43,9 +43,10 @@ state/
   portfolio_history.jsonl  일일 equity 스냅샷 전체 이력 (config/portfolio.json 엔 최근 10개만)
   ratchet_shadow.json      (v2.20) 본전 래칫 스톱 그림자 관측 — track_ratchet_shadow.py 가 18시 종가 기준 stage·가상 breach·해방가능 heat 기록 (관측 전용, 체결 없음)
   ratchet_shadow_scorecard.json score_ratchet_shadow.py 채점 — 가상 breach 의 t+1/t+5 반사실 손익·noise율·실제 청산 대비 보호액 (일 20시 policy_review §1-8 승격 심사 입력)
-  market_snapshot.json     (gitignored) 매 routine마다 fetch_market_data.py가 생성하는 다중출처 가격·5일추세 스냅샷
+  market_snapshot.json     fetch_market_data.py가 생성하는 다중출처 가격·5일추세 스냅샷 — GitHub Actions(fetch_prices.yml)가 수집·커밋해 추적됨(웹 세션 routine 의 1순위 출처)
 reports/
   YYYY-MM-DD-00.md         🌙 자정 글로벌 야간 리포트
+  YYYY-MM-DD-06.md         🌄 미국장 마감 확정 리포트 (발화 06:30)
   YYYY-MM-DD-09.md         🌅 개장 점검 리포트
   YYYY-MM-DD-12.md         🕛 장중 점검 리포트
   YYYY-MM-DD-15.md         🔔 마감 임박 점검 리포트
@@ -56,6 +57,7 @@ reports/
   YYYY-Www-archive.md      일요일 21시 — 지난주 평일 30개 파일을 1개로 응축
 prompts/
   0000_global.md           자정 글로벌 야간 점검
+  0630_us_close.md         06시 미국장 마감 확정 (발화 06:30)
   0900_pre_market.md       09시 개장 점검
   1200_midday.md           12시 장중 점검
   1500_close.md            15시 마감 임박
@@ -89,6 +91,7 @@ scripts/
   backtest_target_model.py 목표주가 추정식 백테스트 — 충격-감쇠·이벤트 스터디·워크포워드 검증, v1.0 vs v1.1 비교 → state/backtest_target_model.json
   screen_universe.py       (v2.7/2.8) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 + 섹터별 몰입(sector_rotation·avoid_reentry) → state/universe_screen.json
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
+  sync_watchlist.py        (2026-07-08 신설) watchlist 보유 종목 필드(shares_held·stop/target)를 portfolio·exit_levels 정본과 동기화 (18시 EOD·수동, 멱등·--dry-run)
   build_lessons_index.py   lessons.md 분류·룰 자동 인덱싱 → sunday_policy_review 1차 입력 (선제 추론 루프 위해 '다음 추론 시 고려' 라벨도 캡처)
   score_inferences.py      (선제 추론 루프) 예측 vs 실측 채점 — rule_attribution 손익 결합 → state/inference_scorecard.json (18시·일 20시)
   build_inference_checklist.py (선제 추론 루프) lessons+scorecard → state/inference_checklist.md 응축(상한 40줄) — 다음 추론 직전 입력

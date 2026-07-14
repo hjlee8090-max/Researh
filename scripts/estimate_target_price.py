@@ -747,7 +747,9 @@ def build_entry_cap_line(r: dict) -> str:
 
 def build_report_section(rows: list[dict], as_of: str) -> str:
     lines = [
-        "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (estimate_target_price v1.5 — 직전 리포트 대비 변동)",
+        # 버전 토큰(vX.Y)은 리포트 계약 §3 금지 항목 — 프롬프트가 이 섹션을 그대로 붙여넣으므로
+        # 헤더에 넣으면 매일 계약 위반이 재생산된다(2026-07-08 제거). 버전은 JSON "model" 필드에만.
+        "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)",
         "",
         f"- 기준 시각: {as_of} · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)",
         "- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).",
@@ -852,6 +854,12 @@ def main() -> int:
         if isinstance(s, dict) and s.get("ticker") and (s.get("shares_held") or 0) > 0:
             by_ticker.setdefault(s["ticker"], {"ticker": s["ticker"], "name": s.get("name", ""),
                                                "sector": s.get("sector"), "theme_exposure": None})
+    # 보유 정본은 portfolio.positions — watchlist.shares_held 결측(null) 시 보유 종목이
+    # 추정 레이어에서 통째로 빠지던 구멍을 닫는다 (2026-07-08 보강)
+    for p in load_json("config/portfolio.json", {}).get("positions", []):
+        if isinstance(p, dict) and p.get("ticker") and (p.get("shares") or 0) > 0:
+            by_ticker.setdefault(p["ticker"], {"ticker": p["ticker"], "name": p.get("name", ""),
+                                               "sector": None, "theme_exposure": None})
 
     results: list[dict] = []
     for ticker, info in by_ticker.items():
@@ -1066,6 +1074,11 @@ def main() -> int:
     }
     OUT_PATH.parent.mkdir(exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # 핫패스 분리(2026-07-08) — 12/15/18시는 report_section_md 만 필요한데 110KB JSON 전체를
+    # 읽어야 했다. 섹션만 담은 경량 md 를 병행 산출한다(JSON 은 하위호환 유지).
+    (ROOT / "state" / "target_estimate_report.md").write_text(
+        out["report_section_md"] + "\n", encoding="utf-8"
+    )
 
     # v1.4 — 추정 스냅샷 로그(jsonl 누적). score_target_estimates.py 가 '추정 vs 실현' 주간
     # 채점에 사용한다. 하루 여러 번 실행돼도 행만 쌓이고, 채점기는 날짜별 마지막 행을 쓴다.

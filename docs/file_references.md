@@ -1,4 +1,4 @@
-# 파일 참조 구조 점검 (2026-06-12 갱신)
+# 파일 참조 구조 점검 (2026-07-08 갱신)
 
 이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
 시간대별 리포트 분리 + 시장 데이터 자동 수집 + 휴장일 가드 작업 이후 갱신.
@@ -123,28 +123,39 @@
 - `state/lessons.md` (필요 시)
 
 ### 🕛 12:00 장중 (`prompts/1200_midday.md`)
+**실행 (0-B)**: `fetch_market_data.py` → `state/market_snapshot.json`, `estimate_target_price.py` → `state/target_estimate.json`, `compute_allocation.py` → `state/allocation.json`, `check_intraday_alerts.py` 직접 실행(pending_orders 트리거·장중 터치 재산출 — gitignored 파일 읽기 의존 금지) → `state/intraday_alert.json`. 매매 booking 직전 §1-PRE: `pre_trade_check.py` (+ fetch/score_candidates/compute_allocation 재실행).
+
 **읽기**:
 - `state/lessons.md`
 - `config/*` 4개
-- 오늘 09시 파일: `reports/YYYY-MM-DD-09.md`
+- `state/market_snapshot.json` (0-B 갱신 — 가격·신뢰도 1순위), `state/allocation.json`(신선도·deploy 판단), `state/target_estimate.json` (§6 뉴스 반영 매매가 표)
+- `state/exit_levels.json` — **09시 산출본 인용만**(12시는 compute_exit_levels 재실행·손계산 금지, 안건⑦)
+- `state/pending_orders.json` (check_intraday_alerts 입력), `state/inference_checklist.md` (§2-2 예측 전 필독)
+- 오늘 09시 파일: `reports/YYYY-MM-DD-09.md` (없으면 `-06.md` → `-00.md` 순 대체)
 - 오늘 자정 파일: `reports/YYYY-MM-DD-00.md` (참고)
 
 **쓰기**:
 - `reports/YYYY-MM-DD-12.md` (신규 생성)
 - `config/watchlist.json`, `config/portfolio.json`
+- `state/inference_log.jsonl` (오후장 예측 1건+ append — `slot:"12:00"`·`horizon:"15:00"`)
 - `state/trade_log.jsonl`, `state/lessons.md` (orange/red 발생 시)
 
 ### 🔔 15:00 마감 임박 (`prompts/1500_close.md`)
+**실행 (0-B)**: `fetch_market_data.py` → `state/market_snapshot.json`, `estimate_target_price.py` → `state/target_estimate.json`, `compute_allocation.py` → `state/allocation.json`, `compute_exit_levels.py` → `state/exit_levels.json`(트레일/손절/목표 단일 소스 — 손계산·직전 리포트 이월 금지), 직후 `sync_pending_orders.py`(트레일링 SELL 트리거값 동기화 — 안건②) + `check_intraday_alerts.py` 직접 실행(장중 터치 → "종가 확인 대기" 명기). booking 시 §0-C: `pre_trade_check.py` (+ 재동기화 재실행).
+
 **읽기**:
 - `state/lessons.md`
-- `config/*` 4개
+- `config/*` 4개 + `config/catalysts.json` (옵셔널 — 익일 임박 촉매 D-3)
+- `state/market_snapshot.json`, `state/allocation.json`, `state/exit_levels.json`, `state/target_estimate.json`(§3 델타 행만), `state/fundamentals.json`(earnings_signal), `state/inference_checklist.md` (§2-1 필독)
 - 오늘 12시 파일: `reports/YYYY-MM-DD-12.md`
-- 오늘 09시 파일: `reports/YYYY-MM-DD-09.md` (참고)
+- 오늘 09시 파일: `reports/YYYY-MM-DD-09.md` (참고, 09/12 둘 다 없으면 `-06.md` → `-00.md` 순 대체)
 
 **쓰기**:
 - `reports/YYYY-MM-DD-15.md` (신규 생성)
-- `config/watchlist.json`, `config/weekly_plan.json` (watch_items 갱신)
-- ※ 매매 체결은 권유하지 않음. 익일 09시 후보만 표시.
+- `config/watchlist.json`, `config/weekly_plan.json` (watch_items 갱신 — 최대 15개)
+- `state/exit_levels.json`·`state/pending_orders.json` (0-B 스크립트 산출·동기화)
+- `state/inference_log.jsonl` (12시 예측 채점 append + 종가·익일 예측 1건+ append — `slot:"15:00"`·`horizon:"18:00"`)
+- ※ 매매 체결은 원칙적으로 익일 09시 이연·후보 표시만. 예외(§0-B v2.2 deploy 신규 진입·손절 청산)는 §0-C 게이트 통과 후 `state/trade_log.jsonl` append.
 
 ### 📊 18:00 종합·확정 (`prompts/1800_report.md`)
 **읽기**:
@@ -238,7 +249,7 @@
 
 ### `scripts/score_candidates.py` (신규)
 - 읽기: `config/candidates.json`, `config/weekly_plan.json`, `state/market_snapshot.json`, `config/policy.json`
-- 쓰기: `state/candidate_scores.json` (gitignored)
+- 쓰기: `state/candidate_scores.json` (GitHub Actions `fetch_prices.yml` 가 수집·커밋 — **추적됨**, gitignore 대상 아님)
 - 09시 routine 0-B 단계에서 `fetch_market_data.py` 직후 호출. 후보 점수·진입 가능 여부 랭킹.
 
 ### `scripts/screen_universe.py` (신규 v2.7 — 종목 탐색)
@@ -298,6 +309,45 @@
 - 실행: 일요일 21시 `sunday_archive` §0-2 (commit 범위에 config/state/docs 포함) + 수동. 멱등, `--dry-run` 지원.
 - 원칙: 학습 재료 삭제 없음(이관만) · 청산 종목 candidates 자동 재등록 금지(재발굴은 universe→screen_universe) · 보존 개수는 `policy.context_budget.retention`.
 
+### `scripts/estimate_target_price.py` (목표주가 추정 레이어 v1.x)
+- 읽기: `config/valuation.json`·`state/consensus.json`(기준가), `config/themes.json`·`config/news_impact.json`·`config/news_keywords.json`·`config/catalysts.json`·`state/news_feed.json`(테마·뉴스/촉매 프리미엄), `state/universe_screen.json`(섹터), `state/market_snapshot.json`·`state/price_history.json`(추세 게이트·기반영 차감), `config/watchlist.json`·`config/candidates.json`·`config/portfolio.json`·`config/policy.json`, 참고 `state/fundamentals.json`·`state/valuation_check.json`
+- 쓰기: `state/target_estimate.json`(목표 매도가+신규진입 상한가·report_section_md) + `state/target_estimate_log.jsonl`(매 실행 스냅샷 append — score_target_estimates 채점 입력)
+- 실행: `fetch_prices.yml` 매 수집 + 12/15시 routine 0-B. watchlist target_price 를 덮어쓰지 않는 참고 레이어.
+
+### `scripts/fetch_valuation.py` (v1.1 — 밸류에이션 시드)
+- 읽기: DART OpenAPI(fnlttSinglAcnt, 환경변수 `DART_API_KEY`)·`state/price_history.json`·네이버 PBR — 분기 BPS·TTM EPS 시계열로 진짜 PER/PBR 5년 밴드 산출(키·이력 부족 시 가격분포 근사 폴백, band_quality 구분)
+- 쓰기: `config/valuation.json` (기존 값의 source_date 가 더 최신이면 보존 — sunday_strategy 주간 시드가 1차 책임, 이 스크립트는 백스톱)
+- 실행: `fetch_valuation.yml` 주 1회(일 07:00 KST) + 수동.
+
+### `scripts/check_valuation_guard.py` (v2.11 — 목표가 천장·과열 가드)
+- 읽기: `config/valuation.json`, `config/watchlist.json`(보유 target_price), `state/market_snapshot.json`(현재가)
+- 쓰기: `state/valuation_check.json` — 종목별 verdict(ok/cap_target/overheat_entry/deep_value/skip). 소비처: 0900 §2·1800 §2-2 목표가 캡, `score_candidates` valuation_tilt(±0.03), `estimate_target_price` 천장 캡.
+
+### `scripts/fetch_fundamentals.py` (IR/펀더멘털 레이어)
+- 읽기: DART OpenAPI(환경변수 `DART_API_KEY`), `config/portfolio.json`·`config/candidates.json`·`config/universe.json` 종목 풀 — 최신 분기 주요계정(매출·영업이익·순이익·earnings_signal). 키·네트워크 없으면 직전본 보존+stale(비치명적)
+- 쓰기: `state/fundamentals.json` (+ gitignored 캐시 `state/dart_corpcodes.json`)
+- 실행: `fetch_fundamentals.yml` 주 1회(일 07:00 KST). 데일리 routine 은 산출물을 확신·검증 레이어로 소비(타이밍 신호 아님).
+
+### `scripts/sync_pending_orders.py` (신규 v2.21 안건② — 트리거값 동기화)
+- 읽기: `state/exit_levels.json`, `state/pending_orders.json`
+- 쓰기: `state/pending_orders.json` in-place — active·SELL·트레일링 계열(trailing_first/trailing_residual/chandelier) 사전주문의 trigger.value 를 exit_levels 산출값으로 갱신(고정값 표류 제거, 목표가·BUY 는 대상 아님)
+- 실행 슬롯: 09시(compute_exit_levels 직후)·15시(v2.22 ⑥)·18시(EOD 갱신 직후).
+
+### `scripts/update_exit_tracking.py` (신규 v2.22 ⑩ — 보유 종가 영속 적재)
+- 읽기: `config/portfolio.json`, `state/market_snapshot.json`(five_day_history 일자별 bar)
+- 쓰기: `state/exit_tracking.json` — 보유 종목 일별 확정 종가 append(기존 (ticker,date) 불변·confidence=low 는 당일 보류). compute_exit_levels 의 '진입 이후 최고 종가'가 6일 창 폴백에 갇히던 제약 해소
+- 실행: 18시 EOD — `fetch_market_data` 직후·`compute_exit_levels` 직전.
+
+### `scripts/self_audit.py` (신규 v2.22 ⑥ — 주간 자기감사)
+- 읽기: `state/trade_log.jsonl`·`config/portfolio.json`·`state/rule_attribution.json`·`state/price_history.json` 등 (+ `reconcile_portfolio`·`check_trade_log_gate` 재사용) — 원장 정합·PF·vs KOSPI 격차·스톱 휩쏘율·게이트 위반·패치 vs 검증 속도·배치·청산 오버레이 A~H 재측정
+- 쓰기: `state/self_audit.json`(히스토리), `state/self_audit_findings.json`(finding 수명·처분), `reports/YYYY-MM-DD-self-audit.md`
+- 실행: `weekly_self_audit.yml` 일 17:00 KST. `sunday_policy_review` §0-0 이 의무 인용·disposition 기입, `--followup-only`+`AUDIT_ENFORCE=1` 에서 무처분 2주+ overdue 존재 시 exit 1(워크플로 FAIL).
+
+### `scripts/sync_watchlist.py` (신규 2026-07-08 — watchlist 정본 동기화)
+- 읽기: `config/portfolio.json`(보유 정본), `state/exit_levels.json`(청산선 정본)
+- 쓰기: `config/watchlist.json` — 보유 종목의 shares_held·stop_price·target_price 를 정본 값으로 덮어쓰고 status="held" 보장(watchlist 가 폐기된 '제3값'을 들고 있던 B-1/B-2 드리프트 해소). portfolio 에 없는 held 종목은 shares_held=0+경고만(이관은 compact_state 소관)
+- 실행: 18시 EOD(확정 후) + 정합성 이슈 발견 시 수동. 멱등·`--dry-run`.
+
 ### `scripts/write_audit_report.py`
 - 읽기: `config/policy.json`, `config/portfolio.json`, `config/weekly_plan.json`, `audit_pipeline.py` stdout
 - 쓰기: `reports/YYYY-MM-DD-audit.md`, `state/audit_log.jsonl`, `config/weekly_plan.json` (자동 수정 항목)
@@ -305,7 +355,7 @@
 ### `scripts/build_html.py`
 - 읽기: `reports/*.md` (모두), `config/portfolio.json`, `templates/*`
 - 쓰기: `_site/*.html`, `_site/style.css`
-- 인덱스 페이지는 일일 리포트를 **날짜별로 그룹핑** 해서 5칸 슬롯 카드로 표시 (시간대별 분리 인지)
+- 인덱스 페이지는 일일 리포트를 **날짜별로 그룹핑** 해서 6칸 슬롯 카드(`STD_SLOTS` = 00/06/09/12/15/18)로 표시 (시간대별 분리 인지)
 
 ### `scripts/send_kakao.py`
 - **발송 가드 3종 (2026-06-12 — 오발송 사고 재발 방지)**:
@@ -358,7 +408,7 @@
 - [ ] 각 파일의 첫 줄(`# 일일 리포트 — ... · 슬롯명`) 이 자기 슬롯과 일치하는가?
 - [ ] "시리즈 진행" 줄의 ✓ 표시가 자기 시간대만 ✓ / 나머지는 "대기" 또는 "✓"(이전 시간대) 인가?
 - [ ] 이전 시간대 파일 링크가 깨지지 않았는가?
-- [ ] `## ⚠️ 위험·매매 시그널 시각화` / `## 🎓 학습 포인트 3개` / `## 📖 오늘 등장한 용어` 세 섹션이 들어 있는가?
+- [ ] `## ⚠️ 위험·매매 시그널 시각화` / `## 🎓 오늘의 학습 노트` 두 섹션이 들어 있는가? (구버전 "🎓 학습 포인트 3개"·"📖 오늘 등장한 용어"는 "🎓 오늘의 학습 노트"로 통합)
 - [ ] 일요일 21:00 archive 가 매주 생성되어 평일 routine 콘텍스트가 한 주치 응축으로 유지되는가?
 - [ ] (신규) `state/market_snapshot.json` 의 `as_of` 가 최신 routine 시각과 일치하는가? 보유종목 `confidence` 가 모두 `low` 면 출처 차단 신호.
 - [ ] (신규) 오늘이 휴장일이면 `check_market_open.py` 결과대로 routine 이 축약 모드로 진행됐는가?

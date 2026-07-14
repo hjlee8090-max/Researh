@@ -166,11 +166,15 @@ def run_audit() -> tuple[str, list[str], int]:
     return output, lines, proc.returncode
 
 
-def classify(lines: list[str]) -> tuple[str, int, int, int]:
+def classify(lines: list[str], returncode: int = 0) -> tuple[str, int, int, int]:
     fail = sum(1 for line in lines if line.startswith("[FAIL]"))
     warn = sum(1 for line in lines if line.startswith("[WARN]"))
     ok = sum(1 for line in lines if line.startswith("[OK]"))
-    if fail:
+    # 감사 스크립트가 크래시하면 태그 라인이 0개가 되어 "OK"로 위장된다 —
+    # returncode 비정상 또는 검사 결과 전무는 정상이 아니라 ERROR 다
+    if ok + warn + fail == 0 or (returncode != 0 and not fail):
+        status = "ERROR"
+    elif fail:
         status = "FAIL"
     elif warn:
         status = "WARN"
@@ -184,6 +188,7 @@ def status_label(status: str) -> str:
         "OK": "정상 - 자동화가 다음 루틴을 진행할 수 있습니다.",
         "WARN": "주의 - 루틴은 돌 수 있지만 확인하면 좋은 항목이 있습니다.",
         "FAIL": "문제 - 다음 루틴 전에 손봐야 할 항목이 있습니다.",
+        "ERROR": "감사 실패 - 점검 스크립트 자체가 비정상 종료되어 오늘 파이프라인 상태를 확인하지 못했습니다. 상세 로그를 확인해야 합니다.",
     }.get(status, status)
 
 
@@ -272,8 +277,8 @@ def load_weekly_snapshot() -> dict[str, Any]:
         return {}
 
 
-def build_report(now: datetime, fixes: list[str], output: str, lines: list[str]) -> tuple[str, dict[str, Any]]:
-    status, ok, warn, fail = classify(lines)
+def build_report(now: datetime, fixes: list[str], output: str, lines: list[str], returncode: int = 0) -> tuple[str, dict[str, Any]]:
+    status, ok, warn, fail = classify(lines, returncode)
     snapshot = load_weekly_snapshot()
     important = [line for line in lines if line.startswith("[FAIL]") or line.startswith("[WARN]") or line.startswith("[INFO]")]
     remaining = [line for line in lines if line.startswith("[FAIL]") or line.startswith("[WARN]")]
@@ -342,7 +347,9 @@ def build_report(now: datetime, fixes: list[str], output: str, lines: list[str])
             "## 다음 액션",
         ]
     )
-    if fail:
+    if status == "ERROR":
+        body.append("- 감사 스크립트가 비정상 종료되어 오늘 점검이 수행되지 않았습니다. 위 상세 로그의 에러를 먼저 고쳐야 합니다.")
+    elif fail:
         body.append("- 문제 항목이 있어 다음 루틴 전에 설정 파일이나 자동화 연결을 수정해야 합니다.")
     elif warn:
         body.append("- 루틴은 계속 돌 수 있습니다. 주의사항이 반복되면 자동 수정 범위를 넓히거나 원인을 따로 고칩니다.")
@@ -364,13 +371,13 @@ def build_report(now: datetime, fixes: list[str], output: str, lines: list[str])
 def main() -> int:
     now = datetime.now(KST)
     fixes = auto_fix_weekly_plan(now)
-    output, lines, _ = run_audit()
+    output, lines, returncode = run_audit()
 
     reports_dir = ROOT / "reports"
     reports_dir.mkdir(exist_ok=True)
     report_path = reports_dir / f"{now.strftime('%Y-%m-%d')}-audit.md"
 
-    report, log = build_report(now, fixes, output, lines)
+    report, log = build_report(now, fixes, output, lines, returncode)
     report_path.write_text(report, encoding="utf-8")
 
     log_path = ROOT / "state" / "audit_log.jsonl"
@@ -379,7 +386,7 @@ def main() -> int:
         f.write(json.dumps(log, ensure_ascii=False) + "\n")
 
     print(f"wrote {report_path.relative_to(ROOT)} status={log['status']} auto_fixed={log['auto_fixed']}")
-    return 1 if log["fail"] else 0
+    return 1 if (log["fail"] or log["status"] == "ERROR") else 0
 
 
 if __name__ == "__main__":

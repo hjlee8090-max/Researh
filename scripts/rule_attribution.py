@@ -331,7 +331,16 @@ def update_exit_tracking(track: dict, trips: list[dict], snapshot: dict) -> dict
                 last_date = max(last_date or "", s["last_date"])
         lc = _num(ts.get("last_close"))
         if last_date and lc:
-            tickers.setdefault(t, {})[last_date] = lc
+            day = tickers.setdefault(t, {})
+            # EOD 정본은 update_exit_tracking(18시) — 여기서 기존 값을 덮어쓰면 장중 실행 시
+            # 장중가가 "확정 종가"를 오염시키고, update_exit_tracking 은 기존 값 불변 원칙이라
+            # 영구 정정 불가 (2026-07-08 정밀 검사 C-1). 신규 날짜도 당일 장중(15:40 이전)이면
+            # 미확정 가격이므로 적재하지 않는다.
+            now = datetime.now(KST)
+            is_today = last_date == now.strftime("%Y-%m-%d")
+            intraday = is_today and now.strftime("%H:%M") < "15:40"
+            if last_date not in day and not intraday:
+                day[last_date] = lc
     track["as_of"] = datetime.now(KST).isoformat(timespec="seconds")
     track["exited_tickers"] = sorted(exited)
     return track

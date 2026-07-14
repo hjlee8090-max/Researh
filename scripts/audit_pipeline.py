@@ -364,7 +364,15 @@ def audit_thesis(data: dict[str, object], messages: list[str]) -> None:
     type_enum = set(cfg.get("invalidation_type_enum", ["매크로", "섹터", "개별", "가정오류"]))
     status_enum = set(cfg.get("status_enum", ["intact", "weakening", "invalidated"]))
     stocks = [s for s in watchlist.get("stocks", []) if isinstance(s, dict)]
-    held = [s for s in stocks if (s.get("shares_held") or 0) > 0]
+    # 보유 정본은 portfolio.positions — watchlist.shares_held 결측(null) 시 보유 종목을
+    # 미보유로 오판해 thesis 누락 검사가 통째로 침묵하던 구멍 보강 (2026-07-08)
+    portfolio = data.get("config/portfolio.json") or {}
+    held_tickers = {
+        p.get("ticker")
+        for p in (portfolio.get("positions", []) if isinstance(portfolio, dict) else [])
+        if isinstance(p, dict) and (p.get("shares") or 0) > 0
+    }
+    held = [s for s in stocks if (s.get("shares_held") or 0) > 0 or s.get("ticker") in held_tickers]
     with_thesis = [s for s in stocks if isinstance(s.get("thesis"), dict)]
     problems: list[str] = []
     for s in with_thesis:
@@ -408,9 +416,17 @@ def audit_target_consensus(data: dict[str, object], messages: list[str]) -> None
         cons = json.loads(cons_path.read_text(encoding="utf-8")).get("tickers", {})
     except Exception:  # noqa: BLE001
         return
+    portfolio = data.get("config/portfolio.json") or {}
+    held_tickers = {
+        p.get("ticker")
+        for p in (portfolio.get("positions", []) if isinstance(portfolio, dict) else [])
+        if isinstance(p, dict) and (p.get("shares") or 0) > 0
+    }
     over: list[str] = []
     for s in watchlist.get("stocks", []):
-        if not isinstance(s, dict) or (s.get("shares_held") or 0) <= 0:
+        if not isinstance(s, dict):
+            continue
+        if (s.get("shares_held") or 0) <= 0 and s.get("ticker") not in held_tickers:
             continue
         our = s.get("target_price")
         c = cons.get(s.get("ticker"), {})
@@ -860,6 +876,23 @@ def audit_slot_matrix(messages: list[str]) -> None:
     if missing_06:
         messages.append(result("INFO", "06시 리포트 부재(시행 초기 관찰 — 2주 후 WARN 승격 예정): " + ", ".join(missing_06)))
 
+    # 주간 아카이브 상시 점검 — 7일 창 밖으로 밀려나면 영구 실종 처리되던 사각지대 보강.
+    # W24~W26 3주 연속 사망을 이 함수가 존재하고도 W27 하나만 반복 경고하던 실사례(2026-07-08).
+    sundays = [today - timedelta(days=back) for back in range(1, 36)
+               if (today - timedelta(days=back)).weekday() == 6][:5]
+    missing_archives = []
+    for d in sundays:
+        iso = d.isocalendar()
+        archive_name = f"{iso[0]}-W{iso[1]:02d}-archive.md"
+        if not (reports_dir / archive_name).exists():
+            missing_archives.append(f"{archive_name}(일요일 {d.isoformat()})")
+    if missing_archives:
+        messages.append(result(
+            "WARN",
+            "주간 아카이브 누락(최근 5주 상시 점검): " + ", ".join(missing_archives)
+            + " — 소급 생성 또는 일 21시 아카이브 루틴 등록 상태 확인",
+        ))
+
 
 def audit_state_schema(messages: list[str]) -> None:
     """LLM 이 손으로 쓰는 state 파일의 스키마 검증 (plan_hourly_report_gap_fix Phase 1-5).
@@ -964,7 +997,10 @@ def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
     if over:
         messages.append(result(
             "WARN",
-            "핫패스 콘텍스트 예산 초과 — scripts/compact_state.py 실행 필요: " + "; ".join(over),
+            "핫패스 콘텍스트 예산 초과: " + "; ".join(over)
+            + " — 처방: watchlist/watch_items/history/lessons 갱신체인은 compact_state.py, "
+            "lessons 본문은 ✅codify 이관(sunday_policy_review §1-6), policy.json 은 note 산문의 "
+            "docs/policy_changelog.md 이관 검토(자동 압축기 없음 — 수동)",
         ))
     else:
         messages.append(result("OK", "핫패스 콘텍스트 예산(watchlist/policy/weekly_plan/lessons/history) 정상"))
@@ -1079,18 +1115,33 @@ def audit_github_notify(messages: list[str]) -> None:
             ))
         elif not fails:
             messages.append(result("OK", "어제 슬롯 발송 원장 대사 일치"))
-    # 토큰 로테이션 D-7 경보 — refresh_token 60일 유효, 마지막 로테이션 53일 경과 시 교체 촉구
-    refreshes = [str(e.get("ts", ""))[:10] for e in entries if e.get("event") == "token_refresh"]
-    if refreshes:
-        last = max(refreshes)
+    # 토큰 만료 경보 v2 (2026-07-08) — 카카오는 만료 30일 전부터 "매 갱신 호출마다" 새 토큰을
+    # 반환하므로 token_refresh 가 매일 찍혀 구버전 "마지막 로테이션 53일 경과" 조건은 영원히
+    # 미충족이었다(구조적 무경보). 새 판정: 최근 token_refresh 신호가 살아 있으면 사용 중인
+    # Secret 이 만료 30일 창 안이라는 뜻 — 같은 token_sha 의 첫 신호일 기준으로 잔여일을 추정한다.
+    refresh_events = [e for e in entries if e.get("event") == "token_refresh"]
+    if refresh_events:
+        def _day(e: dict) -> str:
+            return str(e.get("ts", ""))[:10]
+        last_e = max(refresh_events, key=_day)
         try:
-            age = (datetime.now(KST).date() - datetime.strptime(last, "%Y-%m-%d").date()).days
+            age_since_last = (datetime.now(KST).date() - datetime.strptime(_day(last_e), "%Y-%m-%d").date()).days
         except ValueError:
-            age = -1
-        if age >= 53:
+            age_since_last = 999
+        if age_since_last <= 3:  # 신호가 계속 오는 중 = Secret 미교체 상태로 만료 창 진행 중
+            sha = last_e.get("token_sha")
+            window = [_day(e) for e in refresh_events if sha is None or e.get("token_sha") == sha]
+            first = min(window)
+            try:
+                elapsed = (datetime.now(KST).date() - datetime.strptime(first, "%Y-%m-%d").date()).days
+            except ValueError:
+                elapsed = 0
+            days_left = max(0, 30 - elapsed)
+            level = "FAIL" if days_left <= 7 else "WARN"
             messages.append(result(
-                "WARN",
-                f"카카오 토큰 만료 임박 — 마지막 로테이션 {last}(D+{age}), Secret(KAKAO_REFRESH_TOKEN) 교체 필요",
+                level,
+                f"카카오 refresh_token 만료 창 진행 중 — 첫 로테이션 신호 {first}, 잔여 약 {days_left}일. "
+                "Secret(KAKAO_REFRESH_TOKEN) 을 카톡으로 전달된 새 토큰으로 교체 필요",
             ))
 
 

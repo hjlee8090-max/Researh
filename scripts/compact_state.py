@@ -49,6 +49,11 @@ TARGET_LOG = ROOT / "state" / "target_estimate_log.jsonl"
 TARGET_LOG_ARCHIVE = ROOT / "state" / "target_estimate_log_archive.jsonl"
 # score_target_estimates 의 60거래일 채점 지평(≈88 캘린더일)을 덮는 보존 창 — 초과분만 이관.
 TARGET_LOG_KEEP_DAYS = 90
+LESSONS = ROOT / "state" / "lessons.md"
+LESSONS_ARCHIVE = ROOT / "state" / "lessons_archive.md"
+# lessons.md "최종 갱신" 라인의 "이전 갱신:" 체인 보존 개수 — 무압축 시 한 줄이 ~10KB 까지
+# 자라던 무한 누적원 (2026-07-08 진단). 초과분은 lessons_archive.md 전문 보존.
+KEEP_UPDATE_CHAIN = 2
 
 
 def now_kst() -> str:
@@ -96,8 +101,13 @@ def compact_watchlist(dry: bool) -> dict:
                 overflow = comments[:-KEEP_COMMENTS]
                 stock["comments"] = comments[-KEEP_COMMENTS:]
                 bucket = archive["trimmed_comments"].setdefault(ticker, [])
-                seen_ts = {c.get("ts") for c in bucket}
-                bucket.extend(c for c in overflow if c.get("ts") not in seen_ts)
+                # 코멘트에 dict 가 아닌 평문 문자열이 섞이면(2026-07 실데이터) .get 크래시 —
+                # 문자열 항목은 그대로 이관하고 dict 만 ts 로 dedup 한다 (2026-07-14 보강)
+                seen_ts = {c.get("ts") for c in bucket if isinstance(c, dict)}
+                bucket.extend(
+                    c for c in overflow
+                    if not isinstance(c, dict) or c.get("ts") not in seen_ts
+                )
                 trimmed_total += len(overflow)
             kept_stocks.append(stock)
         else:
@@ -238,6 +248,44 @@ def compact_target_estimate_log(dry: bool) -> dict:
     return {"entries": len(keep) + len(move), "kept": len(keep), "moved": len(move), "cutoff": cutoff}
 
 
+def compact_lessons_update_chain(dry: bool) -> dict:
+    """lessons.md '최종 갱신' 라인의 '이전 갱신:' 무한 체인을 압축한다.
+
+    라인 형식: `_(최종 갱신: <현재 엔트리> 이전 갱신: <엔트리> 이전 갱신: <엔트리> ...)_`
+    현재 + 최근 KEEP_UPDATE_CHAIN 개만 남기고, 초과분 전문은 lessons_archive.md 에 이관.
+    """
+    if not LESSONS.exists():
+        return {"skipped": "lessons.md 부재"}
+    text = LESSONS.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    target_idx = next((i for i, l in enumerate(lines) if l.startswith("_(최종 갱신:")), None)
+    if target_idx is None:
+        return {"skipped": "최종 갱신 라인 없음"}
+    line = lines[target_idx]
+    if not line.endswith(")_"):
+        return {"skipped": "라인 꼬리 형식 상이 — 수동 확인 필요"}
+    inner = line[len("_("):-len(")_")]
+    parts = inner.split(" 이전 갱신: ")
+    if len(parts) <= 1 + KEEP_UPDATE_CHAIN:
+        return {"chain_entries": len(parts), "archived": 0, "line_bytes": len(line.encode("utf-8"))}
+    keep, overflow = parts[: 1 + KEEP_UPDATE_CHAIN], parts[1 + KEEP_UPDATE_CHAIN:]
+    new_line = "_(" + " 이전 갱신: ".join(keep) + " — 이전 체인은 lessons_archive.md 이관)_"
+    if not dry:
+        stamp = now_kst()
+        block = [f"\n## 최종 갱신 체인 이관 ({stamp})\n"]
+        block += [f"- 이전 갱신: {p}" for p in overflow]
+        with LESSONS_ARCHIVE.open("a", encoding="utf-8") as fh:
+            fh.write("\n".join(block) + "\n")
+        lines[target_idx] = new_line
+        LESSONS.write_text("\n".join(lines) + ("\n" if text.endswith("\n") else ""), encoding="utf-8")
+    return {
+        "chain_entries": len(parts),
+        "archived": len(overflow),
+        "line_bytes_before": len(line.encode("utf-8")),
+        "line_bytes_after": len(new_line.encode("utf-8")),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="핫패스 config 누적 필드 압축 (archive 이관)")
     parser.add_argument("--dry-run", action="store_true", help="변경량만 출력하고 파일은 건드리지 않음")
@@ -251,6 +299,7 @@ def main() -> int:
         "portfolio_history": compact_portfolio_history(args.dry_run),
         "policy_changelog": compact_policy_changelog(args.dry_run),
         "target_estimate_log": compact_target_estimate_log(args.dry_run),
+        "lessons_update_chain": compact_lessons_update_chain(args.dry_run),
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0

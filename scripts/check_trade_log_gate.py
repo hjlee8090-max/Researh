@@ -137,7 +137,15 @@ def find_timing_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[st
             continue
         venue = e.get("execution_venue")
         if venue in allowed_eod:
-            continue  # EOD 종가 청산(closing_auction) 예외 허용
+            # (2026-07-08) venue 라벨만으로 무조건 통과시키던 구멍 폐쇄 — 정책은 EOD 종가
+            # 청산의 ts 를 15:30 으로 기록하라고 명시한다(eod_settlement_timestamp). 15:30 은
+            # 정규장 경계 안이라 위 분기에서 이미 통과하므로, 여기 도달한 eod venue 는
+            # 전부 ts 오기록(예: 18:00 체결에 closing_auction 라벨)이다.
+            violations.append(
+                f"[장중시간] {tag}: execution_venue={venue!r} 인데 ts 가 15:30 이 아님 — "
+                "종가 청산은 ts=15:30(마감 동시호가)으로 기록해야 함 (라벨만으로 통과 불가)"
+            )
+            continue
         violations.append(
             f"[장중시간] {tag}: 정규장 밖 체결인데 execution_venue 가 {sorted(allowed_eod)} 가 아님(={venue!r}) "
             "— 종가 청산이면 ts=15:30 + execution_venue=closing_auction 로 기록"
@@ -435,6 +443,82 @@ def find_decision_card_violations(entries: list[dict], gate_cfg: dict) -> tuple[
     return violations, checked, since
 
 
+# ── (7) R/R 하한 게이트 (2026-07-08 신설) ────────────────────────────────────────
+# 신규 진입 R/R 하한(reward_risk_management.regime_adaptive_rr)이 프롬프트 지시로만
+# 존재해 LLM 이 잊으면 하한 미달 진입이 main 에 도달하던 구멍을 CI 로 닫는다.
+def find_rr_entry_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
+    since = str(gate_cfg.get("ci_enforced_since", "2026-07-08"))[:10]
+    tiers = gate_cfg.get("min_rr_by_tier") if isinstance(gate_cfg.get("min_rr_by_tier"), dict) else {}
+    tiers = tiers or {"strong_bull": 1.0, "bull": 1.1, "neutral": 1.2, "bear": 1.4, "deep_bear": 1.6}
+    floor = min(float(v) for v in tiers.values())
+    violations: list[str] = []
+    checked = 0
+    for e in entries:
+        if not rp._is_buy(e.get("action")):
+            continue
+        ts = str(e.get("ts", ""))
+        if ts[:10] < since:
+            continue
+        checked += 1
+        tag = f"{ts} {e.get('action')} {e.get('ticker')}"
+        price, stop, target = rp.num(e.get("price")), rp.num(e.get("stop_price")), rp.num(e.get("target_price"))
+        if not price or not stop or not target:
+            violations.append(f"[R/R하한] {tag}: price/stop_price/target_price 누락 — 신규 진입은 세 값 기록 의무(R/R 검증 불가)")
+            continue
+        if price <= stop:
+            violations.append(f"[R/R하한] {tag}: price({price:,.0f}) <= stop_price({stop:,.0f}) — 손절선 역전")
+            continue
+        rr = (target - price) / (price - stop)
+        tier = str(e.get("regime_tier") or "")
+        # tier 미기록이면 최저 하한만 적용(관대) — 목적은 바닥 뚫린 진입 차단이지 tier 소급 추정이 아니다
+        min_rr = float(tiers.get(tier, floor))
+        if rr + 1e-9 < min_rr:
+            violations.append(
+                f"[R/R하한] {tag}: R/R={rr:.2f} < 하한 {min_rr}(tier={tier or '미기록→최저하한'}) — regime_adaptive_rr 미달 진입"
+            )
+    return violations, checked, since
+
+
+# ── (8) 실적 블랙아웃 게이트 (2026-07-08 신설) ───────────────────────────────────
+# policy.fundamentals.earnings_blackout("실적 발표 D-1~당일 신규 진입 보류")이 어느
+# 스크립트도 검사하지 않던 프롬프트 전용 규칙이었다 — catalysts.json 의 earnings 계열
+# 이벤트와 대조해 CI 로 강제한다.
+def find_earnings_blackout_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
+    since = str(gate_cfg.get("enforced_since", "2026-07-08"))[:10]
+    days_before = int(gate_cfg.get("days_before", 1))
+    cat = load_json("config/catalysts.json", {}) or {}
+    events: list[dict] = []
+    for key in ("generated_events", "manual_events"):
+        for ev in cat.get(key) or []:
+            if isinstance(ev, dict) and "earnings" in str(ev.get("type", "")) and ev.get("ticker") and ev.get("date"):
+                events.append(ev)
+    violations: list[str] = []
+    checked = 0
+    for e in entries:
+        if not rp._is_buy(e.get("action")):
+            continue
+        ts = str(e.get("ts", ""))
+        entry_day = ts[:10]
+        if entry_day < since:
+            continue
+        checked += 1
+        for ev in events:
+            if ev.get("ticker") != e.get("ticker"):
+                continue
+            try:
+                ev_date = date.fromisoformat(str(ev["date"])[:10])
+                d = date.fromisoformat(entry_day)
+            except ValueError:
+                continue
+            if 0 <= (ev_date - d).days <= days_before:
+                confirmed = "확정" if ev.get("confirmed") else "법정기한 추정"
+                violations.append(
+                    f"[실적블랙아웃] {ts} {e.get('action')} {e.get('ticker')}: 실적 이벤트 {ev.get('date')}({confirmed}, {ev.get('id')}) "
+                    f"D-{(ev_date - d).days} 이내 신규/추가매수 — earnings_blackout(D-{days_before}~당일 진입 보류) 위반"
+                )
+    return violations, checked, since
+
+
 def main() -> int:
     policy = load_json("config/policy.json", {})
     pdq = policy.get("price_data_quality", {}) if isinstance(policy, dict) else {}
@@ -488,11 +572,29 @@ def main() -> int:
     if card_gate.get("enabled", True):
         card_violations, card_checked, card_since = find_decision_card_violations(entries, card_gate)
 
+    # (2026-07-08 신설) R/R 하한·실적 블랙아웃 — 프롬프트 전용 규칙의 CI 강제
+    rr_gate = policy.get("reward_risk_management", {}) if isinstance(policy, dict) else {}
+    rr_cfg = rr_gate.get("regime_adaptive_rr", {}) if isinstance(rr_gate.get("regime_adaptive_rr"), dict) else {}
+    rr_violations: list[str] = []
+    rr_checked = 0
+    rr_since = None
+    if rr_cfg.get("enabled", True):
+        rr_violations, rr_checked, rr_since = find_rr_entry_violations(entries, rr_cfg)
+
+    ef = policy.get("entry_filters", {}) if isinstance(policy, dict) else {}
+    eb_cfg = ef.get("earnings_blackout_gate", {}) if isinstance(ef.get("earnings_blackout_gate"), dict) else {}
+    eb_violations: list[str] = []
+    eb_checked = 0
+    eb_since = None
+    if eb_cfg.get("enabled", True):
+        eb_violations, eb_checked, eb_since = find_earnings_blackout_violations(entries, eb_cfg)
+
     source_violations = source_date_violations + recycled_violations
     # audit_pipeline 이 읽는 통합 목록(하나라도 FAIL)
     violations = (
         prov_violations + timing_violations + source_violations
         + chase_violations + shock_violations + card_violations
+        + rr_violations + eb_violations
     )
     out = {
         "enabled": True,
@@ -509,6 +611,10 @@ def main() -> int:
         "chase_checked": chase_checked,
         "shock_checked": shock_checked,
         "decision_card_checked": card_checked,
+        "rr_enforced_since": rr_since,
+        "rr_checked": rr_checked,
+        "earnings_blackout_enforced_since": eb_since,
+        "earnings_blackout_checked": eb_checked,
         "provenance_violations": prov_violations,
         "timing_violations": timing_violations,
         "source_date_violations": source_date_violations,
@@ -516,6 +622,8 @@ def main() -> int:
         "chase_violations": chase_violations,
         "index_shock_violations": shock_violations,
         "decision_card_violations": card_violations,
+        "rr_violations": rr_violations,
+        "earnings_blackout_violations": eb_violations,
         "violations": violations,
         "ok": not violations,
     }
@@ -523,13 +631,15 @@ def main() -> int:
     summary = (
         f"TRADE_LOG_GATE=FAIL (provenance {len(prov_violations)} + timing {len(timing_violations)} "
         f"+ source {len(source_violations)} + chase {len(chase_violations)} + shock {len(shock_violations)} "
-        f"+ card {len(card_violations)} violation) — 묵은/미검증 가격·장외 체결·묵은 출처·추격 진입·"
-        "쇼크일 스톱·판단카드 누락 booking 차단"
+        f"+ card {len(card_violations)} + rr {len(rr_violations)} + earnings {len(eb_violations)} violation) "
+        "— 묵은/미검증 가격·장외 체결·묵은 출처·추격 진입·쇼크일 스톱·판단카드 누락·R/R 하한 미달·"
+        "실적 블랙아웃 booking 차단"
         if violations
         else (
             f"TRADE_LOG_GATE=PASS (provenance {prov_checked}건 + timing {timing_checked}건 "
             f"+ source {source_checked + recycled_checked}건 + chase {chase_checked}건 "
-            f"+ shock {shock_checked}건 + card {card_checked}건 검증)"
+            f"+ shock {shock_checked}건 + card {card_checked}건 + rr {rr_checked}건 "
+            f"+ earnings {eb_checked}건 검증)"
         )
     )
     print(summary, file=sys.stderr)  # 사람용 요약은 stderr 로(stdout JSON 오염 방지)

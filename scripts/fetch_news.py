@@ -239,6 +239,11 @@ def main() -> int:
     for c in load_json("config/candidates.json", {}).get("candidates", []):
         if isinstance(c, dict) and c.get("ticker"):
             tickers[c["ticker"]] = c.get("name", c["ticker"])
+    # 보유 정본은 portfolio.positions — watchlist.shares_held 는 결측(null) 이력이 있어
+    # 이 필드에만 의존하면 보유 종목이 수집 대상에서 통째로 빠진다 (2026-07-08 보강)
+    for p in load_json("config/portfolio.json", {}).get("positions", []):
+        if isinstance(p, dict) and p.get("ticker") and (p.get("shares") or 0) > 0:
+            tickers.setdefault(p["ticker"], p.get("name", p["ticker"]))
     for s in load_json("config/watchlist.json", {}).get("stocks", []):
         if isinstance(s, dict) and s.get("ticker") and (s.get("shares_held") or 0) > 0:
             tickers.setdefault(s["ticker"], s.get("name", s["ticker"]))

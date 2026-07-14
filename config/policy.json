@@ -570,11 +570,19 @@
       },
       "fallback_min_rr": 1.2,
       "medium_confidence_premium": 0.1,
+      "ci_enforced_since": "2026-07-08",
+      "ci_gate_note": "v2.23 — check_trade_log_gate.find_rr_entry_violations 가 이 하한을 CI 하드 게이트로 강제한다(그동안 프롬프트 전용이었음). ci_enforced_since 이후 BUY 는 price/stop_price/target_price 기록 의무 + 재계산 R/R 이 min_rr_by_tier[기록된 regime_tier] 미만이면 main 도달 차단. regime_tier 미기록 booking 은 최저 하한(strong_bull 1.0)만 적용 — tier 기록을 유도하되 소급 추정으로 오탐하지 않는다.",
       "note": "신규 진입 시 적용 R/R 하한 = min_rr_by_tier[effective_tier] (tier 미확정/unknown 이면 fallback_min_rr). data confidence=medium 이면 +medium_confidence_premium. 보유 종목 검토(review_holding_if_rr_below)는 기존 1.2 유지 — 진입 게이트만 레짐 적응."
     },
     "review_holding_follows_regime_adaptive_rr": true
   },
   "entry_filters": {
+    "earnings_blackout_gate": {
+      "enabled": true,
+      "enforced_since": "2026-07-08",
+      "days_before": 1,
+      "purpose": "v2.23 — fundamentals.earnings_blackout(실적 D-1~당일 신규 진입 보류)이 프롬프트 전용 규칙이라 어느 스크립트도 검사하지 않던 구멍을 CI 로 폐쇄. check_trade_log_gate.find_earnings_blackout_violations 가 catalysts.json 의 earnings 계열 이벤트(generated=법정기한 추정 포함)와 BUY ts 를 대조해 D-1~당일 진입을 main 도달 전 차단한다."
+    },
     "trend_lookback_days": 5,
     "block_if_cumulative_return_below_pct": -7.0,
     "block_if_cumulative_return_below_pct_by_tier": {

@@ -18,6 +18,7 @@ GitHub Actions 에서 00/06/09/12/15/18 routine 푸시 후 호출.
                         (동일 routine 의 후속 잡무 커밋이 같은 슬롯 알림을 중복 발송하는 것 방지)
   KAKAO_DRY_RUN         (선택) truthy 면 발송하지 않고 판정·본문만 출력 (로컬 테스트)
 """
+import hashlib
 import json
 import os
 import re
@@ -137,11 +138,17 @@ def find_latest_report() -> Path | None:
     return candidates[-1][2]
 
 
-def find_latest_matching_report(pattern: str) -> Path | None:
+def find_latest_matching_report(pattern: str, stem_re: str | None = None) -> Path | None:
     reports_dir = ROOT / "reports"
     if not reports_dir.exists():
         return None
     files = sorted(reports_dir.glob(pattern))
+    if stem_re:
+        # 글롭만으로는 과매칭된다 — "*-audit.md" 가 "…-self-audit.md" 도 잡아 sorted 마지막
+        # ("s" > 날짜 숫자) 선택으로 일일 감사 알림이 self-audit 요약으로 오발송된 실사고
+        # (2026-07-07 원장 확인, 2026-07-08 수정). stem 정규식 완전일치로 조인다.
+        rx = re.compile(stem_re)
+        files = [f for f in files if rx.fullmatch(f.stem)]
     return files[-1] if files else None
 
 
@@ -552,9 +559,9 @@ def build_weekend_message() -> tuple[str, str, str] | None:
     return title, summary, date
 
 
-def build_pattern_report_message(pattern: str, title_prefix: str, fallback: str) -> tuple[str, str, str] | None:
+def build_pattern_report_message(pattern: str, title_prefix: str, fallback: str, stem_re: str | None = None) -> tuple[str, str, str] | None:
     """패턴에 맞는 최신 리포트의 '요약' 섹션을 모바일 알림으로 변환."""
-    report = find_latest_matching_report(pattern)
+    report = find_latest_matching_report(pattern, stem_re)
     if report is None:
         return None
     date = report.stem
@@ -619,7 +626,10 @@ def main():
         url = f"{PAGES_URL}/{date}.html" if PAGES_URL else base_url
         button = "주간 archive 열기"
     elif is_audit:
-        msg = build_pattern_report_message("*-audit.md", "🧪 파이프라인 감사", "파이프라인 감사 리포트가 갱신되었습니다.")
+        msg = build_pattern_report_message(
+            "*-audit.md", "🧪 파이프라인 감사", "파이프라인 감사 리포트가 갱신되었습니다.",
+            stem_re=r"\d{4}-\d{2}-\d{2}-audit",
+        )
         if msg is None:
             print("no audit reports found, skip notify", flush=True)
             return
@@ -731,13 +741,32 @@ def main():
 
         new_refresh = token_res.get("refresh_token")
         if new_refresh and new_refresh != REFRESH_TOKEN:
+            # CI 로그 평문 노출 금지 — GitHub Actions 는 ::add-mask:: 이후 해당 값을 로그에서
+            # 가린다(기존 Secret 값만 자동 마스킹되므로 신규 토큰은 명시 마스킹 필수).
+            print(f"::add-mask::{new_refresh}", flush=True)
             print("=" * 60, flush=True)
             print("⚠️  NEW REFRESH TOKEN ISSUED — UPDATE GITHUB SECRET!", flush=True)
-            print(f"   Secret name: KAKAO_REFRESH_TOKEN", flush=True)
-            print(f"   New value  : {new_refresh}", flush=True)
+            print("   Secret name: KAKAO_REFRESH_TOKEN", flush=True)
+            print("   새 토큰 값은 로그에 출력하지 않는다 — 카톡 '나에게 보내기' 알림으로 전달됨.", flush=True)
             print("=" * 60, flush=True)
-            # 토큰 값은 원장에 기록하지 않는다 — 만료 D-7 경보(audit)의 기준 시각만 남긴다.
-            log_notify("token_refresh")
+            # 새 토큰은 사용자 전용 채널(나에게 보내기)로 전달 — 실패해도 본 발송은 계속한다.
+            try:
+                send_kakao(
+                    access_token,
+                    "🔑 카카오 토큰 갱신 필요",
+                    "refresh_token 만료 30일 창 진입 — GitHub Secret KAKAO_REFRESH_TOKEN 을 "
+                    f"아래 값으로 교체 후 이 메시지를 삭제하세요.\n\n{new_refresh}",
+                    PAGES_URL or "https://github.com",
+                    "확인",
+                )
+            except Exception as exc:  # noqa: BLE001
+                print(f"token alert send failed (ignored): {exc}", flush=True)
+            # 토큰 값은 원장에 기록하지 않는다. 사용 중 토큰의 해시만 남겨 audit 이
+            # "로테이션 신호가 오는데 Secret 이 그대로"인 상태를 감지하게 한다 (2026-07-08).
+            log_notify(
+                "token_refresh",
+                token_sha=hashlib.sha256(REFRESH_TOKEN.encode("utf-8")).hexdigest()[:12],
+            )
 
         res = send_kakao(access_token, title, body, url, button)
     except SystemExit as exc:

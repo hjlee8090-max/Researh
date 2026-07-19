@@ -1,5 +1,5 @@
 {
- "as_of": "2026-07-05T20:03:32+09:00",
+ "as_of": "2026-07-19T20:07:37+09:00",
  "params": {
   "min_shadow_trading_days": 10,
   "min_breach_events": 3,
@@ -11,20 +11,37 @@
  },
  "sample": {
   "positions": 6,
-  "shadow_trading_days": 2,
-  "breach_events": 0,
-  "breach_completed": 0
+  "shadow_trading_days": 11,
+  "breach_events": 1,
+  "breach_completed": 1
  },
  "scoring": {
   "protected_krw_t5": 0,
-  "forgone_krw_t5": 0,
-  "net_protection_krw": 0,
-  "noise_exit_rate": null,
+  "forgone_krw_t5": 43000.0,
+  "net_protection_krw": -43000.0,
+  "noise_exit_rate": 1.0,
   "protected_vs_real_exits_krw": 0,
-  "avg_freed_heat_krw": 42832.0
+  "avg_freed_heat_krw": 198609.0
  },
- "events_scored": [],
+ "events_scored": [
+  {
+   "position": "079550:2026-06-30",
+   "name": "LIG넥스원",
+   "date": "2026-07-08",
+   "stage": 1,
+   "breach_close": 714000.0,
+   "shares": 1,
+   "shadow_exit_net": 711180.0,
+   "confidence": "high",
+   "t1_close": 694000.0,
+   "t1_delta_krw": -20000.0,
+   "t5_close": 757000.0,
+   "t5_delta_krw": 43000.0,
+   "final": true,
+   "noise_exit": true
+  }
+ ],
  "protected_vs_real": [],
- "verdict": "채점 보류 — 표본 부족 (관측 2/10거래일, 확정 breach 0/3건)",
- "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 2거래일 · 추적 6포지션 · 가상 breach 0건(확정 0)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 0원 / **net +0원**\n- 실제 청산 대비 보호액: 0원 (0건)\n- 해방가능 heat 일평균: 42,832원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 채점 보류 — 표본 부족 (관측 2/10거래일, 확정 breach 0/3건)**"
+ "verdict": "채점 보류 — breach 표본 부족 (확정 1/3건, 관측 11거래일)",
+ "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 11거래일 · 추적 6포지션 · 가상 breach 1건(확정 1)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 43,000원 / **net -43,000원** / noise율 100%\n- 실제 청산 대비 보호액: 0원 (0건)\n- 해방가능 heat 일평균: 198,609원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 채점 보류 — breach 표본 부족 (확정 1/3건, 관측 11거래일)**"
 }

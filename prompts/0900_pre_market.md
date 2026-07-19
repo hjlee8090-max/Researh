@@ -123,6 +123,7 @@
 - **age 가 크다고 confidence 를 강등하지 않는다**(별개 축). 단 fresh 가 아닌(묵은) 가격으로 손절·익절을 그대로 체결하지 않도록 §B-5 안전망을 반드시 적용한다.
 - **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 웹 실시간가는 `market_snapshot.tickers.<t>.today_ohlc` 와 대조한다. 스냅샷 `close` 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 **셋 다 충족할 때만** 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '고가 오인'으로 버린다.** 출처 URL 없는 '기대감 추정' 촉매 서술 금지·가격 변동 단독 thesis 변경 금지. 보유+후보 동일 적용(6/2 현대차 — lessons archive).
 - **(v2.6) 출처 게재일 검증 (필수)** (`policy.price_data_quality.web_verify_guard.source_date_verification`): 웹 출처의 **게재일을 URL/본문에서 실제로 읽어 기록** — 오늘이 아니거나 스냅샷 `as_of` 보다 과거면 '현재가' 채택 금지('스냅샷보다 최신' 자기 단정 금지). stale 스냅샷 + 단일 출처 대규모 갭의 **'예외' 자가면제 금지** — 동일자 복수 출처 + `today_ohlc` 확인 시에만 채택, 아니면 stale `close` 유지·**'오늘 가격 미검증(stale 유지)' 명시**. CI `source_provenance_gate`(`scripts/check_trade_log_gate.py`)가 묵은 게재일·재활용 종가를 하드 차단(6/8 묵은 기사 오인 사고 — lessons archive).
+- **(v2.23) 지수 스냅샷 지연≠지수 미변동** (`policy.price_data_quality.web_verify_guard.index_snapshot_confirmation`): `market_snapshot.regime`(KOSPI) 의 `as_of` 가 오늘이 아니거나 stale 인데 오늘 확정 매크로 이벤트(금리결정·CPI 등)가 있으면, '지수 미확정'으로 침묵하지 말고 웹 2출처(게재일 오늘)로 실제 KOSPI 종가·등락률을 교차확인해 리포트에 명시한다. 보유 종목 일부의 혼조·보합(방어주 divergence)을 지수 전체 방향의 반증으로 쓰지 않는다 — 지수와 바스켓 방향은 분리 판정(7/16 한은 금리인상 크래시 -6.37%를 '스냅샷 지연'으로 오판·방어주 breadth 로만 판정한 사고 방지 — lessons 2026-07-16).
 
 ## 1. 웹 검색 (필수)
 

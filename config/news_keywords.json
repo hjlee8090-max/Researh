@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "as_of": "2026-06-14",
+  "version": "1.1",
+  "as_of": "2026-07-19",
   "purpose": "뉴스 자동 수집·분류(fetch_news.py)의 키워드 레지스트리. type_keywords 의 키는 config/news_impact.json 의 news_type_impact_pct 와 1:1 — 여기서 키워드를 보강하면 목표주가 추정식의 뉴스 가산점 분류가 그대로 따라온다. 매칭은 공백 제거 후 부분일치(예: '공급 계약'='공급계약'). exclude 가 제목에 있으면 해당 유형 매칭을 취소한다(예: '파업 철회' 기사가 labor_dispute 로 오분류되는 것 방지).",
   "recall_note": "재현율 우선 — 종목 별칭이 잡힌 기사는 유형 미매칭이어도 news_feed 의 unclassified 로 보존한다(라우틴이 검토 후 manual_news 로 승격하거나 여기 키워드를 보강). 키워드 보강은 sunday_policy_review 에서 unclassified 누적분을 보고 주기적으로 한다.",
   "ticker_aliases": {
@@ -292,7 +292,8 @@
         "감산",
         "수요둔화",
         "가격급락",
-        "덤핑"
+        "덤핑",
+        "피크아웃"
       ],
       "exclude": [
         "가격상승",

@@ -814,7 +814,7 @@ def audit_reports(messages: list[str]) -> None:
         ))
 
 
-SLOT_MATRIX_06_SINCE = "2026-07-02"  # 06시 슬롯 신설일 — 이전 날짜는 06 부재를 따지지 않는다
+SLOT_MATRIX_06_SINCE = "2026-07-02"  # 06시 슬롯 신설일 — 이전 날짜는 06 부재를 따지지 않는다. 발화 요일은 화~토(미국 세션 다음날 아침)
 
 
 def audit_slot_matrix(messages: list[str]) -> None:
@@ -845,11 +845,16 @@ def audit_slot_matrix(messages: list[str]) -> None:
                     missing.append(f"{hh}시")
             if not (reports_dir / f"{ds}-audit.md").exists():
                 missing.append("audit")
-            if ds >= SLOT_MATRIX_06_SINCE and not (reports_dir / f"{ds}-06.md").exists():
+            # 06시 슬롯은 "미국장 마감 확정" 리포트 — 직전 밤 미국 세션(월~금 ET)이 있는
+            # 화~토 아침에만 발화한다(등록 cron 화~토, 2026-07-20 운영 확정). 월요일은 직전
+            # 미국 세션이 없어 발화 대상이 아니다 — 월~금 전제로 매주 월요일을 오탐하던 검사 정정.
+            if wd >= 1 and ds >= SLOT_MATRIX_06_SINCE and not (reports_dir / f"{ds}-06.md").exists():
                 missing_06.append(ds)
-        elif wd == 5:  # 토요일 — 00시(매일 발화) + 사후분석
+        elif wd == 5:  # 토요일 — 00시(매일 발화) + 06시(금요일 미국 세션 마감) + 사후분석
             if not (reports_dir / f"{ds}-00.md").exists():
                 missing.append("00시")
+            if ds >= SLOT_MATRIX_06_SINCE and not (reports_dir / f"{ds}-06.md").exists():
+                missing_06.append(ds)
             if not (reports_dir / f"{ds}-saturday-review.md").exists():
                 missing.append("saturday-review")
         else:  # 일요일 — 00시 + 전략 + 정책리뷰 + 주간 아카이브(그 주 ISO 주차)
@@ -874,7 +879,7 @@ def audit_slot_matrix(messages: list[str]) -> None:
     else:
         messages.append(result("OK", "지난 7일 슬롯·주말 산출물 매트릭스 결손 없음"))
     if missing_06:
-        messages.append(result("INFO", "06시 리포트 부재(시행 초기 관찰 — 2주 후 WARN 승격 예정): " + ", ".join(missing_06)))
+        messages.append(result("WARN", "06시 리포트 부재(발화 요일 화~토 기준): " + ", ".join(missing_06)))
 
     # 주간 아카이브 상시 점검 — 7일 창 밖으로 밀려나면 영구 실종 처리되던 사각지대 보강.
     # W24~W26 3주 연속 사망을 이 함수가 존재하고도 W27 하나만 반복 경고하던 실사례(2026-07-08).

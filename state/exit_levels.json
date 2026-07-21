@@ -1,10 +1,14 @@
 {
- "as_of": "2026-07-21T15:02:07+09:00",
+ "as_of": "2026-07-21T17:07:03+09:00",
  "policy_ref": "policy.risk.trailing_stop (v2.14) — 이 파일 값만 인용, 손계산·전 리포트 이월 금지",
  "formula": {
   "trailing_first_level": "최고종가 × (1 − max(3.0, 1.5×ATR%)/100) — 이탈 시 50% 부분익절",
   "trailing_residual_level": "최고종가 × (1 − 2.0×ATR%/100) — 이탈 시 잔여 전량",
   "activation": "목표 진행률 ≥ 70% 또는 포지션 trailing_activated"
+ },
+ "estimate_layer": {
+  "as_of": "2026-07-21T15:02:05+09:00",
+  "policy_ref": "policy.reward_risk_management.holding_estimate_review (v2.24) — 매수측 estimate_gate 의 보유측 대응물. 추정은 참고 레이어(목표가·트리거 자동 변경 없음), review_required 는 18시 §2-2 재조정 의무만 발동. 수치 이식 금지(낙관 편향 — estimate_scorecard)."
  },
  "tickers": {
   "079550": {
@@ -20,7 +24,16 @@
    "target_progress_pct": 40.1,
    "trailing_activated": false,
    "trailing_first_level": 676491,
-   "trailing_residual_level": 630321
+   "trailing_residual_level": 630321,
+   "estimate": {
+    "estimate": 698900.0,
+    "expected_return_pct": 4.0,
+    "grade": "B",
+    "as_of": "2026-07-21T15:02:05+09:00",
+    "target_vs_estimate_gap_pct": 33.0,
+    "negative_streak": 0,
+    "review_required": false
+   }
   },
   "042700": {
    "name": "한미반도체",
@@ -35,7 +48,17 @@
    "target_progress_pct": 14.2,
    "trailing_activated": false,
    "trailing_first_level": 223052,
-   "trailing_residual_level": 207569
+   "trailing_residual_level": 207569,
+   "estimate": {
+    "estimate": 212100.0,
+    "expected_return_pct": -5.1,
+    "grade": "B",
+    "as_of": "2026-07-21T15:02:05+09:00",
+    "target_vs_estimate_gap_pct": 56.9,
+    "negative_streak": 8,
+    "review_required": true,
+    "review_reason": "추정 기대수익 -5.1% < 0% 가 8회 연속(등급 B) — 18시 §2-2 재조정 의무: (a)목표가 재조정 (b)손절 상향(트레일링 강화) (c)부분 익절 중 택1 (holding_estimate_review — 자동 청산 아님)"
+   }
   },
   "055550": {
    "name": "신한지주",
@@ -50,7 +73,16 @@
    "target_progress_pct": 87.7,
    "trailing_activated": true,
    "trailing_first_level": 99454,
-   "trailing_residual_level": 96205
+   "trailing_residual_level": 96205,
+   "estimate": {
+    "estimate": 109900.0,
+    "expected_return_pct": 5.0,
+    "grade": "B",
+    "as_of": "2026-07-21T15:02:05+09:00",
+    "target_vs_estimate_gap_pct": 0.8,
+    "negative_streak": 0,
+    "review_required": false
+   }
   }
  }
 }

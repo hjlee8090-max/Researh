@@ -91,10 +91,11 @@
 
 보유 종목이 기존 목표가에 모두 도달해도 주간 목표에 부족하면, 18시 리포트의 "내일 액션 플랜"에 **현금 활용 후보 / 목표 현실화 / 리스크 축소** 중 하나를 반드시 선택해 적는다.
 
-## 2-2. R/R 하한 미달 보유 종목 재조정 (의무)
+## 2-2. R/R 하한 미달·추정 재검토 보유 종목 재조정 (의무)
 종가 평가 후 보유 종목 각각의 R/R = (target_price - close) / (close - stop_price) 를 계산한다.
 - 하한은 **신규 진입과 동일한 레짐 적응 하한**(`policy.reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6, tier 미확정 시 1.2)을 쓴다 — 고정 1.2를 보유에 적용하면 강세 tier 에서 승자를 조기에 자르는 압력이 생긴다(v2.13 통일, audit 동일 기준).
-- R/R < 하한인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
+- **(v2.24) 추정 기준선 재검토 트리거**: R/R 하한과 **독립적으로**, `state/exit_levels.json` 의 `tickers.<티커>.estimate.review_required=true` 인 보유 종목도 아래 (a)/(b)/(c) 재조정 대상에 **의무로 포함**한다(`policy.reward_risk_management.holding_estimate_review` — A/B 등급 추정 기대수익 < 0% 가 2회 연속, 매수측 estimate_gate 의 보유측 대응물). `review_reason` 을 watchlist 코멘트에 인용한다. 추정은 참고 레이어 원칙 그대로 — 자동 청산·목표가 자동 덮어쓰기가 아니라 **오늘 안에 재조정을 결정할 의무**만 발동하며, (a)를 고를 때도 추정 수치를 새 목표가로 그대로 이식하지 않는다(추정은 낙관 편향 −10~−19%p — estimate_scorecard 실측. 재산정은 기존 §2 공통 규칙: 촉매·저항선·컨센×1.15·밸류 천장).
+- R/R < 하한(또는 위 review_required)인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
   - (a) 목표가 재조정 — 현재 가격·촉매·저항선 기반 재산정. **재산정 후 컨센 교차검증**(`policy.consensus.target_cross_check`): 새 목표가가 `state/consensus.json` 컨센 목표주가 × 1.15 초과면 정당화 근거를 comments 에 적거나 컨센×1.15 로 상한(컨센 stale/없음/low 면 생략). **(v2.11) 밸류에이션 천장 동시 적용**(`policy.valuation_anchor`): `state/valuation_check.json` 의 verdict=`cap_target` 이면 `valuation_ceiling_price` 로 캡(skip 이면 생략) — 최종 목표가 = min(재산정값, 컨센×1.15, 밸류에이션 천장).
   - (b) 손절가 상향 — 트레일링스톱 활성화 또는 가격 진입. **(v2.11)** 트레일링은 `policy.risk.trailing_stop` 의 2단 구조를 따른다: 1차 트레일 -max(3, 1.5×ATR%) 이탈 시 **50% 부분익절**(배수는 `policy.risk.trailing_stop.first_trail_rule` 이 정본 — v2.14에서 1.0→1.5 확대), 잔여분은 샹들리에 -2.0×ATR%(최고 종가 기준). 활성화 시 `trailing_first_level`·`trailing_residual_level` 두 레벨을 watchlist 코멘트에 기록.
   - (c) 부분 익절 — 50% 가상 체결
@@ -225,7 +226,7 @@
 - 초보자 한줄: 이 종목을 왜 들고 있는지 / 왜 파는지 / 사업 모델 한 줄
 
 ### 📰 뉴스 반영 매매가 (목표 매도가·신규진입 상한가, 참고 추정 — 델타만)
-(`state/target_estimate_report.md`(경량 분리 파일 — 110KB JSON 전체를 읽지 않는다) 에서 **직전 리포트 대비 Δ(목표/상한 변동)가 있는 행만 남겨** 싣는다 — 전 행 Δ0 이면 "직전 대비 변동 없음" 1줄로 끝내고 표를 재게재하지 않는다(7/2 18시가 Δ 전무 표를 전체 재게재한 사례 방지). 방법론 각주는 싣지 않는다. 행 의미: 보유·후보 종목 추정 목표 매도가 + 신규진입 상한가(R/R 진입 상한)·현재가 위치(🟢진입가능/🟡진입주의=falling knife/🔴상회) + 원인 뉴스. watchlist 실제 매매가를 대체하지 않는 참고 레이어다 — 내일 09시 신규 진입 후보의 진입 타이밍 판단에 쓴다. 신규진입 상한가는 적정가치가 아니라 R/R 진입 상한이며, 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호이지 고평가 판정이 아니다. **차단 게이트가 아닌 진입 타이밍 참고**다(실제 신규 진입 차단은 score_candidates estimate_gate=기대수익<0). 보유 종목 옆 🔴는 청산 신호가 아니고, 앵커가 현재가 폴백인 종목은 상한가가 `—`로 보류된다.)
+(`state/target_estimate_report.md`(경량 분리 파일 — 110KB JSON 전체를 읽지 않는다) 에서 **직전 리포트 대비 Δ(목표/상한 변동)가 있는 행만 남겨** 싣는다 — 전 행 Δ0 이면 "직전 대비 변동 없음" 1줄로 끝내고 표를 재게재하지 않는다(7/2 18시가 Δ 전무 표를 전체 재게재한 사례 방지). 방법론 각주는 싣지 않는다. 행 의미: 보유·후보 종목 추정 목표 매도가 + 신규진입 상한가(R/R 진입 상한)·현재가 위치(🟢진입가능/🟡진입주의=falling knife/🔴상회) + 원인 뉴스. watchlist 실제 매매가를 대체하지 않는 참고 레이어다 — 내일 09시 신규 진입 후보의 진입 타이밍 판단에 쓴다. 신규진입 상한가는 적정가치가 아니라 R/R 진입 상한이며, 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호이지 고평가 판정이 아니다. **차단 게이트가 아닌 진입 타이밍 참고**다(실제 신규 진입 차단은 score_candidates estimate_gate=기대수익<0, 보유측은 exit_levels `estimate.review_required` 가 §2-2 재조정 의무를 발동 — v2.24 holding_estimate_review). 보유 종목 옆 🔴는 청산 신호가 아니고, 앵커가 현재가 폴백인 종목은 상한가가 `—`로 보류된다.)
 
 ### 가상 포트폴리오·주간 목표
 | 항목 | 값 |

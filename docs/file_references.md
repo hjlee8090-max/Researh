@@ -3,6 +3,13 @@
 이 문서는 각 prompt / script 가 **어떤 파일을 읽고 / 어떤 파일을 쓰는지** 한눈에 보여준다.
 시간대별 리포트 분리 + 시장 데이터 자동 수집 + 휴장일 가드 작업 이후 갱신.
 
+> **신규 추가 (2026-07-21, v2.24 추정 기준선 ↔ 매수/매도 정렬 1차)**
+> - `policy.reward_risk_management.holding_estimate_review` — 매수측 estimate_gate(v2.12)의 보유측 대응물: A/B 추정 기대수익 <0% 가 2회 연속이면 18시 §2-2 재조정 의무 발동(자동 청산·목표가 자동 변경 없음. 수치 이식 금지 — estimate_scorecard 낙관 편향 −10~−19%p 실측, 부호 유효성은 gate_cost 차단표본 fwd20 중앙 −21.9% 실증)
+> - `scripts/compute_exit_levels.py` 확장 — 읽기 추가: `state/target_estimate.json`·`state/target_estimate_log.jsonl`(연속 음수 streak)·policy / 쓰기: `state/exit_levels.json` 의 `tickers.<t>.estimate`(추정가·기대수익·운용 목표 대비 괴리%·streak·review_required·review_reason). `--selftest` 에 streak 판정 3케이스 추가
+> - `audit_pipeline.audit_estimate_alignment` — ①보유 운용 목표가가 추정 대비 `target_gap_warn_pct`(20%) 초과 괴리 WARN ②active SELL `price_above` 트리거가 추정 기준선 위(모델상 미도달 구간)면 WARN ③review_required 미처분 표면화(매일 반복 경보)
+> - `prompts/1800_report.md` §2-2 — `exit_levels.estimate.review_required` 소비(의무). `prompts/0900_pre_market.md`·1800 §뉴스 반영 매매가 각주에 보유측 게이트 존재 명시
+> - 진단 실측(2026-07-20): 한미반도체 운용 목표 332,696 vs 추정 210,300(−5.3%, +58% 괴리)·LIG넥스원 +28% 괴리·신한지주 익절 트리거 110,829 > 추정 106,900
+>
 > **신규 추가 (2026-07-02, v2.20 포지션 유동 운영 — 본전 래칫 그림자)**
 > - `policy.risk.breakeven_ratchet` — 본전 래칫 스톱(mode=shadow, 관측 전용·체결 변화 0). 함께: `position_sizing.max_positions` 5→6(momentum top_n 동기 — vacant_slots 영구 0 해소), `risk.time_stop.precedence_over_min_hold`·`horizon.min_hold_precedence`(시간손절 vs 최소보유 우선순위 명문화)
 > - `scripts/track_ratchet_shadow.py` — 읽기: `config/policy.json`·`config/portfolio.json`·`state/market_snapshot.json` / 쓰기: `state/ratchet_shadow.json` (1800 §1 종가 확정 후 실행 — 멱등 upsert·커밋 대상)

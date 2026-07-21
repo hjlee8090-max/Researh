@@ -207,6 +207,17 @@ v1.5에서 매수 프로세스에 연결됐다(policy v2.12 `entry_filters.estim
 score_candidates 가 block_reasons 로 사유를 노출해 리포트에 자동 전파된다. 등급 C·추정
 누락·24h stale 은 게이트 미적용(결측 래칫 방지), 공격 트리거(추정 +X% 매수)는 채점 표본
 누적 후 재검토.
+
+2026-07-21(policy v2.24)에 **매도(보유) 측에도 연결**됐다(`reward_risk_management.holding_estimate_review`):
+매수는 음수 추정을 차단하면서 보유는 음수 전환·지속에 무반응이던 비대칭을 닫는다 —
+A/B 등급 추정 기대수익이 0% 미만으로 2회 연속(target_estimate_log 기준)이면
+`compute_exit_levels.py` 가 `state/exit_levels.json` 의 `tickers.<t>.estimate.review_required=true`
+로 표면화하고, 18시 §2-2 가 목표가 재조정/손절 상향(트레일링 강화)/부분 익절 중 택1 을
+**의무 결정**한다(자동 청산·목표가 자동 변경 없음 — 추정 수치는 낙관 편향(estimate_scorecard
+5td 중앙오차 −10.4%p)이라 부호·지속성 신호만 연결). `audit_pipeline.audit_estimate_alignment`
+가 보유 운용 목표가 ↔ 추정 괴리(+20% 초과)·추정 기준선 위 SELL price_above 트리거(모델상
+미도달 구간)·review_required 미처분을 매일 WARN 으로 감시한다. 랭킹 틸트(기대수익 가중)·수치
+캘리브레이션 연결은 백테스트 근거 확보 후 별도 상정.
 - **기준가**: PER/PBR 5년 밴드 중앙값 적정가(valuation.json) + 컨센서스 목표가(consensus.json) 평균. 결측 시 현재가 폴백(등급 하향)
 - **테마P** (≤20%): Σ(테마 strength × 종목 노출) × 호라이즌 할인 — "3~5년 메가트렌드"는 12개월 목표가에 1/3만 반영
 - **뉴스P** (±12%): `config/news_impact.json` 유형별 가산점 — 과거 뉴스는 90일 시간감쇠, 다가오는 촉매(catalysts.json)는 발생확률×D-day 근접가중×방향(DART earnings_signal)으로 할인

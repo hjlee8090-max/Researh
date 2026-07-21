@@ -443,6 +443,113 @@ def audit_target_consensus(data: dict[str, object], messages: list[str]) -> None
         messages.append(result("OK", "보유 종목 목표가 컨센 교차검증 통과(또는 컨센 미확보)"))
 
 
+def audit_estimate_alignment(data: dict[str, object], messages: list[str]) -> None:
+    """보유 운용 목표가·SELL 트리거 ↔ 추정 기준선(target_estimate) 정렬 감시 (v2.24).
+
+    진단(2026-07-20): 추정 레이어와 매매 실행 수치가 이원화된 채 괴리를 아무도 감시하지
+    않았다 — 한미반도체 운용 목표 332,696 vs 추정 210,300(기대수익 -5.3%, +58% 괴리),
+    신한지주 익절 트리거 110,829 > 추정 106,900(모델상 미도달 구간에 걸린 price_above).
+    18시 오차 채점(watchlist 목표가)과 일요일 추정 채점(estimate_scorecard)이 각자 돌 뿐
+    두 목표가 체계의 정합은 사각지대였다. 추정 수치는 낙관 편향(+10~19%p)이라 여기서는
+    차단·자동 수정 없이 WARN 만 낸다(policy.reward_risk_management.holding_estimate_review).
+    """
+    policy = data.get("config/policy.json") or {}
+    portfolio = data.get("config/portfolio.json") or {}
+    if not isinstance(policy, dict) or not isinstance(portfolio, dict):
+        return
+    cfg = (policy.get("reward_risk_management", {}) or {}).get("holding_estimate_review", {})
+    if not isinstance(cfg, dict) or not cfg.get("enabled"):
+        return
+    te = load_json("state/target_estimate.json")
+    if not isinstance(te, dict):
+        messages.append(result("INFO", "state/target_estimate.json 없음 — 추정 정렬 감시 건너뜀"))
+        return
+    # stale 추정으로 오탐 경보 금지 (결측 래칫 방지 — estimate_gate 동형)
+    max_age = float(cfg.get("max_age_hours", 24))
+    try:
+        age_h = (datetime.now(KST) - datetime.fromisoformat(str(te.get("as_of", "")))).total_seconds() / 3600
+    except ValueError:
+        age_h = None
+    if age_h is None or age_h > max_age:
+        shown = f"{age_h:.1f}h" if isinstance(age_h, float) else "as_of 불명"
+        messages.append(result("INFO", f"target_estimate stale({shown}>{max_age:.0f}h) — 추정 정렬 감시 보류"))
+        return
+    grades = set(cfg.get("allowed_grades") or ["A", "B"])
+    est_map = {
+        e["ticker"]: e for e in (te.get("estimates", []) or [])
+        if isinstance(e, dict) and e.get("ticker") and e.get("grade") in grades
+        and isinstance(e.get("estimate"), (int, float)) and e["estimate"] > 0
+    }
+    gap_warn = float(cfg.get("target_gap_warn_pct", 20.0))
+
+    # ① 보유 운용 목표가 ↔ 추정 괴리 — 목표가가 (이미 낙관 편향인) 추정보다 gap_warn 이상 높으면 WARN
+    gap_over: list[str] = []
+    for pos in portfolio.get("positions", []):
+        if not isinstance(pos, dict) or (pos.get("shares") or 0) <= 0:
+            continue
+        t = str(pos.get("ticker", ""))
+        est = est_map.get(t)
+        target = pos.get("target_price")
+        if not isinstance(est, dict) or not isinstance(target, (int, float)):
+            continue
+        gap = (target / est["estimate"] - 1.0) * 100.0
+        if gap > gap_warn:
+            gap_over.append(
+                f"{pos.get('name') or t} 목표 {target:,.0f} vs 추정 {est['estimate']:,.0f}"
+                f"(+{gap:.0f}% 괴리, 기대수익 {est.get('expected_return_pct'):+.1f}%)"
+                if isinstance(est.get("expected_return_pct"), (int, float))
+                else f"{pos.get('name') or t} 목표 {target:,.0f} vs 추정 {est['estimate']:,.0f}(+{gap:.0f}% 괴리)"
+            )
+
+    # ② 추정 기준선 위 SELL price_above 트리거 — 모델대로면 영원히 안 걸리는 익절 대기주문
+    trig_over: list[str] = []
+    po = load_json("state/pending_orders.json")
+    for o in (po.get("orders") if isinstance(po, dict) else None) or []:
+        if not isinstance(o, dict) or o.get("status") != "active":
+            continue
+        if not str(o.get("action") or "").startswith("SELL"):
+            continue
+        trig = o.get("trigger") if isinstance(o.get("trigger"), dict) else {}
+        val = trig.get("value")
+        est = est_map.get(str(o.get("ticker", "")))
+        if trig.get("type") == "price_above" and isinstance(val, (int, float)) \
+                and isinstance(est, dict) and val > est["estimate"]:
+            trig_over.append(
+                f"{o.get('name') or o.get('ticker')} 트리거 {val:,.0f} > 추정 {est['estimate']:,.0f}"
+            )
+
+    # ③ 보유측 재검토 의무(review_required) 표면화 — 18시 §2-2 처분 누락 시 매일 반복 경보
+    reviews: list[str] = []
+    exit_levels = load_json("state/exit_levels.json")
+    for t, v in ((exit_levels.get("tickers") if isinstance(exit_levels, dict) else None) or {}).items():
+        eb = v.get("estimate") if isinstance(v, dict) else None
+        if isinstance(eb, dict) and eb.get("review_required"):
+            ret = eb.get("expected_return_pct")
+            ret_s = f"{ret:+.1f}%" if isinstance(ret, (int, float)) else "?"
+            reviews.append(f"{v.get('name') or t}(기대수익 {ret_s}·{eb.get('negative_streak')}회 연속)")
+
+    if gap_over:
+        messages.append(result(
+            "WARN",
+            f"운용 목표가 ↔ 추정 기준선 괴리 +{gap_warn:.0f}% 초과(목표 재산정 근거 점검 또는 §2-2 (a) 재조정 필요): "
+            + "; ".join(gap_over),
+        ))
+    if trig_over:
+        messages.append(result(
+            "WARN",
+            "추정 기준선 위 SELL price_above 트리거(모델상 미도달 구간 — 목표/트리거 재검토): "
+            + "; ".join(trig_over),
+        ))
+    if reviews:
+        messages.append(result(
+            "WARN",
+            "보유 추정 재검토 의무 발동(exit_levels estimate.review_required — 18시 §2-2 (a)/(b)/(c) 택1 처분 필요): "
+            + "; ".join(reviews),
+        ))
+    if not (gap_over or trig_over or reviews):
+        messages.append(result("OK", "보유 목표가·SELL 트리거 ↔ 추정 기준선 정렬 정상(A/B 추정 기준)"))
+
+
 def audit_recovery_stage(data: dict[str, object], messages: list[str]) -> None:
     """누적 수익률 기준 회복 전략 단계 판정 (policy.weekly_recovery_plan).
 
@@ -1256,6 +1363,7 @@ def main() -> int:
     audit_trade_log_daily_mark(messages)
     audit_thesis(data, messages)
     audit_target_consensus(data, messages)
+    audit_estimate_alignment(data, messages)
     audit_recovery_stage(data, messages)
     audit_market_data_tooling(messages)
     audit_prompts_and_scripts(messages)

@@ -24,8 +24,12 @@ OUT_PATH = ROOT / "state" / "lessons_index.json"
 HEADER_RE = re.compile(r"^###\s+(.+?)$")
 CATEGORY_RE = re.compile(r"원인 분류[:\s]*([^\n]+)", re.IGNORECASE)
 NEXT_RULE_RE = re.compile(
-    r"\*\*(?:다음 추론 시 고려|다음 적용 룰|다음 진입[^\n]*?시 반영할 룰)\*\*[:：][ \t]*([^\n]+)",
+    r"\*{0,2}(?:다음 추론 시 고려|다음 적용 룰|다음 진입[^\n:：]*?시 반영할 룰"
+    r"|다음 추천 시 반영할 교훈|다음 routine[^\n:：]*?반영할 룰)\*{0,2}[:：][ \t]*([^\n]+)",
     re.IGNORECASE,
+)
+NEXT_RULE_TRIGGER = (
+    "다음 진입", "다음 적용 룰", "다음 추론", "다음 추천 시 반영할 교훈", "다음 routine",
 )
 RULE_BULLET_RE = re.compile(r"^\s*\d+\.\s+(.+?)$")
 COUNTER_LINE_RE = re.compile(r"^-\s*(.+?):\s*(\d+)건")
@@ -64,7 +68,7 @@ def parse_section(section: dict) -> dict:
     # 번호 매김 룰(예: 1. 구조적 악재... / 2. 진입 직전...) 도 별도 캡처
     capture = False
     for line in section["lines"]:
-        if "**다음 진입" in line or "**다음 적용 룰" in line or "**다음 추론" in line:
+        if any(trig in line for trig in NEXT_RULE_TRIGGER):
             capture = True
             continue
         if capture:

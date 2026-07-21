@@ -8,6 +8,7 @@
 > - `scripts/compute_exit_levels.py` 확장 — 읽기 추가: `state/target_estimate.json`·`state/target_estimate_log.jsonl`(연속 음수 streak)·policy / 쓰기: `state/exit_levels.json` 의 `tickers.<t>.estimate`(추정가·기대수익·운용 목표 대비 괴리%·streak·review_required·review_reason). `--selftest` 에 streak 판정 3케이스 추가
 > - `audit_pipeline.audit_estimate_alignment` — ①보유 운용 목표가가 추정 대비 `target_gap_warn_pct`(20%) 초과 괴리 WARN ②active SELL `price_above` 트리거가 추정 기준선 위(모델상 미도달 구간)면 WARN ③review_required 미처분 표면화(매일 반복 경보)
 > - `prompts/1800_report.md` §2-2 — `exit_levels.estimate.review_required` 소비(의무). `prompts/0900_pre_market.md`·1800 §뉴스 반영 매매가 각주에 보유측 게이트 존재 명시
+> - `scripts/backtest_estimate_tilt.py` — 추정 기대수익의 랭킹 편입(가산 틸트/타이브레이크) 백테스트. 읽기: `state/target_estimate_log.jsonl`·`state/price_history.json`(+`scripts/score_candidates.py` 밴드 함수 import) / 쓰기: `state/backtest_estimate_tilt.json`. **1차 판정 hold(배선 없음)** — 재심사 트리거는 `prompts/sunday_policy_review.md` §1-5(표본 ≥45거래일), 근거 `reports/2026-07-21-estimate-tilt-research.md`
 > - 진단 실측(2026-07-20): 한미반도체 운용 목표 332,696 vs 추정 210,300(−5.3%, +58% 괴리)·LIG넥스원 +28% 괴리·신한지주 익절 트리거 110,829 > 추정 106,900
 >
 > **신규 추가 (2026-07-02, v2.20 포지션 유동 운영 — 본전 래칫 그림자)**

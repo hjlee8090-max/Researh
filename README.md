@@ -216,8 +216,12 @@ A/B 등급 추정 기대수익이 0% 미만으로 2회 연속(target_estimate_lo
 **의무 결정**한다(자동 청산·목표가 자동 변경 없음 — 추정 수치는 낙관 편향(estimate_scorecard
 5td 중앙오차 −10.4%p)이라 부호·지속성 신호만 연결). `audit_pipeline.audit_estimate_alignment`
 가 보유 운용 목표가 ↔ 추정 괴리(+20% 초과)·추정 기준선 위 SELL price_above 트리거(모델상
-미도달 구간)·review_required 미처분을 매일 WARN 으로 감시한다. 랭킹 틸트(기대수익 가중)·수치
-캘리브레이션 연결은 백테스트 근거 확보 후 별도 상정.
+미도달 구간)·review_required 미처분을 매일 WARN 으로 감시한다. **랭킹 편입(가산 틸트/
+타이브레이크)은 1차 백테스트(2026-07-21, `scripts/backtest_estimate_tilt.py` 22거래일)에서
+보류(hold)** — 횡단면 순위 정보력은 실재(A/B IC +0.23·양일 77%, 같은 창 모멘텀 프록시 −0.12)하나
+소폭 가산은 픽 변경 0일(죽은 파라미터)이고 픽을 바꿀 만큼 키우면 무해성 기준을 미달했다.
+표본 ≥45거래일에 sunday_policy_review §1-5 가 사전 등록 기준 그대로 재심사한다
+(`reports/2026-07-21-estimate-tilt-research.md`). 수치 캘리브레이션 연결도 동일하게 별도 상정.
 - **기준가**: PER/PBR 5년 밴드 중앙값 적정가(valuation.json) + 컨센서스 목표가(consensus.json) 평균. 결측 시 현재가 폴백(등급 하향)
 - **테마P** (≤20%): Σ(테마 strength × 종목 노출) × 호라이즌 할인 — "3~5년 메가트렌드"는 12개월 목표가에 1/3만 반영
 - **뉴스P** (±12%): `config/news_impact.json` 유형별 가산점 — 과거 뉴스는 90일 시간감쇠, 다가오는 촉매(catalysts.json)는 발생확률×D-day 근접가중×방향(DART earnings_signal)으로 할인

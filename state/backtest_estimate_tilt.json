@@ -1,0 +1,244 @@
+{
+ "as_of": "2026-07-21T15:44:41+09:00",
+ "window": {
+  "t0_first": "2026-06-11",
+  "t0_last": "2026-07-10",
+  "n_days": 22
+ },
+ "params": {
+  "tilt_bands": "≥+15%:+1.0 / +5~15:+0.4 / 0~5:0.0 / <0:-1.0 (A/B 만, C·결측 0) × w",
+  "weight_grid": [
+   0.02,
+   0.05,
+   0.08
+  ],
+  "proxy_score": "momentum(0.30)+relative_strength(0.20) — score_candidates 실제 밴드 함수 재사용",
+  "pool_rule": "A/B 음수 기대수익 제외(estimate_gate 차단 정합), C 잔류"
+ },
+ "ic": {
+  "all_grades": {
+   "fwd5": {
+    "n_days": 22,
+    "mean": 0.206,
+    "median": 0.118,
+    "positive_share": 0.727
+   },
+   "fwd20": {
+    "n_days": 7,
+    "mean": 0.271,
+    "median": 0.567,
+    "positive_share": 0.714
+   }
+  },
+  "ab_only": {
+   "fwd5": {
+    "n_days": 22,
+    "mean": 0.23,
+    "median": 0.188,
+    "positive_share": 0.773
+   },
+   "fwd20": {
+    "n_days": 7,
+    "mean": 0.289,
+    "median": 0.571,
+    "positive_share": 0.714
+   }
+  },
+  "baseline_proxy_fwd5": {
+   "n_days": 22,
+   "mean": -0.117,
+   "median": -0.4,
+   "positive_share": 0.364
+  }
+ },
+ "tercile_spread_pct": {
+  "fwd5": {
+   "n_days": 22,
+   "mean": 3.279,
+   "median": 2.564,
+   "positive_share": 0.636
+  },
+  "fwd20": {
+   "n_days": 7,
+   "mean": 5.962,
+   "median": 8.045,
+   "positive_share": 0.857
+  }
+ },
+ "pick_simulation": {
+  "baseline": {
+   "n_days": 22,
+   "top1_f5_mean": -3.8,
+   "top2_f5_mean": -4.64,
+   "top1_f20_mean": -16.64
+  },
+  "w=0.02": {
+   "n_days": 22,
+   "top1_f5_mean": -3.8,
+   "top2_f5_mean": -4.67,
+   "top1_f20_mean": -16.64,
+   "changed_days": 0
+  },
+  "w=0.05": {
+   "n_days": 22,
+   "top1_f5_mean": -3.8,
+   "top2_f5_mean": -4.67,
+   "top1_f20_mean": -16.64,
+   "changed_days": 0
+  },
+  "w=0.08": {
+   "n_days": 22,
+   "top1_f5_mean": -2.9,
+   "top2_f5_mean": -4.67,
+   "top1_f20_mean": -16.64,
+   "changed_days": 1,
+   "changed_marginal_f5": 19.87,
+   "changed_examples": [
+    {
+     "t0": "2026-07-02",
+     "tilt_pick": "000660",
+     "tilt_f5": -0.05,
+     "base_f5": -19.92
+    }
+   ]
+  }
+ },
+ "tiebreak_simulation": {
+  "margin=0.03": {
+   "n_days": 22,
+   "top1_f5_mean": -3.03,
+   "top1_f20_mean": -16.64,
+   "changed_days": 3,
+   "changed_marginal_f5": 5.68,
+   "changed_examples": [
+    {
+     "t0": "2026-06-29",
+     "tb_pick": "005930",
+     "tb_f5": -1.55,
+     "base_f5": -10.84
+    },
+    {
+     "t0": "2026-06-30",
+     "tb_pick": "005930",
+     "tb_f5": -11.38,
+     "base_f5": -16.94
+    },
+    {
+     "t0": "2026-07-03",
+     "tb_pick": "005930",
+     "tb_f5": -7.92,
+     "base_f5": -10.1
+    }
+   ]
+  },
+  "margin=0.05": {
+   "n_days": 22,
+   "top1_f5_mean": -4.75,
+   "top1_f20_mean": -18.29,
+   "changed_days": 14,
+   "changed_marginal_f5": -1.49,
+   "changed_marginal_f20": -2.31,
+   "changed_examples": [
+    {
+     "t0": "2026-06-11",
+     "tb_pick": "005930",
+     "tb_f5": 21.24,
+     "base_f5": 27.8
+    },
+    {
+     "t0": "2026-06-15",
+     "tb_pick": "005930",
+     "tb_f5": 4.9,
+     "base_f5": 27.58
+    },
+    {
+     "t0": "2026-06-17",
+     "tb_pick": "005930",
+     "tb_f5": -1.73,
+     "base_f5": 2.34
+    },
+    {
+     "t0": "2026-06-18",
+     "tb_pick": "005930",
+     "tb_f5": -1.1,
+     "base_f5": 8.64
+    },
+    {
+     "t0": "2026-06-19",
+     "tb_pick": "005930",
+     "tb_f5": -4.1,
+     "base_f5": -3.29
+    },
+    {
+     "t0": "2026-06-22",
+     "tb_pick": "005930",
+     "tb_f5": -8.63,
+     "base_f5": -9.97
+    },
+    {
+     "t0": "2026-06-24",
+     "tb_pick": "005930",
+     "tb_f5": -7.64,
+     "base_f5": -0.78
+    },
+    {
+     "t0": "2026-06-25",
+     "tb_pick": "005930",
+     "tb_f5": -20.22,
+     "base_f5": -25.03
+    }
+   ]
+  }
+ },
+ "split_half": {
+  "ic5_ab_first_half": {
+   "n_days": 11,
+   "mean": 0.51,
+   "median": 0.667,
+   "positive_share": 0.909
+  },
+  "ic5_ab_second_half": {
+   "n_days": 11,
+   "mean": -0.05,
+   "median": 0.055,
+   "positive_share": 0.636
+  }
+ },
+ "criteria": {
+  "C1_ic_ab_fwd5_positive": {
+   "pass": true,
+   "rule": "A/B IC(fwd5) 평균>0 & 양(+)일 ≥55%"
+  },
+  "C2_pick_no_harm_and_improve": {
+   "pass": false,
+   "rule": "전 w top1 fwd5 무악화 + 최소 1개 w 에서 top1·top2 동시 개선"
+  },
+  "C3_changed_days_marginal": {
+   "pass": true,
+   "rule": "픽 변경일 한계 효과(fwd5) ≥ 0 (전 w)"
+  }
+ },
+ "verdict": "hold",
+ "criteria_tiebreak": {
+  "T1_top1_no_harm_and_improve": {
+   "pass": false,
+   "rule": "전 margin top1 fwd5 무악화 + 최소 1개 margin 개선"
+  },
+  "T2_changed_days_marginal": {
+   "pass": false,
+   "rule": "픽 변경일 한계 효과(fwd5) ≥ 0 (전 margin)"
+  },
+  "T3_fwd20_guard": {
+   "pass": false,
+   "rule": "top1 fwd20 열화 ≤ 0.5%p (전 margin)"
+  }
+ },
+ "tiebreak_verdict": "hold",
+ "tiebreak_recommended_margin": null,
+ "limitations": [
+  "표본 창 ~25거래일 · 겹치는 fwd 창(비독립) · 단일 국면 — 유의성 주장 불가, 방향 판단용",
+  "프록시 점수는 실제 블렌드의 모멘텀+상대강도 50%만 재현(테마·신뢰도·thesis 소급 불가)",
+  "진입필터(5일 급락 tier 임계)·비중캡 미재현"
+ ],
+ "disclaimer": "학습·시뮬레이션 목적 — 투자 권유 아님."
+}

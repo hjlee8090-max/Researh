@@ -110,6 +110,11 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
   **게이트가 알파를 차단 중**이므로 임계(block_if_expected_return_below_pct) 완화를 패치 후보로
   상정한다(레포 교훈: 차단 룰 래칫이 강세장 미배치의 주범). 반대로 차단 종목이 부진하면 게이트
   유효 — 현행 유지.
+- **랭킹 편입(틸트/타이브레이크) 재심사 (2026-07-21 hold)**: 1차 백테스트(`scripts/backtest_estimate_tilt.py`,
+  22거래일)는 A/B IC 양(+0.23·양일 77%)이나 픽 개선 무해성 기준(C2/T1~T3) 미달로 **배선 보류** —
+  근거 `reports/2026-07-21-estimate-tilt-research.md`. estimate 로그 표본 창이 **≥45거래일**이
+  되면(또는 타이브레이크 변경일 표본 n≥10) 스크립트를 재실행해 **사전 등록 기준 그대로** 재심사한다
+  (기준 사후 변경 금지). verdict=wire 계열일 때만 score_candidates 배선을 패치 후보로 상정.
 - 보강·승격 내역은 lessons.md 에 '루틴' 분류로 1줄 기록한다(키워드 레지스트리 변경 이력 추적).
 
 ### 1-6. lessons.md 응축 (콘텍스트 예산 — `policy.context_budget`)

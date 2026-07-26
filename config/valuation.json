@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-07-26T07:57:04+09:00",
+  "as_of": "2026-07-26T21:30:00+09:00",
   "update_cadence": "sunday_strategy 주간 갱신(분기 실적 후 필수). 모든 값은 출처 URL+게재일 동반(web_verify_guard.source_date_verification 동일 적용). 값이 null 이거나 source_date 가 90일 초과면 check_valuation_guard 가 verdict=skip 으로 아무것도 막지 않는다(결측이 새 차단 룰이 되는 래칫 방지).",
   "schema_note": "bps=주당순자산(최근 분기), eps_fwd=12개월 선행 EPS(1차 소스: state/consensus.json 의 eps_consensus), pbr_band_5y/per_band_5y=[하단, 상단] 5년 밴드. preferred_metric: 사이클 업종(반도체·조선·자동차·전지·중공업)은 PER 함정(피크 실적=최저 PER) 때문에 PBR, 비사이클은 PER.",
   "tickers": {
@@ -146,6 +146,60 @@
       "source_date": "2026-07-26",
       "method": "DART 분기 자본총계 10개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 623일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
       "band_quality": "dart_quarterly"
+    },
+    "079550": {
+      "name": "LIG넥스원(LIG디펜스앤에어로스페이스)",
+      "preferred_metric": "PER",
+      "bps": 65465.0,
+      "eps_fwd": 20505.0,
+      "pbr_band_5y": [
+        1.98,
+        11.64
+      ],
+      "per_band_5y": [
+        14.21,
+        66.17
+      ],
+      "source_url": "https://comp.wisereport.co.kr/company/c1010001.aspx?cmp_cd=079550",
+      "source_date": "2026-07-24",
+      "method": "APPROX: WiseReport 스냅샷(현재가 762,000원 기준 실측 BPS/EPS/PER/PBR, 18개 증권사 컨센서스 12M 선행 EPS/BPS) + 별도 조회한 2021~2023 연간 PER/PBR(FnGuide 유사, comp.wisereport 히스토리)로 5년 밴드 근사. DART 10개 분기 자본총계 역산 방식(다른 티커와 동일 정밀도) 미적용 — 밴드는 연도말 스냅샷 몇 개 점을 잇는 근사치이며 일일 가격 시계열 퍼센타일이 아님. 방산은 비사이클로 간주(한화에어로스페이스 선례 따라 PER 채택), 이란-미 갈등발 수출 모멘텀으로 2026 들어 PER/PBR 밴드 급등(최근 66x/11.6x는 재평가 국면 반영, 과거 저점 14x/2.0x 대비 큰 갭).",
+      "band_quality": "consensus_approx"
+    },
+    "042700": {
+      "name": "한미반도체",
+      "preferred_metric": "PBR",
+      "bps": 7278.0,
+      "eps_fwd": 3627.0,
+      "pbr_band_5y": [
+        2.7,
+        27.48
+      ],
+      "per_band_5y": [
+        12.25,
+        89.57
+      ],
+      "source_url": "https://comp.wisereport.co.kr/company/c1010001.aspx?cmp_cd=042700",
+      "source_date": "2026-07-24",
+      "method": "APPROX: WiseReport 스냅샷(현재가 200,000원, 2026-07-24 종가, 실적 발표 후 -7.41% 하락 반영). eps_fwd=2026 컨센서스 EPS(별도 12M 선행치 미제공, 2026E로 대체). 연간 PER/PBR(2021 17.90/2.70, 2022 12.25/2.87, 2023 22.41/10.50, 2024 51.92/14.74) + 현재치로 5년 밴드 근사 — DART 분기 역산 방식 미적용, 일일 가격 퍼센타일 아님. 참고: 2026년 3월 스냅샷 기준 분기 PBR 최고 37.6x까지 관측된 자료도 있어 실제 5년 고점은 27.5x보다 더 높을 수 있음(주가 52주 고점 426,000원 시점 반영 시 PBR 약 55~59x 추정). Q2 2026 실적(매출 2,511억 +39.5%, 영업이익 1,303억 +51% YoY, OPM 51.9%) 발표 후에도 급락 — HBM4/TC본더 사이클 트랩 우려로 PBR 우선 지표 유지.",
+      "band_quality": "consensus_approx"
+    },
+    "055550": {
+      "name": "신한지주",
+      "preferred_metric": "PER",
+      "bps": 121468.0,
+      "eps_fwd": 12812.0,
+      "pbr_band_5y": [
+        0.38,
+        0.86
+      ],
+      "per_band_5y": [
+        4.03,
+        10.35
+      ],
+      "source_url": "https://comp.wisereport.co.kr/company/c1010001.aspx?cmp_cd=055550",
+      "source_date": "2026-07-24",
+      "method": "APPROX: WiseReport 스냅샷(현재가 104,400원, 2026-07-24). eps_fwd=12M 선행 컨센서스(18개 증권사, 평균 목표주가 136,333원). 연간 PER/PBR(2022 4.03/0.38, 2023 ~0.38, 2024 5.65/0.43) + 현재치(10.35/0.86)로 5년 밴드 근사 — DART 분기 역산·일일 가격 퍼센타일 미적용. 2026년 Value-up 2.0/자사주 매입소각(연간 누적 1.4조원 계획, 상반기 순이익 3.4조원 기록)에 따른 밸류에이션 재평가로 밴드 상단이 과거 대비 크게 상향(0.43x→0.86x).",
+      "band_quality": "consensus_approx"
     }
   }
 }

@@ -1306,6 +1306,49 @@ def _run_side_check(script_name: str, payload_rel: str, messages: list[str],
         return None
 
 
+def audit_compactor_coverage(data: dict[str, object], messages: list[str]) -> None:
+    """핫패스 파일의 최상위 누적 배열 중 compact_state.py 가 처리하지 않는 것을 찾는다(v2.26).
+
+    근거(2026-07-27): watchlist.comments 가 68건 80.9KB(파일의 61%)까지 자랐는데 압축기는
+    stocks[].comments 만 봤다. 개별 파일 크기 경보는 "크다"고만 말하고 "무엇이 무관리인지"는
+    말해주지 않아 한 달 넘게 원인이 특정되지 않았다. 이 검사가 그 갭을 메운다.
+    """
+    policy = data.get("config/policy.json")
+    cb = (policy or {}).get("context_budget", {}) if isinstance(policy, dict) else {}
+    if not cb.get("enabled", True):
+        return
+    min_len = int(cb.get("hotpath_array_min_len_to_flag", 20))
+
+    # 관리 주체는 정책에 명시적으로 등재한다 — 스크립트 소스 grep 은 소유자가 여럿(compact_state /
+    # fetch_catalysts / screen_universe)이라 오탐한다.
+    managed = cb.get("managed_hotpath_arrays") or {}
+    if not isinstance(managed, dict) or not managed:
+        messages.append(result("WARN", "context_budget.managed_hotpath_arrays 미설정 — 압축기 커버리지 대조 비활성"))
+        return
+
+    unmanaged: list[str] = []
+    for rel in ("config/watchlist.json", "config/weekly_plan.json", "config/portfolio.json",
+                "config/candidates.json", "config/catalysts.json"):
+        blob = data.get(rel) if rel in data else load_json(rel)
+        if not isinstance(blob, dict):
+            continue
+        for field, value in blob.items():
+            if not isinstance(value, list) or len(value) < min_len:
+                continue
+            if f"{rel}:{field}" in managed:
+                continue
+            size_kb = len(json.dumps(value, ensure_ascii=False).encode("utf-8")) / 1024
+            unmanaged.append(f"{rel}:{field} ({len(value)}건 {size_kb:.1f}KB)")
+
+    if unmanaged:
+        messages.append(result(
+            "WARN",
+            "압축기 미관리 누적 배열 — compact_state.py 에 보존 규칙 추가 필요: " + "; ".join(unmanaged),
+        ))
+    else:
+        messages.append(result("OK", "핫패스 누적 배열 전부 압축기 관리 대상"))
+
+
 def audit_thesis_cards(messages: list[str]) -> None:
     """check_thesis_cards.py 실행 — 논거 카드 완성도·반증 조건·hard 무효화 충족을 표면화(v2.25).
 
@@ -1472,6 +1515,7 @@ def main() -> int:
     audit_portfolio_heat(data, messages)
     audit_trade_log_daily_mark(messages)
     audit_thesis(data, messages)
+    audit_compactor_coverage(data, messages)
     audit_thesis_cards(messages)
     audit_alert_expiry(messages)
     audit_inference_gate(messages)

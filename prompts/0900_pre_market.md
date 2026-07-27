@@ -57,8 +57,8 @@
 5. `config/watchlist.json` — 현재 추천 종목 + `next_day_plan`
 6. `config/portfolio.json` — 보유 현황
 7. `config/candidates.json` — 신규 진입 후보 (`shipbuilding_candidate` 등) — 자동 추적 대상
-8. `state/market_snapshot.json` — 0-B 단계에서 방금 만든 가격·5거래일 추세 스냅샷
-9. `state/candidate_scores.json` — 0-B 단계의 후보 점수·진입 가능 여부 랭킹
+8. `state/market_snapshot_brief.json` — 핫패스 요약본(보유·청산추적 전체 + 진입필터 통과 후보, five_day_history·sources 제외). **가격 신선도·출처 검증(`sources[*].last_date`)이나 5거래일 캔들이 필요하면 그때만 전문 `state/market_snapshot.json` 을 연다.** (0-B 단계에서 방금 생성)
+9. `state/candidate_scores.json` — 0-B 단계의 후보 점수·진입 가능 여부 랭킹. **`ranked` 는 상위 5건만 전문이고 6위 이하는 요약이다** — 하위 후보의 raw data 가 필요하면 `state/candidate_scores_full.json` 을 연다(핫패스 콘텍스트 예산).
 10. `config/catalysts.json` — **다가오는 촉매(실적발표·배당·매크로) 캘린더** (있으면). `generated_events`(법정기한 추정)+`manual_events`(웹검색 확정)를 합쳐 D-day 임박 이벤트를 1-4 에서 경보로 쓴다. 파일이 없으면 이 단계는 건너뛴다(옵셔널).
 11. `state/inference_checklist.md` — **선제 추론 직전 입력**(과거 빗나간 요인). 아래 §1-0 채점·예측 기록에 쓴다.
 12. `state/momentum_signal.json` — **수익형 전략 1순위 진입 엔진**(`policy.momentum_strategy`). `executable_allocation.orders` = 오늘 목표 바스켓. `state/pending_orders.json` 의 `strategy:"dual_momentum_w27"` 주문이 이 바스켓의 사전 체결 지시다.

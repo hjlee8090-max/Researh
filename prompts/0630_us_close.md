@@ -70,7 +70,7 @@
 5. `config/watchlist.json` — 보유 종목
 6. `config/portfolio.json`
 7. `config/candidates.json` — 추적 중인 신규 진입 후보
-8. `state/market_snapshot.json` — 0-A 단계 스냅샷
+8. `state/market_snapshot_brief.json` — 핫패스 요약본(보유·청산추적 전체 + 진입필터 통과 후보, five_day_history·sources 제외). **가격 신선도·출처 검증(`sources[*].last_date`)이나 5거래일 캔들이 필요하면 그때만 전문 `state/market_snapshot.json` 을 연다.** (0-A 단계 생성)
 9. `state/pending_orders.json` — 자정~18시가 적재한 조건부 사전주문(§2-PO 에서 트리거 갱신)
 10. `state/inference_checklist.md` — 선제 추론 직전 입력(과거 빗나간 요인). §2-1 갱신 예측 기록 전 읽는다.
 

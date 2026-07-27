@@ -34,7 +34,7 @@
 3. `config/weekly_plan.json` (이번 주 목표·thesis·invalidation_triggers)
 4. `config/watchlist.json`
 5. `config/portfolio.json`
-6. `state/market_snapshot.json` (0-B 에서 갱신한 가격·신뢰도·5거래일 추세 — 가격 판단 1순위)
+6. `state/market_snapshot_brief.json` — 핫패스 요약본(보유·청산추적 전체 + 진입필터 통과 후보, five_day_history·sources 제외). **가격 신선도·출처 검증(`sources[*].last_date`)이나 5거래일 캔들이 필요하면 그때만 전문 `state/market_snapshot.json` 을 연다.** 가격 판단 1순위.
 7. **시간대별 리포트**:
    - `reports/YYYY-MM-DD-09.md` (오늘 09:00 — 반드시 흡수). 없으면 그 사실 명시
    - **09시가 없으면(미발화)** `reports/YYYY-MM-DD-06.md` 를 대체 흡수한다 — 06시가 개장 갭 예측·pending_orders 트리거를 개장 전에 이미 갱신한 **최신본**이다(진단 P11: 09시가 죽은 날 폴백이 자정 원본까지만 거슬러 올라가던 공백). 06시도 없으면 `-00.md` 순

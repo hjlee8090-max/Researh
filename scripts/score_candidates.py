@@ -145,6 +145,10 @@ def relative_strength_score(
 
 # v2.5 — score blend 가중치(합 1.0). policy.entry_filters.relative_strength.score_blend_weights 와 일치.
 # momentum 은 급락 회피 게이트로 유지하되 비중을 줄이고, relative_strength(섹터 로테이션) 0.20 을 신설.
+# (콘텍스트 압축 v2 Phase 1) 핫패스 candidate_scores.json 에 전문으로 실을 상위 건수.
+# 나머지는 요약만 남기고 전문은 candidate_scores_full.json 으로 분리한다.
+HOTPATH_RANKED_FULL = 5
+
 BLEND_WEIGHTS = {
     "momentum": 0.30,
     "relative_strength": 0.20,
@@ -573,9 +577,38 @@ def main() -> int:
     }
     out_path = ROOT / "state" / "candidate_scores.json"
     out_path.parent.mkdir(exist_ok=True)
+
+    # (콘텍스트 압축 v2 Phase 1) 핫패스에는 상위 HOTPATH_RANKED_FULL 건만 전문으로 싣고,
+    # 나머지는 판단에 필요한 최소 필드(티커·점수·진입가능·차단사유)만 남긴다. 전문은
+    # candidate_scores_full.json 에 보존 — 09시 프롬프트가 15건의 raw data 블록(건당
+    # ~1.9KB)을 전부 읽을 이유가 없다(2026-07-27 실측 62.7KB 중 34KB 가 6위 이하).
+    full_out = dict(out)
+    slim_ranked = []
+    for idx, row in enumerate(ranked):
+        if idx < HOTPATH_RANKED_FULL:
+            slim_ranked.append(row)
+            continue
+        slim_ranked.append({
+            "ticker": row.get("ticker"),
+            "name": row.get("name"),
+            "sector": row.get("sector"),
+            "final_score": row.get("final_score"),
+            "tradable": row.get("tradable"),
+            "block_reasons": row.get("block_reasons"),
+            "_detail": "state/candidate_scores_full.json",
+        })
+    out["ranked"] = slim_ranked
+    out["ranked_note"] = (
+        f"상위 {HOTPATH_RANKED_FULL}건만 전문. {HOTPATH_RANKED_FULL + 1}위 이하는 요약이며 "
+        "전문은 state/candidate_scores_full.json 에 있다(핫패스 콘텍스트 예산)."
+    )
+
+    full_path = ROOT / "state" / "candidate_scores_full.json"
+    full_path.write_text(json.dumps(full_out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
         f"wrote {out_path.relative_to(ROOT)} candidates={len(ranked)} "
+        f"(hotpath full={min(HOTPATH_RANKED_FULL, len(ranked))}) "
         f"tradable={len(tradable)} blocked={len(blocked)} regime={regime_state}"
     )
     return 0

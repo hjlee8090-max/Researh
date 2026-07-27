@@ -37,7 +37,7 @@ KOSPI 정마감은 15:30이므로 이 시점은 **종가 임박치 기준 1차 �
 ## 0. 컨텍스트 적재
 1. `state/lessons.md`
 2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
-3. `state/market_snapshot.json` (0-B 에서 갱신 — 가격·신뢰도 1순위)
+3. `state/market_snapshot_brief.json` — 핫패스 요약본(보유·청산추적 전체 + 진입필터 통과 후보, five_day_history·sources 제외). **가격 신선도·출처 검증(`sources[*].last_date`)이나 5거래일 캔들이 필요하면 그때만 전문 `state/market_snapshot.json` 을 연다.** 가격·신뢰도 1순위.
 3-1. `config/catalysts.json` (있으면 — 익일 09시 사전 알림의 임박 촉매 표출용, 옵셔널)
 4. **시간대별 리포트**:
    - `reports/YYYY-MM-DD-12.md` (오늘 12시 — 반드시 흡수)

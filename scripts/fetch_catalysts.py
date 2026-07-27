@@ -42,6 +42,10 @@ KST = timezone(timedelta(hours=9))
 DART_BASE = "https://opendart.fss.or.kr/api"
 HTTP_TIMEOUT = 15
 ARCHIVE_KEEP_DAYS = 14  # 경과한 generated 이벤트를 events_archive 에 보관하는 기간
+# (콘텍스트 압축 v2 Phase 1) 핫패스 지평 — 이 날짜를 넘는 generated 이벤트는 events_future 로
+# 분리한다. 09시 routine 이 11월 실적 법정기한까지 매일 읽을 이유가 없다(2026-07-27 실측:
+# 54건 44.1KB 중 절반이 D+45 밖). manual_events 는 routine 소유라 손대지 않는다.
+HOTPATH_HORIZON_DAYS = 45
 
 # 분기말(월,일) → (법정기한 월,일, 보고서명, 잠정실적 선행 추정일수)
 # 잠정실적 선행 일수: 대형주가 보고서 법정기한보다 대략 며칠 먼저 잠정실적을 내는 폭(window 시작).
@@ -217,9 +221,15 @@ def main() -> int:
     # 경과한 generated 이벤트는 archive 로 (manual 은 routine 이 직접 관리하므로 손대지 않는다).
     archive = [e for e in prior.get("events_archive", [])
                if e.get("date", "") >= (today - timedelta(days=ARCHIVE_KEEP_DAYS)).isoformat()]
-    fresh, expired = [], []
+    horizon = (today + timedelta(days=HOTPATH_HORIZON_DAYS)).isoformat()
+    fresh, expired, future = [], [], []
     for e in generated:
-        (fresh if e["date"] >= today.isoformat() else expired).append(e)
+        if e["date"] < today.isoformat():
+            expired.append(e)
+        elif e["date"] > horizon:
+            future.append(e)      # 지평 밖 — 보존하되 핫패스에서 뺀다
+        else:
+            fresh.append(e)
     archive.extend(expired)
 
     result = {
@@ -234,10 +244,24 @@ def main() -> int:
         "manual_count": len(manual_events),
         "generated_events": fresh,
         "manual_events": manual_events,
+        "events_future_ref": (
+            f"state/catalysts_future.json (D+{HOTPATH_HORIZON_DAYS} 밖 예정 이벤트 — "
+            "지평 진입 시 다음 실행이 generated_events 로 승격)"
+        ),
         "events_archive": archive[-100:],
     }
     out_path.parent.mkdir(exist_ok=True)
     out_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # 지평 밖 이벤트는 핫패스 밖(state/)에 따로 보관한다 — routine 은 읽지 않고
+    # check_thesis_cards 가 checkpoint 날짜 조회용으로만 참조한다(v2.26).
+    future_path = ROOT / "state" / "catalysts_future.json"
+    future_path.parent.mkdir(exist_ok=True)
+    future_path.write_text(json.dumps({
+        "version": "1.0",
+        "purpose": f"D+{HOTPATH_HORIZON_DAYS} 지평 밖 예정 촉매 — 핫패스 분리 보관(v2.26).",
+        "count": len(future),
+        "events": future,
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"catalysts: wrote {out_path.relative_to(ROOT)} "
           f"generated={len(fresh)} manual={len(manual_events)} key={key_present}")
     return 0

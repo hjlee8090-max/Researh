@@ -36,6 +36,12 @@ KEEP_COMMENTS = 12        # 보유 종목당 최근 코멘트 (≈ 2~3일 × 4~5
 KEEP_WATCH_ITEMS = 15     # "내일 이어받을 트리거"로서 유효한 분량 (≈ 1주)
 KEEP_HISTORY = 10         # 주말 사후분석(1주+)에 충분
 KEEP_CHANGELOG = 5        # 최근 정책 변경 맥락 (전문은 docs/policy_changelog.md)
+# (v2 Phase 1) watchlist 최상위 누적 배열 — compact_watchlist 는 stock.comments 만 보고
+# 최상위 comments/cross_check_notes 는 한 번도 건드리지 않았다. 2026-07-27 실측에서
+# comments 가 68건 80.9KB(파일의 61%)로 자라 있었다. 개수 상한과 바이트 상한을 쌍으로 둔다.
+KEEP_TOPLEVEL_COMMENTS = 12    # 슬롯 코멘트 ≈ 2~3일치 (직전 슬롯 인계에 필요한 분량)
+KEEP_CROSS_CHECK_NOTES = 8     # 섹터 전이 판정 근거 ≈ 1주
+MAX_TOPLEVEL_ENTRY_BYTES = 1200  # 항목 하나가 무한히 자라는 것을 막는 크기 상한
 
 WATCHLIST = ROOT / "config" / "watchlist.json"
 PORTFOLIO = ROOT / "config" / "portfolio.json"
@@ -82,6 +88,91 @@ def load_archive() -> dict:
         "evicted_stocks": [],
         "trimmed_comments": {},
     }
+
+
+TRUNCATE_SUFFIX = " …(archive 전문)"
+
+
+def _truncate_entry(entry, limit: int) -> tuple[object, bool]:
+    """항목의 최장 문자열 필드를 limit 바이트로 자른다. (새 항목, 이번에 잘렸는지) 반환.
+
+    멱등이어야 한다 — 이미 자른 항목을 재실행이 다시 자르면 접미사가 겹쳐 붙고
+    archive 에 중복 이관된다. 잘린 결과가 limit 을 넘지 않도록 접미사 길이를 미리 빼고,
+    dict 는 `_truncated` 마커로 재처리를 막는다.
+    """
+    budget = max(1, limit - len(TRUNCATE_SUFFIX.encode("utf-8")))
+    if isinstance(entry, str):
+        raw = entry.encode("utf-8")
+        if len(raw) <= limit or entry.endswith(TRUNCATE_SUFFIX):
+            return entry, False
+        return raw[:budget].decode("utf-8", "ignore") + TRUNCATE_SUFFIX, True
+    if not isinstance(entry, dict):
+        return entry, False
+    if entry.get("_truncated"):
+        return entry, False  # 이미 처리됨 — 멱등
+    longest, longest_len = None, 0
+    for key, value in entry.items():
+        if isinstance(value, str) and len(value.encode("utf-8")) > longest_len:
+            longest, longest_len = key, len(value.encode("utf-8"))
+    if longest is None or longest_len <= limit:
+        return entry, False
+    trimmed = dict(entry)
+    raw = entry[longest].encode("utf-8")
+    trimmed[longest] = raw[:budget].decode("utf-8", "ignore") + TRUNCATE_SUFFIX
+    trimmed["_truncated"] = True
+    return trimmed, True
+
+
+def compact_watchlist_toplevel(dry: bool) -> dict:
+    """watchlist 최상위 누적 배열(comments·cross_check_notes)을 개수·크기 상한으로 압축한다.
+
+    (v2 Phase 1, 2026-07-27) compact_watchlist 의 사각지대였다 — 그 함수는 stocks[] 안의
+    comments 만 트림하고 파일의 61% 를 차지하는 최상위 comments 는 손대지 않았다.
+    초과분 전문은 watchlist_archive.json 에 이관하므로 학습 재료는 사라지지 않는다.
+    """
+    if not WATCHLIST.exists():
+        return {"skipped": "watchlist.json 부재"}
+    watchlist = read_json(WATCHLIST)
+    archive = load_archive()
+    before = len(json.dumps(watchlist, ensure_ascii=False).encode("utf-8"))
+    targets = (
+        ("comments", KEEP_TOPLEVEL_COMMENTS, "archived_comments"),
+        ("cross_check_notes", KEEP_CROSS_CHECK_NOTES, "archived_cross_check_notes"),
+    )
+    detail: dict[str, dict] = {}
+    changed = False
+    for field, keep, bucket_key in targets:
+        items = watchlist.get(field)
+        if not isinstance(items, list) or not items:
+            detail[field] = {"kept": 0, "archived": 0, "truncated": 0}
+            continue
+        overflow = items[:-keep] if len(items) > keep else []
+        retained = items[-keep:] if len(items) > keep else list(items)
+        new_retained = []
+        cut_originals = []  # 잘린 항목의 전문 — 핫패스만 줄이고 학습 재료는 보존한다.
+        for item in retained:
+            new_item, was_cut = _truncate_entry(item, MAX_TOPLEVEL_ENTRY_BYTES)
+            if was_cut:
+                cut_originals.append(item)
+            new_retained.append(new_item)
+        if overflow or cut_originals:
+            changed = True
+            bucket = archive.setdefault(bucket_key, [])
+            bucket.extend(overflow)
+            bucket.extend(cut_originals)
+            watchlist[field] = new_retained
+        detail[field] = {
+            "kept": len(new_retained),
+            "archived": len(overflow),
+            "truncated": len(cut_originals),
+        }
+    if changed and not dry:
+        watchlist["last_updated"] = now_kst()
+        archive["last_updated"] = now_kst()
+        write_json(WATCHLIST, watchlist, dry)
+        write_json(WATCHLIST_ARCHIVE, archive, dry)
+    after = len(json.dumps(watchlist, ensure_ascii=False).encode("utf-8"))
+    return {**detail, "bytes_before": before, "bytes_after": after, "bytes_saved": before - after}
 
 
 def compact_watchlist(dry: bool) -> dict:
@@ -295,6 +386,7 @@ def main() -> int:
         "as_of": now_kst(),
         "dry_run": args.dry_run,
         "watchlist": compact_watchlist(args.dry_run),
+        "watchlist_toplevel": compact_watchlist_toplevel(args.dry_run),
         "watch_items": compact_watch_items(args.dry_run),
         "portfolio_history": compact_portfolio_history(args.dry_run),
         "policy_changelog": compact_policy_changelog(args.dry_run),

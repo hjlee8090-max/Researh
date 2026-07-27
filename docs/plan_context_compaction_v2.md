@@ -137,6 +137,46 @@ lessons_update_chain: 이관 0 (체인 3개 ≤ 상한 3)
 
 ---
 
+## 4-A. Phase 1 실행 결과 (2026-07-27, policy v2.26)
+
+| 파일 | 이전 | 이후 | 변화 |
+|---|---|---|---|
+| `config/watchlist.json` | 133.6KB | **57.6KB** | -76.0KB |
+| `state/market_snapshot_brief.json` (신규, 프롬프트용) | 47.4KB | **19.6KB** | -27.8KB |
+| `state/candidate_scores.json` | 62.7KB | **35.7KB** | -27.0KB |
+| `config/catalysts.json` | 44.1KB | **33.9KB** | -10.2KB |
+| `config/portfolio.json` | 26.7KB | 24.4KB | -2.3KB |
+| `config/policy.json` | 126.8KB | 129.5KB | +2.7KB |
+| **09시 핫패스 총계** | **733.3KB** | **593.1KB** | **-19.1%** |
+
+토큰 추정 234K → 189K. `watchlist.json` 이 예산(100KB) 안으로 들어와 초과 파일이 5개에서 3개로 줄었다.
+
+`policy.json` 이 2.7KB 늘어난 것은 이번에 추가한 보존 규칙·관리 대상 등재분이다. Phase 2 의 산문 이관 대상이다.
+
+### 구현 내역
+
+- `compact_state.compact_watchlist_toplevel()` 신설 — 최상위 `comments` 12건·`cross_check_notes` 8건·항목당 1,200B 상한. 초과분 56건과 잘린 원문 4건 모두 `watchlist_archive.json` 으로 이관(학습 재료 보존).
+- `score_candidates` — 핫패스는 `ranked` 상위 5건만 전문, 6위 이하는 티커·점수·차단사유만. 전문은 `candidate_scores_full.json`.
+- `fetch_catalysts` — D+45 밖 `generated_events` 를 `state/catalysts_future.json` 으로 분리. 지평에 들어오면 다음 실행이 승격.
+- `fetch_market_data` — `market_snapshot_brief.json` 생성(`five_day_history`·`sources` 제외). **전문은 `score_candidates` 의 입력이라 축소하지 않는다.**
+- 프롬프트 §0 컨텍스트 적재를 요약본으로 전환(00·06·09·12·15시). **18시는 전문 유지** — 종가 확정에 `sources[*].last_date` 검증이 필요하다.
+
+### 구현 중 잡은 문제 3가지
+
+1. **멱등성 파괴.** 항목을 1,200B 로 자른 뒤 " …(archive 전문)" 접미사를 붙여 결과가 상한을 넘겼고, 재실행이 같은 항목을 계속 다시 자르며 archive 에 중복 이관했다. 접미사 길이를 미리 빼고 `_truncated` 마커로 재처리를 막았다. 2회 연속 재실행에서 변화량 0·archive 중복 0 확인.
+2. **수집 실패 경로에서 요약본 미갱신.** `fetch_market_data` 는 모든 출처가 실패하면 직전 스냅샷을 보존하고 조기 반환하는데, 그 경로가 `write_brief` 앞에 있었다. 프롬프트가 요약본을 1순위로 읽으므로 "전문은 stale 표시인데 요약본은 아닌" 불일치가 생긴다. 조기 반환 경로에도 요약본 갱신을 넣었다.
+3. **지평 밖 촉매 날짜 유실.** 카드의 `checkpoints` 는 3분기 실적(11/14)처럼 D+45 밖을 가리킨다. 촉매를 분리하면 `check_thesis_cards` 가 `evaluate_after` 를 못 얻어 invalidation 이 조기 격발한다. 판정기가 `catalysts_future.json` 도 함께 읽도록 고쳤다.
+
+### 재발 방지 — 압축기 커버리지 대조
+
+`audit_pipeline.audit_compactor_coverage` 를 신설했다. 핫패스 파일의 최상위 누적 배열(20건 이상)이 `policy.context_budget.managed_hotpath_arrays` 에 관리 주체와 함께 등재돼 있는지 대조하고, 미등재면 WARN 을 낸다.
+
+처음에는 `compact_state.py` 소스를 grep 하는 방식으로 짰는데 `catalysts.json` 을 오탐했다 — 그 파일은 `fetch_catalysts.py` 가 관리한다. 소유자가 여럿이라 소스 grep 으로는 안 되고, 정책에 명시적으로 등재하는 방식이 맞다. 현재 11건 등재.
+
+미등재 배열을 주입해 검사가 실제로 잡는지 확인했다.
+
+---
+
 ## 5. 예상 결과
 
 | 단계 | 09시 핫패스 | 토큰 |

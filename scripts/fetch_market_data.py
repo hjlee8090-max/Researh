@@ -684,6 +684,36 @@ def apply_entry_filter(
     }
 
 
+# (콘텍스트 압축 v2 Phase 1) 프롬프트용 요약본 — 원본은 score_candidates 의 입력이라
+# 절대 줄이지 않는다. 09시 §0 이 읽는 것은 이 요약본이면 충분하다(2026-07-27 실측:
+# 원본 47.4KB 중 five_day_history 가 종목당 695B 로 46%).
+BRIEF_DROP_FIELDS = ("five_day_history", "sources")
+
+
+def write_brief(snapshot: dict, out_path: Path) -> int:
+    """보유·exit_tracking 전체 + 후보는 진입필터 통과분만, 무거운 필드를 뺀 요약본."""
+    tickers = snapshot.get("tickers") or {}
+    kept: dict = {}
+    for ticker, data in tickers.items():
+        if not isinstance(data, dict):
+            continue
+        role = data.get("role")
+        passes = bool((data.get("entry_filter") or {}).get("passes")) if isinstance(
+            data.get("entry_filter"), dict
+        ) else False
+        if role not in ("holding", "exit_tracking") and not passes:
+            continue
+        kept[ticker] = {k: v for k, v in data.items() if k not in BRIEF_DROP_FIELDS}
+    brief = {k: v for k, v in snapshot.items() if k != "tickers"}
+    brief["tickers"] = kept
+    brief["brief_note"] = (
+        f"핫패스 요약본 — 보유·청산추적 전체 + 진입필터 통과 후보만, "
+        f"{'/'.join(BRIEF_DROP_FIELDS)} 제외. 전문은 state/market_snapshot.json."
+    )
+    out_path.write_text(json.dumps(brief, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return len(kept)
+
+
 def main() -> int:
     policy = load_json("config/policy.json")
     regime_cfg = policy.get("market_regime", {}) if isinstance(policy.get("market_regime"), dict) else {}
@@ -772,9 +802,13 @@ def main() -> int:
                 json.dumps(prior, ensure_ascii=False, indent=2) + "\n",
                 encoding="utf-8",
             )
+            # 요약본도 함께 보존한다 — 프롬프트 §0 이 brief 를 1순위로 읽으므로,
+            # 이 경로에서 brief 를 갱신하지 않으면 stale 표시가 없는 옛 요약본이 남아
+            # "전문은 stale 인데 요약본은 아닌" 불일치가 생긴다.
+            brief_n = write_brief(prior, ROOT / "state" / "market_snapshot_brief.json")
             print(
                 f"all sources failed — preserved prior snapshot (as_of={prior.get('as_of')}), "
-                f"marked stale; regime={regime.get('state')}"
+                f"marked stale; brief={brief_n} regime={regime.get('state')}"
             )
             return 0
 
@@ -782,8 +816,10 @@ def main() -> int:
     out_path.write_text(
         json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
+    brief_n = write_brief(snapshot, ROOT / "state" / "market_snapshot_brief.json")
     print(
-        f"wrote {out_path.relative_to(ROOT)} tickers={len(tickers)} sources_ok={sources_ok} "
+        f"wrote {out_path.relative_to(ROOT)} tickers={len(tickers)} brief={brief_n} "
+        f"sources_ok={sources_ok} "
         f"pass={len(candidates_passing)} block={len(candidates_failing)} low_conf={len(holdings_low)} "
         f"regime={regime.get('state')}"
     )

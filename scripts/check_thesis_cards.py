@@ -96,13 +96,22 @@ def trading_days_between(start: date, end: date, holiday_set: set[str]) -> int:
 
 
 def catalyst_dates() -> dict[str, str]:
-    """config/catalysts.json 의 {catalyst_id: date} 맵."""
-    cal = load_json("config/catalysts.json", {}) or {}
+    """{catalyst_id: date} 맵.
+
+    핫패스(config/catalysts.json)는 D+45 지평 안만 담는다(v2.26). 카드의 checkpoint 는
+    3분기 실적처럼 지평 밖을 가리킬 수 있으므로 state/catalysts_future.json 도 함께 읽는다 —
+    안 읽으면 지평 밖 invalidation 이 evaluate_after 를 못 얻어 조기 격발한다.
+    """
     out: dict[str, str] = {}
+    cal = load_json("config/catalysts.json", {}) or {}
     for key in ("generated_events", "manual_events"):
         for event in cal.get(key) or []:
             if isinstance(event, dict) and event.get("id") and event.get("date"):
                 out[str(event["id"])] = str(event["date"])[:10]
+    future = load_json("state/catalysts_future.json", {}) or {}
+    for event in future.get("events") or []:
+        if isinstance(event, dict) and event.get("id") and event.get("date"):
+            out.setdefault(str(event["id"]), str(event["date"])[:10])
     return out
 
 

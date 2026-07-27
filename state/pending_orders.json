@@ -694,8 +694,9 @@
    "price_source_required": "snapshot_fresh_or_web_verified",
    "valid_until": "2026-07-27T15:30:00+09:00",
    "strategy": "bank_valueup_target_harvest_w30",
-   "status": "active",
-   "inference_id": "inf-20260724-1800-3"
+   "status": "expired",
+   "inference_id": "inf-20260724-1800-3",
+   "expire_note": "valid_until 2026-07-27T15:30 경과 — 양방향 트리거 미도달(종가 105,000). 7/28용으로 재적재."
   },
   {
    "id": "po-20260724-2",
@@ -713,8 +714,9 @@
    "price_source_required": "snapshot_fresh_or_web_verified",
    "valid_until": "2026-07-27T15:30:00+09:00",
    "strategy": "bank_valueup_target_harvest_w30",
-   "status": "active",
-   "inference_id": "inf-20260724-1800-3"
+   "status": "expired",
+   "inference_id": "inf-20260724-1800-3",
+   "expire_note": "valid_until 2026-07-27T15:30 경과 — 양방향 트리거 미도달(종가 105,000). 7/28용으로 재적재."
   },
   {
    "id": "po-20260724-3",
@@ -732,13 +734,58 @@
    "price_source_required": "snapshot_fresh_or_web_verified",
    "valid_until": "2026-07-27T15:30:00+09:00",
    "strategy": "sox_bear_market_spillover_w30",
-   "status": "active",
+   "status": "filled",
    "inference_id": "inf-20260724-1800-1",
    "note": "index_shock_stop_deferral day1(7/24) — 7/27 종가가 잔여선 203,472 재이탈(2일 연속) 확정 시 잔여 전량 closing_auction 청산. 손절 199,143 하회 시 즉시 예외 청산. 장중 터치는 신호일 뿐(v2.21 종가 판정).",
-   "note_1200": "7/27 12:00 장중 — 오전 저 196,000 이 트리거 203,472·손절 199,143 을 모두 관통했으나 장중 터치는 체결 사유 아님(no_intraday_fill). 12:09 근사 199,300 으로 손절 +0.08%(157원) 사수. 트리거·수량 변경 없음 — 18시 EOD 확정 종가로 2일 연속 이탈 여부 판정. status 불변."
+   "note_1200": "7/27 12:00 장중 — 오전 저 196,000 이 트리거 203,472·손절 199,143 을 모두 관통했으나 장중 터치는 체결 사유 아님(no_intraday_fill). 12:09 근사 199,300 으로 손절 +0.08%(157원) 사수. 트리거·수량 변경 없음 — 18시 EOD 확정 종가로 2일 연속 이탈 여부 판정. status 불변.",
+   "filled_at": "2026-07-27T15:30:00+09:00",
+   "filled_price": 203692,
+   "fill_note": "종가 204,500 < 잔여 트레일선 206,329(exit_levels 정본). 주문에 박힌 트리거값 203,472 는 sync 매칭 실패로 표류한 값이며 판정은 정본 기준."
+  },
+  {
+   "id": "po-20260727-1",
+   "created_slot": "2026-07-27T18:00:00+09:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 110829
+   },
+   "size_shares": 2,
+   "size_hint": "target_take_profit — 5주 중 2주(목표 종가 도달 50% 부분익절)",
+   "tier": 1,
+   "price_source_required": "snapshot_fresh_or_web_verified",
+   "valid_until": "2026-07-28T15:30:00+09:00",
+   "strategy": "bank_valueup_target_harvest_w31",
+   "status": "active",
+   "inference_id": "inf-20260727-1800-2",
+   "trigger_source": "exit_levels.trailing_first_level",
+   "trigger_synced_at": "2026-07-27T18:12:36+09:00",
+   "note": "목표가 도달 주문(트레일 계열 아님) — size_hint 에 'trailing_' 접두를 쓰면 sync_pending_orders 가 트레일선으로 오인해 트리거를 덮어쓴다(7/27 실측: 110,829→100,568 오덮어쓰기 후 원복)."
+  },
+  {
+   "id": "po-20260727-2",
+   "created_slot": "2026-07-27T18:00:00+09:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 100568
+   },
+   "size_shares": 2,
+   "size_hint": "trailing_first — 5주 중 2주(트레일 1차선 종가 이탈 부분익절)",
+   "trail_level": "first",
+   "tier": 1,
+   "price_source_required": "snapshot_fresh_or_web_verified",
+   "valid_until": "2026-07-28T15:30:00+09:00",
+   "strategy": "bank_valueup_target_harvest_w31",
+   "status": "active",
+   "inference_id": "inf-20260727-1800-2"
   }
  ],
- "as_of": "2026-07-24T18:10:00+09:00",
+ "as_of": "2026-07-27T18:12:36+09:00",
  "_meta_last_touch": "2026-07-17T06:40:00+09:00 06:00 미국장 마감 확정 — po-20260716-1 신한 목표매도(110,829) 메모만 갱신(원화 목표가·미 마감 무관, 트리거 불변·status active). 한국 폐장으로 체결·trade_log 없음.",
  "_last_slot_touch": "06:00"
 }

@@ -399,6 +399,47 @@ def find_index_shock_violations(entries: list[dict], gate_cfg: dict) -> tuple[li
     return violations, checked, since
 
 
+# ── (6-b) 청산 사유 3분류 — policy.risk.exit_classification (v2.25) ──
+def find_exit_classification_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
+    """SELL 계열 체결에 exit_reason_class 와 분류별 필수 필드가 없으면 위반.
+
+    근거(2026-07-27 학습 구조 점검): rule_attribution 의 청산 룰 7종이 전부 가격 트리거였다.
+    '논거가 깨져서 판다'(thesis_broken)와 '가격 규율로 판다'(price_discipline)가 구분되지
+    않아, 논거 훼손 종목이 쇼크유예로 하루씩 밀리고 기회비용 청산(better_use)은 0건이었다.
+    """
+    since = str(gate_cfg.get("enforced_since", "2026-07-27"))[:10]
+    classes = gate_cfg.get("classes", {}) if isinstance(gate_cfg.get("classes"), dict) else {}
+    enum = set(gate_cfg.get("class_enum") or classes.keys())
+    violations: list[str] = []
+    checked = 0
+    for e in entries:
+        if not isinstance(e, dict):
+            continue
+        action = e.get("action")
+        if not rp._is_sell(action):
+            continue
+        ts = str(e.get("ts", ""))
+        if ts[:10] < since:
+            continue  # grandfather — 발효 이전 체결은 소급 적용하지 않는다
+        checked += 1
+        tag = f"{ts} {action} {e.get('ticker')}"
+        cls = e.get("exit_reason_class")
+        if not cls:
+            violations.append(
+                f"[청산분류] {tag}: exit_reason_class 없음 — "
+                f"{'/'.join(sorted(enum))} 중 하나를 기록해야 한다"
+            )
+            continue
+        if cls not in enum:
+            violations.append(f"[청산분류] {tag}: exit_reason_class='{cls}' 가 enum 밖 ({'/'.join(sorted(enum))})")
+            continue
+        required = (classes.get(cls) or {}).get("required_trade_log_fields") or []
+        missing = [f for f in required if f != "exit_reason_class" and not e.get(f)]
+        if missing:
+            violations.append(f"[청산분류] {tag}: {cls} 필수 필드 누락 — {', '.join(missing)}")
+    return violations, checked, since
+
+
 # ── (6) 판단 카드 — policy.price_data_quality.decision_card_gate (감사: 사람이 읽는 매매 논리) ──
 def find_decision_card_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
     """BUY/SELL 항목에 구조화된 decision_card 필수 필드가 없으면 위반 (enforced_since 이후)."""
@@ -530,6 +571,7 @@ def main() -> int:
     chase_gate = risk.get("chase_entry_filter", {}) if isinstance(risk.get("chase_entry_filter"), dict) else {}
     shock_gate = risk.get("index_shock_stop_deferral", {}) if isinstance(risk.get("index_shock_stop_deferral"), dict) else {}
     card_gate = pdq.get("decision_card_gate", {}) if isinstance(pdq.get("decision_card_gate"), dict) else {}
+    exit_cls_gate = risk.get("exit_classification", {}) if isinstance(risk.get("exit_classification"), dict) else {}
 
     entries = rp.load_trade_log()
 
@@ -572,6 +614,14 @@ def main() -> int:
     if card_gate.get("enabled", True):
         card_violations, card_checked, card_since = find_decision_card_violations(entries, card_gate)
 
+    exit_cls_violations: list[str] = []
+    exit_cls_checked = 0
+    exit_cls_since = None
+    if exit_cls_gate.get("enabled", True):
+        exit_cls_violations, exit_cls_checked, exit_cls_since = find_exit_classification_violations(
+            entries, exit_cls_gate
+        )
+
     # (2026-07-08 신설) R/R 하한·실적 블랙아웃 — 프롬프트 전용 규칙의 CI 강제
     rr_gate = policy.get("reward_risk_management", {}) if isinstance(policy, dict) else {}
     rr_cfg = rr_gate.get("regime_adaptive_rr", {}) if isinstance(rr_gate.get("regime_adaptive_rr"), dict) else {}
@@ -594,7 +644,7 @@ def main() -> int:
     violations = (
         prov_violations + timing_violations + source_violations
         + chase_violations + shock_violations + card_violations
-        + rr_violations + eb_violations
+        + exit_cls_violations + rr_violations + eb_violations
     )
     out = {
         "enabled": True,
@@ -604,6 +654,7 @@ def main() -> int:
         "chase_enforced_since": chase_since,
         "shock_enforced_since": shock_since,
         "decision_card_enforced_since": card_since,
+        "exit_classification_enforced_since": exit_cls_since,
         "checked": prov_checked,
         "timing_checked": timing_checked,
         "source_checked": source_checked,
@@ -611,6 +662,7 @@ def main() -> int:
         "chase_checked": chase_checked,
         "shock_checked": shock_checked,
         "decision_card_checked": card_checked,
+        "exit_classification_checked": exit_cls_checked,
         "rr_enforced_since": rr_since,
         "rr_checked": rr_checked,
         "earnings_blackout_enforced_since": eb_since,
@@ -622,6 +674,7 @@ def main() -> int:
         "chase_violations": chase_violations,
         "index_shock_violations": shock_violations,
         "decision_card_violations": card_violations,
+        "exit_classification_violations": exit_cls_violations,
         "rr_violations": rr_violations,
         "earnings_blackout_violations": eb_violations,
         "violations": violations,
@@ -631,14 +684,16 @@ def main() -> int:
     summary = (
         f"TRADE_LOG_GATE=FAIL (provenance {len(prov_violations)} + timing {len(timing_violations)} "
         f"+ source {len(source_violations)} + chase {len(chase_violations)} + shock {len(shock_violations)} "
-        f"+ card {len(card_violations)} + rr {len(rr_violations)} + earnings {len(eb_violations)} violation) "
+        f"+ card {len(card_violations)} + exitcls {len(exit_cls_violations)} "
+        f"+ rr {len(rr_violations)} + earnings {len(eb_violations)} violation) "
         "— 묵은/미검증 가격·장외 체결·묵은 출처·추격 진입·쇼크일 스톱·판단카드 누락·R/R 하한 미달·"
-        "실적 블랙아웃 booking 차단"
+        "실적 블랙아웃·청산분류 누락 booking 차단"
         if violations
         else (
             f"TRADE_LOG_GATE=PASS (provenance {prov_checked}건 + timing {timing_checked}건 "
             f"+ source {source_checked + recycled_checked}건 + chase {chase_checked}건 "
-            f"+ shock {shock_checked}건 + card {card_checked}건 + rr {rr_checked}건 "
+            f"+ shock {shock_checked}건 + card {card_checked}건 "
+            f"+ exitcls {exit_cls_checked}건 + rr {rr_checked}건 "
             f"+ earnings {eb_checked}건 검증)"
         )
     )

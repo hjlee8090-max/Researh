@@ -235,6 +235,87 @@ thesis 0.20이 유일하게 논거를 반영할 자리인데, 실제 코드는 *
 
 ---
 
+## 구현 결과 (2026-07-27, policy v2.25)
+
+우선순위 1~4번을 구현했다. 5~6번은 미착수다.
+
+### 1. Thesis Card (구현)
+
+새 구조를 만들지 않았다. `policy.thesis` 스키마가 이미 있었는데 **보유 3종 전부 thesis 객체가 비어 있었다** — 설계는 있고 구현이 없던 상태였다. 그 층을 채우고 게이트를 세웠다.
+
+- `policy.thesis.card_gate` 신설 — `evidence`(숫자 3개 이내)·`checkpoints`·`target_decomposition` 필수, `invalidation[]` 중 최소 1건 `measurable:true`
+- 보유 3종 카드 작성 (`config/watchlist.json`) — DART 1Q26 실적과 `valuation_check.json` 실측치 기반
+- `scripts/check_thesis_cards.py` — 완성도 검사 + measurable 조건 자동 판정 + 체크포인트 도래 감지
+
+카드를 쓰면서 나온 것:
+
+| 종목 | 목표가 상승 여력 | 리레이팅 몫 | 이익성장 몫 |
+|---|---|---|---|
+| LIG넥스원 | +21.96% | 100% | 0% |
+| 한미반도체 | +34.75% | 100% | 0% |
+| 신한지주 | +6.16% | 100% | 0% |
+
+세 종목 모두 목표가 상승 여력의 100%가 멀티플 확장 가정이다. 목표가가 `dynamic_exit_model`(진입가·ATR·52주 고점)에서 나와 이익추정이 들어가 있지 않기 때문이다. 즉 **목표가가 가격에서 역산됐지 이익에서 나오지 않았다.** 카드가 이걸 숫자로 드러낸다.
+
+한미반도체는 hard invalidation 2건이 모두 8/14 반기보고서에서 판정된다. 1Q 확정 감익(-87.9%)과 언론의 2Q 영업이익률 51.9% 보도가 정면으로 어긋나는데, 그 상충이 카드에 명시적으로 적혀 있다.
+
+구현 중 잡은 버그 하나 — 초기 판정기가 2Q 조건을 현재 1Q 실측치로 즉시 격발시켰다. `linked_catalyst` 날짜 전에는 `판정대기`로 두도록 고쳤다.
+
+### 2. 청산 사유 3분류 (구현)
+
+- `policy.risk.exit_classification` 신설 — `thesis_broken` / `price_discipline` / `better_use`
+- `thesis_broken` 은 지수 쇼크일 유예를 적용하지 않는다 (기존 `index_shock_stop_deferral` 예외② 와 명시적으로 연결)
+- 분류별 필수 필드: thesis_broken → `invalidation_id`·`invalidation_evidence`, price_discipline → `thesis_status_at_exit`, better_use → `compared_to`·`compared_reason`
+- `check_trade_log_gate.py` 에 하드 게이트 추가 (2026-07-27 발효, 이전 체결은 grandfather)
+
+합성 데이터로 3케이스 검증했다 — 분류 누락, 정상 기록, `thesis_broken` 근거 필드 누락. 모두 의도대로 잡힌다.
+
+### 3. 반복 경보 만료 (구현)
+
+- `policy.alert_expiry` 신설 — 동일 경보 3회 연속 + 미결정이면 강제 결정 대상
+- 결정 enum: 재조정 / 청산 / 예외승인 / 경보폐기. 예외승인은 `expires_on`·`basis` 둘 다 있어야 유효하고, 만료되면 자동으로 미결정으로 돌아온다
+- `scripts/check_alert_expiry.py` — `reports/*-audit.md` 52일치의 `[WARN]` 라인을 정규화해 연속 발생을 센다
+- 결정 원장: `state/alert_decisions.jsonl`
+
+과거 감사 리포트를 실제로 파싱한 결과가 자기진단보다 나빴다.
+
+| 경보 | 연속 |
+|---|---|
+| R/R 하한 미달 | **20 감사일** (2026-07-07~07-26) |
+| 보유 종목 thesis 누락 | 13 감사일 |
+| 핫패스 콘텍스트 예산 초과 | 13 감사일 |
+| 선제 추론 미채점 누적 | 10 감사일 |
+
+lessons.md 45번은 R/R 경보를 "5거래일 연속"으로 적었는데 실제로는 20 감사일이었다.
+
+"보유 종목 thesis 누락"은 오늘 카드 작성으로 해소해 `alert_decisions.jsonl` 에 기록했고, 즉시 목록에서 빠졌다. 나머지 3건은 미결정으로 남겨뒀다 — 포지션 처분이 걸린 판단이라 사용자 결정 사항이다.
+
+### 4. 선제추론 등록 조건 (구현)
+
+- `inference_logging.required_fields` 에 `action_if_wrong` 추가
+- `registration_gate` 신설 — 행동 없는 서술은 `kind:observation` 으로 격리해 적중률 통계와 선제추론오차 카운터에서 분리
+- 지수 밴드 예측 슬롯당 1건 상한, 슬롯마다 보유 종목 논거 예측 1건 이상
+- 상충 교훈 탐지 — 같은 주제에 상방·하방 교훈이 공존하면 경고
+- `scripts/check_inference_gate.py`
+
+오늘자 09시 예측 2건이 곧바로 걸렸다 — 둘 다 `action_if_wrong` 이 없어 observation 으로 격리됐다. 상충 탐지기도 체크리스트의 지수 밴드 상방·하방 교훈 공존을 잡아냈다.
+
+기존 이력은 소급 적용하지 않는다(2026-07-27 발효). `check_state_schema.py` 의 필수 필드는 하드코딩이라 과거 199건에 경고가 쏟아지지 않는다.
+
+### 연결·검증
+
+- `audit_pipeline.py` 에 세 검사 연결 — 전체 감사 exit 0, FAIL 0건
+- 프롬프트 반영: `0900`(청산 분류) · `1800`(경보 강제 결정·카드 게이트·청산 분류) · `0000_global`(추론 등록 조건) · `sunday_policy_review`(세 검사 주간 심사 §1-2-c/d/e)
+- 파생 산출물 3개는 `.gitignore` 처리, 결정 원장(`alert_decisions.jsonl`)은 트래킹
+
+### 남은 문제
+
+카드가 `watchlist.json` 을 6.6KB, 정책 확장이 `policy.json` 을 5.8KB 늘렸다. 두 파일 모두 이미 핫패스 예산 초과 상태였으니 그만큼 나빠졌다. 카드를 다른 파일로 빼는 건 답이 아니다 — `policy.thesis.location` 과 기존 thesis-tracker 가 watchlist 를 보고 있다. `compact_state` 압축과 policy 산문의 docs 이관으로 푸는 게 맞고, 다음 정책 리뷰 안건이다.
+
+5번(매수 점수 개편)은 카드가 몇 주 쌓여 `thesis_score` 가 볼 실체가 생긴 뒤에 하는 게 맞다. 6번(lessons.md 분할)은 그 다음이다.
+
+---
+
 ## 한 줄 요약
 
 지금 시스템은 **자기 파이프라인을 감시하는 학습**은 잘하고, **회사를 판단하는 학습**은 하지 않는다.

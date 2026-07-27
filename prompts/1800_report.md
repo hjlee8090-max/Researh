@@ -100,6 +100,7 @@
   - (b) 손절가 상향 — 트레일링스톱 활성화 또는 가격 진입. **(v2.11)** 트레일링은 `policy.risk.trailing_stop` 의 2단 구조를 따른다: 1차 트레일 -max(3, 1.5×ATR%) 이탈 시 **50% 부분익절**(배수는 `policy.risk.trailing_stop.first_trail_rule` 이 정본 — v2.14에서 1.0→1.5 확대), 잔여분은 샹들리에 -2.0×ATR%(최고 종가 기준). 활성화 시 `trailing_first_level`·`trailing_residual_level` 두 레벨을 watchlist 코멘트에 기록.
   - (c) 부분 익절 — 50% 가상 체결
 - 결정을 보류했다면 다음 영업일까지만 허용. 사유를 한 줄 명시.
+- **(v2.25) 반복 경보 강제 결정**(`policy.alert_expiry`): `python scripts/check_alert_expiry.py` 를 돌려 `state/alert_expiry.json.needs_decision` 을 확인한다. 같은 경보가 **3회 연속** 뜬 상태로 결정이 없으면 오늘 안에 **재조정·청산·예외승인·경보폐기** 중 하나를 골라 `state/alert_decisions.jsonl` 에 1줄 append 한다(`alert_key` 는 산출 JSON 의 값을 그대로 복사). 예외승인은 `expires_on`(만료일)과 `basis`(근거)가 둘 다 있어야 유효하고, 없으면 미결정으로 되돌아온다. **"유지" 결론을 다시 쓰려면 근거가 직전과 달라야 한다** — 같은 문장 반복은 미결정으로 집계된다(근거: lessons.md 45번, R/R 경보 20회 연속 동일 설명 반복).
 - 가격 신뢰도 low 인 종목은 "R/R 계산 보류 — price_confidence=low" 로 표기하고 다음 routine 으로 미룬다.
 - **실적 신호 반영**(`policy.fundamentals.holdings_use`): `state/fundamentals.json` 의 보유종목 `earnings_signal` 이 `sharp_decline`/적자전환/가이던스 컷이면 위 (b)손절가 상향·(c)부분 익절을 우선 적용하고, 관련 thesis 의 `invalidation_triggers` 점검 결과를 코멘트에 1줄 남긴다. `strong_growth` 면 목표가 상향((a))의 근거로 쓴다.
 - **테마 신호 반영**(`config/themes.json.holdings_use`): 보유종목이 노출된 테마의 `strength` 가 크게 하향됐거나 연결 thesis 가 무효화됐으면 R/R 미달과 겹칠 때 (b)/(c) 쪽으로 기운다(느린 신호 — 단독 당일 매도 금지, 일요일 주간 점검에서 교체 후보로 확정).
@@ -116,6 +117,12 @@
 3. status 가 `intact` 이외로 바뀐 종목은 **충족된 invalidation 의 type(매크로/섹터/개별/가정오류)** 그대로 §3 lessons 에 1줄 기록(가격 오차가 ±5% 이내여도 기록 — "논리는 깨졌으나 가격은 아직"은 중요한 학습이다).
 4. `linked_catalyst` 가 오늘 통과한 실적 촉매면(`catalysts.json`), 그 invalidation(주로 `가정오류` 유형)을 fundamentals 갱신값으로 우선 판정한다(Part C 결합).
 5. 청산으로 watchlist 에서 빠지는 종목의 thesis 최종 status·사유는 `comments` 에 남겨 히스토리를 보존한다.
+6. **(v2.25) 카드 게이트**(`policy.thesis.card_gate`): `python scripts/check_thesis_cards.py` 를 돌려 `state/thesis_cards.json` 을 확인한다. 카드에는 `evidence`(검증 가능한 숫자 3개 이내)·`checkpoints`(논거의 답이 나오는 날짜)·`target_decomposition`(목표가 = 멀티플 × 이익추정 분해)이 있어야 하고, `invalidation[]` 중 **최소 1건은 `measurable:true`**(metric·operator·threshold 로 자동 판정 가능)여야 한다. 서술형 조건만 있으면 status 가 `intact` 로 영구 고착된다. `linked_catalyst` 가 걸린 조건은 그 촉매일 전까지 `판정대기` 이며, 직전 분기 실측치로 미리 격발시키지 않는다.
+7. **(v2.25) 청산 사유 분류**(`policy.risk.exit_classification`): 오늘 매도를 booking 하면 `exit_reason_class` 를 반드시 남긴다.
+   - `thesis_broken` — hard invalidation 충족. `invalidation_id`·`invalidation_evidence` 필수. **지수 쇼크일 유예를 적용하지 않는다**(가격이 green 이어도 청산 대상).
+   - `price_discipline` — 논거는 살아 있고 가격 규칙만 이탈. `thesis_status_at_exit` 필수. 쇼크일 유예 대상이고 재진입 후보로 남긴다.
+   - `better_use` — 논거·가격 모두 유효하나 더 나은 후보로 자본·히트 재배치. `compared_to`(비교 후보)·`compared_reason` 필수.
+   `check_trade_log_gate` 가 2026-07-27 이후 SELL 체결에서 이 필드를 검사한다(누락 시 빌드 FAIL).
 
 ## 2-5. earnings-preview (Phase 2 — 실적 프리뷰 생성·채점, `policy.earnings_preview` 활성 시)
 `config/catalysts.json` 의 `type=earnings_report` 이벤트를 보고 **`prompts/earnings_preview.md` 스펙을 따른다**:

@@ -133,7 +133,14 @@
    `{"ts":"YYYY-MM-DDT00:00:00+09:00","slot":"00:00","id":"inf-YYYYMMDD-0000-1","subject":"KOSPI_open_gap","prediction":"개장 -1.0~-2.5% 갭다운","horizon":"09:00","confidence":0.55,"factors_considered":["미장 -1.2%","원달러 1553"],"assumptions":["PCE 부합"],"key_uncertainty":"지정학 [진행형] 05:00 역전 가능","preemptive_action":{"tier":1,"what":"보유 손절 이격 재확인 메모","trade_logged":false},"checklist_refs":["갭다운 버퍼 룰"]}`
    - 보유 종목 야간 영향(§2-1)이 뚜렷하면 종목 예측(`"subject":"ticker:XXXXXX"`)도 추가(최대 3건).
    - 자정은 장 마감 → 선제 액션은 **Tier 0~1 만**(코멘트·경보·손절 이격 메모). 신규 매매 금지.
-3. horizon="09:00" 예측은 09시 routine §1-0 이 채점한다.
+3. **(v2.25) 등록 조건**(`inference_logging.registration_gate`) — 아래를 만족하지 못하는 서술은 예측으로 적재하지 않는다.
+   - **`action_if_wrong` 필수**: 예측이 빗나갔을 때 실제로 바뀌는 행동을 함께 적는다. 형식 `{"trigger":"...","action":"...","tier":"tier1"}`. **"tier0 관찰"만 적는 것은 행동이 아니다** — 그런 서술은 `"kind":"observation"` 으로 기록해 적중률 통계와 lessons 선제추론오차 카운터에서 분리한다.
+     근거: 채점 180건 중 손익에 연결된 예측이 1건뿐이었고, 나머지는 맞든 틀리든 매매를 바꾸지 않으면서 학습 노트의 24%를 차지했다.
+   - **지수 밴드는 슬롯당 1건**: `^KS11`·`KOSPI_*` 종가·개장 밴드 예측은 한 슬롯에 하나만. 적중률이 26.5%(개장갭)·38.5%(00시)로 전 주제 중 최저이고 손익 연결이 0건이다.
+   - **보유 종목 논거 예측 1건 이상**: 슬롯마다 최소 1건은 보유·후보 종목의 thesis checkpoint 를 대상으로 한다. 지수 밴드가 예측 예산을 독점하지 않게 한다.
+   - **상충 교훈 금지**: 최근 5거래일 내 같은 주제에 반대 방향 교훈이 이미 올라 있으면, 새 교훈을 얹기 전에 한쪽을 폐기하거나 조건을 분기한다. 상방·하방 교훈을 함께 쌓으면 "밴드를 넓혀라"로 수렴해 정보량이 0이 된다(2026-07-21~24 지수 밴드 교훈 4건 선례).
+   - 점검: `python scripts/check_inference_gate.py` → `state/inference_gate.json`.
+4. horizon="09:00" 예측은 09시 routine §1-0 이 채점한다.
 
 ## 3. 리포트 작성 (시간대별 분리 파일)
 **오늘 날짜의 자정 리포트 `reports/YYYY-MM-DD-00.md` 를 새로 생성** 한다 (이미 존재하면 덮어쓰기 — 자정이 그날의 첫 routine).

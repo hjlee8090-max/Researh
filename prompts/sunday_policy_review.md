@@ -86,6 +86,25 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 - `blocked_day_rate_pct` 가 40% 이상이면 차단 룰 과잉(래칫) 신호 — `lessons_rule_sunset` 만료 대상·완화 후보를 식별한다.
 - lessons 발 즉석 제한 룰의 expiry(`policy.lessons_rule_sunset` 기본 5거래일) 도래 여부를 점검해 만료/승격을 분류한다.
 
+### 1-2-c. 반복 경보 만료 심사 (alert_expiry — v2.25)
+`python scripts/check_alert_expiry.py` 후 `state/alert_expiry.json` 을 점검한다:
+- `needs_decision` 에 남은 항목은 **3회 연속 이상 뜨는데 결정이 없는 경보**다. 각각에 대해 재조정·청산·예외승인·경보폐기 중 하나를 이번 리뷰에서 확정하고 `state/alert_decisions.jsonl` 에 기록한다.
+- 같은 경보가 **강제 결정 4회 이상 '경보폐기'로 귀결**되면 그 경보를 audit 에서 내린다(오탐 경보 제거). 반대로 매번 '재조정'으로 귀결되는데 경보가 계속 뜨면 **임계·룰 자체가 틀린 것**이므로 정책 패치 후보로 올린다.
+- 예외승인의 `expires_on` 이 지난 항목은 자동으로 미결정으로 돌아온다 — 만료된 예외를 갱신할지 이번에 결론 낸다.
+
+### 1-2-d. 논거 카드 심사 (thesis card — v2.25)
+`python scripts/check_thesis_cards.py` 후 `state/thesis_cards.json` 을 점검한다:
+- `missing_card`·`no_measurable_invalidation` 은 **논거 없이 보유 중**이라는 뜻이다. 다음 09시까지 카드를 채우거나 포지션을 정리한다.
+- `hard_breached` 는 `exit_reason_class=thesis_broken` 청산 후보다. 가격 상태와 무관하게 처분을 결론 낸다.
+- 카드의 `target_decomposition.rerating_share_pct` 가 100%에 가까우면 **목표가에 이익추정이 들어 있지 않다**는 뜻이다(가격에서 역산한 목표가). forward 이익추정을 채울지, 목표가를 낮출지 결정한다.
+- 지난 주 도래한 `checkpoints` 가 재검토 없이 지나갔으면 그 자체를 절차 오류로 기록한다.
+
+### 1-2-e. 선제추론 등록 게이트 (registration_gate — v2.25)
+`python scripts/check_inference_gate.py` 후 `state/inference_gate.json` 을 점검한다:
+- `observation_isolated` = `action_if_wrong` 이 없어 통계에서 분리된 서술. 이 비율이 높으면 예측 예산이 여전히 행동과 무관하게 쓰이고 있다는 뜻이다.
+- `violations` 의 `index_band_cap`·`holding_subject_floor` 는 지수 밴드가 예측 예산을 독점하고 있다는 신호다.
+- `contradictions` 가 잡히면 `state/inference_checklist.md` 에서 상충하는 교훈 중 하나를 **이번 리뷰에서 폐기하거나 조건을 분기**한다. 상방·하방 교훈을 함께 남겨두면 "밴드를 넓혀라"로 수렴해 정보량이 0이 된다.
+
 ### 1-3. policy 미사용 필드 점검
 `policy.json` 에 정의됐지만 어느 prompt/script 에서도 참조하지 않는 필드를 찾는다 (dead config).
 - 삭제 후보 / 활성화 후보 중 분류

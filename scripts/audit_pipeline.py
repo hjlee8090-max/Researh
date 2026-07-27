@@ -1291,6 +1291,116 @@ def audit_lessons_applied(messages: list[str]) -> None:
         messages.append(result("INFO", f"교훈 수동검토 {len(manual)}건(자동 검증 불가 앵커 부재) — sunday_policy_review 확인"))
 
 
+def _run_side_check(script_name: str, payload_rel: str, messages: list[str],
+                    disabled_note: str) -> dict | None:
+    """보조 점검 스크립트를 실행하고 산출 JSON 을 돌려준다(없으면 WARN 후 None)."""
+    script = ROOT / "scripts" / script_name
+    if not script.exists():
+        messages.append(result("WARN", f"scripts/{script_name} 없음 — {disabled_note}"))
+        return None
+    subprocess.run([sys.executable, str(script)], capture_output=True, text=True)
+    try:
+        return json.loads((ROOT / payload_rel).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        messages.append(result("WARN", f"{payload_rel} 파싱 실패 — {disabled_note}"))
+        return None
+
+
+def audit_thesis_cards(messages: list[str]) -> None:
+    """check_thesis_cards.py 실행 — 논거 카드 완성도·반증 조건·hard 무효화 충족을 표면화(v2.25).
+
+    보유 종목에 thesis 카드가 없으면 청산 판정이 가격 규칙 하나로 축소된다(2026-07-27 진단).
+    hard 무효화 충족은 exit_reason_class=thesis_broken 청산 후보이므로 WARN 으로 올린다.
+    """
+    payload = _run_side_check(
+        "check_thesis_cards.py", "state/thesis_cards.json", messages, "thesis 카드 점검 비활성"
+    )
+    if not payload or payload.get("enabled") is False:
+        return
+    summary = payload.get("summary") or {}
+    missing = summary.get("missing_card") or []
+    no_measurable = summary.get("no_measurable_invalidation") or []
+    hard = summary.get("hard_breached") or []
+    stale = summary.get("stale_review") or []
+    if missing:
+        messages.append(result("WARN", "thesis 카드 없음(논거 없이 보유): " + ", ".join(map(str, missing))))
+    if no_measurable:
+        messages.append(result(
+            "WARN",
+            "자동 판정 가능한 반증 조건 없음 — status=intact 영구 고착 위험: " + ", ".join(map(str, no_measurable)),
+        ))
+    for item in hard:
+        messages.append(result(
+            "WARN",
+            f"thesis hard 무효화 충족 — {item.get('name')}({item.get('ticker')}): "
+            f"{', '.join(map(str, item.get('invalidation_ids') or []))} → thesis_broken 청산 판정 필요(쇼크유예 제외)",
+        ))
+    if stale:
+        messages.append(result("WARN", "thesis 재검토 지연: " + ", ".join(map(str, stale))))
+    if not (missing or no_measurable or hard or stale):
+        messages.append(result("OK", f"thesis 카드 {payload.get('held_count', 0)}종 정상 — hard 무효화·재검토 지연 없음"))
+
+
+def audit_alert_expiry(messages: list[str]) -> None:
+    """check_alert_expiry.py 실행 — 동일 경보가 임계 이상 연속 반복되는데 결정이 없으면 WARN(v2.25).
+
+    근거: lessons.md 45번 — R/R 하한 미달 경보가 매일 뜨는데 결론이 매번 '유지' 였다.
+    답이 정해진 경보는 경보가 아니다.
+    """
+    payload = _run_side_check(
+        "check_alert_expiry.py", "state/alert_expiry.json", messages, "반복 경보 만료 점검 비활성"
+    )
+    if not payload or payload.get("enabled") is False:
+        return
+    pending = payload.get("needs_decision") or []
+    threshold = payload.get("threshold_consecutive_days", 3)
+    for row in pending[:4]:
+        messages.append(result(
+            "WARN",
+            f"경보 {row.get('streak_audit_days')}회 연속 미결정 — {str(row.get('sample'))[:80]} "
+            "→ 강제 결정 필요(재조정/청산/예외승인/경보폐기, state/alert_decisions.jsonl 기록)",
+        ))
+    if len(pending) > 4:
+        messages.append(result("WARN", f"연속 미결정 경보 외 {len(pending) - 4}건 더 — state/alert_expiry.json 참조"))
+    if not pending:
+        messages.append(result(
+            "OK", f"반복 경보 강제 결정 대기 0건 (임계 {threshold}회 연속, 추적 {payload.get('tracked_count', 0)}건)"
+        ))
+
+
+def audit_inference_gate(messages: list[str]) -> None:
+    """check_inference_gate.py 실행 — 행동을 바꾸지 않는 예측을 표면화(v2.25).
+
+    근거: inference_scorecard 채점 180건 중 손익 연결 1건. 예측 예산을 실제 매매를 바꾸는
+    예측으로 되돌린다.
+    """
+    payload = _run_side_check(
+        "check_inference_gate.py", "state/inference_gate.json", messages, "선제추론 등록 게이트 비활성"
+    )
+    if not payload or payload.get("enabled") is False:
+        return
+    isolated = payload.get("observation_isolated") or []
+    violations = payload.get("violations") or []
+    contradictions = payload.get("contradictions") or []
+    if isolated:
+        sample = ", ".join(str(o.get("id")) for o in isolated[:3])
+        messages.append(result(
+            "WARN",
+            f"action_if_wrong 없는 예측 {len(isolated)}건 — observation 으로 격리(적중률·오차 카운터 제외): {sample}",
+        ))
+    for v in violations[:3]:
+        messages.append(result("WARN", f"선제추론 등록 위반: {v.get('message')}"))
+    if len(violations) > 3:
+        messages.append(result("WARN", f"선제추론 등록 위반 외 {len(violations) - 3}건 더 — state/inference_gate.json 참조"))
+    for c in contradictions:
+        messages.append(result("WARN", f"교훈 상충({c.get('topic')}): {c.get('message')}"))
+    if not (isolated or violations or contradictions):
+        totals = payload.get("totals") or {}
+        messages.append(result(
+            "OK", f"선제추론 등록 게이트 정상 (발효 이후 예측 {totals.get('predictions_enforced', 0)}건)"
+        ))
+
+
 def audit_trade_provenance(messages: list[str]) -> None:
     """check_trade_log_gate.py 를 subprocess 로 실행 — price_source 누락(묵은/미검증) + 장중 시간 밖 booking 을 FAIL 로 차단.
 
@@ -1362,6 +1472,9 @@ def main() -> int:
     audit_portfolio_heat(data, messages)
     audit_trade_log_daily_mark(messages)
     audit_thesis(data, messages)
+    audit_thesis_cards(messages)
+    audit_alert_expiry(messages)
+    audit_inference_gate(messages)
     audit_target_consensus(data, messages)
     audit_estimate_alignment(data, messages)
     audit_recovery_stage(data, messages)

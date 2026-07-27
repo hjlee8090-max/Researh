@@ -22,7 +22,9 @@ LESSONS_PATH = ROOT / "state" / "lessons.md"
 OUT_PATH = ROOT / "state" / "lessons_index.json"
 
 HEADER_RE = re.compile(r"^###\s+(.+?)$")
-CATEGORY_RE = re.compile(r"원인 분류[:\s]*([^\n]+)", re.IGNORECASE)
+# 실제 표기는 "- 분류: 섹터" 형태다. "원인 분류" 만 찾던 초기 정규식은 65개 섹션 중 56개를
+# '기타' 로 떨어뜨렸다(2026-07-27 실측) — 두 표기를 모두 받는다.
+CATEGORY_RE = re.compile(r"(?:원인\s*)?분류[:\s]*([^\n]+)", re.IGNORECASE)
 NEXT_RULE_RE = re.compile(
     r"\*{0,2}(?:다음 추론 시 고려|다음 적용 룰|다음 진입[^\n:：]*?시 반영할 룰"
     r"|다음 추천 시 반영할 교훈|다음 routine[^\n:：]*?반영할 룰)\*{0,2}[:：][ \t]*([^\n]+)",

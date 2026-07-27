@@ -124,7 +124,9 @@ def main() -> int:
     # 과거 changelog 에만 남은 반영 신호가 '미반영' 오탐이 되지 않도록 함께 grep 한다.
     parts: list[str] = []
     haystack_files: list[str] = []
-    for rel in ("config/policy.json", "docs/policy_changelog.md"):
+    # docs/policy_notes.md — policy.json 의 purpose 산문 이관분(v2.27, 콘텍스트 압축 Phase 2).
+    # 빠뜨리면 이미 반영된 교훈이 '앵커 미발견 = 미반영' 으로 오탐된다.
+    for rel in ("config/policy.json", "docs/policy_changelog.md", "docs/policy_notes.md"):
         path = ROOT / rel
         if path.exists():
             parts.append(path.read_text(encoding="utf-8"))

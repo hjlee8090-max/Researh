@@ -1,6 +1,6 @@
 {
   "version": "1.3",
-  "last_updated": "2026-06-29",
+  "last_updated": "2026-07-28T09:35:00+09:00",
   "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
   "candidates": [
     {
@@ -257,6 +257,42 @@
       "theme_exposure": [],
       "structural_bear_flags": [],
       "first_added": "2026-06-29"
+    },
+    {
+      "ticker": "086790",
+      "name": "하나금융지주",
+      "sector": "금융/은행",
+      "thesis_id": "bank_valueup_harvest_w31",
+      "rationale": "7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.",
+      "structural_bear_flags": [],
+      "first_added": "2026-07-28",
+      "theme_exposure": [
+        {
+          "theme": "value_up_shareholder_return",
+          "exposure": 0.7,
+          "evidence": "은행권 밸류업 프로그램(자사주 소각·배당 확대) 직접 수혜 — 7/28 screen_universe 상대강도 상위",
+          "source": "https://kr.investing.com/indices/kospi"
+        }
+      ],
+      "note": "2026-07-28 09시 신규 등록 — 당일 체결 없음. 12시 슬롯부터 score_candidates 정식 스코어링 대상. 은행 2종 동시 보유는 섹터 집중이므로 신한지주 부분익절(목표 110,829) 이후에 검토."
+    },
+    {
+      "ticker": "105560",
+      "name": "KB금융",
+      "sector": "금융/은행",
+      "thesis_id": "bank_valueup_harvest_w31",
+      "rationale": "7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
+      "structural_bear_flags": [],
+      "first_added": "2026-07-28",
+      "theme_exposure": [
+        {
+          "theme": "value_up_shareholder_return",
+          "exposure": 0.7,
+          "evidence": "밸류업 로테이션 은행 대장 — 7/28 지수 급락일 무변동 방어",
+          "source": "https://kr.investing.com/indices/kospi"
+        }
+      ],
+      "note": "2026-07-28 09시 신규 등록 — 당일 체결 없음. lessons: 금융주 목표가 설정 시 추가 할인 필요(3회 연속 미달). 12시부터 정식 스코어링."
     }
   ],
   "evaluation_rules": {
@@ -266,6 +302,11 @@
     "auto_drop_after_days_without_thesis": 14
   },
   "change_log": [
+    {
+      "ts": "2026-07-28T09:35:00+09:00",
+      "slot": "09:00",
+      "change": "하나금융지주(086790)·KB금융(105560) 신규 등록 — 7/28 지수 -7%대 급락일 상대강도 최상위(screen 0.51/0.63·20일 초과수익 +36%대·모멘텀 필터 통과). 등록만 하고 당일 체결 없음(은행 섹터 집중·이벤트 48시간 집중)."
+    },
     {
       "date": "2026-06-30",
       "action": "remove",

@@ -812,12 +812,13 @@
       "price_source_required": "snapshot_fresh_or_web_verified",
       "valid_until": "2026-07-29T15:30:00+09:00",
       "strategy": "bank_valueup_target_harvest_w31",
-      "status": "active",
+      "status": "expired",
       "inference_id": "inf-20260728-1800-2",
       "trigger_source": "watchlist.target_price",
       "note": "목표가 도달 주문(트레일 계열 아님) — size_hint 에 'trailing_' 접두를 쓰면 sync_pending_orders 가 트레일선으로 오인해 트리거를 덮어쓴다(7/27 실측). 체결은 7/29 09시 routine 이 pre_trade_gate 통과 후. [7/29 06:00] 미국장 마감 확정 반영 — 트리거 110,829 유지(watchlist.target_price 불변). 간밤 미 금융 XLF 사상 최고권(+0.5%)·다우 +1.03%로 은행 심리는 우호적이나 목표 이격이 -8.96%라 개장 도달 가능성은 낮다. 값 변경 없음.",
       "trigger_reviewed_at": "2026-07-29T06:40:00+09:00",
-      "note_0900": "[7/29 09:00] 미발동 — 09:21 근사 100,600 으로 목표 110,829 까지 -9.22% 이격(22거래일째 문턱). 트리거 값 불변(watchlist 목표가 정본). 종가 판정·장중 터치 무체결."
+      "note_0900": "[7/29 09:00] 미발동 — 09:21 근사 100,600 으로 목표 110,829 까지 -9.22% 이격(22거래일째 문턱). 트리거 값 불변(watchlist 목표가 정본). 종가 판정·장중 터치 무체결.",
+      "expired_note": "valid_until 2026-07-29T15:30 경과 — 7/29 18시 EOD 만료 정리. 종가 98,300 으로 목표 110,829 까지 -11.30% 이격(22거래일째 문턱), 미발동. 7/30 분은 po-20260729-1 로 재적재."
     },
     {
       "id": "po-20260728-2",
@@ -827,7 +828,7 @@
       "action": "SELL",
       "trigger": {
         "type": "price_below",
-        "value": 99421
+        "value": 99487
       },
       "size_shares": 2,
       "size_hint": "trailing_first — 5주 중 2주(트레일 1차선 종가 이탈 부분익절)",
@@ -836,16 +837,106 @@
       "price_source_required": "snapshot_fresh_or_web_verified",
       "valid_until": "2026-07-29T15:30:00+09:00",
       "strategy": "bank_valueup_target_harvest_w31",
-      "status": "active",
+      "status": "expired",
       "inference_id": "inf-20260728-1800-2",
       "trigger_source": "exit_levels.trailing_first_level",
-      "trigger_synced_at": "2026-07-29T15:02:08+09:00",
+      "trigger_synced_at": "2026-07-29T18:02:14+09:00",
       "note": "7/28 종가 100,900 이 1차선 99,978 을 +0.92% 로 사수 — day0(이탈 이력 없음). 7/29 가 비쇼크일(|KOSPI 등락|<5%)이면 종가 이탈 확정 시 당일 closing_auction 체결, 쇼크일이면 7/30 재확인. [7/29 06:00] 미국장 마감 확정 반영 — 06:37 exit_levels 재산출 결과 1차선 99,978·잔여 96,904 로 7/28 정본과 동일(한국 신규 종가가 없어 최고종가 109,200·ATR 5.63% 불변). 트리거값 변경 없음. 간밤 미 금융주 사상 최고권으로 개장 갭업 우위이나 판정은 종가로만 — 09시 routine 이 pre_trade_gate 통과 후 집행.",
       "trigger_reviewed_at": "2026-07-29T06:40:00+09:00",
-      "note_0900": "[7/29 09:00] 미발동·감시 최우선 — 트리거 100,420 은 오늘 exit_levels 재산출 정본과 일치(sync_pending_orders 09:21 동기화, 직전 99,978 대비 +442원 상향). 09:21 근사 100,600 은 트리거 위 +0.18% 박빙이고 당일 저 99,500 이 이미 장중 관통했으나 no_intraday_fill 로 09시 무체결. 오늘 KOSPI +2.25% 로 비쇼크일 경로 — 종가가 100,420 미만이면 index_shock_stop_deferral 없이 당일 closing_auction 에서 5주 중 2주 부분익절 집행. 12/15시 재확인."
+      "note_0900": "[7/29 09:00] 미발동·감시 최우선 — 트리거 100,420 은 오늘 exit_levels 재산출 정본과 일치(sync_pending_orders 09:21 동기화, 직전 99,978 대비 +442원 상향). 09:21 근사 100,600 은 트리거 위 +0.18% 박빙이고 당일 저 99,500 이 이미 장중 관통했으나 no_intraday_fill 로 09시 무체결. 오늘 KOSPI +2.25% 로 비쇼크일 경로 — 종가가 100,420 미만이면 index_shock_stop_deferral 없이 당일 closing_auction 에서 5주 중 2주 부분익절 집행. 12/15시 재확인.",
+      "note_1800": "[7/29 18:00] **트리거 발동 — 체결 유예.** 확정 종가 98,300 이 트리거 99,487(오늘 exit_levels 정본, sync_pending_orders 18:02 동기화로 99,421→99,487 상향)을 -1.19% 이탈했다. KOSPI -5.98%(|등락|≥5%) 지수쇼크일이라 index_shock_stop_deferral 발동 → 당일 closing_auction 체결 없음(day1). 즉시체결 예외 미충족: ①추가 관통폭 1.19% < 1.0×ATR 5.93% ②개별 악재·thesis 무효화 없음. 7/30 종가 재확인 주문(po-20260729-2)으로 승계.",
+      "expired_note": "valid_until 2026-07-29T15:30 경과 — 판정은 완료(이탈 확정)됐고 체결만 유예. 7/30 재확인분은 po-20260729-2.",
+      "outcome": "triggered_deferred"
+    },
+    {
+      "id": "po-20260729-1",
+      "created_slot": "2026-07-29T18:00:00+09:00",
+      "ticker": "055550",
+      "name": "신한지주",
+      "action": "SELL",
+      "trigger": {
+        "type": "price_above",
+        "value": 110829
+      },
+      "size_shares": 2,
+      "size_hint": "target_take_profit — 5주 중 2주(목표 종가 도달 50% 부분익절)",
+      "tier": 1,
+      "price_source_required": "snapshot_fresh_or_web_verified",
+      "valid_until": "2026-07-30T15:30:00+09:00",
+      "strategy": "bank_valueup_target_harvest_w31",
+      "status": "active",
+      "inference_id": "inf-20260729-1800-2",
+      "trigger_source": "watchlist.target_price",
+      "note": "목표가 도달 주문(트레일 계열 아님 — size_hint 에 'trailing_' 접두를 쓰면 sync_pending_orders 가 트레일선으로 오인해 트리거를 덮어쓴다). 종가 98,300 기준 목표까지 +12.75% 이격이라 7/30 도달 가능성은 낮으나, 양방향 트리거를 함께 두어야 판정이 비대칭해지지 않는다. 체결은 7/30 routine 이 pre_trade_gate 통과 후 closing_auction."
+    },
+    {
+      "id": "po-20260729-2",
+      "created_slot": "2026-07-29T18:00:00+09:00",
+      "ticker": "055550",
+      "name": "신한지주",
+      "action": "SELL",
+      "trigger": {
+        "type": "price_below",
+        "value": 99487
+      },
+      "size_shares": 2,
+      "size_hint": "trailing_first — 5주 중 2주(트레일 1차선 종가 2일 연속 이탈 부분익절)",
+      "trail_level": "first",
+      "tier": 1,
+      "price_source_required": "snapshot_fresh_or_web_verified",
+      "valid_until": "2026-07-30T15:30:00+09:00",
+      "strategy": "bank_valueup_target_harvest_w31",
+      "status": "active",
+      "inference_id": "inf-20260729-1800-2",
+      "trigger_source": "exit_levels.trailing_first_level",
+      "deferral_state": "day1",
+      "note": "**7/29 종가 98,300 이 1차선 99,487 을 -1.19% 이탈해 유예 day1 성립(po-20260728-2 승계).** 7/30 종가가 재산출 1차선을 재차 이탈하면 2일 연속 확정으로 당일 closing_auction 에서 2주 부분익절 집행, 1차선 위로 회복하면 유예 해제·주문 만료. 트리거값은 7/30 06시·09시 sync_pending_orders 가 exit_levels 재산출본으로 동기화한다(고정값 표류 금지)."
+    },
+    {
+      "id": "po-20260729-3",
+      "created_slot": "2026-07-29T18:00:00+09:00",
+      "ticker": "055550",
+      "name": "신한지주",
+      "action": "SELL",
+      "trigger": {
+        "type": "price_below",
+        "value": 96249
+      },
+      "size_shares": 3,
+      "size_hint": "trailing_residual — 잔여 3주 전량(샹들리에 잔여선 종가 이탈)",
+      "trail_level": "residual",
+      "tier": 1,
+      "price_source_required": "snapshot_fresh_or_web_verified",
+      "valid_until": "2026-07-30T15:30:00+09:00",
+      "strategy": "bank_valueup_target_harvest_w31",
+      "status": "active",
+      "inference_id": "inf-20260729-1800-2",
+      "trigger_source": "exit_levels.trailing_residual_level",
+      "note": "잔여선 96,249 종가 이탈 시 잔여 전량 청산. 7/29 당일 저 95,700 이 이 선을 장중 관통했으나 종가 98,300 으로 +2.13% 사수(no_intraday_fill). 7/30 이 쇼크일이면 이 트리거도 유예 대상(day1부터 재계산)."
+    },
+    {
+      "id": "po-20260729-4",
+      "created_slot": "2026-07-29T18:00:00+09:00",
+      "ticker": "079550",
+      "name": "LIG넥스원",
+      "action": "SELL",
+      "trigger": {
+        "type": "price_below",
+        "value": 583143
+      },
+      "size_shares": 1,
+      "size_hint": "hard_stop — 1주 전량(손절 종가 이탈)",
+      "tier": 1,
+      "price_source_required": "snapshot_fresh_or_web_verified",
+      "valid_until": "2026-07-30T15:30:00+09:00",
+      "strategy": "dual_momentum_w27",
+      "status": "active",
+      "inference_id": "inf-20260729-1800-3",
+      "trigger_source": "watchlist.stop_price",
+      "note": "LIG넥스원의 유효한 매도 트리거는 이 손절 하나뿐(트레일 1차선 672,212·잔여선 624,616 은 목표진행 40.1%<70% 로 미활성 참고선이라 이탈해도 체결 사유가 아니다). 7/29 종가 620,000 기준 +6.32% 이격이고 당일 저 601,000 이 +3.06% 까지 접근했다. 7/30 이 지수쇼크일이면 유예 규칙 적용."
     }
   ],
-  "as_of": "2026-07-29T15:02:08+09:00",
+  "as_of": "2026-07-29T18:02:14+09:00",
   "_meta_last_touch": "2026-07-17T06:40:00+09:00 06:00 미국장 마감 확정 — po-20260716-1 신한 목표매도(110,829) 메모만 갱신(원화 목표가·미 마감 무관, 트리거 불변·status active). 한국 폐장으로 체결·trade_log 없음.",
   "_last_slot_touch": "2026-07-29T09:35:00+09:00 (09:00 개장 점검 — active 2건 모두 미발동, 만료 0건, 신규 적재 0건)"
 }

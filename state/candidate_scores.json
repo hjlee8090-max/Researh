@@ -1,34 +1,34 @@
 {
-  "as_of": "2026-07-30T12:18:04+09:00",
-  "snapshot_as_of": "2026-07-30T12:18:01+09:00",
+  "as_of": "2026-07-30T12:14:06+09:00",
+  "snapshot_as_of": "2026-07-30T12:09:50+09:00",
   "regime": {
-    "state": "risk_off",
+    "state": "risk_on",
     "detail": {
       "index": "KOSPI",
-      "last_close": 5709.64,
+      "last_close": 5754.65,
       "ma_window": 200,
-      "ma_long": 5719.1,
-      "ma60": 7734.48,
-      "above_ma": false,
-      "pct_vs_ma": -0.17,
-      "pct_vs_ma60": -26.18,
-      "ret_60d_pct": -13.48,
-      "ret_20d_pct": -31.24,
+      "ma_long": 5719.33,
+      "ma60": 7735.23,
+      "above_ma": true,
+      "pct_vs_ma": 0.62,
+      "pct_vs_ma60": -25.6,
+      "ret_60d_pct": -12.79,
+      "ret_20d_pct": -30.7,
       "ma200_slope_pct": 6.7,
       "slope_lookback_days": 20,
-      "state": "risk_off",
+      "state": "risk_on",
       "source": "yahoo:^KS11",
       "as_of": "2026-07-30",
-      "tier": "neutral",
+      "tier": "bull",
       "target_equity_pct": [
-        45,
-        60
+        65,
+        80
       ],
-      "entry_mode": "reduced",
-      "tier_narrative": "중립 — 200일선 ±2% 근처. 주식 45~60%. 축소 진입비중·선별적."
+      "entry_mode": "default",
+      "tier_narrative": "상승 — 200일선 위, 기울기 횡보~상승. 주식 65~80%. 기본 진입비중."
     },
     "blocks_new_entry": false,
-    "kospi_ret_60d_pct": -13.48
+    "kospi_ret_60d_pct": -12.79
   },
   "score_blend_weights": {
     "momentum": 0.3,
@@ -49,6 +49,88 @@
   ],
   "ranked": [
     {
+      "ticker": "105560",
+      "name": "KB금융",
+      "sector": "금융/은행",
+      "thesis_id": "bank_valueup_harvest_w31",
+      "rationale": "7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
+      "components": {
+        "momentum": 0.496,
+        "momentum_parts": {
+          "ret5": 0.1,
+          "ret60": 0.6,
+          "high52": 0.8
+        },
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 16.53,
+        "thematic": 0.0,
+        "thematic_parts": [
+          {
+            "theme": "value_up_shareholder_return",
+            "exposure": 0.7,
+            "strength": 0.0,
+            "contrib": 0.0
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.6,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.02,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "growth"
+      },
+      "final_score": 0.609,
+      "data": {
+        "five_day_cumulative_return_pct": -5.56,
+        "ret_60d_pct": 3.74,
+        "pct_of_52w_high": 85.6,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 166500.0,
+          "position_cap_krw": 1626852,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "value_up_shareholder_return",
+            "exposure": 0.7,
+            "evidence": "밸류업 로테이션 은행 대장 — 7/28 지수 급락일 무변동 방어",
+            "source": "https://kr.investing.com/indices/kospi"
+          }
+        ],
+        "target_estimate": {
+          "estimate": 184300.0,
+          "expected_return_pct": 10.7,
+          "grade": "B",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 7159729000000,
+          "operating_profit": 2727566000000,
+          "op_margin_pct": 38.1,
+          "op_growth_pop_pct": 19.0,
+          "period_label": "1분기",
+          "earnings_signal": "growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -5.6% — 추세필터 통과(방어)",
+        "60일 모멘텀 +3.7%",
+        "상대강도: KOSPI 대비 +16.5%p (주도주)",
+        "52주 고점의 86% 수준",
+        "미래 테마 노출: value_up_shareholder_return(노출 0.7)",
+        "가격 신뢰도 high(2출처 일치)",
+        "후보 thesis 'bank_valueup_harvest_w31' 연결",
+        "근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
+        "실적 모멘텀(growth, 영업이익 전기대비 +19%)"
+      ],
+      "adopt_summary": "5거래일 누적 -5.6% — 추세필터 통과(방어) · 60일 모멘텀 +3.7% · 상대강도: KOSPI 대비 +16.5%p (주도주) · 52주 고점의 86% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(growth, 영업이익 전기대비 +19%)",
+      "block_reasons": []
+    },
+    {
       "ticker": "000660",
       "name": "SK하이닉스",
       "sector": "IT/반도체",
@@ -62,7 +144,7 @@
           "high52": 0.2
         },
         "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 16.67,
+        "rs_excess_vs_kospi_pct": 16.91,
         "thematic": 0.902,
         "thematic_parts": [
           {
@@ -81,14 +163,14 @@
       },
       "final_score": 0.57,
       "data": {
-        "five_day_cumulative_return_pct": -30.85,
-        "ret_60d_pct": 3.19,
-        "pct_of_52w_high": 44.43,
+        "five_day_cumulative_return_pct": -30.22,
+        "ret_60d_pct": 4.12,
+        "pct_of_52w_high": 44.83,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 1327000.0,
+          "last_close": 1339000.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -101,8 +183,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 1613200.0,
-          "expected_return_pct": 18.4,
+          "estimate": 1598300.0,
+          "expected_return_pct": 19.4,
           "grade": "A",
           "gate_blocked": false
         },
@@ -119,92 +201,7 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -30.85% < 기준 -14.0% (tier:neutral+rs_leader)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
-      ]
-    },
-    {
-      "ticker": "009540",
-      "name": "HD한국조선해양",
-      "sector": "조선",
-      "thesis_id": "shipbuilding_candidate",
-      "rationale": "LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
-      "components": {
-        "momentum": 0.367,
-        "momentum_parts": {
-          "ret5": 0.4,
-          "ret60": 0.1,
-          "high52": 0.6
-        },
-        "relative_strength": 0.4,
-        "rs_excess_vs_kospi_pct": -6.67,
-        "thematic": 0.72,
-        "thematic_parts": [
-          {
-            "theme": "shipbuilding_supercycle",
-            "exposure": 0.9,
-            "strength": 0.8,
-            "contrib": 0.72
-          }
-        ],
-        "confidence": 1.0,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.05,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "strong_growth"
-      },
-      "final_score": 0.558,
-      "data": {
-        "five_day_cumulative_return_pct": -3.28,
-        "ret_60d_pct": -20.15,
-        "pct_of_52w_high": 74.52,
-        "confidence": "high",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 368500.0,
-          "position_cap_krw": 1626852,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "shipbuilding_supercycle",
-            "exposure": 0.9,
-            "evidence": "LNG선·특수선 수주잔고 슈퍼사이클, 1Q26 영업이익 +57.8% YoY",
-            "source": null
-          }
-        ],
-        "target_estimate": {
-          "estimate": 363200.0,
-          "expected_return_pct": -2.9,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 8140889752000,
-          "operating_profit": 1355970120000,
-          "op_margin_pct": 16.66,
-          "op_growth_pop_pct": 57.8,
-          "period_label": "1분기",
-          "earnings_signal": "strong_growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -3.3% — 추세필터 통과(방어)",
-        "60일 모멘텀 -20.1%",
-        "상대강도: KOSPI 대비 -6.7%p (동행)",
-        "52주 고점의 75% 수준",
-        "미래 테마 노출: shipbuilding_supercycle(노출 0.9)",
-        "가격 신뢰도 high(2출처 일치)",
-        "근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
-      ],
-      "adopt_summary": "5거래일 누적 -3.3% — 추세필터 통과(방어) · 60일 모멘텀 -20.1% · 상대강도: KOSPI 대비 -6.7%p (동행) · 52주 고점의 75% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
-      "block_reasons": [
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)",
-        "[어드바이저리] 추정 기대수익 -2.9% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
+        "5거래일 누적 -30.22% < 기준 -17.0% (tier:bull+rs_leader)"
       ]
     },
     {
@@ -221,7 +218,7 @@
           "high52": 0.8
         },
         "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 10.9,
+        "rs_excess_vs_kospi_pct": 10.91,
         "thematic": 0.0,
         "thematic_parts": [
           {
@@ -240,14 +237,14 @@
       },
       "final_score": 0.54,
       "data": {
-        "five_day_cumulative_return_pct": -4.52,
-        "ret_60d_pct": -2.58,
-        "pct_of_52w_high": 87.44,
+        "five_day_cumulative_return_pct": -3.83,
+        "ret_60d_pct": -1.88,
+        "pct_of_52w_high": 88.07,
         "confidence": "medium",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 124600.0,
+          "last_close": 125500.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -260,7 +257,7 @@
           }
         ],
         "target_estimate": {
-          "estimate": 132900.0,
+          "estimate": 131400.0,
           "expected_return_pct": 4.7,
           "grade": "B",
           "gate_blocked": false
@@ -276,20 +273,18 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -4.5% — 추세필터 통과(방어)",
-        "60일 모멘텀 -2.6%",
+        "5거래일 누적 -3.8% — 추세필터 통과(방어)",
+        "60일 모멘텀 -1.9%",
         "상대강도: KOSPI 대비 +10.9%p (주도주)",
-        "52주 고점의 87% 수준",
+        "52주 고점의 88% 수준",
         "미래 테마 노출: value_up_shareholder_return(노출 0.7)",
         "가격 신뢰도 medium(단일출처)",
         "후보 thesis 'bank_valueup_harvest_w31' 연결",
         "근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.",
         "실적 모멘텀(growth, 영업이익 전기대비 +11%)"
       ],
-      "adopt_summary": "5거래일 누적 -4.5% — 추세필터 통과(방어) · 60일 모멘텀 -2.6% · 상대강도: KOSPI 대비 +10.9%p (주도주) · 52주 고점의 87% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 medium(단일출처) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +11%)",
-      "block_reasons": [
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
-      ]
+      "adopt_summary": "5거래일 누적 -3.8% — 추세필터 통과(방어) · 60일 모멘텀 -1.9% · 상대강도: KOSPI 대비 +10.9%p (주도주) · 52주 고점의 88% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 medium(단일출처) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +11%)",
+      "block_reasons": []
     },
     {
       "ticker": "005930",
@@ -305,7 +300,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 8.72,
+        "rs_excess_vs_kospi_pct": 9.16,
         "thematic": 0.855,
         "thematic_parts": [
           {
@@ -324,14 +319,14 @@
       },
       "final_score": 0.517,
       "data": {
-        "five_day_cumulative_return_pct": -22.22,
-        "ret_60d_pct": -4.76,
-        "pct_of_52w_high": 56.07,
+        "five_day_cumulative_return_pct": -21.3,
+        "ret_60d_pct": -3.63,
+        "pct_of_52w_high": 56.74,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 210000.0,
+          "last_close": 212500.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -344,8 +339,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 245800.0,
-          "expected_return_pct": 13.5,
+          "estimate": 227800.0,
+          "expected_return_pct": 7.2,
           "grade": "A",
           "gate_blocked": false
         },
@@ -362,92 +357,7 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -22.22% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
-      ]
-    },
-    {
-      "ticker": "105560",
-      "name": "KB금융",
-      "sector": "금융/은행",
-      "thesis_id": "bank_valueup_harvest_w31",
-      "rationale": "7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
-      "components": {
-        "momentum": 0.43,
-        "momentum_parts": {
-          "ret5": 0.1,
-          "ret60": 0.6,
-          "high52": 0.6
-        },
-        "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 16.1,
-        "thematic": 0.0,
-        "thematic_parts": [
-          {
-            "theme": "value_up_shareholder_return",
-            "exposure": 0.7,
-            "strength": 0.0,
-            "contrib": 0.0
-          }
-        ],
-        "confidence": 0.5,
-        "thesis": 0.6,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.02,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "growth"
-      },
-      "final_score": 0.514,
-      "data": {
-        "five_day_cumulative_return_pct": -6.58,
-        "ret_60d_pct": 2.62,
-        "pct_of_52w_high": 84.68,
-        "confidence": "medium",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 164700.0,
-          "position_cap_krw": 1626852,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "value_up_shareholder_return",
-            "exposure": 0.7,
-            "evidence": "밸류업 로테이션 은행 대장 — 7/28 지수 급락일 무변동 방어",
-            "source": "https://kr.investing.com/indices/kospi"
-          }
-        ],
-        "target_estimate": {
-          "estimate": 185300.0,
-          "expected_return_pct": 10.7,
-          "grade": "B",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 7159729000000,
-          "operating_profit": 2727566000000,
-          "op_margin_pct": 38.1,
-          "op_growth_pop_pct": 19.0,
-          "period_label": "1분기",
-          "earnings_signal": "growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -6.6% — 추세필터 통과(방어)",
-        "60일 모멘텀 +2.6%",
-        "상대강도: KOSPI 대비 +16.1%p (주도주)",
-        "52주 고점의 85% 수준",
-        "미래 테마 노출: value_up_shareholder_return(노출 0.7)",
-        "가격 신뢰도 medium(단일출처)",
-        "후보 thesis 'bank_valueup_harvest_w31' 연결",
-        "근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
-        "실적 모멘텀(growth, 영업이익 전기대비 +19%)"
-      ],
-      "adopt_summary": "5거래일 누적 -6.6% — 추세필터 통과(방어) · 60일 모멘텀 +2.6% · 상대강도: KOSPI 대비 +16.1%p (주도주) · 52주 고점의 85% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 medium(단일출처) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(growth, 영업이익 전기대비 +19%)",
-      "block_reasons": [
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "5거래일 누적 -21.3% < 기준 -10.0% (tier:bull)"
       ]
     },
     {
@@ -464,7 +374,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 6.8,
+        "rs_excess_vs_kospi_pct": 6.63,
         "thematic": 0.48,
         "thematic_parts": [
           {
@@ -483,14 +393,14 @@
       },
       "final_score": 0.506,
       "data": {
-        "five_day_cumulative_return_pct": -10.5,
-        "ret_60d_pct": -6.68,
-        "pct_of_52w_high": 64.77,
+        "five_day_cumulative_return_pct": -10.0,
+        "ret_60d_pct": -6.16,
+        "pct_of_52w_high": 65.13,
         "confidence": "high",
-        "entry_filter_passes": false,
+        "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 196900.0,
+          "last_close": 198000.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -503,7 +413,7 @@
           }
         ],
         "target_estimate": {
-          "estimate": 217900.0,
+          "estimate": 216300.0,
           "expected_return_pct": 9.2,
           "grade": "B",
           "gate_blocked": false
@@ -517,12 +427,101 @@
           "earnings_signal": "growth"
         }
       },
-      "tradable": false,
-      "adopt_reasons": [],
-      "adopt_summary": null,
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -10.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -6.2%",
+        "상대강도: KOSPI 대비 +6.6%p (동행)",
+        "52주 고점의 65% 수준",
+        "미래 테마 노출: internet_ai_platform(노출 0.8)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.",
+        "실적 모멘텀(growth, 영업이익 전기대비 +7%)"
+      ],
+      "adopt_summary": "5거래일 누적 -10.0% — 추세필터 통과(방어) · 60일 모멘텀 -6.2% · 상대강도: KOSPI 대비 +6.6%p (동행) · 52주 고점의 65% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건. · 실적 모멘텀(growth, 영업이익 전기대비 +7%)",
+      "block_reasons": []
+    },
+    {
+      "ticker": "009540",
+      "name": "HD한국조선해양",
+      "sector": "조선",
+      "thesis_id": "shipbuilding_candidate",
+      "rationale": "LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
+      "components": {
+        "momentum": 0.367,
+        "momentum_parts": {
+          "ret5": 0.4,
+          "ret60": 0.1,
+          "high52": 0.6
+        },
+        "relative_strength": 0.4,
+        "rs_excess_vs_kospi_pct": -7.04,
+        "thematic": 0.72,
+        "thematic_parts": [
+          {
+            "theme": "shipbuilding_supercycle",
+            "exposure": 0.9,
+            "strength": 0.8,
+            "contrib": 0.72
+          }
+        ],
+        "confidence": 0.5,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.05,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "strong_growth"
+      },
+      "final_score": 0.483,
+      "data": {
+        "five_day_cumulative_return_pct": -2.89,
+        "ret_60d_pct": -19.83,
+        "pct_of_52w_high": 74.82,
+        "confidence": "medium",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 370000.0,
+          "position_cap_krw": 1626852,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "shipbuilding_supercycle",
+            "exposure": 0.9,
+            "evidence": "LNG선·특수선 수주잔고 슈퍼사이클, 1Q26 영업이익 +57.8% YoY",
+            "source": null
+          }
+        ],
+        "target_estimate": {
+          "estimate": 361100.0,
+          "expected_return_pct": -2.4,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 8140889752000,
+          "operating_profit": 1355970120000,
+          "op_margin_pct": 16.66,
+          "op_growth_pop_pct": 57.8,
+          "period_label": "1분기",
+          "earnings_signal": "strong_growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -2.9% — 추세필터 통과(방어)",
+        "60일 모멘텀 -19.8%",
+        "상대강도: KOSPI 대비 -7.0%p (동행)",
+        "52주 고점의 75% 수준",
+        "미래 테마 노출: shipbuilding_supercycle(노출 0.9)",
+        "가격 신뢰도 medium(단일출처)",
+        "근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
+      ],
+      "adopt_summary": "5거래일 누적 -2.9% — 추세필터 통과(방어) · 60일 모멘텀 -19.8% · 상대강도: KOSPI 대비 -7.0%p (동행) · 52주 고점의 75% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
       "block_reasons": [
-        "5거래일 누적 -10.5% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "[어드바이저리] 추정 기대수익 -2.4% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
       ]
     },
     {
@@ -539,7 +538,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -11.15,
+        "rs_excess_vs_kospi_pct": -11.42,
         "thematic": 0.3,
         "thematic_parts": [
           {
@@ -558,14 +557,14 @@
       },
       "final_score": 0.435,
       "data": {
-        "five_day_cumulative_return_pct": -4.04,
-        "ret_60d_pct": -24.63,
-        "pct_of_52w_high": 51.15,
+        "five_day_cumulative_return_pct": -3.5,
+        "ret_60d_pct": -24.21,
+        "pct_of_52w_high": 51.43,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 35650.0,
+          "last_close": 35850.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -578,8 +577,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 37100.0,
-          "expected_return_pct": 2.8,
+          "estimate": 36900.0,
+          "expected_return_pct": 2.9,
           "grade": "B",
           "gate_blocked": false
         },
@@ -594,19 +593,17 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -4.0% — 추세필터 통과(방어)",
-        "60일 모멘텀 -24.6%",
-        "상대강도: KOSPI 대비 -11.2%p (후행주)",
+        "5거래일 누적 -3.5% — 추세필터 통과(방어)",
+        "60일 모멘텀 -24.2%",
+        "상대강도: KOSPI 대비 -11.4%p (후행주)",
         "52주 고점의 51% 수준",
         "미래 테마 노출: internet_ai_platform(노출 0.5)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)"
       ],
-      "adopt_summary": "5거래일 누적 -4.0% — 추세필터 통과(방어) · 60일 모멘텀 -24.6% · 상대강도: KOSPI 대비 -11.2%p (후행주) · 52주 고점의 51% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)",
-      "block_reasons": [
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
-      ]
+      "adopt_summary": "5거래일 누적 -3.5% — 추세필터 통과(방어) · 60일 모멘텀 -24.2% · 상대강도: KOSPI 대비 -11.4%p (후행주) · 52주 고점의 51% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)",
+      "block_reasons": []
     },
     {
       "ticker": "028260",
@@ -615,14 +612,14 @@
       "thesis_id": "momentum_rotation_deploy_w27",
       "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
       "components": {
-        "momentum": 0.247,
+        "momentum": 0.33,
         "momentum_parts": {
           "ret5": 0.0,
-          "ret60": 0.35,
+          "ret60": 0.6,
           "high52": 0.4
         },
         "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 12.64,
+        "rs_excess_vs_kospi_pct": 13.46,
         "thematic": 0.3,
         "thematic_parts": [],
         "confidence": 0.5,
@@ -632,22 +629,22 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "decline"
       },
-      "final_score": 0.394,
+      "final_score": 0.419,
       "data": {
-        "five_day_cumulative_return_pct": -17.78,
-        "ret_60d_pct": -0.84,
-        "pct_of_52w_high": 52.39,
+        "five_day_cumulative_return_pct": -16.53,
+        "ret_60d_pct": 0.67,
+        "pct_of_52w_high": 53.19,
         "confidence": "medium",
-        "entry_filter_passes": false,
+        "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 296000.0,
+          "last_close": 300500.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
         "theme_exposure": [],
         "target_estimate": {
-          "estimate": 324400.0,
+          "estimate": 321200.0,
           "expected_return_pct": 6.9,
           "grade": "B",
           "gate_blocked": false
@@ -661,13 +658,17 @@
           "earnings_signal": "decline"
         }
       },
-      "tradable": false,
-      "adopt_reasons": [],
-      "adopt_summary": null,
-      "block_reasons": [
-        "5거래일 누적 -17.78% < 기준 -14.0% (tier:neutral+rs_leader)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
-      ]
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -16.5% — 추세필터 통과(방어)",
+        "60일 모멘텀 +0.7%",
+        "상대강도: KOSPI 대비 +13.5%p (주도주)",
+        "52주 고점의 53% 수준",
+        "가격 신뢰도 medium(단일출처)",
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강."
+      ],
+      "adopt_summary": "5거래일 누적 -16.5% — 추세필터 통과(방어) · 60일 모멘텀 +0.7% · 상대강도: KOSPI 대비 +13.5%p (주도주) · 52주 고점의 53% 수준 · 가격 신뢰도 medium(단일출처) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "block_reasons": []
     },
     {
       "ticker": "010140",
@@ -683,7 +684,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -23.15,
+        "rs_excess_vs_kospi_pct": -23.22,
         "thematic": 0.64,
         "thematic_parts": [
           {
@@ -702,14 +703,14 @@
       },
       "final_score": 0.37,
       "data": {
-        "five_day_cumulative_return_pct": -13.32,
-        "ret_60d_pct": -36.63,
-        "pct_of_52w_high": 57.99,
+        "five_day_cumulative_return_pct": -12.47,
+        "ret_60d_pct": -36.01,
+        "pct_of_52w_high": 58.56,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 20500.0,
+          "last_close": 20700.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -722,8 +723,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 21500.0,
-          "expected_return_pct": 2.4,
+          "estimate": 21300.0,
+          "expected_return_pct": 2.9,
           "grade": "A",
           "gate_blocked": false
         },
@@ -740,8 +741,7 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -13.32% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "5거래일 누적 -12.47% < 기준 -10.0% (tier:bull)"
       ]
     },
     {
@@ -758,7 +758,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -17.34,
+        "rs_excess_vs_kospi_pct": -17.5,
         "thematic": 0.63,
         "thematic_parts": [
           {
@@ -777,14 +777,14 @@
       },
       "final_score": 0.369,
       "data": {
-        "five_day_cumulative_return_pct": -11.55,
-        "ret_60d_pct": -30.82,
-        "pct_of_52w_high": 58.23,
+        "five_day_cumulative_return_pct": -10.87,
+        "ret_60d_pct": -30.29,
+        "pct_of_52w_high": 58.68,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 651000.0,
+          "last_close": 656000.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -797,7 +797,7 @@
           }
         ],
         "target_estimate": {
-          "estimate": 683000.0,
+          "estimate": 672800.0,
           "expected_return_pct": 2.6,
           "grade": "B",
           "gate_blocked": false
@@ -815,83 +815,7 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -11.55% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
-      ]
-    },
-    {
-      "ticker": "012450",
-      "name": "한화에어로스페이스",
-      "sector": "방산",
-      "thesis_id": null,
-      "rationale": "K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
-      "components": {
-        "momentum": 0.165,
-        "momentum_parts": {
-          "ret5": 0.0,
-          "ret60": 0.1,
-          "high52": 0.4
-        },
-        "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -24.49,
-        "thematic": 0.63,
-        "thematic_parts": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "strength": 0.7,
-            "contrib": 0.63
-          }
-        ],
-        "confidence": 0.5,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.02,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "growth"
-      },
-      "final_score": 0.339,
-      "data": {
-        "five_day_cumulative_return_pct": -8.25,
-        "ret_60d_pct": -37.97,
-        "pct_of_52w_high": 53.11,
-        "confidence": "medium",
-        "entry_filter_passes": false,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 879000.0,
-          "position_cap_krw": 1626852,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "evidence": "K-방산 수출 대표주 — 자주포·장갑체계 유럽 수출 확대",
-            "source": null
-          }
-        ],
-        "target_estimate": {
-          "estimate": 1302400.0,
-          "expected_return_pct": 43.9,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 5751023496000,
-          "operating_profit": 638892160000,
-          "op_margin_pct": 11.11,
-          "op_growth_pop_pct": 20.6,
-          "period_label": "1분기",
-          "earnings_signal": "growth"
-        }
-      },
-      "tradable": false,
-      "adopt_reasons": [],
-      "adopt_summary": null,
-      "block_reasons": [
-        "5거래일 누적 -8.25% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "5거래일 누적 -10.87% < 기준 -10.0% (tier:bull)"
       ]
     },
     {
@@ -908,7 +832,7 @@
           "high52": 0.2
         },
         "relative_strength": 0.05,
-        "rs_excess_vs_kospi_pct": -30.8,
+        "rs_excess_vs_kospi_pct": -30.99,
         "thematic": 0.6,
         "thematic_parts": [
           {
@@ -927,14 +851,14 @@
       },
       "final_score": 0.315,
       "data": {
-        "five_day_cumulative_return_pct": -30.69,
-        "ret_60d_pct": -44.28,
-        "pct_of_52w_high": 46.24,
+        "five_day_cumulative_return_pct": -30.07,
+        "ret_60d_pct": -43.78,
+        "pct_of_52w_high": 46.66,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 154900.0,
+          "last_close": 156300.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -947,8 +871,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 170700.0,
-          "expected_return_pct": 7.6,
+          "estimate": 168100.0,
+          "expected_return_pct": 7.5,
           "grade": "B",
           "gate_blocked": false
         },
@@ -965,8 +889,81 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -30.69% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "5거래일 누적 -30.07% < 기준 -10.0% (tier:bull)"
+      ]
+    },
+    {
+      "ticker": "267260",
+      "name": "HD현대일렉트릭",
+      "sector": "전력기기",
+      "thesis_id": null,
+      "rationale": "변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
+      "components": {
+        "momentum": 0.099,
+        "momentum_parts": {
+          "ret5": 0.0,
+          "ret60": 0.1,
+          "high52": 0.2
+        },
+        "relative_strength": 0.05,
+        "rs_excess_vs_kospi_pct": -40.01,
+        "thematic": 0.637,
+        "thematic_parts": [
+          {
+            "theme": "power_grid_ai",
+            "exposure": 0.85,
+            "strength": 0.75,
+            "contrib": 0.637
+          }
+        ],
+        "confidence": 0.5,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.02,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "growth"
+      },
+      "final_score": 0.29,
+      "data": {
+        "five_day_cumulative_return_pct": -31.99,
+        "ret_60d_pct": -52.8,
+        "pct_of_52w_high": 41.33,
+        "confidence": "medium",
+        "entry_filter_passes": false,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 591000.0,
+          "position_cap_krw": 1626852,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "power_grid_ai",
+            "exposure": 0.85,
+            "evidence": "초고압 변압기 수출 — AI 데이터센터·노후 전력망 교체 수요 직접 노출",
+            "source": null
+          }
+        ],
+        "target_estimate": {
+          "estimate": 995600.0,
+          "expected_return_pct": 68.5,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 1036500341405,
+          "operating_profit": 258269322064,
+          "op_margin_pct": 24.92,
+          "op_growth_pop_pct": 18.4,
+          "period_label": "1분기",
+          "earnings_signal": "growth"
+        }
+      },
+      "tradable": false,
+      "adopt_reasons": [],
+      "adopt_summary": null,
+      "block_reasons": [
+        "5거래일 누적 -31.99% < 기준 -10.0% (tier:bull)"
       ]
     },
     {
@@ -976,14 +973,14 @@
       "thesis_id": "momentum_rotation_deploy_w27",
       "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
       "components": {
-        "momentum": 0.099,
+        "momentum": 0.165,
         "momentum_parts": {
           "ret5": 0.0,
           "ret60": 0.1,
-          "high52": 0.2
+          "high52": 0.4
         },
         "relative_strength": 0.05,
-        "rs_excess_vs_kospi_pct": -34.79,
+        "rs_excess_vs_kospi_pct": -34.98,
         "thematic": 0.3,
         "thematic_parts": [],
         "confidence": 0.5,
@@ -993,22 +990,22 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.27,
+      "final_score": 0.289,
       "data": {
-        "five_day_cumulative_return_pct": -23.02,
-        "ret_60d_pct": -48.27,
-        "pct_of_52w_high": 49.72,
+        "five_day_cumulative_return_pct": -22.27,
+        "ret_60d_pct": -47.77,
+        "pct_of_52w_high": 50.21,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 359500.0,
+          "last_close": 363000.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
         "theme_exposure": [],
         "target_estimate": {
-          "estimate": 372800.0,
+          "estimate": 366200.0,
           "expected_return_pct": 0.9,
           "grade": "B",
           "gate_blocked": false
@@ -1026,8 +1023,81 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -23.02% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "5거래일 누적 -22.27% < 기준 -10.0% (tier:bull)"
+      ]
+    },
+    {
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
+      "sector": "방산",
+      "thesis_id": null,
+      "rationale": "K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
+      "components": {
+        "momentum": 0.165,
+        "momentum_parts": {
+          "ret5": 0.0,
+          "ret60": 0.1,
+          "high52": 0.4
+        },
+        "relative_strength": 0.2,
+        "rs_excess_vs_kospi_pct": -24.75,
+        "thematic": 0.63,
+        "thematic_parts": [
+          {
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "strength": 0.7,
+            "contrib": 0.63
+          }
+        ],
+        "confidence": 0.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.02,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "growth"
+      },
+      "final_score": 0.264,
+      "data": {
+        "five_day_cumulative_return_pct": -7.62,
+        "ret_60d_pct": -37.54,
+        "pct_of_52w_high": 53.47,
+        "confidence": "low",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 885000.0,
+          "position_cap_krw": 1626852,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "evidence": "K-방산 수출 대표주 — 자주포·장갑체계 유럽 수출 확대",
+            "source": null
+          }
+        ],
+        "target_estimate": {
+          "estimate": 1291900.0,
+          "expected_return_pct": 46.0,
+          "grade": "B",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 5751023496000,
+          "operating_profit": 638892160000,
+          "op_margin_pct": 11.11,
+          "op_growth_pop_pct": 20.6,
+          "period_label": "1분기",
+          "earnings_signal": "growth"
+        }
+      },
+      "tradable": false,
+      "adopt_reasons": [],
+      "adopt_summary": null,
+      "block_reasons": [
+        "가격 신뢰도 low — 신규 매매 차단"
       ]
     },
     {
@@ -1044,7 +1114,7 @@
           "high52": 0.2
         },
         "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -21.08,
+        "rs_excess_vs_kospi_pct": -21.39,
         "thematic": 0.69,
         "thematic_parts": [
           {
@@ -1069,14 +1139,14 @@
       },
       "final_score": 0.248,
       "data": {
-        "five_day_cumulative_return_pct": -19.56,
-        "ret_60d_pct": -34.56,
-        "pct_of_52w_high": 44.38,
+        "five_day_cumulative_return_pct": -19.1,
+        "ret_60d_pct": -34.18,
+        "pct_of_52w_high": 44.64,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 347500.0,
+          "last_close": 349500.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -1095,8 +1165,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 354300.0,
-          "expected_return_pct": -0.2,
+          "estimate": 351700.0,
+          "expected_return_pct": 0.6,
           "grade": "A",
           "gate_blocked": false
         },
@@ -1113,9 +1183,7 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -19.56% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)",
-        "[어드바이저리] 추정 기대수익 -0.2% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
+        "5거래일 누적 -19.1% < 기준 -10.0% (tier:bull)"
       ]
     },
     {
@@ -1132,7 +1200,7 @@
           "high52": 0.2
         },
         "relative_strength": 0.05,
-        "rs_excess_vs_kospi_pct": -41.9,
+        "rs_excess_vs_kospi_pct": -42.18,
         "thematic": 0.807,
         "thematic_parts": [
           {
@@ -1151,14 +1219,14 @@
       },
       "final_score": 0.236,
       "data": {
-        "five_day_cumulative_return_pct": -23.98,
-        "ret_60d_pct": -55.38,
-        "pct_of_52w_high": 38.54,
+        "five_day_cumulative_return_pct": -23.29,
+        "ret_60d_pct": -54.97,
+        "pct_of_52w_high": 38.9,
         "confidence": "medium",
         "entry_filter_passes": false,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 164200.0,
+          "last_close": 165700.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -1171,7 +1239,7 @@
           }
         ],
         "target_estimate": {
-          "estimate": 172100.0,
+          "estimate": 170100.0,
           "expected_return_pct": 2.7,
           "grade": "B",
           "gate_blocked": false
@@ -1189,84 +1257,7 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -23.98% < 기준 -7.0% (tier:neutral)",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
-      ]
-    },
-    {
-      "ticker": "267260",
-      "name": "HD현대일렉트릭",
-      "sector": "전력기기",
-      "thesis_id": null,
-      "rationale": "변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
-      "components": {
-        "momentum": 0.099,
-        "momentum_parts": {
-          "ret5": 0.0,
-          "ret60": 0.1,
-          "high52": 0.2
-        },
-        "relative_strength": 0.05,
-        "rs_excess_vs_kospi_pct": -39.95,
-        "thematic": 0.637,
-        "thematic_parts": [
-          {
-            "theme": "power_grid_ai",
-            "exposure": 0.85,
-            "strength": 0.75,
-            "contrib": 0.637
-          }
-        ],
-        "confidence": 0.0,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.02,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "growth"
-      },
-      "final_score": 0.215,
-      "data": {
-        "five_day_cumulative_return_pct": -32.91,
-        "ret_60d_pct": -53.43,
-        "pct_of_52w_high": 40.77,
-        "confidence": "low",
-        "entry_filter_passes": false,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 583000.0,
-          "position_cap_krw": 1626852,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "power_grid_ai",
-            "exposure": 0.85,
-            "evidence": "초고압 변압기 수출 — AI 데이터센터·노후 전력망 교체 수요 직접 노출",
-            "source": null
-          }
-        ],
-        "target_estimate": {
-          "estimate": 1002100.0,
-          "expected_return_pct": 66.2,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 1036500341405,
-          "operating_profit": 258269322064,
-          "op_margin_pct": 24.92,
-          "op_growth_pop_pct": 18.4,
-          "period_label": "1분기",
-          "earnings_signal": "growth"
-        }
-      },
-      "tradable": false,
-      "adopt_reasons": [],
-      "adopt_summary": null,
-      "block_reasons": [
-        "5거래일 누적 -32.91% < 기준 -7.0% (tier:neutral)",
-        "가격 신뢰도 low — 신규 매매 차단",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "5거래일 누적 -23.29% < 기준 -10.0% (tier:bull)"
       ]
     },
     {
@@ -1283,7 +1274,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -17.79,
+        "rs_excess_vs_kospi_pct": -18.59,
         "thematic": 0.693,
         "thematic_parts": [
           {
@@ -1299,25 +1290,25 @@
             "contrib": 0.225
           }
         ],
-        "confidence": 1.0,
+        "confidence": 0.5,
         "thesis": 0.3,
         "bear_penalty": 0.15,
         "fundamental_tilt": -0.06,
         "valuation_tilt": 0.0,
         "earnings_signal": "sharp_decline"
       },
-      "final_score": 0.193,
+      "final_score": 0.118,
       "data": {
-        "five_day_cumulative_return_pct": -9.05,
-        "ret_60d_pct": -31.27,
-        "pct_of_52w_high": 60.06,
-        "confidence": "high",
-        "entry_filter_passes": false,
+        "five_day_cumulative_return_pct": -9.2,
+        "ret_60d_pct": -31.38,
+        "pct_of_52w_high": 59.96,
+        "confidence": "medium",
+        "entry_filter_passes": true,
         "structural_bear_flags": [
           "관세"
         ],
         "buyability": {
-          "last_close": 316500.0,
+          "last_close": 316000.0,
           "position_cap_krw": 1626852,
           "size_feasible": true
         },
@@ -1336,8 +1327,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 354100.0,
-          "expected_return_pct": 10.5,
+          "estimate": 351900.0,
+          "expected_return_pct": 11.4,
           "grade": "A",
           "gate_blocked": false
         },
@@ -1354,39 +1345,38 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "5거래일 누적 -9.05% < 기준 -7.0% (tier:neutral)",
-        "구조적 악재 매칭: 관세",
-        "시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)"
+        "구조적 악재 매칭: 관세"
       ]
     }
   ],
   "adopted": [
     {
-      "ticker": "009540",
-      "name": "HD한국조선해양",
-      "final_score": 0.558,
-      "summary": "5거래일 누적 -3.3% — 추세필터 통과(방어) · 60일 모멘텀 -20.1% · 상대강도: KOSPI 대비 -6.7%p (동행) · 52주 고점의 75% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
+      "ticker": "105560",
+      "name": "KB금융",
+      "final_score": 0.609,
+      "summary": "5거래일 누적 -5.6% — 추세필터 통과(방어) · 60일 모멘텀 +3.7% · 상대강도: KOSPI 대비 +16.5%p (주도주) · 52주 고점의 86% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(growth, 영업이익 전기대비 +19%)",
       "reasons": [
-        "5거래일 누적 -3.3% — 추세필터 통과(방어)",
-        "60일 모멘텀 -20.1%",
-        "상대강도: KOSPI 대비 -6.7%p (동행)",
-        "52주 고점의 75% 수준",
-        "미래 테마 노출: shipbuilding_supercycle(노출 0.9)",
+        "5거래일 누적 -5.6% — 추세필터 통과(방어)",
+        "60일 모멘텀 +3.7%",
+        "상대강도: KOSPI 대비 +16.5%p (주도주)",
+        "52주 고점의 86% 수준",
+        "미래 테마 노출: value_up_shareholder_return(노출 0.7)",
         "가격 신뢰도 high(2출처 일치)",
-        "근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
+        "후보 thesis 'bank_valueup_harvest_w31' 연결",
+        "근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
+        "실적 모멘텀(growth, 영업이익 전기대비 +19%)"
       ]
     },
     {
       "ticker": "086790",
       "name": "하나금융지주",
       "final_score": 0.54,
-      "summary": "5거래일 누적 -4.5% — 추세필터 통과(방어) · 60일 모멘텀 -2.6% · 상대강도: KOSPI 대비 +10.9%p (주도주) · 52주 고점의 87% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 medium(단일출처) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +11%)",
+      "summary": "5거래일 누적 -3.8% — 추세필터 통과(방어) · 60일 모멘텀 -1.9% · 상대강도: KOSPI 대비 +10.9%p (주도주) · 52주 고점의 88% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 medium(단일출처) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +11%)",
       "reasons": [
-        "5거래일 누적 -4.5% — 추세필터 통과(방어)",
-        "60일 모멘텀 -2.6%",
+        "5거래일 누적 -3.8% — 추세필터 통과(방어)",
+        "60일 모멘텀 -1.9%",
         "상대강도: KOSPI 대비 +10.9%p (주도주)",
-        "52주 고점의 87% 수준",
+        "52주 고점의 88% 수준",
         "미래 테마 노출: value_up_shareholder_return(노출 0.7)",
         "가격 신뢰도 medium(단일출처)",
         "후보 thesis 'bank_valueup_harvest_w31' 연결",
@@ -1395,45 +1385,74 @@
       ]
     },
     {
-      "ticker": "105560",
-      "name": "KB금융",
-      "final_score": 0.514,
-      "summary": "5거래일 누적 -6.6% — 추세필터 통과(방어) · 60일 모멘텀 +2.6% · 상대강도: KOSPI 대비 +16.1%p (주도주) · 52주 고점의 85% 수준 · 미래 테마 노출: value_up_shareholder_return(노출 0.7) · 가격 신뢰도 medium(단일출처) · 후보 thesis 'bank_valueup_harvest_w31' 연결 · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(growth, 영업이익 전기대비 +19%)",
+      "ticker": "035420",
+      "name": "NAVER",
+      "final_score": 0.506,
+      "summary": "5거래일 누적 -10.0% — 추세필터 통과(방어) · 60일 모멘텀 -6.2% · 상대강도: KOSPI 대비 +6.6%p (동행) · 52주 고점의 65% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건. · 실적 모멘텀(growth, 영업이익 전기대비 +7%)",
       "reasons": [
-        "5거래일 누적 -6.6% — 추세필터 통과(방어)",
-        "60일 모멘텀 +2.6%",
-        "상대강도: KOSPI 대비 +16.1%p (주도주)",
-        "52주 고점의 85% 수준",
-        "미래 테마 노출: value_up_shareholder_return(노출 0.7)",
+        "5거래일 누적 -10.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -6.2%",
+        "상대강도: KOSPI 대비 +6.6%p (동행)",
+        "52주 고점의 65% 수준",
+        "미래 테마 노출: internet_ai_platform(노출 0.8)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.",
+        "실적 모멘텀(growth, 영업이익 전기대비 +7%)"
+      ]
+    },
+    {
+      "ticker": "009540",
+      "name": "HD한국조선해양",
+      "final_score": 0.483,
+      "summary": "5거래일 누적 -2.9% — 추세필터 통과(방어) · 60일 모멘텀 -19.8% · 상대강도: KOSPI 대비 -7.0%p (동행) · 52주 고점의 75% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
+      "reasons": [
+        "5거래일 누적 -2.9% — 추세필터 통과(방어)",
+        "60일 모멘텀 -19.8%",
+        "상대강도: KOSPI 대비 -7.0%p (동행)",
+        "52주 고점의 75% 수준",
+        "미래 테마 노출: shipbuilding_supercycle(노출 0.9)",
         "가격 신뢰도 medium(단일출처)",
-        "후보 thesis 'bank_valueup_harvest_w31' 연결",
-        "근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
-        "실적 모멘텀(growth, 영업이익 전기대비 +19%)"
+        "근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
       ]
     },
     {
       "ticker": "035720",
       "name": "카카오",
       "final_score": 0.435,
-      "summary": "5거래일 누적 -4.0% — 추세필터 통과(방어) · 60일 모멘텀 -24.6% · 상대강도: KOSPI 대비 -11.2%p (후행주) · 52주 고점의 51% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)",
+      "summary": "5거래일 누적 -3.5% — 추세필터 통과(방어) · 60일 모멘텀 -24.2% · 상대강도: KOSPI 대비 -11.4%p (후행주) · 52주 고점의 51% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)",
       "reasons": [
-        "5거래일 누적 -4.0% — 추세필터 통과(방어)",
-        "60일 모멘텀 -24.6%",
-        "상대강도: KOSPI 대비 -11.2%p (후행주)",
+        "5거래일 누적 -3.5% — 추세필터 통과(방어)",
+        "60일 모멘텀 -24.2%",
+        "상대강도: KOSPI 대비 -11.4%p (후행주)",
         "52주 고점의 51% 수준",
         "미래 테마 노출: internet_ai_platform(노출 0.5)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)"
       ]
+    },
+    {
+      "ticker": "028260",
+      "name": "삼성물산",
+      "final_score": 0.419,
+      "summary": "5거래일 누적 -16.5% — 추세필터 통과(방어) · 60일 모멘텀 +0.7% · 상대강도: KOSPI 대비 +13.5%p (주도주) · 52주 고점의 53% 수준 · 가격 신뢰도 medium(단일출처) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "reasons": [
+        "5거래일 누적 -16.5% — 추세필터 통과(방어)",
+        "60일 모멘텀 +0.7%",
+        "상대강도: KOSPI 대비 +13.5%p (주도주)",
+        "52주 고점의 53% 수준",
+        "가격 신뢰도 medium(단일출처)",
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강."
+      ]
     }
   ],
-  "report_section_md": "### 신규 후보 채택 사유\n\n- 시장 레짐: 🔴 **risk_off** (KOSPI 5709.64 / 200일선 대비 -0.2%)\n\n- **HD한국조선해양(009540)** — 점수 0.558\n  - 5거래일 누적 -3.3% — 추세필터 통과(방어)\n  - 60일 모멘텀 -20.1%\n  - 상대강도: KOSPI 대비 -6.7%p (동행)\n  - 52주 고점의 75% 수준\n  - 미래 테마 노출: shipbuilding_supercycle(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)\n- **하나금융지주(086790)** — 점수 0.54\n  - 5거래일 누적 -4.5% — 추세필터 통과(방어)\n  - 60일 모멘텀 -2.6%\n  - 상대강도: KOSPI 대비 +10.9%p (주도주)\n  - 52주 고점의 87% 수준\n  - 미래 테마 노출: value_up_shareholder_return(노출 0.7)\n  - 가격 신뢰도 medium(단일출처)\n  - 후보 thesis 'bank_valueup_harvest_w31' 연결\n  - 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.\n  - 실적 모멘텀(growth, 영업이익 전기대비 +11%)\n- **KB금융(105560)** — 점수 0.514\n  - 5거래일 누적 -6.6% — 추세필터 통과(방어)\n  - 60일 모멘텀 +2.6%\n  - 상대강도: KOSPI 대비 +16.1%p (주도주)\n  - 52주 고점의 85% 수준\n  - 미래 테마 노출: value_up_shareholder_return(노출 0.7)\n  - 가격 신뢰도 medium(단일출처)\n  - 후보 thesis 'bank_valueup_harvest_w31' 연결\n  - 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.\n  - 실적 모멘텀(growth, 영업이익 전기대비 +19%)\n- **카카오(035720)** — 점수 0.435\n  - 5거래일 누적 -4.0% — 추세필터 통과(방어)\n  - 60일 모멘텀 -24.6%\n  - 상대강도: KOSPI 대비 -11.2%p (후행주)\n  - 52주 고점의 51% 수준\n  - 미래 테마 노출: internet_ai_platform(노출 0.5)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)\n\n> 차단된 후보:\n> - SK하이닉스(000660): 5거래일 누적 -30.85% < 기준 -14.0% (tier:neutral+rs_leader); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - 삼성전자(005930): 5거래일 누적 -22.22% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - NAVER(035420): 5거래일 누적 -10.5% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - 삼성물산(028260): 5거래일 누적 -17.78% < 기준 -14.0% (tier:neutral+rs_leader); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - 삼성중공업(010140): 5거래일 누적 -13.32% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - LIG넥스원(079550): 5거래일 누적 -11.55% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - 한화에어로스페이스(012450): 5거래일 누적 -8.25% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - LS ELECTRIC(010120): 5거래일 누적 -30.69% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - 삼성SDI(006400): 5거래일 누적 -23.02% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - 현대차(005380): 5거래일 누적 -19.56% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리); [어드바이저리] 추정 기대수익 -0.2% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)\n> - 한미반도체(042700): 5거래일 누적 -23.98% < 기준 -7.0% (tier:neutral); 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - HD현대일렉트릭(267260): 5거래일 누적 -32.91% < 기준 -7.0% (tier:neutral); 가격 신뢰도 low — 신규 매매 차단; 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)\n> - LG에너지솔루션(373220): 5거래일 누적 -9.05% < 기준 -7.0% (tier:neutral); 구조적 악재 매칭: 관세; 시장 레짐 risk_off (KOSPI<200일선 -0.17%) — 신규 진입 신중(어드바이저리)",
+  "report_section_md": "### 신규 후보 채택 사유\n\n- 시장 레짐: 🟢 **risk_on** (KOSPI 5754.65 / 200일선 대비 +0.6%)\n\n- **KB금융(105560)** — 점수 0.609\n  - 5거래일 누적 -5.6% — 추세필터 통과(방어)\n  - 60일 모멘텀 +3.7%\n  - 상대강도: KOSPI 대비 +16.5%p (주도주)\n  - 52주 고점의 86% 수준\n  - 미래 테마 노출: value_up_shareholder_return(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 후보 thesis 'bank_valueup_harvest_w31' 연결\n  - 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.\n  - 실적 모멘텀(growth, 영업이익 전기대비 +19%)\n- **하나금융지주(086790)** — 점수 0.54\n  - 5거래일 누적 -3.8% — 추세필터 통과(방어)\n  - 60일 모멘텀 -1.9%\n  - 상대강도: KOSPI 대비 +10.9%p (주도주)\n  - 52주 고점의 88% 수준\n  - 미래 테마 노출: value_up_shareholder_return(노출 0.7)\n  - 가격 신뢰도 medium(단일출처)\n  - 후보 thesis 'bank_valueup_harvest_w31' 연결\n  - 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.\n  - 실적 모멘텀(growth, 영업이익 전기대비 +11%)\n- **NAVER(035420)** — 점수 0.506\n  - 5거래일 누적 -10.0% — 추세필터 통과(방어)\n  - 60일 모멘텀 -6.2%\n  - 상대강도: KOSPI 대비 +6.6%p (동행)\n  - 52주 고점의 65% 수준\n  - 미래 테마 노출: internet_ai_platform(노출 0.8)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.\n  - 실적 모멘텀(growth, 영업이익 전기대비 +7%)\n- **HD한국조선해양(009540)** — 점수 0.483\n  - 5거래일 누적 -2.9% — 추세필터 통과(방어)\n  - 60일 모멘텀 -19.8%\n  - 상대강도: KOSPI 대비 -7.0%p (동행)\n  - 52주 고점의 75% 수준\n  - 미래 테마 노출: shipbuilding_supercycle(노출 0.9)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)\n- **카카오(035720)** — 점수 0.435\n  - 5거래일 누적 -3.5% — 추세필터 통과(방어)\n  - 60일 모멘텀 -24.2%\n  - 상대강도: KOSPI 대비 -11.4%p (후행주)\n  - 52주 고점의 51% 수준\n  - 미래 테마 노출: internet_ai_platform(노출 0.5)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +66%)\n- **삼성물산(028260)** — 점수 0.419\n  - 5거래일 누적 -16.5% — 추세필터 통과(방어)\n  - 60일 모멘텀 +0.7%\n  - 상대강도: KOSPI 대비 +13.5%p (주도주)\n  - 52주 고점의 53% 수준\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n\n> 차단된 후보:\n> - SK하이닉스(000660): 5거래일 누적 -30.22% < 기준 -17.0% (tier:bull+rs_leader)\n> - 삼성전자(005930): 5거래일 누적 -21.3% < 기준 -10.0% (tier:bull)\n> - 삼성중공업(010140): 5거래일 누적 -12.47% < 기준 -10.0% (tier:bull)\n> - LIG넥스원(079550): 5거래일 누적 -10.87% < 기준 -10.0% (tier:bull)\n> - LS ELECTRIC(010120): 5거래일 누적 -30.07% < 기준 -10.0% (tier:bull)\n> - HD현대일렉트릭(267260): 5거래일 누적 -31.99% < 기준 -10.0% (tier:bull)\n> - 삼성SDI(006400): 5거래일 누적 -22.27% < 기준 -10.0% (tier:bull)\n> - 한화에어로스페이스(012450): 가격 신뢰도 low — 신규 매매 차단\n> - 현대차(005380): 5거래일 누적 -19.1% < 기준 -10.0% (tier:bull)\n> - 한미반도체(042700): 5거래일 누적 -23.29% < 기준 -10.0% (tier:bull)\n> - LG에너지솔루션(373220): 구조적 악재 매칭: 관세",
   "summary": {
     "total": 17,
-    "tradable_count": 4,
-    "blocked_count": 13,
-    "top_tradable_ticker": "009540",
-    "regime_state": "risk_off"
+    "tradable_count": 6,
+    "blocked_count": 11,
+    "top_tradable_ticker": "105560",
+    "regime_state": "risk_on"
   }
 }

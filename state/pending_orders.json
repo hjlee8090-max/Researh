@@ -879,7 +879,7 @@
       "action": "SELL",
       "trigger": {
         "type": "price_below",
-        "value": 99487
+        "value": 99896
       },
       "size_shares": 2,
       "size_hint": "trailing_first — 5주 중 2주(트레일 1차선 종가 2일 연속 이탈 부분익절)",
@@ -894,7 +894,8 @@
       "deferral_state": "day1",
       "note": "**7/29 종가 98,300 이 1차선 99,487 을 -1.19% 이탈해 유예 day1 성립(po-20260728-2 승계).** 7/30 종가가 재산출 1차선을 재차 이탈하면 2일 연속 확정으로 당일 closing_auction 에서 2주 부분익절 집행, 1차선 위로 회복하면 유예 해제·주문 만료. 트리거값은 7/30 06시·09시 sync_pending_orders 가 exit_levels 재산출본으로 동기화한다(고정값 표류 금지). || [7/30 06:00] 미국장 마감 확정 반영 — sync_pending_orders 재계산 결과 exit_levels.trailing_first_level 과 이미 일치(99,487, 변동 0)해 트리거값 갱신 없음. 한국 폐장으로 종가 미발생이라 1차선 자체가 재산출되지 않는 슬롯이다. **유예 day1 상태 유지 — 오늘(7/30) 종가가 09시 재산출 1차선을 재차 이탈하면 2일 연속 확정으로 closing_auction 2주 부분익절.** 마감 확정 재료는 회복 쪽에 우호적(30년물 +9bp·2년물 -4bp 스티프닝 → NIM 우호, USD/KRW 1,444.03 원화 강세 지속)이나 미국장이 저점권 -1.52% 마감·VIX 20.66 으로 지수 갭다운 우위라 상쇄. status 변경 없음.",
       "last_slot_touch": "06:00",
-      "trigger_reviewed_at": "2026-07-30T06:40:00+09:00"
+      "trigger_reviewed_at": "2026-07-30T06:40:00+09:00",
+      "trigger_synced_at": "2026-07-30T09:21:20+09:00"
     },
     {
       "id": "po-20260729-3",
@@ -904,7 +905,7 @@
       "action": "SELL",
       "trigger": {
         "type": "price_below",
-        "value": 96249
+        "value": 96795
       },
       "size_shares": 3,
       "size_hint": "trailing_residual — 잔여 3주 전량(샹들리에 잔여선 종가 이탈)",
@@ -918,7 +919,8 @@
       "trigger_source": "exit_levels.trailing_residual_level",
       "note": "잔여선 96,249 종가 이탈 시 잔여 전량 청산. 7/29 당일 저 95,700 이 이 선을 장중 관통했으나 종가 98,300 으로 +2.13% 사수(no_intraday_fill). 7/30 이 쇼크일이면 이 트리거도 유예 대상(day1부터 재계산). || [7/30 06:00] 미국장 마감 확정 반영 — trailing_residual_level 과 이미 일치(96,249, 변동 0). 한국 폐장으로 재산출 없음. 7/29 당일 저 95,700 의 장중 관통은 종가 98,300(+2.13%) 사수로 무체결 처리된 상태 그대로 유지. status 변경 없음.",
       "last_slot_touch": "06:00",
-      "trigger_reviewed_at": "2026-07-30T06:40:00+09:00"
+      "trigger_reviewed_at": "2026-07-30T06:40:00+09:00",
+      "trigger_synced_at": "2026-07-30T09:21:20+09:00"
     },
     {
       "id": "po-20260729-4",
@@ -944,7 +946,7 @@
       "trigger_reviewed_at": "2026-07-30T06:40:00+09:00"
     }
   ],
-  "as_of": "2026-07-30T06:40:00+09:00",
+  "as_of": "2026-07-30T09:21:20+09:00",
   "_meta_last_touch": "2026-07-17T06:40:00+09:00 06:00 미국장 마감 확정 — po-20260716-1 신한 목표매도(110,829) 메모만 갱신(원화 목표가·미 마감 무관, 트리거 불변·status active). 한국 폐장으로 체결·trade_log 없음.",
   "_last_slot_touch": "2026-07-30T06:00 KST (06:00 미국장 마감 확정 — 트리거 재계산 결과 변동 0, 메모만 갱신. 한국 폐장·체결 없음·status 무변경)"
 }

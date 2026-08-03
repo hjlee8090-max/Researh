@@ -1,0 +1,173 @@
+{
+  "as_of": "2026-08-03T12:30:00+09:00",
+  "purpose": "sunday_policy_review 후보 C — 트레일링 청산 후 t+1 재진입 규칙의 사전 검증. rule_attribution 표본 2건(t+1 일실 +232,186원 vs t+5 -105,814원)만으로는 규칙화가 불가하다는 판단에 따라 백테스트 표본으로 확대 검증.",
+  "design": {
+    "reentry_condition": "트레일링 청산 후 t+1 종가 > 청산가",
+    "entry_price": "t+1 종가",
+    "exit_horizons": [
+      "t+5",
+      "t+10",
+      "t+21(다음 월간 리밸 근사)"
+    ],
+    "cost": "왕복 0.58% (매수 0.20% + 매도 0.38%) 전액 차감",
+    "baseline": "현행 규칙 = 재진입 없음(현금 대기) → 수익 0%"
+  },
+  "data_window": {
+    "start": "2024-01-02",
+    "end": "2026-08-03",
+    "trading_days": 629,
+    "tickers": 30
+  },
+  "results": {
+    "권장 Top10·월간리밸 (backtest_strategy 검증 설정)": {
+      "full": {
+        "window": "full",
+        "period": "2024-10-30~2026-08-03",
+        "trailing_exits": 109,
+        "reentry_triggered": 58,
+        "trigger_rate_pct": 53.2,
+        "whipsaw_scored_n": 53,
+        "whipsaw_rate_pct": 64.2,
+        "t5": {
+          "n": 58,
+          "mean_net_pct": -1.04,
+          "median_net_pct": -1.33,
+          "win_rate_pct": 39.7,
+          "best_pct": 14.8,
+          "worst_pct": -18.78,
+          "sum_net_pct": -60.31
+        },
+        "t10": {
+          "n": 58,
+          "mean_net_pct": 3.29,
+          "median_net_pct": 2.44,
+          "win_rate_pct": 58.6,
+          "best_pct": 31.2,
+          "worst_pct": -19.42,
+          "sum_net_pct": 190.57
+        },
+        "t21": {
+          "n": 58,
+          "mean_net_pct": 1.24,
+          "median_net_pct": -1.63,
+          "win_rate_pct": 41.4,
+          "best_pct": 52.46,
+          "worst_pct": -23.07,
+          "sum_net_pct": 72.15
+        }
+      },
+      "recent_2026": {
+        "window": "recent_2026",
+        "period": "2026-01-02~2026-08-03",
+        "trailing_exits": 53,
+        "reentry_triggered": 23,
+        "trigger_rate_pct": 43.4,
+        "whipsaw_scored_n": 26,
+        "whipsaw_rate_pct": 80.8,
+        "t5": {
+          "n": 22,
+          "mean_net_pct": -1.08,
+          "median_net_pct": -1.34,
+          "win_rate_pct": 40.9,
+          "best_pct": 6.46,
+          "worst_pct": -7.99,
+          "sum_net_pct": -23.87
+        },
+        "t10": {
+          "n": 22,
+          "mean_net_pct": 4.39,
+          "median_net_pct": 1.21,
+          "win_rate_pct": 54.5,
+          "best_pct": 31.2,
+          "worst_pct": -8.61,
+          "sum_net_pct": 96.55
+        },
+        "t21": {
+          "n": 21,
+          "mean_net_pct": 3.38,
+          "median_net_pct": -0.93,
+          "win_rate_pct": 47.6,
+          "best_pct": 84.49,
+          "worst_pct": -20.44,
+          "sum_net_pct": 70.95
+        }
+      }
+    },
+    "라이브 Top6·21일리밸 (policy momentum_strategy 설정)": {
+      "full": {
+        "window": "full",
+        "period": "2024-10-30~2026-08-03",
+        "trailing_exits": 88,
+        "reentry_triggered": 40,
+        "trigger_rate_pct": 45.5,
+        "whipsaw_scored_n": 42,
+        "whipsaw_rate_pct": 61.9,
+        "t5": {
+          "n": 40,
+          "mean_net_pct": -2.75,
+          "median_net_pct": -1.89,
+          "win_rate_pct": 32.5,
+          "best_pct": 10.3,
+          "worst_pct": -14.94,
+          "sum_net_pct": -109.93
+        },
+        "t10": {
+          "n": 40,
+          "mean_net_pct": -1.2,
+          "median_net_pct": -1.09,
+          "win_rate_pct": 45.0,
+          "best_pct": 31.2,
+          "worst_pct": -24.62,
+          "sum_net_pct": -47.88
+        },
+        "t21": {
+          "n": 40,
+          "mean_net_pct": -5.45,
+          "median_net_pct": -5.83,
+          "win_rate_pct": 25.0,
+          "best_pct": 52.46,
+          "worst_pct": -34.13,
+          "sum_net_pct": -217.94
+        }
+      },
+      "recent_2026": {
+        "window": "recent_2026",
+        "period": "2026-01-02~2026-08-03",
+        "trailing_exits": 47,
+        "reentry_triggered": 22,
+        "trigger_rate_pct": 46.8,
+        "whipsaw_scored_n": 23,
+        "whipsaw_rate_pct": 73.9,
+        "t5": {
+          "n": 21,
+          "mean_net_pct": -3.25,
+          "median_net_pct": -2.49,
+          "win_rate_pct": 33.3,
+          "best_pct": 9.67,
+          "worst_pct": -15.17,
+          "sum_net_pct": -68.27
+        },
+        "t10": {
+          "n": 21,
+          "mean_net_pct": -3.3,
+          "median_net_pct": -1.85,
+          "win_rate_pct": 33.3,
+          "best_pct": 31.2,
+          "worst_pct": -24.62,
+          "sum_net_pct": -69.31
+        },
+        "t21": {
+          "n": 20,
+          "mean_net_pct": -4.25,
+          "median_net_pct": -11.26,
+          "win_rate_pct": 25.0,
+          "best_pct": 84.49,
+          "worst_pct": -34.13,
+          "sum_net_pct": -84.93
+        }
+      }
+    }
+  },
+  "verdict_basis": "판정 기준 = '라이브 Top6·21일리밸 (policy momentum_strategy 설정)' (실제 운용 설정). 검증용 Top10·월간리밸 설정은 참고로만 본다 — 규칙은 라이브 파라미터에서 값을 해야 채택할 수 있다.",
+  "verdict": "기각 — 전 지평에서 평균 순수익이 음수. 왕복 비용 0.58% 를 넘는 반등이 나오지 않는다"
+}

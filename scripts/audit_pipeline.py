@@ -63,9 +63,11 @@ ALLOWED_TRADE_ACTIONS = {
     "BUY", "SELL", "TRAILING_STOP", "SCALE_IN", "SCALE_OUT",
 }
 # 비매매 기록 액션(점검·평가 마커) — ticker 없어도 정상 (예: HOLIDAY_EVAL 은 계좌 단위 기록).
+# REPRICE: 목표가·손절가 조정 기록(체결 없음) — policy.reward_risk_management.
+# rr_breach_forced_action(v2.26)이 3거래일 연속 R/R 미달 시 강제하는 3택 중 ①②의 산출물이다.
 ALLOWED_NONTRADE_ACTIONS = {
     "HOLD", "EVAL", "EOD_EVAL", "OPEN_CHECK", "MIDDAY_CHECK", "CLOSE_CHECK",
-    "HOLIDAY_EVAL", "DEFERRED", "WATCH",
+    "HOLIDAY_EVAL", "DEFERRED", "WATCH", "REPRICE",
 }
 
 

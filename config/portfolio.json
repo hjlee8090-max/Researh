@@ -1,16 +1,16 @@
 {
-  "as_of": "2026-07-31T15:30:00+09:00",
+  "as_of": "2026-08-03T12:25:00+09:00",
   "base_currency": "KRW",
   "initial_capital": 5000000,
-  "cash": 3474148,
+  "cash": 2968264,
   "positions": [
     {
       "ticker": "079550",
       "name": "LIG넥스원",
       "entry_price": 738585,
       "shares": 1,
-      "current_price_approx": 699000.0,
-      "market_value_approx": 699000,
+      "current_price_approx": 675000.0,
+      "market_value_approx": 675000,
       "cost_basis_total": 738585,
       "stop_price": 583143,
       "target_price": 929321,
@@ -25,8 +25,8 @@
       "name": "신한지주",
       "entry_price": 97609,
       "shares": 5,
-      "current_price_approx": 100700.0,
-      "market_value_approx": 503500,
+      "current_price_approx": 102000.0,
+      "market_value_approx": 510000,
       "cost_basis_total": 488045,
       "stop_price": 86657,
       "target_price": 110829,
@@ -35,13 +35,29 @@
       "strategy": "dual_momentum_w27",
       "weekly_thesis_id": "momentum_rotation_deploy_w27",
       "opened": "2026-06-30"
+    },
+    {
+      "ticker": "086790",
+      "name": "하나금융지주",
+      "entry_price": 126471,
+      "shares": 4,
+      "current_price_approx": 126200.0,
+      "market_value_approx": 504800,
+      "cost_basis_total": 505884,
+      "stop_price": 111699,
+      "target_price": 144000,
+      "rr_ratio": 1.19,
+      "tier": "green",
+      "strategy": "bank_valueup_harvest_w32",
+      "weekly_thesis_id": "recovery_stage_normalization_w32",
+      "opened": "2026-08-03"
     }
   ],
-  "equity": 4676648,
+  "equity": 4658064,
   "realized_pnl": -299222,
-  "unrealized_pnl": -24130,
-  "cumulative_return_pct": -6.467,
-  "trade_count": 26,
+  "unrealized_pnl": -42714,
+  "cumulative_return_pct": -6.839,
+  "trade_count": 27,
   "win_count": 4,
   "loss_count": 9,
   "history": [
@@ -391,6 +407,37 @@
       "backfilled": true,
       "recovered_at": "2026-08-03T11:05:00+09:00",
       "note": "2026-08-03(월) 11:05 KST 소급 복구 — 7/31(금) 18시 슬롯이 미발화해 금요일 EOD 확정이 누락된 상태로 주말 전체가 흘렀다(마지막 EOD_MARK=7/30). 리포트 백필은 report_contract §7-2 에 따라 금지이므로 하지 않고, 확정 종가로부터 재구성 가능한 state 만 복구한다. 종가 출처: price_history(naver) = snapshot sources[yahoo].last_close(last_date=2026-07-31) 2출처 일치 — 079550 699,000 / 055550 100,700, KOSPI 6,595.45(양 출처 일치)."
+    },
+    {
+      "date": "2026-08-03T12:25:00+09:00",
+      "equity_snapshot": 4658064,
+      "cash_snapshot": 2968264,
+      "cumulative_return_pct": -6.839,
+      "action": "MIDDAY_CHECK",
+      "holdings": [
+        {
+          "ticker": "079550",
+          "close": 675000.0,
+          "shares": 1,
+          "price_source": "snapshot_fresh",
+          "data_confidence": "high"
+        },
+        {
+          "ticker": "055550",
+          "close": 102000.0,
+          "shares": 5,
+          "price_source": "snapshot_fresh",
+          "data_confidence": "high"
+        },
+        {
+          "ticker": "086790",
+          "close": 126200.0,
+          "shares": 4,
+          "price_source": "snapshot_fresh",
+          "data_confidence": "high"
+        }
+      ],
+      "note": "8/3 12:00 장중 점검(W32 D1·월). 신규 진입 1건 — 하나금융지주 4주 @126,471(취득 505,884원·비중 10.8%·손절 111,699·목표 144,000·R/R 1.19). 보유 3종 모두 🟢 green(진입가 대비 LIG넥스원 -8.61%·신한지주 +4.50%·하나금융 -0.21%), 청산 체결 0건. KOSPI 12:09 6,322.31(-4.14% vs 7/31 6,595.45) — 7/31 +17.91% 폭등 이후 외국인 1조3,623억·기관 6,623억 순매도 차익실현(개인 1조9,776억 순매수), 삼성전자 -7.71%·SK하이닉스 -7.10% 반도체 주도 하락 속 은행주 방어(신한 +1.29%·하나 +0.64%·KB -0.42%). 장중 터치 1건: 신한지주 저가 99,000이 트레일 1차선 99,831을 관통 — 종가 확인 대기(무체결). equity 4,658,064원(누적 -6.839%·미실현 -25,214·현금 2,968,264원 주식 36.3%/현금 63.7%). 회복 단계 caution 유지(주간 누적 -0.37% vs starting_equity 4,676,648 — 12시는 완화 권한 없음). 가격 출처: 2출처 일치 스냅샷(naver=yahoo, 12:09 수집, confidence high)+지수 웹 교차확인. ※학습·시뮬레이션 목적."
     }
   ],
   "recovered_at": "2026-08-03T11:05:00+09:00",

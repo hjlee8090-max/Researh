@@ -1,5 +1,5 @@
 {
- "as_of": "2026-07-26T20:07:24+09:00",
+ "as_of": "2026-08-03T11:27:22+09:00",
  "params": {
   "min_shadow_trading_days": 10,
   "min_breach_events": 3,
@@ -11,8 +11,8 @@
  },
  "sample": {
   "positions": 6,
-  "shadow_trading_days": 16,
-  "breach_events": 1,
+  "shadow_trading_days": 20,
+  "breach_events": 2,
   "breach_completed": 1
  },
  "scoring": {
@@ -21,7 +21,7 @@
   "net_protection_krw": -43000.0,
   "noise_exit_rate": 1.0,
   "protected_vs_real_exits_krw": 0,
-  "avg_freed_heat_krw": 196202.0
+  "avg_freed_heat_krw": 186612.0
  },
  "events_scored": [
   {
@@ -39,9 +39,25 @@
    "t5_delta_krw": 43000.0,
    "final": true,
    "noise_exit": true
+  },
+  {
+   "position": "055550:2026-06-30",
+   "name": "신한지주",
+   "date": "2026-07-28",
+   "stage": 2,
+   "breach_close": 100900.0,
+   "shares": 5,
+   "shadow_exit_net": 502507.0,
+   "confidence": "high",
+   "t1_close": 98300.0,
+   "t1_delta_krw": -13000.0,
+   "t5_close": 100600.0,
+   "t5_delta_krw": -1500.0,
+   "final": false,
+   "noise_exit": null
   }
  ],
  "protected_vs_real": [],
- "verdict": "채점 보류 — breach 표본 부족 (확정 1/3건, 관측 16거래일)",
- "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 16거래일 · 추적 6포지션 · 가상 breach 1건(확정 1)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 43,000원 / **net -43,000원** / noise율 100%\n- 실제 청산 대비 보호액: 0원 (0건)\n- 해방가능 heat 일평균: 196,202원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 채점 보류 — breach 표본 부족 (확정 1/3건, 관측 16거래일)**"
+ "verdict": "채점 보류 — breach 표본 부족 (확정 1/3건, 관측 20거래일)",
+ "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 20거래일 · 추적 6포지션 · 가상 breach 2건(확정 1)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 43,000원 / **net -43,000원** / noise율 100%\n- 실제 청산 대비 보호액: 0원 (0건)\n- 해방가능 heat 일평균: 186,612원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 채점 보류 — breach 표본 부족 (확정 1/3건, 관측 20거래일)**"
 }

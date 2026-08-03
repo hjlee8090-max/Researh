@@ -13,8 +13,8 @@
       "status": "open",
       "disposition": {
         "action": "observe",
-        "note": "재확인(07-26): ratchet_shadow promotion_criteria 여전히 미달(breach 확정 1/3건·관측 16거래일, 07-19 대비 거래일만 진전·확정 breach 불변). backtest_exit_overlay 결론 불변(4개 설정·구간 중 3개서 오버레이가 가치 파괴 -253.5%p~-39.9%p, 예외는 recent_2026·라이브 설정 +9.3%p뿐). whipsaw율 71.4%(07-19와 동일) — 07-06 감사 대비 추가 악화 아님. policy v2.24(직전 감사 대비 버전 불변)·신규 왕복 0건 지속 — 패치 동결 원칙 유지, 전략 파라미터 변경 대신 관측 지속. 재심 트리거: ratchet breach 확정 3건 도달(현재 1건) 또는 whipsaw율 추가 악화.",
-        "date": "2026-07-26",
+        "note": "재확인(08-03): ratchet_shadow 승격 기준 여전히 미달 — breach 확정 1/3건·관측 20거래일(07-26 16거래일 대비 거래일만 진전, 확정 breach 불변). 이번 채점에서 net 보호 -43,000원·noise율 100%로 그림자 성적이 오히려 악화됐다(표본 1건이라 통계 의미 없음). 승격 심사는 breach 3건 확정 시점까지 보류하고 관측 지속. 다음 재검토 2026-08-16(14일 만료 전).",
+        "date": "2026-08-03",
         "by": "sunday_policy_review"
       },
       "disposition_history": [
@@ -22,6 +22,12 @@
           "action": "observe",
           "note": "이미 배치된 대응(v2.20 breakeven_ratchet shadow·v2.22 index_shock_stop_deferral)이 아직 검증 미완 — ratchet_shadow promotion_criteria 미달(breach 확정 1/3건·관측 11거래일), backtest_exit_overlay(2026-07-08 as_of) 결론 불변(오버레이 4개 설정 중 3개서 가치 파괴, 예외는 고변동 구간 방어뿐). 2026-07-06 패치(v2.22) 이후 신규 왕복 0건으로 패치 동결 원칙 적용 — 전략 파라미터 변경 대신 관측 지속. 재심 트리거: ratchet breach 확정 3건 도달 또는 whipsaw율이 07-06 감사 대비 추가 악화.",
           "date": "2026-07-19",
+          "by": "sunday_policy_review"
+        },
+        {
+          "action": "observe",
+          "note": "재확인(07-26): ratchet_shadow promotion_criteria 여전히 미달(breach 확정 1/3건·관측 16거래일, 07-19 대비 거래일만 진전·확정 breach 불변). backtest_exit_overlay 결론 불변(4개 설정·구간 중 3개서 오버레이가 가치 파괴 -253.5%p~-39.9%p, 예외는 recent_2026·라이브 설정 +9.3%p뿐). whipsaw율 71.4%(07-19와 동일) — 07-06 감사 대비 추가 악화 아님. policy v2.24(직전 감사 대비 버전 불변)·신규 왕복 0건 지속 — 패치 동결 원칙 유지, 전략 파라미터 변경 대신 관측 지속. 재심 트리거: ratchet breach 확정 3건 도달(현재 1건) 또는 whipsaw율 추가 악화.",
+          "date": "2026-07-26",
           "by": "sunday_policy_review"
         }
       ]
@@ -36,9 +42,9 @@
       "weeks_seen": 4,
       "status": "open",
       "disposition": {
-        "action": "observe",
-        "note": "재확인(07-26): heat 잔여 87,021원/예산 363,020원(24.0%) — 07-19 4,234원 대비 명목상 회복됐으나 여전히 목표 배치(65~80%)에 필요한 신규 진입 여력에는 부족(주식비중 35.4% 그대로 미달). ratchet_shadow 는 여전히 promotion_criteria 미달(breach 1/3건)로 라이브 전환 불가 — 구조적 해법 미가동 상태 지속. 07-13 지수쇼크 이후 caution 단계 유지가 배치 억제 요인인 것도 불변 — 과잉교정(추격 진입) 방지 위해 강제 배치 패치는 계속 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유가 예산 대비 유의미한 수준(예 30%+)까지 회복.",
-        "date": "2026-07-26",
+        "action": "patch",
+        "note": "원인 규명 완료 — 만성 미배치의 직접 원인은 히트 예산이 아니라 회복 단계 오적용이었다. 총 누적(-6.47%)을 주간 기준 floor 에 대입해 defensive 를 발동, 신규 진입 가능일 2/2일(100%)을 차단했다. policy v2.25 에서 weekly_recovery_plan.basis 를 weekly_cumulative_return_pct 로 명문화하고 W32 를 caution 으로 재개해 shortlist 진입 경로를 열었다(config/policy.json · config/weekly_plan.json).",
+        "date": "2026-08-03",
         "by": "sunday_policy_review"
       },
       "disposition_history": [
@@ -46,6 +52,12 @@
           "action": "observe",
           "note": "히트예산 소진(잔여 4,234원/예산 363,020원)이 만성 미배치의 직접 병목 — 2026-07-04 saturday_review 진단과 동일 구조 재확인. breakeven_ratchet(v2.20 shadow)이 구조적 해법이나 promotion_criteria 미달로 라이브 전환 불가. 2026-07-13 지수쇼크(-8.95%) 이후 방어적 caution 단계 유지도 배치 억제 요인 — 과잉교정(추격 진입) 방지 차원에서 강제 배치 패치는 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유 회복.",
           "date": "2026-07-19",
+          "by": "sunday_policy_review"
+        },
+        {
+          "action": "observe",
+          "note": "재확인(07-26): heat 잔여 87,021원/예산 363,020원(24.0%) — 07-19 4,234원 대비 명목상 회복됐으나 여전히 목표 배치(65~80%)에 필요한 신규 진입 여력에는 부족(주식비중 35.4% 그대로 미달). ratchet_shadow 는 여전히 promotion_criteria 미달(breach 1/3건)로 라이브 전환 불가 — 구조적 해법 미가동 상태 지속. 07-13 지수쇼크 이후 caution 단계 유지가 배치 억제 요인인 것도 불변 — 과잉교정(추격 진입) 방지 위해 강제 배치 패치는 계속 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유가 예산 대비 유의미한 수준(예 30%+)까지 회복.",
+          "date": "2026-07-26",
           "by": "sunday_policy_review"
         }
       ]
@@ -59,7 +71,12 @@
       "last_seen": "2026-08-02",
       "weeks_seen": 1,
       "status": "open",
-      "disposition": null,
+      "disposition": {
+        "action": "patch",
+        "note": "detail 이 물은 '미배치/휩쏘/추격 중 어느 경로인가'의 답은 **미배치**다. 7/31 KOSPI +17.91% 반등일에 계좌는 +1.25%에 그쳤다 — 현금 74.3%가 방어에서 벌어둔 우위를 반등 하루에 반납한 구조. 휩쏘·추격 경로는 이번 주 해당 없음(신규 진입 0건·체결 1건은 룰 청산). 처방은 deployment-below-band 와 동일 패치(policy v2.25 단계 기준 확정)이며, 배치 재개 후 다음 감사에서 격차 방향이 뒤집히는지로 검증한다.",
+        "date": "2026-08-03",
+        "by": "sunday_policy_review"
+      },
       "disposition_history": []
     },
     {

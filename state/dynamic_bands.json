@@ -1,0 +1,320 @@
+{
+ "as_of": "2026-08-05T15:07:12+09:00",
+ "policy_ref": "policy.dynamic_reprice — 밴드·신호는 매 산출 시점 재계산 정본만 인용. 직전 리포트·주초 계획의 절대가격 이월 금지 (compute_exit_levels 동형). 운용 목표가 자동 덮어쓰기 없음 — 재산정 의무만 발동(참고 레이어 원칙).",
+ "regime_tier": "bull",
+ "tier_target_mult": 1.4,
+ "params": {
+  "entry_band_atr": [
+   0.75,
+   0.25
+  ],
+  "target_band_spread": [
+   0.7,
+   1.3
+  ],
+  "target_gap_warn_pct": 12.0,
+  "stop_max_atr_mult": 2.5
+ },
+ "formula": {
+  "entry_band": "현재가 × (1 − 하단×ATR%) ~ 현재가 × (1 + 상단×ATR%) — 하단 눌림 매수, 상단 추격 상한(entry_cap 캡)",
+  "target_band": "max(진입 후 최고종가, 현재가) × (1 + [0.7,1.3]×k(tier)×ATR%) — 밸류에이션 천장 캡",
+  "reprice_signals": "target_exhausted(진행률≥100%) / target_gap(참조 대비 괴리≥경고) / stop_too_wide(손절폭>2.5×ATR)"
+ },
+ "signal_count": 1,
+ "tickers": {
+  "079550": {
+   "name": "LIG넥스원",
+   "role": "holding",
+   "price": 795000.0,
+   "atr_pct": 8.62,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 743603,
+    "high": 812132,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   },
+   "target_band": {
+    "low": 859952,
+    "ref": 859952,
+    "high": 859952,
+    "base": 815000,
+    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3] · 밸류에이션 천장 캡",
+    "cap_applied": true
+   },
+   "operating": {
+    "entry_price": 738585.0,
+    "target_price": 859952.0,
+    "stop_price": 665000.0,
+    "target_progress_pct": 63.0
+   },
+   "reprice_signals": []
+  },
+  "055550": {
+   "name": "신한지주",
+   "role": "holding",
+   "price": 103600.0,
+   "atr_pct": 5.26,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 99513,
+    "high": 104962,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   },
+   "target_band": {
+    "low": 100830,
+    "ref": 100830,
+    "high": 100830,
+    "base": 109200,
+    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3] · 밸류에이션 천장 캡",
+    "cap_applied": true
+   },
+   "operating": {
+    "entry_price": 97609.0,
+    "target_price": 103000.0,
+    "stop_price": 99831.0,
+    "target_progress_pct": 215.0
+   },
+   "reprice_signals": [
+    {
+     "code": "target_exhausted",
+     "severity": "high",
+     "msg": "운용 목표가 103,000원 소진(진행률 215%) — 당일 18시까지 (a)종가 익절 판정 (b)목표 재산정+REPRICE 기록 (c)트레일링 전용 전환 선언 중 택1. 소진된 목표가는 R/R·진행률 계산 기준으로 더 쓰지 않는다"
+    }
+   ]
+  },
+  "086790": {
+   "name": "하나금융지주",
+   "role": "holding",
+   "price": 128300.0,
+   "atr_pct": 5.36,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 123142,
+    "high": 130019,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   },
+   "target_band": {
+    "low": 137881,
+    "ref": 140830,
+    "high": 143779,
+    "base": 131000,
+    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3]",
+    "cap_applied": false
+   },
+   "operating": {
+    "entry_price": 126471.0,
+    "target_price": 144000.0,
+    "stop_price": 112700.0,
+    "target_progress_pct": 25.8
+   },
+   "reprice_signals": []
+  },
+  "105560": {
+   "name": "KB금융",
+   "role": "holding",
+   "price": 171000.0,
+   "atr_pct": 5.31,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 164190,
+    "high": 173270,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   },
+   "target_band": {
+    "low": 181792,
+    "ref": 185646,
+    "high": 189500,
+    "base": 172800,
+    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3]",
+    "cap_applied": false
+   },
+   "operating": {
+    "entry_price": 173172.0,
+    "target_price": 195886.0,
+    "stop_price": 155001.0,
+    "target_progress_pct": -1.6
+   },
+   "reprice_signals": []
+  },
+  "005930": {
+   "name": "삼성전자",
+   "role": "watch",
+   "price": 249250.0,
+   "atr_pct": 10.02,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 230519,
+    "high": 255494,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "009540": {
+   "name": "HD한국조선해양",
+   "role": "watch",
+   "price": 396500.0,
+   "atr_pct": 6.58,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 376933,
+    "high": 403022,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "010140": {
+   "name": "삼성중공업",
+   "role": "watch",
+   "price": 22250.0,
+   "atr_pct": 6.71,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 21130,
+    "high": 22623,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "373220": {
+   "name": "LG에너지솔루션",
+   "role": "watch",
+   "price": 332500.0,
+   "atr_pct": 6.05,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 317413,
+    "high": 337529,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "000660": {
+   "name": "SK하이닉스",
+   "role": "watch",
+   "price": 1693000.0,
+   "atr_pct": 11.75,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 1543804,
+    "high": 1742732,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "005380": {
+   "name": "현대차",
+   "role": "watch",
+   "price": 406500.0,
+   "atr_pct": 7.09,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 384884,
+    "high": 413705,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "012450": {
+   "name": "한화에어로스페이스",
+   "role": "watch",
+   "price": 1007000.0,
+   "atr_pct": 7.19,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 952698,
+    "high": 1025101,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "267260": {
+   "name": "HD현대일렉트릭",
+   "role": "watch",
+   "price": 769000.0,
+   "atr_pct": 9.48,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 714324,
+    "high": 787225,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "035420": {
+   "name": "NAVER",
+   "role": "watch",
+   "price": 230000.0,
+   "atr_pct": 6.79,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 218287,
+    "high": 233904,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "035720": {
+   "name": "카카오",
+   "role": "watch",
+   "price": 38100.0,
+   "atr_pct": 4.82,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 36723,
+    "high": 38559,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "010120": {
+   "name": "LS ELECTRIC",
+   "role": "watch",
+   "price": 212500.0,
+   "atr_pct": 9.88,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 196754,
+    "high": 217749,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "042700": {
+   "name": "한미반도체",
+   "role": "watch",
+   "price": 209000.0,
+   "atr_pct": 11.12,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 191569,
+    "high": 214810,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "028260": {
+   "name": "삼성물산",
+   "role": "watch",
+   "price": 347500.0,
+   "atr_pct": 9.48,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 322793,
+    "high": 355736,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "006400": {
+   "name": "삼성SDI",
+   "role": "watch",
+   "price": 427500.0,
+   "atr_pct": 8.06,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 401658,
+    "high": 436114,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
+  "000270": {
+   "name": null,
+   "role": "watch",
+   "price": 133300.0,
+   "atr_pct": 6.4,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 126902,
+    "high": 135433,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  }
+ }
+}

@@ -1324,6 +1324,88 @@ def audit_trade_provenance(messages: list[str]) -> None:
             messages.append(result("WARN", "check_trade_log_gate 비정상 종료(violation 미보고)"))
 
 
+def audit_kakao_equity_repetition(messages: list[str]) -> None:
+    """카톡 발송 평가금액 반복 대사 (2026-08-05 사용자 보고 '항상 똑같은 금액' 재발 방지).
+
+    send_kakao 가 원장에 남기는 equity(발송 시점 스냅샷 마크 값)를 어제 슬롯끼리 비교 —
+    3개 이상 슬롯이 원단위까지 동일하면 마크 경로가 죽었거나 스냅샷이 멈춘 것(WARN).
+    equity 필드가 없는 구버전 원장 행은 건너뛴다(시행 초기 무경보).
+    """
+    ledger_path = ROOT / "state" / "notify_log.jsonl"
+    if not ledger_path.exists():
+        return
+    yesterday = (datetime.now(KST).date() - timedelta(days=1)).isoformat()
+    if not is_business_day(datetime.now(KST).date() - timedelta(days=1)):
+        return
+    equities: list[tuple[str, int]] = []
+    for raw in ledger_path.read_text(encoding="utf-8").splitlines():
+        try:
+            e = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if not (isinstance(e, dict) and e.get("event") == "send" and e.get("ok")):
+            continue
+        if not str(e.get("ts", "")).startswith(yesterday):
+            continue
+        eq = e.get("equity")
+        if isinstance(eq, (int, float)) and str(e.get("slot")) in ("09", "12", "15", "18"):
+            equities.append((str(e.get("slot")), int(eq)))
+    if len(equities) < 3:
+        return
+    values = [eq for _, eq in equities]
+    if len(set(values)) == 1:
+        slots = ", ".join(s for s, _ in equities)
+        messages.append(result(
+            "WARN",
+            f"카톡 평가금액 반복 발송 의심(어제 {yesterday}): {slots}시 슬롯 {len(equities)}건이 "
+            f"모두 {values[0]:,}원 — mark_to_market 경로 또는 스냅샷 갱신 점검 필요",
+        ))
+    else:
+        messages.append(result("OK", f"어제 카톡 평가금액 슬롯별 갱신 확인({len(equities)}건 발송)"))
+
+
+def audit_dynamic_reprice(messages: list[str]) -> None:
+    """동적 재산정 밴드 신선도 + 고위험 신호 표면화 (policy.dynamic_reprice v2.28).
+
+    - dynamic_bands.json 이 스냅샷보다 26시간 넘게 낡으면 재산정 미실행 WARN
+      (fetch_prices 워크플로·routine 양쪽에서 산출되므로 하루 이상 공백은 배선 문제).
+    - target_exhausted(목표 소진) 신호가 떠 있으면 INFO 로 나열 — 처리 의무는 18시
+      §2-2 의 몫이고, 여기서는 '신호가 존재하는데 리포트가 침묵'하는 상태를 감사가
+      매일 볼 수 있게만 한다(신한지주 215% 방치 유형의 무음 재발 방지).
+    """
+    bands = load_json("state/dynamic_bands.json")
+    if bands is None:
+        messages.append(result("INFO", "dynamic_bands.json 없음(시행 초기) — 다음 수집부터 산출"))
+        return
+    snapshot = load_json("state/market_snapshot.json") or {}
+    try:
+        bands_ts = datetime.fromisoformat(str(bands.get("as_of")))
+        snap_ts = datetime.fromisoformat(str(snapshot.get("as_of")))
+        lag_h = (snap_ts - bands_ts).total_seconds() / 3600
+    except (TypeError, ValueError):
+        lag_h = None
+    if lag_h is not None and lag_h > 26:
+        messages.append(result(
+            "WARN",
+            f"dynamic_bands 재산정 공백 {lag_h:.0f}시간(스냅샷 대비) — fetch_prices/routine 배선 점검",
+        ))
+    exhausted = []
+    for ticker, t in (bands.get("tickers") or {}).items():
+        if not isinstance(t, dict):
+            continue
+        for sig in t.get("reprice_signals") or []:
+            if isinstance(sig, dict) and sig.get("code") == "target_exhausted":
+                exhausted.append(f"{t.get('name') or ticker}")
+    if exhausted:
+        messages.append(result(
+            "INFO",
+            "목표 소진(target_exhausted) 신호 활성: " + ", ".join(exhausted[:4])
+            + " — 18시 §2-2 3택(익절 판정/재산정 REPRICE/트레일링 전용 전환) 당일 결정 의무",
+        ))
+    else:
+        messages.append(result("OK", "동적 재산정 고위험 신호 없음"))
+
+
 def audit_merge_conflicts(messages: list[str]) -> None:
     """auto_merge rebase 충돌 마커 표면화 (plan Phase 2-4, 진단 P6).
 
@@ -1376,6 +1458,8 @@ def main() -> int:
     audit_context_budget(data, messages)
     audit_inference_loop(messages)
     audit_github_notify(messages)
+    audit_kakao_equity_repetition(messages)
+    audit_dynamic_reprice(messages)
     audit_merge_conflicts(messages)
 
     print("\n".join(messages))

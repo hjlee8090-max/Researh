@@ -97,10 +97,12 @@ scripts/
   build_inference_checklist.py (선제 추론 루프) lessons+scorecard → state/inference_checklist.md 응축(상한 40줄) — 다음 추론 직전 입력
   track_ratchet_shadow.py  (v2.20) 본전 래칫 스톱 그림자 트래커 — 18시 EOD 실행, 이익 +1×ATR 시 스톱→본전 래칫의 가상 stage·breach·해방 heat 기록 → state/ratchet_shadow.json (관측 전용)
   score_ratchet_shadow.py  래칫 그림자 채점 — 가상 breach t+1/t+5 반사실 손익·noise율·보호액 → state/ratchet_shadow_scorecard.json (일 20시 policy_review 0-E)
+  mark_to_market.py        (2026-08-05 신설) portfolio.json 평가 필드를 스냅샷 시세로 갱신 — 카톡·인덱스 평가금액의 정본. fetch_prices 워크플로 + 09/12/15/18시 routine 실행 (원장 사실 불변, --dry-run·--selftest)
+  compute_dynamic_bands.py (2026-08-05 신설, policy.dynamic_reprice) ATR×레짐 tier 매수/매도 참조 밴드 + 재산정 신호(목표 소진·참조 괴리·손절폭 과대) → state/dynamic_bands.json — 목표가 경직성 보완, 매 슬롯 재산정·이월 금지
   audit_pipeline.py        파이프라인 무결성 점검 (의존성 0)
   write_audit_report.py    audit 결과 + 자동 수정 → 사람 친화 리포트
-  build_html.py            reports/*.md → _site/*.html (GitHub Pages)
-  send_kakao.py            카카오 '나에게 보내기' 알림
+  build_html.py            reports/*.md → _site/*.html (GitHub Pages) — 헤드라인 평가금액은 빌드 시점 스냅샷 마크 값
+  send_kakao.py            카카오 '나에게 보내기' 알림 — 평가금액·보유 등락률은 발송 시점 스냅샷 마크 값(+시세 기준시각 표기)
   kakao_oauth_helper.py    1회 refresh_token 발급
 ```
 

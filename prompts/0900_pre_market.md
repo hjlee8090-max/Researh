@@ -25,6 +25,7 @@
 ## 0-B. 시장 데이터 스냅샷 수집 (영업일에만)
 - `python scripts/fetch_market_data.py` 를 실행하여 `state/market_snapshot.json` 을 새로 만든다.
   - 보유종목+후보종목의 네이버·Yahoo 양쪽 가격을 수집한다. 신뢰도는 **동일 거래일(date) 출처끼리만** 교차검증한다(v2.18): 같은 날짜 2출처 괴리 ≤1% high·≤2% medium, 당일치 단일 출처(또는 날짜가 서로 다름)면 medium, 데이터 없음 low. 개장 직후 Yahoo 일봉 지연은 `meta.regularMarketPrice`(당일 실시간가)로 보강돼 더 이상 naver 당일가와 '불일치 low' 로 충돌하지 않는다. stdout 의 pass/block/low_conf 는 진입 판단에만 쓰고 리포트에 옮기지 않는다.
+- 직후 `python scripts/mark_to_market.py` 를 실행해 `config/portfolio.json` 의 평가 필드(current_price_approx·equity·누적수익률)를 방금 스냅샷 시세로 갱신한다 — **평가금액 손계산·직전 슬롯 값 이월 금지. 카톡·인덱스가 이 시세 반영 값을 싣는다** (8/5 12시 routine 이 portfolio.json 갱신을 건너뛰어 09:35 평가금액이 카톡에 재발송된 사고의 재발 방지 — 원장 사실(cash·shares)은 스크립트가 건드리지 않는다).
 - `python scripts/score_candidates.py` 를 실행하여 `state/candidate_scores.json` 을 만든다.
   - 모멘텀(35%)+테마 노출(20%)+신뢰도(20%)+thesis(25%)−구조적 악재로 점수화. `tradable_count >= 1` 이면 "한눈에 보기"에 1순위 ticker 표기.
   - **채택 사유 노티(조건부 — 진단 I4)**: 오늘 신규 진입이 가능한 날(§0-5 빈 슬롯≥1 & heat 잔여>0 & 레짐 진입 허용)에만 `candidate_scores.json.report_section_md`("### 신규 후보 채택 사유")를 **상위 5 종목까지 잘라** 싣는다. 진입 불가한 날은 상세 대신 "신규매수 불가(사유) — 후보 상위 3: 종목(점수)·종목·종목, 전체는 candidate_scores.json" 1~3줄로 축약한다 — 행동 불가한 날의 후보 백과(120줄)는 의사결정 정보가 아니라 로그다.
@@ -33,6 +34,7 @@
 - `python scripts/compute_exit_levels.py` 를 실행하여 `state/exit_levels.json` 을 만든다 — **보유 종목의 트레일링 1차선·샹들리에·손절·목표 수치는 리포트·판단에서 이 파일 값만 인용한다. 손계산·직전 리포트 이월 금지** (7/1 ATR 배수 오기입 239,495원이 세 리포트에 유통된 사고의 재발 방지 — 진단 I8).
 - 직후 `python scripts/sync_pending_orders.py` 를 실행하여 `state/pending_orders.json` 의 **트레일링 계열 SELL 트리거값을 exit_levels 산출값과 동기화**한다 — po 고정값과 단일 소스 재산출값의 괴리가 체결 여부를 가르는 것 방지(7/3 실측: 고정 222,117 vs 재산출 224,647, 종가 여유 +0.16% 박빙 — reports/2026-07-05-pipeline-counterfactual-research.md 안건②). 트리거 판정·체결 규약은 `policy.risk.exit_execution`(v2.21 — 종가 판정·당일 closing_auction 체결, 장중 터치는 신호일 뿐).
 - `python scripts/momentum_signal.py` 를 실행하여 `state/momentum_signal.json` 을 갱신한다 (**수익형 전략 1순위 진입 엔진** — `policy.momentum_strategy`). `executable_allocation.orders` 가 오늘 목표 정수주 바스켓이고, `rebalance_changes.enter/exit` 가 변경분이다. 백테스트 근거: `docs/strategy_momentum.md`.
+- `python scripts/compute_dynamic_bands.py` 를 실행하여 `state/dynamic_bands.json` 을 만든다 (`policy.dynamic_reprice`). **매수/매도 참조가격은 이 당회 산출 밴드만 인용한다 — 직전 리포트·주초 계획의 절대가격 이월 금지**(시장이 움직였는데 목표 매수/매도가가 앵커로 고정되던 경직성 보완 — 8/5 실측: 신한지주 목표 진행률 215% 방치). `reprice_signals` 가 있는 보유 종목(목표 소진·참조 괴리·손절폭 과대)은 "한눈에 보기" 아래에 1줄씩 표면화하고 §2 판단에 반영한다 — 처리 의무 자체는 18시 §2-2 의 3택이다.
 
 > **스냅샷 출처 주의**: 세션 네트워크 차단 시 스크립트는 Actions(`fetch_prices.yml`) 정기 수집본을 보존하고 `stale` 표시만 남긴다 — 리포트 머리말 각주에 명시. **신규/추가 매수는 §2-PRE·`new_entry_freshness_rule` 에 따라 fresh 스냅샷 또는 웹 교차확인 가격으로만 체결** — 묵은 가격 선체결 후 재확인(booking-then-verify) 금지.
 - `python scripts/reconcile_portfolio.py` 를 실행하여 trade_log ↔ portfolio.json 정합성을 사전 점검. issues 가 있으면 09시 routine 은 매매 없이 사용자에게 보고하고 종료하되, **`-09.md` 축약 리포트(불일치 내용 명기)는 반드시 생성·커밋한다**(복구 계약 ③ — 무음 종료 금지: 리포트가 없으면 12시가 장애/휴장을 구분할 수 없다).

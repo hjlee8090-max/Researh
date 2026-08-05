@@ -32,6 +32,47 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
 
+# 발송 시점 평가금액 재계산 — portfolio.json 정적 equity 가 아니라 최신 스냅샷 시세로
+# 마크한 값을 싣는다 (2026-08-05 "카톡 평가금액이 항상 똑같다" 수정. 실측: 8/5 12시
+# routine 이 portfolio.json 을 안 고쳐 09:35 값 4,825,648 이 12:23 에 재발송됐다).
+# import 실패(경로 변형 실행 등) 시 None — 기존 정적 필드 경로로 폴백해 발송은 계속한다.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+try:
+    import mark_to_market
+except ImportError:
+    mark_to_market = None
+
+
+def _marked_portfolio() -> dict | None:
+    """스냅샷 오버레이 평가 요약 (1회 계산 캐시). 스냅샷이 한 종목도 못 덮으면 None."""
+    global _MARKED_CACHE
+    if _MARKED_CACHE is not False:
+        return _MARKED_CACHE
+    marked = mark_to_market.load_marked(ROOT) if mark_to_market else None
+    if marked is not None and marked.get("total", 0) > 0 and marked.get("marked", 0) == 0:
+        marked = None  # 스냅샷 결측 — 정적 필드 폴백이 덜 위험
+    _MARKED_CACHE = marked
+    return marked
+
+
+_MARKED_CACHE: dict | None | bool = False
+
+
+def _price_time_label(price_as_of: str | None) -> str:
+    """스냅샷 기준 시각을 카톡용 짧은 라벨로 — 오늘이면 'HH:MM 시세', 아니면 'M/D 시세'."""
+    if not price_as_of:
+        return ""
+    try:
+        dt = datetime.fromisoformat(price_as_of)
+    except ValueError:
+        return ""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=KST)
+    dt = dt.astimezone(KST)
+    if dt.date() == datetime.now(KST).date():
+        return f"{dt.strftime('%H:%M')} 시세"
+    return f"{dt.month}/{dt.day} 시세"
+
 REST_KEY = os.environ.get("KAKAO_REST_API_KEY", "")
 REFRESH_TOKEN = os.environ.get("KAKAO_REFRESH_TOKEN", "")
 CLIENT_SECRET = os.environ.get("KAKAO_CLIENT_SECRET")
@@ -301,7 +342,22 @@ def extract_one_glance(section_text: str) -> list[str]:
 
 
 def portfolio_equity_line() -> str | None:
-    """config/portfolio.json 의 현재 평가금액·누적수익률을 카톡 1줄로."""
+    """현재 평가금액·누적수익률 카톡 1줄 — 발송 시점 스냅샷 시세로 재계산한 값을 싣는다.
+
+    이전엔 portfolio.json 의 equity 정적 필드를 그대로 읽어, routine 이 그 파일을
+    갱신하지 않은 슬롯(실측 2026-08-05 12시)마다 직전 금액이 반복 발송됐다.
+    이제 mark_to_market 오버레이 값 + 시세 기준 시각을 싣고, 스냅샷 결측 시에만
+    정적 필드로 폴백한다(폴백 시 시각 라벨 없음 — 신선도 미보장 표시).
+    """
+    marked = _marked_portfolio()
+    if marked is not None and isinstance(marked.get("equity"), (int, float)):
+        cum = marked.get("cumulative_return_pct")
+        t = _price_time_label(marked.get("price_as_of"))
+        inner = f"누적 {cum:+.2f}%" if isinstance(cum, (int, float)) else ""
+        if t:
+            inner = f"{inner}, {t}" if inner else t
+        suffix = f" ({inner})" if inner else ""
+        return f"💰 평가금액 {int(round(marked['equity'])):,}원{suffix}"
     path = ROOT / "config" / "portfolio.json"
     try:
         d = json.loads(path.read_text(encoding="utf-8"))
@@ -353,6 +409,9 @@ def portfolio_holdings_line() -> str | None:
     오참조(portfolio 실제 키: current_price_approx)로 등락률이 항상 공란이라 정보량
     없이 예산 1/3을 소비했다. 이제 진입가 대비 ±3% 밖이거나 단계색이 green 이 아닌
     종목만 명기하고, 나머지는 개수로 요약한다.
+
+    등락률은 발송 시점 스냅샷 시세(mark_to_market 오버레이) 우선 — portfolio.json 의
+    묵은 평가가로 계산한 등락률이 반복 발송되던 문제의 보유 라인 대응 (2026-08-05).
     """
     path = ROOT / "config" / "portfolio.json"
     try:
@@ -362,10 +421,18 @@ def portfolio_holdings_line() -> str | None:
     positions = [p for p in d.get("positions", []) if isinstance(p, dict) and p.get("shares")]
     if not positions:
         return "📌 보유 없음 · 현금 100%"
+    marked = _marked_portfolio()
+    marked_pct = {
+        pos["ticker"]: pos.get("pct_from_entry")
+        for pos in (marked.get("positions", []) if marked else [])
+        if pos.get("price_source") == "snapshot"
+    }
     notables: list[tuple[float, str]] = []
     all_green = True
     for p in positions:
-        pct = p.get("pct_from_entry")
+        pct = marked_pct.get(str(p.get("ticker", "")))
+        if not isinstance(pct, (int, float)):
+            pct = p.get("pct_from_entry")
         if not isinstance(pct, (int, float)):
             ep = p.get("entry_price")
             cp = p.get("current_price_approx") or p.get("current_price")
@@ -774,7 +841,14 @@ def main():
         log_notify("send", slot=slot_label, ok=False, reason=str(exc)[:160])
         raise
     print(f"sent: {res}", flush=True)
-    log_notify("send", slot=slot_label, ok=True, title=title[:60])
+    # 발송 본문에 실린 평가금액·시세 기준시각을 원장에 남긴다 — audit_github_notify 가
+    # "스냅샷은 움직였는데 같은 equity 가 연속 발송" 회귀를 대사할 수 있게 (2026-08-05).
+    marked = _marked_portfolio()
+    log_notify(
+        "send", slot=slot_label, ok=True, title=title[:60],
+        equity=(marked or {}).get("equity"),
+        price_as_of=(marked or {}).get("price_as_of"),
+    )
 
 
 if __name__ == "__main__":

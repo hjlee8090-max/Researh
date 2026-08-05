@@ -1,12 +1,13 @@
 {
-  "version": "2.27",
-  "last_updated": "2026-08-03",
+  "version": "2.28",
+  "last_updated": "2026-08-05",
   "changelog": [
     "2.21: 종가 트리거 체결가 규약 명문화(risk.exit_execution 신설, 근거: reports/2026-07-05-pipeline-counterfactual-research.md 안건③) — closing_auction(당일 확정 종가, 6/23 삼성전자 SELL_STOP 선례) 규약과 pending_orders '익일 09시 게이트 후 집행' 문구가 병존해 반사실 검증에서 동일 트리거의 체결가가 1주당 11,457원(235,601 vs 247,058) 갈리는 비결정성 확인. ①close_trigger_fill_rule: 손절·트레일링(1차/잔여)·목표가의 종가 이탈/도달 판정 확정 시 당일 closing_auction(확정 종가)로 가상 체결(trading_cost 적용). ②missed_eod_fallback: 18시 EOD 미발화 등으로 당일 판정을 놓쳐 익일 발견 시에만 익일 09시 시가 체결 + trade_log reason 에 지연 사유 명기. ③no_intraday_fill: 장중 트리거 터치는 체결 사유 아님 — check_intraday_alerts 신호(종가 확인 대기)로만 취급(7/3 LS ELECTRIC 저가 218,000<222,117 터치·종가 225,000 미이탈 실측). 부속: scripts/sync_pending_orders.py 신설(안건② — 트레일링 SELL po 트리거값을 exit_levels 산출값과 09/18시 동기화, 고정 222,117 vs 재산출 224,647 괴리 실측), audit_pipeline 에 portfolio heat 게이지 WARN 신설(안건① — 6/30 10.14%·7/1 10.51% > strong_bull 예산 9.0% 무경보 통과 실측). [2차분 동일 버전] ④선제추론 P&L 결합 배선: rule_attribution round_trip 에 trade_log SELL 의 inference_id 전파 + 0900/1800 booking 계약에 'pending_orders 주문의 inference_id 를 trade_log 라인에 복사' 명문화(pnl_linked_n=0 고착 해소 — PF 산출·Tier2 개방 평가의 전제). ⑤스키마 게이트: 09시 예측 3건(6/30·7/2·7/3) ts/slot/subject 소급 보정(confidence 는 사후 부여 금지·null) → 09:00 슬롯 채점보류 해제(n=6·적중률 66.7% 최초 공표), proactive_inference.schema_gate 신설(10영업일 무위반 시 --strict 승격 심사·backfill_discipline 명문화). ⑥12/15시 슬롯에 check_intraday_alerts 재산출 + '장중 터치 — 종가 확인 대기' 명기 의무 + 15시 sync_pending_orders 추가(7/3 저가 218,000<222,117 터치 무언급 통과 재발 방지). [3차분 동일 버전] ⑦12시 exit 수치 손계산 금지 명문화(09시 exit_levels 인용 슬롯 — 7/3 12시 제3값 ≈221,340 재발 방지). ⑧price_data_quality.settlement_close_source 신설 — 판정용 확정 종가 = 스냅샷 당일자 교차확인 종가, 사후 price_history ±0.5% 초과 괴리는 소급 기록만·판정 번복 금지(7/3 LS 225,000/229,500 3원화 해소). ⑨무체결 날도 EOD_MARK 1줄 의무(2026-07-06 발효) + audit_trade_log_daily_mark WARN(6/26·6/29·7/1·7/3 기록 공백 실측). ⑩scripts/update_exit_tracking.py 신설 — 보유 종목 일별 종가를 exit_tracking 에 영속 적재(five_day_history 6일 창 제약 해소, 기존 값 불변·low 보류), 보유 6종목 6/26~7/3 백필 완료.",
     "2.20: 포지션 유동 운영 진단 반영 3종(근거: reports/2026-07-02-position-management-research.md — 매도 8건 전부 룰 실행 vs SCALE_IN 6주 0건의 매수측 마비 비대칭). ①position_sizing.max_positions 5→6 — momentum top_n(6)과 불일치로 바스켓 만석 시 compute_allocation vacant_slots 가 영구 0이 되어 09시 §2-C deploy 경로가 사문화되던 정합 오류 수정(6/30 top_n 10→6 축소 때 미동기화). ②risk.breakeven_ratchet 신설(mode=shadow — 관측 전용·체결 변화 0): 이익 +1.0×ATR 도달 시 스톱→본전+왕복비용, +2.0×ATR 시 본전+0.5×ATR 로 올리는 래칫을 그림자 채점. 목적 = 트레일링 활성화(목표진행 70%) 전 사각지대의 open_risk 인플레이션 해소로 히트 예산 재활용(7/2 실측: LIG넥스원 1종목 open_risk 186,857원=strong_bull 예산 42%, deploy 1,372,090원 권고 vs 히트 잔여 0원·현금 41% 잠금) + 6/23 보호손절(+25,369원) 실증의 규칙화. 부작용(본전 노이즈 체결 — 5/28 KB금융 give-back -13,598원·t5 forgone +164,798원 교훈) 검증을 위해 scripts/track_ratchet_shadow.py(18시 EOD)→state/ratchet_shadow.json, scripts/score_ratchet_shadow.py(일 20시 0-E)→state/ratchet_shadow_scorecard.json 로 반사실 채점 후 promotion_criteria 충족 시에만 sunday_policy_review §1-8 이 live 전환을 심사. ③risk.time_stop.precedence_over_min_hold + horizon.min_hold_precedence — min_hold(5일)는 이익·중립 종목 회전마찰 방지용, '평가손실+모멘텀 소멸(score<10)' 종목엔 time_stop(목요일 리뷰)·회전아웃이 우선(W27 화·수 진입 주의 목요일 리뷰 충돌 해소). 히트 예산 자체 재보정(9→14%)·승자 증량(SCALE_IN winners_only)은 백테스트 오버레이 검증 후 별도 상정(연구 P2·P4).",
     "2.25: 회복 단계 판정 기준 명문화 + 예측 밴드 폭 변동성 연동 (근거: reports/2026-08-01-saturday-review.md, 2026-07-31 09시 lessons 루틴 오차). ①weekly_recovery_plan.basis=weekly_cumulative_return_pct 신설 — 필드명·purpose·defensive narrative 3중이 주간을 가리키는데 7/29~7/31 슬롯이 총 누적(-7.617%)을 대입해 defensive 를 선언, 신규 진입 차단율 100%(2/2일)를 만들었고 그중 하루가 KOSPI +17.91% 반등일이었다. 기준을 주간으로 확정하고 basis_definition·basis_note 로 분모를 못 박음. re_entry_after_defensive·evaluation_cadence 문구도 '주간 누적'으로 일치시키고, 판정 수치를 리포트에 함께 적도록 의무화(혼용 재발 방지). 과거 선언은 소급 정정하지 않고 오적용 구간으로 기록만. ②proactive_inference.band_width_rule 신설 — 직전 3거래일 실현 |등락| 평균이 5% 초과 시 밴드 반폭을 그 2배 이상으로 확대. 조건부 규칙 가드·개장 30분 앵커 금지 동반. 둘 다 버그 수정·게이트 강화로 패치 동결 규칙 대상 밖(전략 파라미터 불변).",
     "2.26: reward_risk_management.rr_breach_forced_action 신설 (근거: reports/2026-07-25·2026-08-01-saturday-review.md 연속 지목, 3주 연속 미이행). R/R 이 tier 하한 미만인 상태가 3거래일 연속이면 18시가 목표가 하향·손절가 상향·청산 중 하나를 반드시 선택·기록하고, 예외는 사유+재검토일을 trade_log 에 남겨야 통과한다(재검토일 경과 시 자동 만료). '자연 압축' 서술로 무한 이월되던 경로 차단. note 에 목표가 하향이 R/R 을 악화시키는 역방향 관계를 명시(신한지주 실측 0.72→0.09)해 ①선택 시 ②동반 검토를 의무화. 사용자 승인 후 적용 — 청산을 강제할 수 있어 손익에 직접 영향.",
-    "2.27: reward_risk_management.rr_breach_forced_action.exclude_when 추가 — 현재가가 목표가 3% 이내로 근접한 종목을 연속 카운터에서 제외. v2.26 도입 당일 신한지주에서 오발동 조건이 실측됐다(목표 103,000 하향 직후 현재가 102,000 으로 R/R 0.46). 목표 근접 구간의 낮은 R/R 은 설정 결함이 아니라 익절 임박 신호이므로 강제 재조정이 목표 상향이라는 잘못된 방향으로 작동한다. 올바른 처리는 종가 목표 익절 판정."
+    "2.27: reward_risk_management.rr_breach_forced_action.exclude_when 추가 — 현재가가 목표가 3% 이내로 근접한 종목을 연속 카운터에서 제외. v2.26 도입 당일 신한지주에서 오발동 조건이 실측됐다(목표 103,000 하향 직후 현재가 102,000 으로 R/R 0.46). 목표 근접 구간의 낮은 R/R 은 설정 결함이 아니라 익절 임박 신호이므로 강제 재조정이 목표 상향이라는 잘못된 방향으로 작동한다. 올바른 처리는 종가 목표 익절 판정.",
+    "2.28: dynamic_reprice 신설 — 목표 매수/매도가의 시장 적응 재산정 체계 (근거: 2026-08-05 사용자 검토 요청 '2달 운용에서 목표가가 시장 상황과 무관하게 틀을 유지', 실측: 신한지주 목표 103,000 고정 상태로 목표 진행률 215%·추정 기준선 118,700 대비 -13% 방치 — rr_breach_forced_action 은 R/R 하락만 잡고 목표 소진·매수 밴드 이탈은 무신호). scripts/compute_dynamic_bands.py 가 매 시세 수집·슬롯마다 ATR×레짐 tier 참조 밴드와 reprice_signals(target_exhausted/target_gap/stop_too_wide)를 재산정하고, routine 은 절대가격 이월 대신 state/dynamic_bands.json 정본을 인용한다. 신호 발생 시 당일 18시 3택 의무(익절 판정/REPRICE/트레일링 전용 전환) — 자동 목표 변경은 하지 않는다(참고 레이어 원칙 유지). 같은 커밋에서 카톡·인덱스 평가금액도 발송/빌드 시점 스냅샷 마크 값으로 교체(scripts/mark_to_market.py — 8/5 12시 routine 무갱신으로 09:35 평가금액이 재발송된 사고 수정)."
   ],
   "momentum_strategy": {
     "enabled": true,
@@ -624,6 +625,45 @@
         "trigger_case": "8/3 신한지주 실측 — 목표를 103,000 으로 하향 조정한 직후 현재가가 102,000(목표 -0.97%)까지 올라 R/R 이 2.65(7/31 종가 기준) → 0.46(12:09 마크 기준)으로 떨어졌다. 예외가 없으면 방금 조정한 목표를 3거래일 뒤 또 조정하라고 요구하게 된다."
       }
     }
+  },
+  "dynamic_reprice": {
+    "enabled": true,
+    "purpose": "2달 운용 관찰(2026-08-05 사용자 검토 요청): 목표 매수/매도 금액이 주간 계획·직전 리포트의 절대가격 앵커로 고정되고 시장이 움직여도 틀을 유지하려는 경직성 보완. 실측 — 신한지주 목표 103,000 이 목표 진행률 215%(최고 종가 109,200)에도 고정, 추정 기준선 118,700 대비 -13% 방치. 기존 장치의 사각: rr_breach_forced_action(v2.26)은 R/R '하락'만, holding_estimate_review(v2.24)는 기대수익 '음수 전환'만 발동 — 목표 '초과 소진'과 매수 밴드의 시세 이탈은 무신호였다.",
+    "bands_source": "state/dynamic_bands.json (scripts/compute_dynamic_bands.py — fetch_prices 워크플로가 시세 수집마다, routine 이 09/12/15/18시 데이터 준비 단계에서 재산정). 매수/매도 참조가격은 이 파일의 당회 산출값만 인용한다 — 직전 리포트·주초 계획의 절대가격 이월 금지(compute_exit_levels 손계산·이월 금지 원칙과 동형).",
+    "tier_target_atr_mult": {
+      "strong_bull": 1.6,
+      "bull": 1.4,
+      "neutral": 1.2,
+      "bear": 1.0,
+      "deep_bear": 0.85
+    },
+    "fallback_target_atr_mult": 1.2,
+    "entry_band_atr": [
+      0.75,
+      0.25
+    ],
+    "target_band_spread": [
+      0.7,
+      1.3
+    ],
+    "target_gap_warn_pct": 12.0,
+    "stop_max_atr_mult": 2.5,
+    "obligations": {
+      "target_exhausted": "목표 진행률 ≥ 100% 신호 발생 시 당일 18시까지 (a)종가 목표 익절 판정 (b)목표가 재산정(밸류에이션 천장·컨센×1.15 캡 동일 적용, trade_log 에 action=REPRICE 기록) (c)트레일링 전용 전환 선언(목표가를 R/R·진행률 계산에서 제외 표기) 중 택1. 다음 영업일 이월 금지 — rr_breach_forced_action 의 '경보만으로는 행동이 바뀌지 않는다' 실측(3주 연속 미이행)을 목표 초과 쪽에도 동일 적용한다.",
+      "target_gap": "운용 목표가가 동적 참조(target_band.ref) 대비 ±target_gap_warn_pct 이상 괴리면 18시 재산정 검토 의무. 유지를 선택하면 사유를 당일 리포트에 기록하되, 같은 사유는 1회만 유효 — 다음 신호에 재사용 금지(동일 서술 무한 이월 차단, rr_breach_forced_action 동형).",
+      "entry_side": "신규/추가 매수 지시가격은 dynamic_bands.entry_band 이내의 값만 유효하다. 주간 계획·watch_items 의 절대가격은 '시드'로만 취급하고, 슬롯마다 당회 밴드로 갱신해 인용한다(밴드 상단 = 추격 상한: 상단 밖 진입 지시는 §1-PRE 게이트에서 사유 없이 통과 불가). 시장이 밴드를 벗어나 계획가격이 무의미해졌으면 '가격 미도달 대기'를 반복 서술하지 말고 밴드 기준으로 계획을 다시 쓴다.",
+      "stop_too_wide": "손절폭 > stop_max_atr_mult×ATR 신호는 권고(계좌 하방 보호) — 18시 트레일링/본전 상향 검토에 반영하되 강제 아님."
+    },
+    "anti_patterns": [
+      "직전 리포트·주초 계획의 목표/매수 절대가격을 재검증 없이 이월",
+      "목표 소진(진행률≥100%) 상태의 목표가를 R/R·진행률 계산에 계속 사용",
+      "'가격 미도달 대기' 를 3슬롯 이상 반복 서술하며 매수 밴드를 재산정하지 않음",
+      "reprice_signals 를 인지하고도 당일 결정 없이 다음 영업일로 이월"
+    ],
+    "reference_layer_note": "밴드·신호는 참고 레이어다 — watchlist/portfolio 의 운용 목표가·pending_orders 트리거를 자동으로 덮어쓰지 않는다. 행동 의무(당일 3택 결정·기록)만 발생한다. 익절/청산 판정 자체는 기존 규칙(종가 판정·트레일링·exit_levels 정본)이 계속 담당한다.",
+    "applies_to": "scripts/compute_dynamic_bands.py(산출) → prompts/0900·1200·1500 (§ 데이터 준비: 재산정 실행 + 신호 표면화) / prompts/1800_report.md §2-2(3택 의무 결정·REPRICE 기록) / .github/workflows/fetch_prices.yml(슬롯 전 사전 산출) / scripts/audit_pipeline.py audit_dynamic_reprice(신호 방치 WARN)",
+    "added": "2026-08-05",
+    "approved_by": "user"
   },
   "entry_filters": {
     "earnings_blackout_gate": {

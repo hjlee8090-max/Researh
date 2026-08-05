@@ -12,8 +12,10 @@
   - **현재가(시장가) 기준 신규 진입(NEW_ENTRY)·추가매수(SCALE_IN)를 booking 하지 않는다** — 발굴한 후보는 "내일 액션 플랜"에 메모만 하고 **다음 영업일 09시로 이연**한다 (`market_hours.rules.no_new_entry_after_close`).
   - 허용되는 체결은 손절/목표/트레일링스톱에 **종가 기준으로 도달한 종목의 청산**뿐이다(아래 §1).
 - 영업일이면 `python scripts/fetch_market_data.py` 를 실행해 보유·후보 종목의 **확정 종가**를 `state/market_snapshot.json` 에 기록한다.
+- 직후 `python scripts/mark_to_market.py` 를 실행해 `config/portfolio.json` 의 평가 필드(current_price_approx·equity·누적수익률)를 확정 종가로 갱신한다 — **EOD 평가 손계산 금지, 리포트·weekly_plan·카톡이 이 산출값을 인용한다** (8/5 카톡 평가금액 반복 발송 수정의 EOD 앵커. 원장 사실(cash·shares·realized)은 §1 체결 booking 이 갱신하며 이 스크립트는 건드리지 않는다).
 - `python scripts/compute_exit_levels.py` 를 실행해 `state/exit_levels.json` 을 갱신한다 — **트레일링 1차선·샹들리에·손절·목표 수치는 종가 판정·리포트·if-then 표에서 이 파일 값만 인용한다. 손계산·직전 리포트 이월 금지** (7/1 ATR 배수 오기입 유통 사고의 재발 방지 — 진단 I8. 검증: `--selftest` 가 7/2 정정 사례 222,117/208,323원을 재현).
 - 직후 `python scripts/sync_pending_orders.py` 를 실행해 트레일링 계열 SELL 사전주문의 트리거값을 EOD 확정 exit_levels 와 동기화한다(익일 09시까지 po 고정값 표류 방지 — reports/2026-07-05-pipeline-counterfactual-research.md 안건②).
+- `python scripts/compute_dynamic_bands.py` 를 실행해 `state/dynamic_bands.json` 을 EOD 기준으로 재산정한다 (`policy.dynamic_reprice`) — §2-2 의 재산정 의무 판정(목표 소진·참조 괴리)과 내일 09시 매수 밴드의 시드가 된다.
 - `python scripts/update_exit_tracking.py` 를 **compute_exit_levels 직전에** 실행해 보유 종목의 당일 확정 종가를 `state/exit_tracking.json` 에 영속 적재한다(안건⑩ — five_day_history 6일 창 밖으로 초기 고점이 밀리면 최고 종가 산출이 무너지는 문제 방지. confidence=low 종목은 자동 보류). 판정용 확정 종가의 출처 우선순위는 `policy.price_data_quality.settlement_close_source` 를 따른다(안건⑧ — 스냅샷 당일자 교차확인 종가가 확정, 사후 price_history 괴리 ±0.5% 초과는 '데이터 정정' 소급 기록만·판정 번복 금지).
 - **무체결 날에도 `trade_log.jsonl` 에 EOD_MARK 1줄을 반드시 남긴다**(안건⑨, 2026-07-06 발효 — audit 가 영업일 기록 공백을 WARN 한다). '체결 없음'과 '기록 없음'이 구분되지 않으면 반사실 검증·reconcile 이 공백을 해석해야 한다(6/26·6/29·7/1·7/3 실측 공백).
 - **종가 트리거 체결가 규약(`policy.risk.exit_execution` v2.21)**: 종가 이탈/도달 판정이 이 슬롯에서 확정되면 **당일 closing_auction(확정 종가)로 가상 체결**한다(익일 시가 아님 — 6/23 삼성전자 SELL_STOP 선례 표준화). 당일 판정을 놓쳐 익일 발견한 경우에만 익일 09시 시가 체결 + trade_log 에 지연 사유 명기. 장중 트리거 터치는 체결 사유가 아니다.
@@ -95,11 +97,17 @@
 종가 평가 후 보유 종목 각각의 R/R = (target_price - close) / (close - stop_price) 를 계산한다.
 - 하한은 **신규 진입과 동일한 레짐 적응 하한**(`policy.reward_risk_management.regime_adaptive_rr.min_rr_by_tier`: strong_bull 1.0 / bull 1.1 / neutral 1.2 / bear 1.4 / deep_bear 1.6, tier 미확정 시 1.2)을 쓴다 — 고정 1.2를 보유에 적용하면 강세 tier 에서 승자를 조기에 자르는 압력이 생긴다(v2.13 통일, audit 동일 기준).
 - **(v2.24) 추정 기준선 재검토 트리거**: R/R 하한과 **독립적으로**, `state/exit_levels.json` 의 `tickers.<티커>.estimate.review_required=true` 인 보유 종목도 아래 (a)/(b)/(c) 재조정 대상에 **의무로 포함**한다(`policy.reward_risk_management.holding_estimate_review` — A/B 등급 추정 기대수익 < 0% 가 2회 연속, 매수측 estimate_gate 의 보유측 대응물). `review_reason` 을 watchlist 코멘트에 인용한다. 추정은 참고 레이어 원칙 그대로 — 자동 청산·목표가 자동 덮어쓰기가 아니라 **오늘 안에 재조정을 결정할 의무**만 발동하며, (a)를 고를 때도 추정 수치를 새 목표가로 그대로 이식하지 않는다(추정은 낙관 편향 −10~−19%p — estimate_scorecard 실측. 재산정은 기존 §2 공통 규칙: 촉매·저항선·컨센×1.15·밸류 천장).
-- R/R < 하한(또는 위 review_required)인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
+- **(v2.28) 동적 재산정 트리거**(`policy.dynamic_reprice`): 위 두 트리거와 **독립적으로**, `state/dynamic_bands.json` 의 `tickers.<티커>.reprice_signals` 가 있는 보유 종목도 재조정 대상에 **의무로 포함**한다. R/R·추정 트리거가 '하락 방어' 쪽만 잡는 비대칭의 보완이다(8/5 실측: 신한지주 목표 진행률 215%·최고 종가 109,200 인데 목표 103,000 고정 — 어느 트리거도 무발동):
+  - `target_exhausted`(목표 진행률 ≥ 100%): (a)재산정 또는 아래 (c′)트레일링 전용 전환 중 택1 — **소진된 목표가를 R/R·진행률 계산에 계속 쓰지 않는다**(near_target 카운터 제외 규칙의 일반화). 종가가 목표 도달 상태면 우선 §1 종가 익절 판정이 먼저다.
+  - `target_gap`(운용 목표가 ↔ 동적 참조 `target_band.ref` 괴리 ≥ 12%): (a)재산정 검토. **유지를 선택하면 사유를 오늘 리포트에 기록하되 같은 사유는 1회만 유효** — 다음 신호에 재사용 금지(동일 서술 무한 이월 차단).
+  - `stop_too_wide`(손절폭 > 2.5×ATR): (b)상향 검토 권고(강제 아님).
+  - 재산정 시 새 목표가는 `dynamic_bands.target_band` 를 출발점으로 기존 캡(컨센×1.15·밸류에이션 천장)을 동일 적용하고, 변경은 `trade_log` 에 `action=REPRICE` 로 남긴다(rr_breach_forced_action 과 동일 규약). **다음 영업일 이월 금지.**
+- R/R < 하한(또는 위 review_required·reprice_signals)인 종목은 다음 중 하나를 **오늘 18시 안에** 결정해 watchlist 코멘트에 명시한다:
   - (a) 목표가 재조정 — 현재 가격·촉매·저항선 기반 재산정. **재산정 후 컨센 교차검증**(`policy.consensus.target_cross_check`): 새 목표가가 `state/consensus.json` 컨센 목표주가 × 1.15 초과면 정당화 근거를 comments 에 적거나 컨센×1.15 로 상한(컨센 stale/없음/low 면 생략). **(v2.11) 밸류에이션 천장 동시 적용**(`policy.valuation_anchor`): `state/valuation_check.json` 의 verdict=`cap_target` 이면 `valuation_ceiling_price` 로 캡(skip 이면 생략) — 최종 목표가 = min(재산정값, 컨센×1.15, 밸류에이션 천장).
   - (b) 손절가 상향 — 트레일링스톱 활성화 또는 가격 진입. **(v2.11)** 트레일링은 `policy.risk.trailing_stop` 의 2단 구조를 따른다: 1차 트레일 -max(3, 1.5×ATR%) 이탈 시 **50% 부분익절**(배수는 `policy.risk.trailing_stop.first_trail_rule` 이 정본 — v2.14에서 1.0→1.5 확대), 잔여분은 샹들리에 -2.0×ATR%(최고 종가 기준). 활성화 시 `trailing_first_level`·`trailing_residual_level` 두 레벨을 watchlist 코멘트에 기록.
   - (c) 부분 익절 — 50% 가상 체결
-- 결정을 보류했다면 다음 영업일까지만 허용. 사유를 한 줄 명시.
+  - (c′) 트레일링 전용 전환 — `target_exhausted` 종목 한정. 목표가를 "소진(달성)" 상태로 watchlist 코멘트에 표기하고 이후 R/R·진행률 계산에서 제외, 청산 관리는 트레일링 2단(`exit_levels` 정본)만으로 한다. 전환 선언도 `trade_log` 에 `action=REPRICE`(사유: 목표 소진 전환)로 남긴다.
+- 결정을 보류했다면 다음 영업일까지만 허용. 사유를 한 줄 명시(단, `dynamic_reprice` 트리거의 보류는 불가 — 당일 결정, `policy.dynamic_reprice.obligations`).
 - 가격 신뢰도 low 인 종목은 "R/R 계산 보류 — price_confidence=low" 로 표기하고 다음 routine 으로 미룬다.
 - **실적 신호 반영**(`policy.fundamentals.holdings_use`): `state/fundamentals.json` 의 보유종목 `earnings_signal` 이 `sharp_decline`/적자전환/가이던스 컷이면 위 (b)손절가 상향·(c)부분 익절을 우선 적용하고, 관련 thesis 의 `invalidation_triggers` 점검 결과를 코멘트에 1줄 남긴다. `strong_growth` 면 목표가 상향((a))의 근거로 쓴다.
 - **테마 신호 반영**(`config/themes.json.holdings_use`): 보유종목이 노출된 테마의 `strength` 가 크게 하향됐거나 연결 thesis 가 무효화됐으면 R/R 미달과 겹칠 때 (b)/(c) 쪽으로 기운다(느린 신호 — 단독 당일 매도 금지, 일요일 주간 점검에서 교체 후보로 확정).

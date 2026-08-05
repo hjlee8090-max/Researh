@@ -481,7 +481,9 @@
         "match_tolerance_pct": 0.1,
         "value_min": 1000,
         "value_max": 20000,
-        "index_close_paths": "kospi*close (kospi_close·kospi_prev_close 포함; change/chg/pct 제외)"
+        "index_close_paths": "kospi*close (kospi_close·kospi_prev_close 포함; change/chg/pct 제외)",
+        "internal_consistency_tolerance_pct": 0.15,
+        "internal_consistency_exemption": "항목이 스스로 기록한 KOSPI 등락률(kospi_change_pct 등)이 직전 영업일 종가와 오늘 종가를 ±internal_consistency_tolerance_pct 안에서 잇는다면 재활용이 아니므로 면제한다 — 묵은 값을 도용하면 close 와 change_pct 가 서로 어긋나기 때문이다. 지수가 과거 레벨로 되돌아온 우연을 재활용으로 오탐하던 것을 좁힌다(2026-08-05 실측 오탐: 오늘 종가 6,598.26 = 8/4 6,358.95×(1+3.76%) 인데 7/31 종가 6,595.45 와 0.043% 차이로 충돌해 FAIL. 웹 3출처 당일 게재 기사로 교차확인된 값이었다). 2026-06-08·2026-07-17 실제 사고 2건은 close·change_pct 가 정합하지 않아 이 면제로 통과하지 않는다."
       },
       "note": "enforced_since 이전 ts 는 grandfather(소급 미적용). 모든 액션(OPEN_CHECK·EOD_EVAL 포함)을 검사한다 — 2026-06-08 오염은 BUY/SELL 이 아닌 OPEN_CHECK 항목에 있었다.",
       "enforced_by": [

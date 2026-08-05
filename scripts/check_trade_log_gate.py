@@ -208,6 +208,11 @@ def _is_stale_ref_path(path: str) -> bool:
     return "kospi" in p and any(x in p for x in ("stale", "prev", "last", "known"))
 
 
+def _is_kospi_change_pct_path(path: str) -> bool:
+    p = path.lower()
+    return "kospi" in p and any(x in p for x in ("change_pct", "chg_pct", "change", "chg"))
+
+
 def find_source_date_violations(entries: list[dict], gate_cfg: dict) -> tuple[list[str], int, str]:
     """web_verify 출처의 게재일이 항목 ts 일자보다 과거이면 위반. policy...source_provenance_gate.source_date_gate."""
     since = str(gate_cfg.get("enforced_since", "2026-06-08"))[:10]
@@ -249,6 +254,8 @@ def find_recycled_value_violations(entries: list[dict], gate_cfg: dict) -> tuple
     tol = float(sub.get("match_tolerance_pct", 0.1)) / 100.0
     vmin = float(sub.get("value_min", 1000))
     vmax = float(sub.get("value_max", 20000))
+    # 재활용이 아니라 '지수가 과거 레벨로 되돌아온 우연' 을 면제하는 내부 정합성 허용오차.
+    consist_tol = float(sub.get("internal_consistency_tolerance_pct", 0.15)) / 100.0
 
     # 전체 항목에서 (ts일자, 반올림 종가) 수집 — kospi_close·kospi_prev_close 등 명시적 종가 경로만.
     dated_closes: list[tuple[str, int]] = []
@@ -270,7 +277,10 @@ def find_recycled_value_violations(entries: list[dict], gate_cfg: dict) -> tuple
             continue  # grandfather
         asserted: list[tuple[str, float]] = []
         stale_refs: set[int] = set()
+        change_pcts: list[float] = []
         for path, val in _flatten(e):
+            if isinstance(val, (int, float)) and not isinstance(val, bool) and _is_kospi_change_pct_path(path):
+                change_pcts.append(float(val))
             if not (isinstance(val, (int, float)) and not isinstance(val, bool) and vmin <= val <= vmax):
                 continue
             if _is_asserted_today_close(path):
@@ -280,11 +290,26 @@ def find_recycled_value_violations(entries: list[dict], gate_cfg: dict) -> tuple
         if not asserted:
             continue
         checked += 1
-        prior = {v for (d, v) in dated_closes if d < ed}  # 직전(strictly earlier) 일자 종가 집합
+        prior_dated = sorted([(d, v) for (d, v) in dated_closes if d < ed])
+        prior = {v for (_, v) in prior_dated}  # 직전(strictly earlier) 일자 종가 집합
+        # 직전 영업일(가장 최근 strictly-earlier 일자) 종가 — 내부 정합성 면제의 기준선
+        last_day = prior_dated[-1][0] if prior_dated else None
+        last_day_closes = [v for (d, v) in prior_dated if d == last_day] if last_day else []
         for path, val in asserted:
             rv = round(val)
             if rv in stale_refs:
                 continue  # 본인이 인용한 stale 참조값과 같으면 정상(예: 오늘=stale 유지)
+            # 항목이 스스로 기록한 등락률이 직전 영업일 종가와 오늘 종가를 잇는다면 재활용이 아니다
+            # — 묵은 값을 도용하면 close 와 change_pct 가 서로 어긋난다(지수가 과거 레벨로
+            #   되돌아온 우연을 재활용으로 오탐하던 것을 좁힌다. 2026-08-05 실측: 오늘 6,598.26
+            #   = 8/4 6,358.95 × (1+3.76%) 인데 7/31 종가 6,595.45 와 0.04% 차이로 충돌).
+            if change_pcts and last_day_closes:
+                if any(
+                    pc and abs(rv - pc * (1 + cp / 100.0)) / (pc * (1 + cp / 100.0)) <= consist_tol
+                    for pc in last_day_closes
+                    for cp in change_pcts
+                ):
+                    continue
             match = next((pv for pv in prior if pv and abs(rv - pv) / pv <= tol), None)
             if match is not None:
                 violations.append(

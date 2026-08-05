@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-02",
+  "as_of": "2026-08-05",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,8 +8,8 @@
       "detail": "손실 스톱 t+5 일실 합계 222731.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-02",
-      "weeks_seen": 4,
+      "last_seen": "2026-08-05",
+      "weeks_seen": 5,
       "status": "open",
       "disposition": {
         "action": "observe",
@@ -34,19 +34,14 @@
     },
     {
       "id": "deployment-below-band",
-      "title": "주식비중 24.8% < 목표 하한 65% — 만성 미배치",
-      "detail": "⚠️ 주식비중 24.8% < 목표 하한 65% — 만성 미배치 계열",
+      "title": "주식비중 49.3% < 목표 하한 65% — 만성 미배치",
+      "detail": "⚠️ 주식비중 49.3% < 목표 하한 65% — 만성 미배치 계열",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-02",
-      "weeks_seen": 4,
+      "last_seen": "2026-08-05",
+      "weeks_seen": 5,
       "status": "open",
-      "disposition": {
-        "action": "patch",
-        "note": "원인 규명 완료 — 만성 미배치의 직접 원인은 히트 예산이 아니라 회복 단계 오적용이었다. 총 누적(-6.47%)을 주간 기준 floor 에 대입해 defensive 를 발동, 신규 진입 가능일 2/2일(100%)을 차단했다. policy v2.25 에서 weekly_recovery_plan.basis 를 weekly_cumulative_return_pct 로 명문화하고 W32 를 caution 으로 재개해 shortlist 진입 경로를 열었다(config/policy.json · config/weekly_plan.json).",
-        "date": "2026-08-03",
-        "by": "sunday_policy_review"
-      },
+      "disposition": null,
       "disposition_history": [
         {
           "action": "observe",
@@ -59,6 +54,13 @@
           "note": "재확인(07-26): heat 잔여 87,021원/예산 363,020원(24.0%) — 07-19 4,234원 대비 명목상 회복됐으나 여전히 목표 배치(65~80%)에 필요한 신규 진입 여력에는 부족(주식비중 35.4% 그대로 미달). ratchet_shadow 는 여전히 promotion_criteria 미달(breach 1/3건)로 라이브 전환 불가 — 구조적 해법 미가동 상태 지속. 07-13 지수쇼크 이후 caution 단계 유지가 배치 억제 요인인 것도 불변 — 과잉교정(추격 진입) 방지 위해 강제 배치 패치는 계속 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유가 예산 대비 유의미한 수준(예 30%+)까지 회복.",
           "date": "2026-07-26",
           "by": "sunday_policy_review"
+        },
+        {
+          "action": "patch",
+          "note": "원인 규명 완료 — 만성 미배치의 직접 원인은 히트 예산이 아니라 회복 단계 오적용이었다. 총 누적(-6.47%)을 주간 기준 floor 에 대입해 defensive 를 발동, 신규 진입 가능일 2/2일(100%)을 차단했다. policy v2.25 에서 weekly_recovery_plan.basis 를 weekly_cumulative_return_pct 로 명문화하고 W32 를 caution 으로 재개해 shortlist 진입 경로를 열었다(config/policy.json · config/weekly_plan.json).",
+          "date": "2026-08-03",
+          "by": "sunday_policy_review",
+          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
         }
       ]
     },
@@ -70,33 +72,35 @@
       "first_seen": "2026-08-02",
       "last_seen": "2026-08-02",
       "weeks_seen": 1,
-      "status": "open",
+      "status": "resolved",
       "disposition": {
         "action": "patch",
         "note": "detail 이 물은 '미배치/휩쏘/추격 중 어느 경로인가'의 답은 **미배치**다. 7/31 KOSPI +17.91% 반등일에 계좌는 +1.25%에 그쳤다 — 현금 74.3%가 방어에서 벌어둔 우위를 반등 하루에 반납한 구조. 휩쏘·추격 경로는 이번 주 해당 없음(신규 진입 0건·체결 1건은 룰 청산). 처방은 deployment-below-band 와 동일 패치(policy v2.25 단계 기준 확정)이며, 배치 재개 후 다음 감사에서 격차 방향이 뒤집히는지로 검증한다.",
         "date": "2026-08-03",
         "by": "sunday_policy_review"
       },
-      "disposition_history": []
+      "disposition_history": [],
+      "resolved_date": "2026-08-05"
     },
     {
       "id": "patch-without-validation",
       "title": "검증 표본 없는 정책 패치 — 패치 동결 규칙 발동",
       "detail": "⚠️ 직전 감사 이후 정책 버전이 올라갔는데 신규 검증 표본(왕복)이 0건 — 패치 동결 검토(검증 없는 패치 누적).",
       "severity": "warn",
-      "first_seen": "2026-07-23",
-      "last_seen": "2026-07-23",
+      "first_seen": "2026-08-05",
+      "last_seen": "2026-08-05",
       "weeks_seen": 1,
-      "status": "resolved",
+      "status": "open",
       "disposition": null,
-      "disposition_history": [],
-      "resolved_date": "2026-07-26"
+      "disposition_history": []
     }
   ],
   "open": [
     "whipsaw-high",
     "deployment-below-band",
-    "benchmark-gap-widening"
+    "patch-without-validation"
   ],
-  "overdue": []
+  "overdue": [
+    "deployment-below-band"
+  ]
 }

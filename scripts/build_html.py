@@ -6,6 +6,7 @@ GitHub Actions에서 호출되며, GitHub Pages 배포 artifact로 업로드된�
 import json
 import re
 import shutil
+import sys
 import html
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -14,6 +15,15 @@ try:
     import markdown
 except ModuleNotFoundError:
     markdown = None
+
+# 인덱스 헤드라인 평가금액을 빌드 시점 스냅샷 시세로 재계산 — 종목 행은 이미 스냅샷을
+# 오버레이하는데(2026-07-04) 헤드라인 equity 만 portfolio.json 정적 필드라 서로 어긋나고,
+# routine 이 파일 갱신을 건너뛴 슬롯엔 직전 금액이 그대로 노출됐다 (2026-08-05 수정).
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+try:
+    import mark_to_market
+except ImportError:
+    mark_to_market = None
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = ROOT / "reports"
@@ -449,6 +459,12 @@ def main():
     equity = portfolio.get("equity", 0)
     cash = portfolio.get("cash", 0)
     ret = portfolio.get("cumulative_return_pct", 0)
+    # 헤드라인도 종목 행과 같은 스냅샷 오버레이 값으로 — 정적 필드는 스냅샷 결측 시 폴백
+    marked = mark_to_market.load_marked(ROOT) if mark_to_market else None
+    if marked and marked.get("marked", 0) > 0:
+        equity = marked.get("equity", equity)
+        if isinstance(marked.get("cumulative_return_pct"), (int, float)):
+            ret = marked["cumulative_return_pct"]
     return_class = "pos" if ret >= 0 else "neg"
     as_of_raw = portfolio.get("as_of", "")
     try:

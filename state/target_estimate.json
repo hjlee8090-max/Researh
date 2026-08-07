@@ -1,185 +1,48 @@
 {
-  "as_of": "2026-08-07T09:22:45+09:00",
-  "snapshot_as_of": "2026-08-07T09:22:32+09:00",
+  "as_of": "2026-08-07T10:42:54+09:00",
+  "snapshot_as_of": "2026-08-07T10:42:51+09:00",
   "horizon_months": 12,
   "formula": "추정목표가 = 기준가(밸류밴드·컨센 평균, 결측 시 현재가) × (1 + 추세게이트×(테마P(호라이즌할인) + 양뉴스P(시간감쇠·확률·기반영차감)) + 음뉴스P + 섹터활발성P + 모멘텀틸트(초과수익+52주고점)) → min(컨센×1.15, 밸류천장) 캡 [v1.1 백테스트 보정]",
-  "kospi_ret_60d_pct": -18.49,
+  "kospi_ret_60d_pct": -18.88,
   "estimates": [
-    {
-      "ticker": "035420",
-      "name": "NAVER",
-      "sector": "인터넷/AI",
-      "current_price": 215000.0,
-      "anchor_price": 215000.0,
-      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
-      "consensus_rejected": null,
-      "premium_pct": {
-        "theme": 3.2,
-        "news": 5.41,
-        "sector": 8.0,
-        "momentum": 2.0,
-        "total": 18.61
-      },
-      "trend_gate": {
-        "factor": 1.0,
-        "excess60_vs_kospi_pct": 23.88,
-        "pct_of_52w_high": 70.72,
-        "ungated": {
-          "theme": 3.2,
-          "news": 5.41
-        }
-      },
-      "raw_estimate": 255000.0,
-      "cap_applied": null,
-      "estimate": 255000.0,
-      "expected_return_pct": 18.6,
-      "entry_cap_price": 218700.0,
-      "entry_cap_basis": {
-        "min_rr": 1.1,
-        "min_rr_tier": "bull",
-        "stop_frac_pct": 15.1,
-        "stop_basis": "ATR 7.5%×2≈손절 15.1%",
-        "formula": "목표가 / (1 + min_rr × 손절%)"
-      },
-      "in_buy_zone": true,
-      "entry_cap_gap_pct": 1.7,
-      "entry_cap_note": null,
-      "entry_cap_caution": null,
-      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +21%p)",
-      "sector_signals": {
-        "group": "sector:인터넷/AI",
-        "median_excess_60d": 21.32,
-        "signals_met": 2,
-        "min_signals": 2,
-        "immersion_met": true,
-        "sector_value": null
-      },
-      "grade": "B",
-      "data_layers": {
-        "valuation_band": false,
-        "consensus_target": false,
-        "price_snapshot": true,
-        "theme_exposure": true,
-        "sector_group": true,
-        "earnings_signal": true
-      },
-      "detail": {
-        "theme_parts": [
-          {
-            "theme": "internet_ai_platform",
-            "exposure": 0.8,
-            "strength": 0.6,
-            "horizon": "2-4y",
-            "horizon_discount": 0.333,
-            "contrib_pct": 3.2
-          }
-        ],
-        "news_parts": [
-          {
-            "kind": "news_auto",
-            "type": "buyback_cancellation",
-            "date": "2026-08-06",
-            "impact_pct": 4.0,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 2.37,
-            "note": "\"주가 이런데 고액 성과급?\" 삼전닉스 주주환원은 언제? [몇층이세요]",
-            "source_url": "https://finance.naver.com/item/news_news.naver?code=035420",
-            "matched_keywords": [
-              "주주환원"
-            ]
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-08-14",
-            "d_day": 7,
-            "impact_pct": 6.0,
-            "direction": 0.6,
-            "time_weight": 1.0,
-            "probability": 0.6,
-            "contrib_pct": 2.16,
-            "id": "035420-2026Half-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-11-14",
-            "d_day": 99,
-            "impact_pct": 3.0,
-            "direction": 0.6,
-            "time_weight": 0.81,
-            "probability": 0.6,
-            "contrib_pct": 0.88,
-            "id": "035420-20263Q-earnings"
-          }
-        ],
-        "earnings_signal": "growth",
-        "ret_60d_pct": 5.39,
-        "next_catalyst": {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-08-14",
-          "d_day": 7,
-          "impact_pct": 6.0,
-          "direction": 0.6,
-          "time_weight": 1.0,
-          "probability": 0.6,
-          "contrib_pct": 2.16,
-          "id": "035420-2026Half-earnings"
-        }
-      },
-      "delta_vs_prev": {
-        "prev_estimate": 256800.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -1800.0,
-        "entry_cap_delta_krw": -1800.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
-      },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **255,000원**(+18.6%, 등급 B) · 직전 리포트 대비 ▼1,800원 · 프리미엄 테마+3/뉴스+5/섹터+8/모멘텀+2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **218,700원**(R/R≥1.1·ATR 7.5%×2≈손절 15.1% 기준) · 현재가 215,000원 🟢진입 가능(현재가가 상한가보다 1.7% 낮음) · 직전 리포트 대비 ▼1,800원"
-    },
     {
       "ticker": "086790",
       "name": "하나금융지주",
       "sector": "금융/은행",
-      "current_price": 130500.0,
-      "anchor_price": 130500.0,
+      "current_price": 132600.0,
+      "anchor_price": 132600.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.0,
-        "news": 10.2,
+        "news": 10.24,
         "sector": 5.29,
         "momentum": 3.0,
-        "total": 18.49
+        "total": 18.53
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 24.5,
-        "pct_of_52w_high": 91.58,
+        "excess60_vs_kospi_pct": 26.6,
+        "pct_of_52w_high": 93.05,
         "ungated": {
           "theme": 0.0,
-          "news": 10.2
+          "news": 10.24
         }
       },
-      "raw_estimate": 154600.0,
+      "raw_estimate": 157200.0,
       "cap_applied": null,
-      "estimate": 154600.0,
-      "expected_return_pct": 18.5,
-      "entry_cap_price": 140300.0,
+      "estimate": 157200.0,
+      "expected_return_pct": 18.6,
+      "entry_cap_price": 142800.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 9.3,
-        "stop_basis": "ATR 4.6%×2≈손절 9.3%",
+        "stop_frac_pct": 9.2,
+        "stop_basis": "ATR 4.6%×2≈손절 9.2%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 7.5,
+      "entry_cap_gap_pct": 7.7,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +18%p) · 섹터값 0.32(집중도 평소 0.83배·heat 0.031)",
@@ -251,29 +114,29 @@
           {
             "kind": "news_auto",
             "type": "earnings_surprise_beat",
-            "date": "2026-08-06",
+            "date": "2026-08-07",
             "impact_pct": 6.0,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": 3.56,
-            "note": "GS피앤엘 '날개'…외국인 관광객 늘자 깜짝 실적",
+            "contrib_pct": 3.6,
+            "note": "BGF리테일, 호실적에 14%대 강세…2분기 영업익 22% 증가",
             "source_url": "https://finance.naver.com/item/news_news.naver?code=086790",
             "matched_keywords": [
-              "깜짝실적"
+              "호실적"
             ]
           },
           {
             "kind": "news_auto",
             "type": "policy_support",
-            "date": "2026-07-29",
+            "date": "2026-08-07",
             "impact_pct": 3.0,
-            "decay": 0.9,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": -2.89,
+            "realized_since_event_pct": 0.0,
             "contrib_pct": 1.8,
-            "note": "[하나금융지주 밸류업 2.0]②하나증권, ROE 두 배 뛰었다…다음 목표는 12% - PRESS9",
-            "source_url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE5VeTVhREo4c0Z1SW1acWhhWHpsNDkyc2h3Z1NEdllLSF9ERl9sdk1VTmE5bllwcW44WGpxR05EXzdfY1ljS213enZNX2lBNm5IcDFRSmd6Sk00SmQ5eS1reWJmYlRMdw?oc=5",
+            "note": "환율 내려가니 금융지주 '방긋'…밸류업에도 청신호",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=086790",
             "matched_keywords": [
               "밸류업"
             ]
@@ -304,7 +167,7 @@
           }
         ],
         "earnings_signal": "growth",
-        "ret_60d_pct": 6.01,
+        "ret_60d_pct": 7.72,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -319,23 +182,198 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 155300.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -700.0,
-        "entry_cap_delta_krw": -800.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "prev_estimate": 154600.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": 2600.0,
+        "entry_cap_delta_krw": 2500.0,
+        "news_pct_delta": 0.04,
+        "expected_return_delta_pct": 0.1
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **154,600원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼700원 · 프리미엄 테마+0/뉴스+10/섹터+5/모멘텀+3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **140,300원**(R/R≥1.1·ATR 4.6%×2≈손절 9.3% 기준) · 현재가 130,500원 🟢진입 가능(현재가가 상한가보다 7.5% 낮음) · 직전 리포트 대비 ▼800원"
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "earnings_surprise_beat",
+          "date": "2026-08-07",
+          "contrib_pct": 3.6,
+          "note": "BGF리테일, 호실적에 14%대 강세…2분기 영업익 22% 증가",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=086790"
+        },
+        {
+          "kind": "news_auto",
+          "type": "policy_support",
+          "date": "2026-08-07",
+          "contrib_pct": 1.8,
+          "note": "환율 내려가니 금융지주 '방긋'…밸류업에도 청신호",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=086790"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **157,200원**(+18.6%, 등급 B) · 직전 리포트 대비 ▲2,600원 · 프리미엄 테마+0/뉴스+10/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; policy_support(자동) +1.8%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **142,800원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 132,600원 🟢진입 가능(현재가가 상한가보다 7.7% 낮음) · 직전 리포트 대비 ▲2,500원"
+    },
+    {
+      "ticker": "035420",
+      "name": "NAVER",
+      "sector": "인터넷/AI",
+      "current_price": 211000.0,
+      "anchor_price": 211000.0,
+      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
+      "consensus_rejected": null,
+      "premium_pct": {
+        "theme": 3.2,
+        "news": 6.28,
+        "sector": 8.0,
+        "momentum": 1.0,
+        "total": 18.48
+      },
+      "trend_gate": {
+        "factor": 1.0,
+        "excess60_vs_kospi_pct": 22.31,
+        "pct_of_52w_high": 69.41,
+        "ungated": {
+          "theme": 3.2,
+          "news": 6.28
+        }
+      },
+      "raw_estimate": 250000.0,
+      "cap_applied": null,
+      "estimate": 250000.0,
+      "expected_return_pct": 18.5,
+      "entry_cap_price": 213300.0,
+      "entry_cap_basis": {
+        "min_rr": 1.1,
+        "min_rr_tier": "bull",
+        "stop_frac_pct": 15.6,
+        "stop_basis": "ATR 7.8%×2≈손절 15.6%",
+        "formula": "목표가 / (1 + min_rr × 손절%)"
+      },
+      "in_buy_zone": true,
+      "entry_cap_gap_pct": 1.1,
+      "entry_cap_note": null,
+      "entry_cap_caution": null,
+      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +21%p)",
+      "sector_signals": {
+        "group": "sector:인터넷/AI",
+        "median_excess_60d": 21.32,
+        "signals_met": 2,
+        "min_signals": 2,
+        "immersion_met": true,
+        "sector_value": null
+      },
+      "grade": "B",
+      "data_layers": {
+        "valuation_band": false,
+        "consensus_target": false,
+        "price_snapshot": true,
+        "theme_exposure": true,
+        "sector_group": true,
+        "earnings_signal": true
+      },
+      "detail": {
+        "theme_parts": [
+          {
+            "theme": "internet_ai_platform",
+            "exposure": 0.8,
+            "strength": 0.6,
+            "horizon": "2-4y",
+            "horizon_discount": 0.333,
+            "contrib_pct": 3.2
+          }
+        ],
+        "news_parts": [
+          {
+            "kind": "news_auto",
+            "type": "buyback_cancellation",
+            "date": "2026-07-27",
+            "impact_pct": 4.0,
+            "decay": 0.88,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 7.09,
+            "contrib_pct": 0.0,
+            "note": "NAVER, 엔비디아 지분투자·자사주 소각에 10% 급등 - 매일신문",
+            "source_url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE9hUHVsd0o2azhDVy1WVlFxUTJySU1YNTVSSjhOSlFyaUlLYkVEdkloTHNEc1BaaUVqWDNUbWgybW02NWJGcGlGRk4wNjNCcjU2TDB4T24wMjQ3enNRZWpQUmJn?oc=5",
+            "matched_keywords": [
+              "자사주소각"
+            ]
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-08-14",
+            "d_day": 7,
+            "impact_pct": 6.0,
+            "direction": 0.6,
+            "time_weight": 1.0,
+            "probability": 0.6,
+            "contrib_pct": 2.16,
+            "id": "035420-2026Half-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-11-14",
+            "d_day": 99,
+            "impact_pct": 3.0,
+            "direction": 0.6,
+            "time_weight": 0.81,
+            "probability": 0.6,
+            "contrib_pct": 0.88,
+            "id": "035420-20263Q-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-08-07",
+            "d_day": 0,
+            "impact_pct": 6.0,
+            "direction": 0.6,
+            "time_weight": 1.0,
+            "probability": 0.9,
+            "contrib_pct": 3.24,
+            "id": "035420-2026-08-07-q2-earnings"
+          }
+        ],
+        "earnings_signal": "growth",
+        "ret_60d_pct": 3.43,
+        "next_catalyst": {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-08-07",
+          "d_day": 0,
+          "impact_pct": 6.0,
+          "direction": 0.6,
+          "time_weight": 1.0,
+          "probability": 0.9,
+          "contrib_pct": 3.24,
+          "id": "035420-2026-08-07-q2-earnings"
+        }
+      },
+      "delta_vs_prev": {
+        "prev_estimate": 255000.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -5000.0,
+        "entry_cap_delta_krw": -5400.0,
+        "news_pct_delta": 0.87,
+        "expected_return_delta_pct": -0.1
+      },
+      "new_news_since_prev": [
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-08-07",
+          "contrib_pct": 3.24,
+          "note": null,
+          "source_url": null
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **250,000원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼5,000원 · 프리미엄 테마+3/뉴스+6/섹터+8/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **213,300원**(R/R≥1.1·ATR 7.8%×2≈손절 15.6% 기준) · 현재가 211,000원 🟢진입 가능(현재가가 상한가보다 1.1% 낮음) · 직전 리포트 대비 ▼5,400원"
     },
     {
       "ticker": "005930",
       "name": "삼성전자",
       "sector": "IT/반도체",
-      "current_price": 235250.0,
-      "anchor_price": 235200.0,
+      "current_price": 230250.0,
+      "anchor_price": 230200.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
@@ -347,23 +385,23 @@
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 2.81,
-        "pct_of_52w_high": 62.82,
+        "excess60_vs_kospi_pct": 1.41,
+        "pct_of_52w_high": 61.48,
         "ungated": {
           "theme": 5.69,
           "news": 12.0
         }
       },
-      "raw_estimate": 276700.0,
+      "raw_estimate": 270800.0,
       "cap_applied": null,
-      "estimate": 276700.0,
+      "estimate": 270800.0,
       "expected_return_pct": 17.6,
-      "entry_cap_price": 226800.0,
+      "entry_cap_price": 222000.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
         "stop_frac_pct": 20.0,
-        "stop_basis": "ATR 10.1%×2≈손절 20.0%",
+        "stop_basis": "ATR 10.4%×2≈손절 20.0%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
@@ -461,14 +499,14 @@
           {
             "kind": "news_auto",
             "type": "buyback_cancellation",
-            "date": "2026-08-06",
+            "date": "2026-08-07",
             "impact_pct": 4.0,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": 2.37,
-            "note": "삼성전자·SK하이닉스 “주주환원 확대”...삼성은 ‘조만간’, 하이닉스는 ‘연말까지’ - 조선일보",
-            "source_url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPcDlvREprMWpXWUpxTmROWUdkdDRnSGVadU96OWhVQUMyUTRLRnhOSlR2QXhJRnhfTElpdTBkcENtVkF3anRXQkpSemF1b051b1pURzZCTks0d19nc3BRaksycEFNSUtTNVJ0cnJiOE1PRU1JQTBCUU5vSHRvWEEzaHdnSU1YbWJnZ1VJ?oc=5",
+            "contrib_pct": 2.4,
+            "note": "반도체 투톱, 주주환원 확대 압박에 대응책 고심 [비즈360]",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=005930",
             "matched_keywords": [
               "주주환원확대",
               "주주환원"
@@ -476,62 +514,62 @@
           },
           {
             "kind": "news_auto",
-            "type": "capex_expansion",
-            "date": "2026-07-30",
-            "impact_pct": 3.0,
-            "decay": 0.91,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.16,
-            "contrib_pct": 1.48,
-            "note": "[IB토마토](반도체 메가투자)②삼성전자 현금·SDI 차입…엇갈린 2655조 투자체력 - 뉴스토마토",
-            "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5PVEtpbHhLZ1dOclNBRTFMS0JocWNWbHNYNDlMeWtBVGR2N01kb0ZtNE9CRGFXdWhqeUwzQmx1NGpXdFl6UGxMUG1ZLV9Sa0ZiM3JEdy1QZWpDOVNaLU1BZQ?oc=5",
-            "matched_keywords": [
-              "조투자"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "earnings_surprise_beat",
-            "date": "2026-08-03",
+            "date": "2026-08-06",
             "impact_pct": 6.0,
-            "decay": 0.96,
+            "decay": 0.99,
             "auto_factor": 0.6,
-            "realized_since_event_pct": -3.24,
-            "contrib_pct": 3.6,
-            "note": "삼성전자 파운드리, 연내 가동률 100% 달성 전망...흑자전환 카운트다운 - 조선비즈 - Chosunbiz",
-            "source_url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQamJ4eHo0azhhaW5qU1NuSjY5YTV0QXF5M1NpUml0RUp4YlF1NzAySDJlTXl1M3E3TmZkSGdnUm5td2gwZGR0Z21WNElvVGF0MVpfV1NVMklUSkZ3QU0zdlFxbUZONVE3dWpOUFk3ZkFHN1RySm1qREtvY21tT3ZvSkh30gGWAUFVX3lxTE5WUW9QT0Y2aHM4b0JlV2Q4YmxtdkpXeF9LdVlmV0c0UkJxRnFQMGZid0JFMUJTNDNKYXFaSGVIQllCdVNnVnRlUFc4emRpTVRoRTU2TXQ4TGpjYkRhZS1ha0JCMGZHZ1hSaFRlbFZnN1lYaWZRQXlGc3dfcFJ5d29OUDZPazlfSDlhbGpBU2lOR2x1MlhwQQ?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.56,
+            "note": "AI 데이터센터 열풍에 샌디스크·WD 실적 호조...삼성전자·하이닉스 주주 환원 확대 - YTN",
+            "source_url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBScmtIRy1oaDY3ckdsY2Q1OERaZlAzUENhZFdYU3hERm9hbVZNNW9kOEhva2poT2NjcWdlWXEzbFhHOEVQZUxHUjhfRHk3bG8yNWJtb3FBd0llWUE2NGc?oc=5",
             "matched_keywords": [
-              "흑자전환"
+              "실적호조"
             ]
           },
           {
             "kind": "news_auto",
             "type": "order_backlog_surprise",
-            "date": "2026-07-30",
+            "date": "2026-08-07",
             "impact_pct": 5.0,
-            "decay": 0.91,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 0.16,
-            "contrib_pct": 2.57,
-            "note": "삼성전자, 1년 만에 '1800% 잭팟'…반도체로 89조 벌었다 - 한국경제",
-            "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBkYndaVHhiSnBVNEpUdndUMjJOSFdYdmpBVmFNSTBxV2FOcGUwQThCSTg3eU9ZSWVyeDhzMWF6VWhKRUlEeWQxdGJ0NDk4S2lHZGFGdHBENE13Zw?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.0,
+            "note": "1030 女 푹 빠졌다…'여권폰' 라방서 130억 잭팟 역대급 돌풍 [...",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=005930",
             "matched_keywords": [
               "잭팟"
             ]
           },
           {
             "kind": "news_auto",
-            "type": "tech_breakthrough",
-            "date": "2026-08-05",
-            "impact_pct": 6.0,
-            "decay": 0.98,
+            "type": "regulation_or_tariff",
+            "date": "2026-08-07",
+            "impact_pct": -4.0,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": -0.58,
-            "contrib_pct": 3.6,
-            "note": "삼성전자, 차세대 'zHBM'-세계최초 400단 이상 'V10 낸드' 공개 - 머니투데이 - 머니투데이",
-            "source_url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9oTV9iUlhKYWEyZE1KMHNPM0ZNa1ROYnlXc25LdW9Yd3BoQV8xeHZ6MC05c2FzMGt5R1ZpS0pJR2tURzF2SnJhZlNZTnJsZ3NjR19NbDRTSmdqYkZUcldqRkRTTlRuVVBLbVUwM9IBckFVX3lxTE1rbzE5ZklJWVY4RllyMjhQLTNsaFlVNzNVY05DYm1ySjJKWWhiNTJLTkRObzM4UWlQMEFlWmNiWlhoaXlHREhEa3R6ME81TXQ5aE5vOFo2QW9yVVpyM1hSQVh5elF5bDVCZFVza3N3ZDNXQQ?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -2.4,
+            "note": "[단독] 美, 포스코 후판 상계관세 1%대로…3.70%서 '뚝'",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=005930",
             "matched_keywords": [
-              "세계최초"
+              "관세"
+            ]
+          },
+          {
+            "kind": "news_auto",
+            "type": "tech_breakthrough",
+            "date": "2026-08-07",
+            "impact_pct": 6.0,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.6,
+            "note": "메모리 신기술 축제 FMS 달군 삼성…부스 사흘간 2000여 명 방문",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=005930",
+            "matched_keywords": [
+              "신기술"
             ]
           },
           {
@@ -602,7 +640,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -15.68,
+        "ret_60d_pct": -17.47,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -617,55 +655,96 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 280500.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -3800.0,
-        "entry_cap_delta_krw": -3300.0,
+        "prev_estimate": 276700.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -5900.0,
+        "entry_cap_delta_krw": -4800.0,
         "news_pct_delta": 0.0,
         "expected_return_delta_pct": 0.0
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **276,700원**(+17.6%, 등급 B) · 직전 리포트 대비 ▼3,800원 · 프리미엄 테마+3/뉴스+12(캡)/섹터+5/모멘텀-2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **226,800원**(R/R≥1.1·ATR 10.1%×2≈손절 20.0% 기준) · 현재가 235,250원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 3.6% 상회) · 직전 리포트 대비 ▼3,300원"
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "buyback_cancellation",
+          "date": "2026-08-07",
+          "contrib_pct": 2.4,
+          "note": "반도체 투톱, 주주환원 확대 압박에 대응책 고심 [비즈360]",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=005930"
+        },
+        {
+          "kind": "news_auto",
+          "type": "earnings_surprise_beat",
+          "date": "2026-08-06",
+          "contrib_pct": 3.56,
+          "note": "AI 데이터센터 열풍에 샌디스크·WD 실적 호조...삼성전자·하이닉스 주주 환원 확대 - YTN",
+          "source_url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBScmtIRy1oaDY3ckdsY2Q1OERaZlAzUENhZFdYU3hERm9hbVZNNW9kOEhva2poT2NjcWdlWXEzbFhHOEVQZUxHUjhfRHk3bG8yNWJtb3FBd0llWUE2NGc?oc=5"
+        },
+        {
+          "kind": "news_auto",
+          "type": "order_backlog_surprise",
+          "date": "2026-08-07",
+          "contrib_pct": 3.0,
+          "note": "1030 女 푹 빠졌다…'여권폰' 라방서 130억 잭팟 역대급 돌풍 [...",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=005930"
+        },
+        {
+          "kind": "news_auto",
+          "type": "regulation_or_tariff",
+          "date": "2026-08-07",
+          "contrib_pct": -2.4,
+          "note": "[단독] 美, 포스코 후판 상계관세 1%대로…3.70%서 '뚝'",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=005930"
+        },
+        {
+          "kind": "news_auto",
+          "type": "tech_breakthrough",
+          "date": "2026-08-07",
+          "contrib_pct": 3.6,
+          "note": "메모리 신기술 축제 FMS 달군 삼성…부스 사흘간 2000여 명 방문",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=005930"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **270,800원**(+17.6%, 등급 B) · 직전 리포트 대비 ▼5,900원 · 프리미엄 테마+3/뉴스+12(캡)/섹터+5/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_surprise_beat(자동) +3.6%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **222,000원**(R/R≥1.1·ATR 10.4%×2≈손절 20.0% 기준) · 현재가 230,250원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 3.6% 상회) · 직전 리포트 대비 ▼4,800원"
     },
     {
       "ticker": "055550",
       "name": "신한지주",
       "sector": null,
-      "current_price": 106700.0,
-      "anchor_price": 106700.0,
+      "current_price": 108950.0,
+      "anchor_price": 109000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.0,
-        "news": 4.23,
+        "news": 10.24,
         "sector": 5.29,
-        "momentum": 3.0,
-        "total": 12.52
+        "momentum": 1.5,
+        "total": 17.03
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 28.83,
-        "pct_of_52w_high": 94.17,
+        "excess60_vs_kospi_pct": 31.55,
+        "pct_of_52w_high": 96.16,
         "ungated": {
           "theme": 0.0,
-          "news": 4.23
+          "news": 10.24
         }
       },
-      "raw_estimate": 120100.0,
+      "raw_estimate": 127500.0,
       "cap_applied": null,
-      "estimate": 120100.0,
-      "expected_return_pct": 12.6,
-      "entry_cap_price": 109200.0,
+      "estimate": 127500.0,
+      "expected_return_pct": 17.0,
+      "entry_cap_price": 115800.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 9.1,
-        "stop_basis": "ATR 4.5%×2≈손절 9.1%",
+        "stop_frac_pct": 9.2,
+        "stop_basis": "ATR 4.6%×2≈손절 9.2%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 2.3,
+      "entry_cap_gap_pct": 6.3,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +18%p) · 섹터값 0.32(집중도 평소 0.83배·heat 0.031)",
@@ -707,14 +786,14 @@
           {
             "kind": "news_auto",
             "type": "analyst_target_upgrade",
-            "date": "2026-07-24",
+            "date": "2026-08-07",
             "impact_pct": 3.0,
-            "decay": 0.84,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 6.62,
-            "contrib_pct": 0.0,
-            "note": "[리포트 브리핑]신한지주, '금리인상 수혜와 안정적 투자수익 가능한 최선호주로 추천' 목표가 130,000원 - BNK투자증권 - 뉴스핌",
-            "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE94TWZ3OURtRjdEcFk3Nmt1MG83UGNhTjZSQlBsMUplVVlNVjRDa3pNTUIxQWQ4c2tWSmFQOUxsbjVHYjNYYmh1U2trbENQNnNHQ0g2ak9kWTA1SG1o?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 1.8,
+            "note": "\"올해 순이익 3조 무난\"…최선호주 유지한 증권가",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=055550",
             "matched_keywords": [
               "최선호주"
             ]
@@ -737,31 +816,31 @@
           {
             "kind": "news_auto",
             "type": "earnings_surprise_beat",
-            "date": "2026-08-06",
+            "date": "2026-08-07",
             "impact_pct": 6.0,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": 3.56,
-            "note": "[특징주]신한지주, 코스피 폭락장서 외국인·기관 ‘쌍끌이 매수’…사상 최대 실적·자사주 뒷받침 - 남도일보",
-            "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5UczB4SUhCbGZMLThESmtzbl9sQ2lUbWhDUEF1TnZRNGxtUmlqN3V5SklXY3RSUUNwWlY3akZqUXFyZ3p0dmtlNUZSVW9vNnJmc0FTc1V3bFhoMXdkZmxkZm9UX1dVYWs2TGhGUE5ReTbSAXBBVV95cUxOVHMweElIQmxmTC04REprc25fbENpVG1oQ1BBdU52UTRsbVJpajd1eUpJV2N0UlFDcFpWN2pGalFxcmd6dHZrZTVGUlVvbzZyZnNBU3NVd2xYaDF3ZGZsZGZvVF9XVWFrNkxoRlBOUXk2?oc=5",
+            "contrib_pct": 3.6,
+            "note": "LIG D&A, 2분기 호실적에도 주가는 '냉랭'...그 이유는? [주...",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=055550",
             "matched_keywords": [
-              "사상최대실적"
+              "호실적"
             ]
           },
           {
             "kind": "news_auto",
-            "type": "regulation_or_tariff",
-            "date": "2026-08-06",
-            "impact_pct": -4.0,
-            "decay": 0.99,
+            "type": "policy_support",
+            "date": "2026-08-07",
+            "impact_pct": 3.0,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -2.37,
-            "note": "쿠팡, 과징금에 탈팡 여파로 주가 40% 밀려…반전 카드는 [종목+]",
+            "contrib_pct": 1.8,
+            "note": "환율 내려가니 금융지주 '방긋'…밸류업에도 청신호",
             "source_url": "https://finance.naver.com/item/news_news.naver?code=055550",
             "matched_keywords": [
-              "과징금"
+              "밸류업"
             ]
           },
           {
@@ -790,7 +869,7 @@
           }
         ],
         "earnings_signal": "growth",
-        "ret_60d_pct": 10.34,
+        "ret_60d_pct": 12.67,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -805,55 +884,80 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 119300.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": 800.0,
-        "entry_cap_delta_krw": 600.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 1.6
+        "prev_estimate": 120100.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": 7400.0,
+        "entry_cap_delta_krw": 6600.0,
+        "news_pct_delta": 6.01,
+        "expected_return_delta_pct": 4.4
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **120,100원**(+12.6%, 등급 B) · 직전 리포트 대비 ▲800원 · 프리미엄 테마+0/뉴스+4/섹터+5/모멘텀+3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **109,200원**(R/R≥1.1·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 106,700원 🟢진입 가능(현재가가 상한가보다 2.3% 낮음) · 직전 리포트 대비 ▲600원"
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "analyst_target_upgrade",
+          "date": "2026-08-07",
+          "contrib_pct": 1.8,
+          "note": "\"올해 순이익 3조 무난\"…최선호주 유지한 증권가",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=055550"
+        },
+        {
+          "kind": "news_auto",
+          "type": "earnings_surprise_beat",
+          "date": "2026-08-07",
+          "contrib_pct": 3.6,
+          "note": "LIG D&A, 2분기 호실적에도 주가는 '냉랭'...그 이유는? [주...",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=055550"
+        },
+        {
+          "kind": "news_auto",
+          "type": "policy_support",
+          "date": "2026-08-07",
+          "contrib_pct": 1.8,
+          "note": "환율 내려가니 금융지주 '방긋'…밸류업에도 청신호",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=055550"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **127,500원**(+17.0%, 등급 B) · 직전 리포트 대비 ▲7,400원 · 프리미엄 테마+0/뉴스+10/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; analyst_target_upgrade(자동) +1.8%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **115,800원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 108,950원 🟢진입 가능(현재가가 상한가보다 6.3% 낮음) · 직전 리포트 대비 ▲6,600원"
     },
     {
       "ticker": "105560",
       "name": "KB금융",
       "sector": "금융/은행",
-      "current_price": 171500.0,
-      "anchor_price": 171500.0,
+      "current_price": 175200.0,
+      "anchor_price": 175200.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.0,
-        "news": 5.44,
+        "news": 7.24,
         "sector": 5.29,
         "momentum": 1.5,
-        "total": 12.23
+        "total": 14.03
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 30.14,
-        "pct_of_52w_high": 88.17,
+        "excess60_vs_kospi_pct": 32.94,
+        "pct_of_52w_high": 90.08,
         "ungated": {
           "theme": 0.0,
-          "news": 5.44
+          "news": 7.24
         }
       },
-      "raw_estimate": 192500.0,
+      "raw_estimate": 199800.0,
       "cap_applied": null,
-      "estimate": 192500.0,
-      "expected_return_pct": 12.2,
-      "entry_cap_price": 174900.0,
+      "estimate": 199800.0,
+      "expected_return_pct": 14.0,
+      "entry_cap_price": 181400.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 9.1,
-        "stop_basis": "ATR 4.6%×2≈손절 9.1%",
+        "stop_frac_pct": 9.2,
+        "stop_basis": "ATR 4.6%×2≈손절 9.2%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 2.0,
+      "entry_cap_gap_pct": 3.5,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +18%p) · 섹터값 0.32(집중도 평소 0.83배·heat 0.031)",
@@ -910,16 +1014,16 @@
           {
             "kind": "news_auto",
             "type": "policy_support",
-            "date": "2026-07-27",
+            "date": "2026-08-07",
             "impact_pct": 3.0,
-            "decay": 0.88,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 4.9,
-            "contrib_pct": 0.0,
-            "note": "KB금융, 4차 생산적금융 협의회…첨단전략산업 투자 확대 - 서울경제TV",
-            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5IdERWMHRUYWZYRElwZVZKOF9WY24xMzlqdnZNLTVKZjFpU25BZHJoSU1WUl9aTHZodmFoMXkzSFloRUZ4OFJFa184TV9ldGRFa192VERQNmRPaWpXb1doNDktQ2U?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 1.8,
+            "note": "환율 내려가니 금융지주 '방긋'…밸류업에도 청신호",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=105560",
             "matched_keywords": [
-              "첨단전략산업"
+              "밸류업"
             ]
           },
           {
@@ -948,7 +1052,7 @@
           }
         ],
         "earnings_signal": "growth",
-        "ret_60d_pct": 11.65,
+        "ret_60d_pct": 14.06,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -963,55 +1067,64 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 193100.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -600.0,
-        "entry_cap_delta_krw": -800.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "prev_estimate": 192500.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": 7300.0,
+        "entry_cap_delta_krw": 6500.0,
+        "news_pct_delta": 1.8,
+        "expected_return_delta_pct": 1.8
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **192,500원**(+12.2%, 등급 B) · 직전 리포트 대비 ▼600원 · 프리미엄 테마+0/뉴스+5/섹터+5/모멘텀+2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **174,900원**(R/R≥1.1·ATR 4.6%×2≈손절 9.1% 기준) · 현재가 171,500원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음) · 직전 리포트 대비 ▼800원"
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "policy_support",
+          "date": "2026-08-07",
+          "contrib_pct": 1.8,
+          "note": "환율 내려가니 금융지주 '방긋'…밸류업에도 청신호",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=105560"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **199,800원**(+14.0%, 등급 B) · 직전 리포트 대비 ▲7,300원 · 프리미엄 테마+0/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: policy_support(자동) +1.8%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **181,400원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 175,200원 🟢진입 가능(현재가가 상한가보다 3.5% 낮음) · 직전 리포트 대비 ▲6,500원"
     },
     {
       "ticker": "035720",
       "name": "카카오",
       "sector": "인터넷/AI",
-      "current_price": 38650.0,
-      "anchor_price": 38600.0,
+      "current_price": 39225.0,
+      "anchor_price": 39200.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.2,
-        "news": 5.55,
+        "news": 4.5,
         "sector": 6.4,
         "momentum": -2.5,
-        "total": 10.65
+        "total": 9.6
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 7.24,
-        "pct_of_52w_high": 55.45,
+        "excess60_vs_kospi_pct": 8.95,
+        "pct_of_52w_high": 56.28,
         "ungated": {
           "theme": 2.0,
-          "news": 10.44
+          "news": 8.68
         }
       },
-      "raw_estimate": 42800.0,
+      "raw_estimate": 43000.0,
       "cap_applied": null,
-      "estimate": 42800.0,
-      "expected_return_pct": 10.7,
+      "estimate": 43000.0,
+      "expected_return_pct": 9.6,
       "entry_cap_price": 38900.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 9.2,
-        "stop_basis": "ATR 4.6%×2≈손절 9.2%",
+        "stop_frac_pct": 9.5,
+        "stop_basis": "ATR 4.7%×2≈손절 9.5%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
-      "in_buy_zone": true,
-      "entry_cap_gap_pct": 0.6,
+      "in_buy_zone": false,
+      "entry_cap_gap_pct": -0.8,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정",
@@ -1046,21 +1159,6 @@
         "news_parts": [
           {
             "kind": "news_auto",
-            "type": "earnings_surprise_beat",
-            "date": "2026-08-06",
-            "impact_pct": 6.0,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 3.56,
-            "note": "[컨콜 종합] '사상 최대 실적' 카카오 \"카톡에서 AI로 쿠팡이츠 ...",
-            "source_url": "https://finance.naver.com/item/news_news.naver?code=035720",
-            "matched_keywords": [
-              "사상최대실적"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "labor_dispute",
             "date": "2026-08-06",
             "impact_pct": -3.0,
@@ -1090,21 +1188,6 @@
             ]
           },
           {
-            "kind": "news_auto",
-            "type": "tech_breakthrough",
-            "date": "2026-08-03",
-            "impact_pct": 6.0,
-            "decay": 0.96,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -0.91,
-            "contrib_pct": 3.6,
-            "note": "카카오모빌, 유료 자율주행택시 1000건 돌파…상용화 '청신호' - 서울경제TV",
-            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE95dUdKT3pkVHZsZGNXZnpNLUdGaXZNZHhzc2lqRFM3RnBhR2U0OHAyYnk4dlJOWDV1ZklyTU1YenpPMVVWMElUYVBkNnhEb29SSHNWWTNPNHNXNHJZelpHX25KNC0?oc=5",
-            "matched_keywords": [
-              "상용화"
-            ]
-          },
-          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-08-14",
@@ -1127,10 +1210,22 @@
             "probability": 0.6,
             "contrib_pct": 1.46,
             "id": "035720-20263Q-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-08-06",
+            "d_day": -1,
+            "impact_pct": 6.0,
+            "direction": 1.0,
+            "time_weight": 1.0,
+            "probability": 0.9,
+            "contrib_pct": 5.4,
+            "id": "035720-2026-08-06-q2-earnings"
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -11.25,
+        "ret_60d_pct": -9.93,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -1145,23 +1240,212 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 42600.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
+        "prev_estimate": 42800.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
         "estimate_delta_krw": 200.0,
-        "entry_cap_delta_krw": 100.0,
+        "entry_cap_delta_krw": 0.0,
+        "news_pct_delta": -1.05,
+        "expected_return_delta_pct": -1.1
+      },
+      "new_news_since_prev": [
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-08-06",
+          "contrib_pct": 5.4,
+          "note": null,
+          "source_url": null
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **43,000원**(+9.6%, 등급 B) · 직전 리포트 대비 ▲200원 · 프리미엄 테마+1/뉴스+4/섹터+6/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +5.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **38,900원**(R/R≥1.1·ATR 4.7%×2≈손절 9.5% 기준) · 현재가 39,225원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.8% 상회)"
+    },
+    {
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
+      "sector": "방산",
+      "current_price": 1068000.0,
+      "anchor_price": 1068000.0,
+      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
+      "consensus_rejected": null,
+      "premium_pct": {
+        "theme": 1.89,
+        "news": 3.96,
+        "sector": 4.4,
+        "momentum": -2.5,
+        "total": 7.75
+      },
+      "trend_gate": {
+        "factor": 0.6,
+        "excess60_vs_kospi_pct": 2.06,
+        "pct_of_52w_high": 64.53,
+        "ungated": {
+          "theme": 3.15,
+          "news": 6.6
+        }
+      },
+      "raw_estimate": 1150800.0,
+      "cap_applied": null,
+      "estimate": 1150800.0,
+      "expected_return_pct": 7.8,
+      "entry_cap_price": 1005900.0,
+      "entry_cap_basis": {
+        "min_rr": 1.1,
+        "min_rr_tier": "bull",
+        "stop_frac_pct": 13.1,
+        "stop_basis": "ATR 6.5%×2≈손절 13.1%",
+        "formula": "목표가 / (1 + min_rr × 손절%)"
+      },
+      "in_buy_zone": false,
+      "entry_cap_gap_pct": -5.8,
+      "entry_cap_note": null,
+      "entry_cap_caution": null,
+      "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.30(집중도 평소 0.45배·heat 0.0)",
+      "sector_signals": {
+        "group": "defense_export",
+        "median_excess_60d": -7.24,
+        "signals_met": 3,
+        "min_signals": 2,
+        "immersion_met": true,
+        "sector_value": {
+          "sector_value": 0.3,
+          "heat": 0.0,
+          "rs": 1.0,
+          "conc_ratio": 0.45,
+          "median_excess_20d": 11.17,
+          "members": [
+            "012450",
+            "064350",
+            "079550"
+          ],
+          "as_of": "2026-08-06",
+          "group": "defense_export"
+        }
+      },
+      "grade": "B",
+      "data_layers": {
+        "valuation_band": false,
+        "consensus_target": false,
+        "price_snapshot": true,
+        "theme_exposure": true,
+        "sector_group": true,
+        "earnings_signal": true
+      },
+      "detail": {
+        "theme_parts": [
+          {
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "strength": 0.7,
+            "horizon": "3-5y",
+            "horizon_discount": 0.25,
+            "contrib_pct": 3.15
+          }
+        ],
+        "news_parts": [
+          {
+            "kind": "news_auto",
+            "type": "earnings_surprise_beat",
+            "date": "2026-08-03",
+            "impact_pct": 6.0,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 10.41,
+            "contrib_pct": 0.0,
+            "note": "한화에어로스페이스, 2분기 ’어닝 서프라이즈’...하반기 수주 모멘텀 By 알파경제 alphabiz - Investing.com 한국어",
+            "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5JZ2RCQmNDbzZwVDM2VjJ3S2gzVlp3N1pMeDBaZHVvZ1I1U0JjWjJEZEUxeTk0OVNQY2NRZ0JzZEFaNVlYd3dPcUFFMk1QT3l5dUliSkIwVzRTeWVCWUI4ampfYjA3ck5UYzlJdWlGTnE?oc=5",
+            "matched_keywords": [
+              "어닝서프라이즈"
+            ]
+          },
+          {
+            "kind": "news_auto",
+            "type": "supply_contract_major",
+            "date": "2026-08-03",
+            "impact_pct": 8.0,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 10.41,
+            "contrib_pct": 0.0,
+            "note": "한화에어로, 4천548억원 UAM 부품 공급계약 해지…사업정리 수순 - v.daum.net",
+            "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE5QNXR6eXBRbWxkQkxFMjhhZzdRNW9NeEI4VzNtRTBTUXJBU1UxZG9sZ3ExOHpxME9EVU9jc1VGek1yazBTWXc?oc=5",
+            "matched_keywords": [
+              "공급계약"
+            ]
+          },
+          {
+            "kind": "news_auto",
+            "type": "tech_breakthrough",
+            "date": "2026-08-06",
+            "impact_pct": 6.0,
+            "decay": 0.99,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.56,
+            "note": "미국·중국 꺾고 무기 선주문 1위...국산화 없인 ‘반짝 특수’ [배창...",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=012450",
+            "matched_keywords": [
+              "국산화"
+            ]
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-08-14",
+            "d_day": 7,
+            "impact_pct": 6.0,
+            "direction": 0.6,
+            "time_weight": 1.0,
+            "probability": 0.6,
+            "contrib_pct": 2.16,
+            "id": "012450-2026Half-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-11-14",
+            "d_day": 99,
+            "impact_pct": 3.0,
+            "direction": 0.6,
+            "time_weight": 0.81,
+            "probability": 0.6,
+            "contrib_pct": 0.88,
+            "id": "012450-20263Q-earnings"
+          }
+        ],
+        "earnings_signal": "growth",
+        "ret_60d_pct": -16.82,
+        "next_catalyst": {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-08-14",
+          "d_day": 7,
+          "impact_pct": 6.0,
+          "direction": 0.6,
+          "time_weight": 1.0,
+          "probability": 0.6,
+          "contrib_pct": 2.16,
+          "id": "012450-2026Half-earnings"
+        }
+      },
+      "delta_vs_prev": {
+        "prev_estimate": 1147500.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": 3300.0,
+        "entry_cap_delta_krw": 3300.0,
         "news_pct_delta": 0.0,
         "expected_return_delta_pct": 0.1
       },
       "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **42,800원**(+10.7%, 등급 B) · 직전 리포트 대비 ▲200원 · 프리미엄 테마+1/뉴스+6/섹터+6/모멘텀-2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **38,900원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 38,650원 🟢진입 가능(현재가가 상한가보다 0.6% 낮음) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,150,800원**(+7.8%, 등급 B) · 직전 리포트 대비 ▲3,300원 · 프리미엄 테마+2/뉴스+4/섹터+4/모멘텀-2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,005,900원**(R/R≥1.1·ATR 6.5%×2≈손절 13.1% 기준) · 현재가 1,068,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.8% 상회) · 직전 리포트 대비 ▲3,300원"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
       "sector": "조선",
-      "current_price": 389000.0,
-      "anchor_price": 389000.0,
+      "current_price": 391000.0,
+      "anchor_price": 391000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
@@ -1173,18 +1457,18 @@
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 2.24,
-        "pct_of_52w_high": 78.67,
+        "excess60_vs_kospi_pct": 3.06,
+        "pct_of_52w_high": 79.07,
         "ungated": {
           "theme": 2.88,
           "news": 5.06
         }
       },
-      "raw_estimate": 418800.0,
+      "raw_estimate": 421000.0,
       "cap_applied": null,
-      "estimate": 418800.0,
+      "estimate": 421000.0,
       "expected_return_pct": 7.7,
-      "entry_cap_price": 367700.0,
+      "entry_cap_price": 369700.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -1193,7 +1477,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -5.5,
+      "entry_cap_gap_pct": -5.4,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.30(집중도 평소 0.56배·heat 0.0)",
@@ -1340,7 +1624,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -16.25,
+        "ret_60d_pct": -15.82,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -1355,436 +1639,55 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 424200.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -5400.0,
-        "entry_cap_delta_krw": -5600.0,
+        "prev_estimate": 418800.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": 2200.0,
+        "entry_cap_delta_krw": 2000.0,
         "news_pct_delta": 0.0,
         "expected_return_delta_pct": 0.0
       },
       "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **418,800원**(+7.7%, 등급 B) · 직전 리포트 대비 ▼5,400원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀-2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **367,700원**(R/R≥1.1·ATR 6.3%×2≈손절 12.6% 기준) · 현재가 389,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.5% 상회) · 직전 리포트 대비 ▼5,600원"
-    },
-    {
-      "ticker": "012450",
-      "name": "한화에어로스페이스",
-      "sector": "방산",
-      "current_price": 1065000.0,
-      "anchor_price": 1065000.0,
-      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
-      "consensus_rejected": null,
-      "premium_pct": {
-        "theme": 1.89,
-        "news": 3.96,
-        "sector": 4.4,
-        "momentum": -2.5,
-        "total": 7.75
-      },
-      "trend_gate": {
-        "factor": 0.6,
-        "excess60_vs_kospi_pct": 1.43,
-        "pct_of_52w_high": 64.35,
-        "ungated": {
-          "theme": 3.15,
-          "news": 6.6
-        }
-      },
-      "raw_estimate": 1147500.0,
-      "cap_applied": null,
-      "estimate": 1147500.0,
-      "expected_return_pct": 7.7,
-      "entry_cap_price": 1002600.0,
-      "entry_cap_basis": {
-        "min_rr": 1.1,
-        "min_rr_tier": "bull",
-        "stop_frac_pct": 13.1,
-        "stop_basis": "ATR 6.6%×2≈손절 13.1%",
-        "formula": "목표가 / (1 + min_rr × 손절%)"
-      },
-      "in_buy_zone": false,
-      "entry_cap_gap_pct": -5.9,
-      "entry_cap_note": null,
-      "entry_cap_caution": null,
-      "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.30(집중도 평소 0.45배·heat 0.0)",
-      "sector_signals": {
-        "group": "defense_export",
-        "median_excess_60d": -7.24,
-        "signals_met": 3,
-        "min_signals": 2,
-        "immersion_met": true,
-        "sector_value": {
-          "sector_value": 0.3,
-          "heat": 0.0,
-          "rs": 1.0,
-          "conc_ratio": 0.45,
-          "median_excess_20d": 11.17,
-          "members": [
-            "012450",
-            "064350",
-            "079550"
-          ],
-          "as_of": "2026-08-06",
-          "group": "defense_export"
-        }
-      },
-      "grade": "B",
-      "data_layers": {
-        "valuation_band": false,
-        "consensus_target": false,
-        "price_snapshot": true,
-        "theme_exposure": true,
-        "sector_group": true,
-        "earnings_signal": true
-      },
-      "detail": {
-        "theme_parts": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "strength": 0.7,
-            "horizon": "3-5y",
-            "horizon_discount": 0.25,
-            "contrib_pct": 3.15
-          }
-        ],
-        "news_parts": [
-          {
-            "kind": "news_auto",
-            "type": "earnings_surprise_beat",
-            "date": "2026-08-03",
-            "impact_pct": 6.0,
-            "decay": 0.96,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 10.41,
-            "contrib_pct": 0.0,
-            "note": "[리포트 브리핑]한화에어로스페이스, '자회사 실적 영향으로 컨센서스 상회' 목표가 1,650,000원 - LS증권 - 뉴스핌",
-            "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE51MzJDRGlUVm5BeG9GS3NKb1luZEZ5OFYxOVE1X1dOd2cxU2E0aEd6cjJweWJKbEMwTHp1NkpyZXZRY0dvTy1EUjllakFFVmFQOFdWM2g0alJxV244?oc=5",
-            "matched_keywords": [
-              "컨센서스상회"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "supply_contract_major",
-            "date": "2026-08-03",
-            "impact_pct": 8.0,
-            "decay": 0.96,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 10.41,
-            "contrib_pct": 0.0,
-            "note": "한화에어로, 英 VA와 체결한 4548억원 규모 공급 계약 조기 종료 - 조선비즈 - Chosunbiz",
-            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNZ2hfNFRNdXM2MS1wQ3pZeVM1VTZTWUhvVnZPVmQxRHI2RnBZVUVSNGVWNWdHdFZfbHZqVGJQUkI5N0VNdnJ1SDdTeC1Tam9QSXVHNHlJRnVneDNjODh2MThBUWVleG0zNWxQVVBvdTV6VnhHT3VDWnVHR2V6R3hXRGs3QnnSAZgBQVVfeXFMT3FZOGVibGVpT3VaU0o1QzBxS0pRbWdjTVRkbHJKdkktN0lfOUpWbjRPamM4bnl3bHNENk1HdGtkQXU0UW5GNDhBNXgyaE5razh0ZWZYMzc3RF9GNElnMUlVVTZUX21FX1MyOFFjNHAtS2owQy1ZZW9jZW9iMGo5SDVQVF9fdWRTeHItdTZOTi0wdTRRU3d3YjY?oc=5",
-            "matched_keywords": [
-              "공급계약"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "tech_breakthrough",
-            "date": "2026-08-06",
-            "impact_pct": 6.0,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 3.56,
-            "note": "미국·중국 꺾고 무기 선주문 1위...국산화 없인 ‘반짝 특수’ [배창...",
-            "source_url": "https://finance.naver.com/item/news_news.naver?code=012450",
-            "matched_keywords": [
-              "국산화"
-            ]
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-08-14",
-            "d_day": 7,
-            "impact_pct": 6.0,
-            "direction": 0.6,
-            "time_weight": 1.0,
-            "probability": 0.6,
-            "contrib_pct": 2.16,
-            "id": "012450-2026Half-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-11-14",
-            "d_day": 99,
-            "impact_pct": 3.0,
-            "direction": 0.6,
-            "time_weight": 0.81,
-            "probability": 0.6,
-            "contrib_pct": 0.88,
-            "id": "012450-20263Q-earnings"
-          }
-        ],
-        "earnings_signal": "growth",
-        "ret_60d_pct": -17.06,
-        "next_catalyst": {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-08-14",
-          "d_day": 7,
-          "impact_pct": 6.0,
-          "direction": 0.6,
-          "time_weight": 1.0,
-          "probability": 0.6,
-          "contrib_pct": 2.16,
-          "id": "012450-2026Half-earnings"
-        }
-      },
-      "delta_vs_prev": {
-        "prev_estimate": 1154000.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -6500.0,
-        "entry_cap_delta_krw": -6800.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
-      },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,147,500원**(+7.7%, 등급 B) · 직전 리포트 대비 ▼6,500원 · 프리미엄 테마+2/뉴스+4/섹터+4/모멘텀-2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,002,600원**(R/R≥1.1·ATR 6.6%×2≈손절 13.1% 기준) · 현재가 1,065,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.9% 상회) · 직전 리포트 대비 ▼6,800원"
-    },
-    {
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "sector": "방산",
-      "current_price": 690000.0,
-      "anchor_price": 690000.0,
-      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
-      "consensus_rejected": null,
-      "premium_pct": {
-        "theme": 0.94,
-        "news": 5.1,
-        "sector": 4.4,
-        "momentum": -3.5,
-        "total": 6.94
-      },
-      "trend_gate": {
-        "factor": 0.3,
-        "excess60_vs_kospi_pct": -3.01,
-        "pct_of_52w_high": 61.72,
-        "ungated": {
-          "theme": 3.15,
-          "news": 12.0
-        }
-      },
-      "raw_estimate": 737900.0,
-      "cap_applied": null,
-      "estimate": 737900.0,
-      "expected_return_pct": 6.9,
-      "entry_cap_price": 604800.0,
-      "entry_cap_basis": {
-        "min_rr": 1.1,
-        "min_rr_tier": "bull",
-        "stop_frac_pct": 20.0,
-        "stop_basis": "ATR 10.6%×2≈손절 20.0%",
-        "formula": "목표가 / (1 + min_rr × 손절%)"
-      },
-      "in_buy_zone": false,
-      "entry_cap_gap_pct": -12.3,
-      "entry_cap_note": null,
-      "entry_cap_caution": null,
-      "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.30(집중도 평소 0.45배·heat 0.0)",
-      "sector_signals": {
-        "group": "defense_export",
-        "median_excess_60d": -7.24,
-        "signals_met": 3,
-        "min_signals": 2,
-        "immersion_met": true,
-        "sector_value": {
-          "sector_value": 0.3,
-          "heat": 0.0,
-          "rs": 1.0,
-          "conc_ratio": 0.45,
-          "median_excess_20d": 11.17,
-          "members": [
-            "012450",
-            "064350",
-            "079550"
-          ],
-          "as_of": "2026-08-06",
-          "group": "defense_export"
-        }
-      },
-      "grade": "B",
-      "data_layers": {
-        "valuation_band": false,
-        "consensus_target": false,
-        "price_snapshot": false,
-        "theme_exposure": true,
-        "sector_group": true,
-        "earnings_signal": true
-      },
-      "detail": {
-        "theme_parts": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "strength": 0.7,
-            "horizon": "3-5y",
-            "horizon_discount": 0.25,
-            "contrib_pct": 3.15
-          }
-        ],
-        "news_parts": [
-          {
-            "kind": "news_auto",
-            "type": "capex_expansion",
-            "date": "2026-08-06",
-            "impact_pct": 3.0,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 1.78,
-            "note": "美, 이란 전쟁에 무기고 텅 비었다 …'탄약 공장' 증설 K-방산 기회",
-            "source_url": "https://finance.naver.com/item/news_news.naver?code=079550",
-            "matched_keywords": [
-              "증설"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "supply_contract_major",
-            "date": "2026-08-06",
-            "impact_pct": 8.0,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 4.75,
-            "note": "그린광학, 42억 규모 방산 센서부 공급계약",
-            "source_url": "https://finance.naver.com/item/news_news.naver?code=079550",
-            "matched_keywords": [
-              "공급계약"
-            ]
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-08-14",
-            "d_day": 7,
-            "impact_pct": 6.0,
-            "direction": 1.0,
-            "time_weight": 1.0,
-            "probability": 0.6,
-            "contrib_pct": 3.6,
-            "id": "079550-2026Half-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-11-14",
-            "d_day": 99,
-            "impact_pct": 3.0,
-            "direction": 1.0,
-            "time_weight": 0.81,
-            "probability": 0.6,
-            "contrib_pct": 1.46,
-            "id": "079550-20263Q-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "geopolitical",
-            "date": "2026-08-07",
-            "d_day": 0,
-            "impact_pct": 0.0,
-            "direction": 1.0,
-            "time_weight": 1.0,
-            "probability": 0.6,
-            "contrib_pct": 0.0,
-            "id": "geo-2026-08-04-hormuz-deal-imminent"
-          },
-          {
-            "kind": "catalyst",
-            "type": "geopolitical",
-            "date": "2026-08-06",
-            "d_day": -1,
-            "impact_pct": 0.0,
-            "direction": 1.0,
-            "time_weight": 1.0,
-            "probability": 0.9,
-            "contrib_pct": 0.0,
-            "id": "geo-2026-08-05-houthi-tanker-attack"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-08-06",
-            "d_day": -1,
-            "impact_pct": 6.0,
-            "direction": 1.0,
-            "time_weight": 1.0,
-            "probability": 0.9,
-            "contrib_pct": 5.4,
-            "id": "079550-2026-08-06-q2-earnings"
-          }
-        ],
-        "earnings_signal": "strong_growth",
-        "ret_60d_pct": -21.5,
-        "next_catalyst": {
-          "kind": "catalyst",
-          "type": "geopolitical",
-          "date": "2026-08-07",
-          "d_day": 0,
-          "impact_pct": 0.0,
-          "direction": 1.0,
-          "time_weight": 1.0,
-          "probability": 0.6,
-          "contrib_pct": 0.0,
-          "id": "geo-2026-08-04-hormuz-deal-imminent"
-        }
-      },
-      "delta_vs_prev": {
-        "prev_estimate": 816100.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -78200.0,
-        "entry_cap_delta_krw": -64100.0,
-        "news_pct_delta": -5.09,
-        "expected_return_delta_pct": -7.1
-      },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **737,900원**(+6.9%, 등급 B) · 직전 리포트 대비 ▼78,200원 · 프리미엄 테마+1/뉴스+5/섹터+4/모멘텀-4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **604,800원**(R/R≥1.1·ATR 10.6%×2≈손절 20.0% 기준) · 현재가 690,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.3% 상회) · 직전 리포트 대비 ▼64,100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **421,000원**(+7.7%, 등급 B) · 직전 리포트 대비 ▲2,200원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀-2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **369,700원**(R/R≥1.1·ATR 6.3%×2≈손절 12.6% 기준) · 현재가 391,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.4% 상회) · 직전 리포트 대비 ▲2,000원"
     },
     {
       "ticker": "000660",
       "name": "SK하이닉스",
       "sector": "IT/반도체",
-      "current_price": 1494000.0,
-      "anchor_price": 1494000.0,
+      "current_price": 1419000.0,
+      "anchor_price": 1419000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.8,
-        "news": 3.54,
+        "news": 3.62,
         "sector": 4.72,
         "momentum": -3.5,
-        "total": 6.56
+        "total": 6.64
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -0.09,
-        "pct_of_52w_high": 50.02,
+        "excess60_vs_kospi_pct": -3.79,
+        "pct_of_52w_high": 47.51,
         "ungated": {
           "theme": 6.01,
-          "news": 11.96
+          "news": 12.0
         }
       },
-      "raw_estimate": 1592000.0,
+      "raw_estimate": 1513200.0,
       "cap_applied": null,
-      "estimate": 1592000.0,
+      "estimate": 1513200.0,
       "expected_return_pct": 6.6,
-      "entry_cap_price": 1304900.0,
+      "entry_cap_price": 1240300.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
         "stop_frac_pct": 20.0,
-        "stop_basis": "ATR 12.5%×2≈손절 20.0%",
+        "stop_basis": "ATR 13.5%×2≈손절 20.0%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -12.7,
+      "entry_cap_gap_pct": -12.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.38(집중도 평소 1.19배·heat 0.482)",
@@ -1848,14 +1751,14 @@
           {
             "kind": "news_auto",
             "type": "buyback_cancellation",
-            "date": "2026-08-06",
+            "date": "2026-08-07",
             "impact_pct": 4.0,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": 2.37,
-            "note": "삼성전자·SK하이닉스 “주주환원 확대”...삼성은 ‘조만간’, 하이닉스는 ‘연말까지’ - 조선일보",
-            "source_url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPcDlvREprMWpXWUpxTmROWUdkdDRnSGVadU96OWhVQUMyUTRLRnhOSlR2QXhJRnhfTElpdTBkcENtVkF3anRXQkpSemF1b051b1pURzZCTks0d19nc3BRaksycEFNSUtTNVJ0cnJiOE1PRU1JQTBCUU5vSHRvWEEzaHdnSU1YbWJnZ1VJ?oc=5",
+            "contrib_pct": 2.4,
+            "note": "반도체 투톱, 주주환원 확대 압박에 대응책 고심 [비즈360]",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=000660",
             "matched_keywords": [
               "주주환원확대",
               "주주환원"
@@ -1870,25 +1773,10 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -7.01,
             "contrib_pct": 3.0,
-            "note": "8년 묵힌 4조원이 '63조' 됐다…SK하이닉스 '잭팟' [홍민성의 테토남] - 한국경제",
+            "note": "8년 묵힌 4조원이 '63조' 됐다…SK하이닉스 '잭팟' [홍민성의 테토남] - hankyung.com",
             "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE4xNTlQalJ6bVNQYi1yTS1yRmdVQ3FqOEJXcnVmZndvSktWSXZFUTN0eHhMWkV3cExneTVoR1RsU1Y0S0RYNUF6bkdPM2Y2TEFSWWpPdTMxUjViUQ?oc=5",
             "matched_keywords": [
               "잭팟"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "supply_glut_or_price_drop",
-            "date": "2026-07-29",
-            "impact_pct": -5.0,
-            "decay": 0.9,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -2.63,
-            "contrib_pct": -0.07,
-            "note": "SK하이닉스, ‘메모리 피크아웃’ 우려 진정 총력전… “AI 투자 지속 확대” - 조선비즈 - Chosunbiz",
-            "source_url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQaGVHbnYzazFPRU5seXo1RnZfQXh1NDhCVGFRT1ZDZUlDcnl5dzM5RnJ6TXhDQk55N01wS005MnZ2bGNQSlRyUzJwQ2tlSWh6RTlPaGhtR1RMY0tvOFYxQU9qcUFrNExxR3hTYnFSYWVzWXhOTGhSeVYxdzQ2V1NtZFhB0gGWAUFVX3lxTE5NNGhCNkt1TUdxLUVQNXJVWVRlZjdmRS1XVDVIdG9Ndm5FMHVXRHdsT3Zic2VQZGtOYkdDbHFBWWpGb052UnNMV29waGVJbTJKX2FJTDhMSzNVV1VkbVJDR1JwLTFUaGQ3QzI0S2UtV01lZDlydm9RQTJDRWFEclRsaFlhWlVtWktFZkdsLXdZSG1LNFBwZw?oc=5",
-            "matched_keywords": [
-              "피크아웃"
             ]
           },
           {
@@ -1931,7 +1819,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -18.58,
+        "ret_60d_pct": -22.67,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -1946,23 +1834,32 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 1732000.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -140000.0,
-        "entry_cap_delta_krw": -114800.0,
-        "news_pct_delta": -3.61,
-        "expected_return_delta_pct": -6.4
+        "prev_estimate": 1592000.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -78800.0,
+        "entry_cap_delta_krw": -64600.0,
+        "news_pct_delta": 0.08,
+        "expected_return_delta_pct": 0.0
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,592,000원**(+6.6%, 등급 B) · 직전 리포트 대비 ▼140,000원 · 프리미엄 테마+2/뉴스+4/섹터+5/모멘텀-4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,304,900원**(R/R≥1.1·ATR 12.5%×2≈손절 20.0% 기준) · 현재가 1,494,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.7% 상회) · 직전 리포트 대비 ▼114,800원"
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "buyback_cancellation",
+          "date": "2026-08-07",
+          "contrib_pct": 2.4,
+          "note": "반도체 투톱, 주주환원 확대 압박에 대응책 고심 [비즈360]",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=000660"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,513,200원**(+6.6%, 등급 B) · 직전 리포트 대비 ▼78,800원 · 프리미엄 테마+2/뉴스+4/섹터+5/모멘텀-4% · 📰 원인 뉴스: buyback_cancellation(자동) +2.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,240,300원**(R/R≥1.1·ATR 13.5%×2≈손절 20.0% 기준) · 현재가 1,419,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.6% 상회) · 직전 리포트 대비 ▼64,600원"
     },
     {
       "ticker": "010120",
       "name": "LS ELECTRIC",
       "sector": "전력기기",
-      "current_price": 200000.0,
-      "anchor_price": 200000.0,
+      "current_price": 193100.0,
+      "anchor_price": 193100.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
@@ -1974,27 +1871,27 @@
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -12.31,
-        "pct_of_52w_high": 59.7,
+        "excess60_vs_kospi_pct": -14.3,
+        "pct_of_52w_high": 57.64,
         "ungated": {
           "theme": 2.66,
           "news": 8.62
         }
       },
-      "raw_estimate": 212600.0,
+      "raw_estimate": 205200.0,
       "cap_applied": null,
-      "estimate": 212600.0,
+      "estimate": 205200.0,
       "expected_return_pct": 6.3,
-      "entry_cap_price": 174300.0,
+      "entry_cap_price": 168200.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
         "stop_frac_pct": 20.0,
-        "stop_basis": "ATR 10.3%×2≈손절 20.0%",
+        "stop_basis": "ATR 10.8%×2≈손절 20.0%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -12.8,
+      "entry_cap_gap_pct": -12.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.30(집중도 평소 0.48배·heat 0.0)",
@@ -2142,7 +2039,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -30.8,
+        "ret_60d_pct": -33.18,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2157,51 +2054,51 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 216300.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -3700.0,
-        "entry_cap_delta_krw": -3000.0,
+        "prev_estimate": 212600.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -7400.0,
+        "entry_cap_delta_krw": -6100.0,
         "news_pct_delta": 0.0,
         "expected_return_delta_pct": 0.0
       },
       "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **212,600원**(+6.3%, 등급 B) · 직전 리포트 대비 ▼3,700원 · 프리미엄 테마+1/뉴스+3/섹터+4/모멘텀-2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **174,300원**(R/R≥1.1·ATR 10.3%×2≈손절 20.0% 기준) · 현재가 200,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.8% 상회) · 직전 리포트 대비 ▼3,000원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **205,200원**(+6.3%, 등급 B) · 직전 리포트 대비 ▼7,400원 · 프리미엄 테마+1/뉴스+3/섹터+4/모멘텀-2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **168,200원**(R/R≥1.1·ATR 10.8%×2≈손절 20.0% 기준) · 현재가 193,100원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.9% 상회) · 직전 리포트 대비 ▼6,100원"
     },
     {
       "ticker": "267260",
       "name": "HD현대일렉트릭",
       "sector": "전력기기",
-      "current_price": 756000.0,
-      "anchor_price": 756000.0,
+      "current_price": 741000.0,
+      "anchor_price": 741000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.85,
-        "news": 1.25,
+        "news": 1.79,
         "sector": 4.4,
         "momentum": -1.5,
-        "total": 5.0
+        "total": 5.54
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -23.76,
-        "pct_of_52w_high": 52.87,
+        "excess60_vs_kospi_pct": -24.51,
+        "pct_of_52w_high": 51.82,
         "ungated": {
           "theme": 2.83,
-          "news": 4.18
+          "news": 5.98
         }
       },
-      "raw_estimate": 793800.0,
+      "raw_estimate": 782100.0,
       "cap_applied": null,
-      "estimate": 793800.0,
-      "expected_return_pct": 5.0,
-      "entry_cap_price": 656800.0,
+      "estimate": 782100.0,
+      "expected_return_pct": 5.5,
+      "entry_cap_price": 643600.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 19.0,
-        "stop_basis": "ATR 9.5%×2≈손절 19.0%",
+        "stop_frac_pct": 19.6,
+        "stop_basis": "ATR 9.8%×2≈손절 19.6%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
@@ -2255,14 +2152,14 @@
           {
             "kind": "news_auto",
             "type": "capex_expansion",
-            "date": "2026-07-29",
+            "date": "2026-08-07",
             "impact_pct": 3.0,
-            "decay": 0.9,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 18.54,
-            "contrib_pct": 0.0,
-            "note": "“효성·LS에 증설 밀렸다고?…HD현대일렉트릭, ‘추가 증설’ 카드 만지작” - 뉴스퀘스트",
-            "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9lNTNmcWNnV1BTWGFRY2ZqYXIyZTFmSHlyY3ZPd3lGc05QbEtfbTJvUHBaN0pORG9ld3BQbENJWG9jakdST1RkXzd0ZmFBa09qdjRaX3A2YXhfbEVybFVmY1lad3J0Zm5ENEVLeWlYRdIBc0FVX3lxTE1MZGc1eW1sekIxeGtSTXY4WE9zejZLel96bThVeEM5ZzdKYk9OcGVmMUZtdkhDYnNJbEtNLVdzLXM0anN5T25seVdwZFVFTjlsUmJRUDFnU2doRnZaOUF0bzk5OHZoQmpEckhMZTJOaEpkRWc?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 1.8,
+            "note": "HD현대일렉트릭, 美 앨라배마 공장 누적 변압기 1,000대 돌파… 2억 달러 증설 착수 - 글로벌이코노믹",
+            "source_url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQdm5LeG5wWWt4NnRpbmh0NUlXaGZJMjJrVkZXckF6UXVqbVhpNXY5RTRSdGVvb3dlU08yTjFvcmM3V2NGMG9XenhmS0RNRkcwQkNJcjVKQ3A4Q3lEU0hyT2REMWRMUWJmMVRjOThUdnF5bVJBZTVmdDB2clpPUDlncVJwLWFOUC13?oc=5",
             "matched_keywords": [
               "증설"
             ]
@@ -2276,7 +2173,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 18.54,
             "contrib_pct": 0.0,
-            "note": "[특징주] HD현대일렉트릭, 호실적에도 13% 급락…신규 사업 반영 지연 우려 - ajunews.com",
+            "note": "[특징주] HD현대일렉트릭, 호실적에도 13% 급락…신규 사업 반영 지연 우려 - 아주경제",
             "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1kT3dvc3hDa2pjX3hmbklfdTFpSG5ZZW5BaFFBU3ZPRkkzSGI3RF9PSlB6cHpYd2x3dHlObHRNY0ZoZTY1TWVyWnNiNjNGd2lrQ3M4a3laX2Vyd9IBWEFVX3lxTE5BczBJNm9MeWlHeTBOb2hQSkdhemlja05TVEFvN05Zamh3TjV3cFRkbDBUY1dlVmtnYjZZczg2OUthRDF6Q2t1TU1YYU5SM0J1TWF3dllSUXg?oc=5",
             "matched_keywords": [
               "호실적"
@@ -2323,7 +2220,7 @@
           }
         ],
         "earnings_signal": "growth",
-        "ret_60d_pct": -42.25,
+        "ret_60d_pct": -43.39,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2338,56 +2235,65 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 809600.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -15800.0,
-        "entry_cap_delta_krw": -15400.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "prev_estimate": 793800.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -11700.0,
+        "entry_cap_delta_krw": -13200.0,
+        "news_pct_delta": 0.54,
+        "expected_return_delta_pct": 0.5
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **793,800원**(+5.0%, 등급 B) · 직전 리포트 대비 ▼15,800원 · 프리미엄 테마+1/뉴스+1/섹터+4/모멘텀-2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **656,800원**(R/R≥1.1·ATR 9.5%×2≈손절 19.0% 기준) · 현재가 756,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 13.1% 상회) · 직전 리포트 대비 ▼15,400원"
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "capex_expansion",
+          "date": "2026-08-07",
+          "contrib_pct": 1.8,
+          "note": "HD현대일렉트릭, 美 앨라배마 공장 누적 변압기 1,000대 돌파… 2억 달러 증설 착수 - 글로벌이코노믹",
+          "source_url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQdm5LeG5wWWt4NnRpbmh0NUlXaGZJMjJrVkZXckF6UXVqbVhpNXY5RTRSdGVvb3dlU08yTjFvcmM3V2NGMG9XenhmS0RNRkcwQkNJcjVKQ3A4Q3lEU0hyT2REMWRMUWJmMVRjOThUdnF5bVJBZTVmdDB2clpPUDlncVJwLWFOUC13?oc=5"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **782,100원**(+5.5%, 등급 B) · 직전 리포트 대비 ▼11,700원 · 프리미엄 테마+1/뉴스+2/섹터+4/모멘텀-2% · 📰 원인 뉴스: capex_expansion(자동) +1.8%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **643,600원**(R/R≥1.1·ATR 9.8%×2≈손절 19.6% 기준) · 현재가 741,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 13.1% 상회) · 직전 리포트 대비 ▼13,200원"
     },
     {
       "ticker": "006400",
       "name": "삼성SDI",
       "sector": "2차전지",
-      "current_price": 461000.0,
-      "anchor_price": 461000.0,
+      "current_price": 442000.0,
+      "anchor_price": 442000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.0,
-        "news": 4.01,
+        "news": 2.59,
         "sector": 4.4,
-        "momentum": -3.5,
-        "total": 4.91
+        "momentum": -1.5,
+        "total": 5.49
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -8.22,
-        "pct_of_52w_high": 63.76,
+        "excess60_vs_kospi_pct": -10.85,
+        "pct_of_52w_high": 61.13,
         "ungated": {
           "theme": 0.0,
-          "news": 12.0
+          "news": 8.62
         }
       },
-      "raw_estimate": 483600.0,
+      "raw_estimate": 466300.0,
       "cap_applied": null,
-      "estimate": 483600.0,
-      "expected_return_pct": 4.9,
-      "entry_cap_price": null,
+      "estimate": 466300.0,
+      "expected_return_pct": 5.5,
+      "entry_cap_price": 398200.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 14.9,
-        "stop_basis": "ATR 7.4%×2≈손절 14.9%",
+        "stop_frac_pct": 15.5,
+        "stop_basis": "ATR 7.8%×2≈손절 15.5%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": null,
-      "entry_cap_note": "밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요",
+      "entry_cap_gap_pct": -9.9,
+      "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.30(집중도 평소 0.44배·heat 0.0)",
       "sector_signals": {
@@ -2464,24 +2370,9 @@
             "realized_since_event_pct": 6.69,
             "contrib_pct": 0.0,
             "note": "삼성SDI, 7분기 만에 흑자…미 보조금 빼고도 1000억 - v.daum.net",
-            "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE5Ibi0wbzU1STI5bktLYU0yMzBfLWdXU2xyTFF5MThkblNWdXhmNWhtUUh4MjVPZm1XZjFTUEE5LTZ6bDdNUUE?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9HSlctSDQza3d3b2pyT0RKU0l6X3dSRlZTQTA4QTlUQ0I3amJManRmLU1ISlVhOEViaHc0VlRIdVhtYUN6Q1NzU3JxZWd5dE0?oc=5",
             "matched_keywords": [
               "보조금"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "supply_contract_major",
-            "date": "2026-08-06",
-            "impact_pct": 8.0,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 4.75,
-            "note": "포스코퓨처엠, LFP 양극재 첫 공급",
-            "source_url": "https://finance.naver.com/item/news_news.naver?code=006400",
-            "matched_keywords": [
-              "첫공급"
             ]
           },
           {
@@ -2494,7 +2385,7 @@
             "realized_since_event_pct": 0.0,
             "contrib_pct": 3.56,
             "note": "삼성SDI·SK온, 솔리드파워와 전고체 배터리 상용화 '성큼' - 더구루",
-            "source_url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1MTldHWWg2aHlYdkVjREU2R01BcnV2TmRsNjdZTkVaa3JZY0xtcHltQzl4MUhHLUdlTUNjUXljVTRGUmNYQmxBNXM5RFFEZGZvZ05TcEpsV0U2S2pkc0JLaTFEcw?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE85LVpzUXItTkNSWnBjb01IWWpRWWhYQ2pxV0dDRUxNaUE5azhzX0VURmp1X1FRZGNKdDdpdG1GbFR6RUtQUmo1Z1hZQjRGTWY2R095MGV6RU9DR3RhQ3c0SA?oc=5",
             "matched_keywords": [
               "전고체",
               "상용화"
@@ -2526,7 +2417,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -26.71,
+        "ret_60d_pct": -29.73,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2541,23 +2432,256 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 475800.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": 7800.0,
+        "prev_estimate": 483600.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -17300.0,
         "entry_cap_delta_krw": null,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "news_pct_delta": -1.42,
+        "expected_return_delta_pct": 0.6
       },
       "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **483,600원**(+4.9%, 등급 B) · 직전 리포트 대비 ▲7,800원 · 프리미엄 테마+0/뉴스+4/섹터+4/모멘텀-4%",
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **466,300원**(+5.5%, 등급 B) · 직전 리포트 대비 ▼17,300원 · 프리미엄 테마+0/뉴스+3/섹터+4/모멘텀-2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **398,200원**(R/R≥1.1·ATR 7.8%×2≈손절 15.5% 기준) · 현재가 442,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 9.9% 상회)"
+    },
+    {
+      "ticker": "079550",
+      "name": "LIG넥스원",
+      "sector": "방산",
+      "current_price": 706000.0,
+      "anchor_price": 706000.0,
+      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
+      "consensus_rejected": null,
+      "premium_pct": {
+        "theme": 0.94,
+        "news": 2.04,
+        "sector": 4.4,
+        "momentum": -3.5,
+        "total": 3.88
+      },
+      "trend_gate": {
+        "factor": 0.3,
+        "excess60_vs_kospi_pct": -0.8,
+        "pct_of_52w_high": 63.15,
+        "ungated": {
+          "theme": 3.15,
+          "news": 12.0
+        }
+      },
+      "raw_estimate": 733400.0,
+      "cap_applied": null,
+      "estimate": 733400.0,
+      "expected_return_pct": 3.9,
+      "entry_cap_price": null,
+      "entry_cap_basis": {
+        "min_rr": 1.1,
+        "min_rr_tier": "bull",
+        "stop_frac_pct": 20.0,
+        "stop_basis": "ATR 10.4%×2≈손절 20.0%",
+        "formula": "목표가 / (1 + min_rr × 손절%)"
+      },
+      "in_buy_zone": false,
+      "entry_cap_gap_pct": null,
+      "entry_cap_note": "밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요",
+      "entry_cap_caution": null,
+      "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.30(집중도 평소 0.45배·heat 0.0)",
+      "sector_signals": {
+        "group": "defense_export",
+        "median_excess_60d": -7.24,
+        "signals_met": 3,
+        "min_signals": 2,
+        "immersion_met": true,
+        "sector_value": {
+          "sector_value": 0.3,
+          "heat": 0.0,
+          "rs": 1.0,
+          "conc_ratio": 0.45,
+          "median_excess_20d": 11.17,
+          "members": [
+            "012450",
+            "064350",
+            "079550"
+          ],
+          "as_of": "2026-08-06",
+          "group": "defense_export"
+        }
+      },
+      "grade": "B",
+      "data_layers": {
+        "valuation_band": false,
+        "consensus_target": false,
+        "price_snapshot": true,
+        "theme_exposure": true,
+        "sector_group": true,
+        "earnings_signal": true
+      },
+      "detail": {
+        "theme_parts": [
+          {
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "strength": 0.7,
+            "horizon": "3-5y",
+            "horizon_discount": 0.25,
+            "contrib_pct": 3.15
+          }
+        ],
+        "news_parts": [
+          {
+            "kind": "news_auto",
+            "type": "earnings_miss_or_guidance_cut",
+            "date": "2026-08-07",
+            "impact_pct": -6.0,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -3.6,
+            "note": "\"LIG디펜스앤에어로스, 실적 부진 따른 단기 변동성은 기회\"-신한",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=079550",
+            "matched_keywords": [
+              "실적부진"
+            ]
+          },
+          {
+            "kind": "news_auto",
+            "type": "earnings_surprise_beat",
+            "date": "2026-08-07",
+            "impact_pct": 6.0,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.6,
+            "note": "LIG D&A, 2분기 호실적에도 주가는 '냉랭'...그 이유는? [주...",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=079550",
+            "matched_keywords": [
+              "호실적"
+            ]
+          },
+          {
+            "kind": "news_auto",
+            "type": "supply_contract_major",
+            "date": "2026-08-06",
+            "impact_pct": 8.0,
+            "decay": 0.99,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 4.75,
+            "note": "그린광학, 42억 규모 방산 센서부 공급계약",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=079550",
+            "matched_keywords": [
+              "공급계약"
+            ]
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-08-14",
+            "d_day": 7,
+            "impact_pct": 6.0,
+            "direction": 1.0,
+            "time_weight": 1.0,
+            "probability": 0.6,
+            "contrib_pct": 3.6,
+            "id": "079550-2026Half-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-11-14",
+            "d_day": 99,
+            "impact_pct": 3.0,
+            "direction": 1.0,
+            "time_weight": 0.81,
+            "probability": 0.6,
+            "contrib_pct": 1.46,
+            "id": "079550-20263Q-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "geopolitical",
+            "date": "2026-08-07",
+            "d_day": 0,
+            "impact_pct": 0.0,
+            "direction": 1.0,
+            "time_weight": 1.0,
+            "probability": 0.6,
+            "contrib_pct": 0.0,
+            "id": "geo-2026-08-04-hormuz-deal-imminent"
+          },
+          {
+            "kind": "catalyst",
+            "type": "geopolitical",
+            "date": "2026-08-06",
+            "d_day": -1,
+            "impact_pct": 0.0,
+            "direction": 1.0,
+            "time_weight": 1.0,
+            "probability": 0.9,
+            "contrib_pct": 0.0,
+            "id": "geo-2026-08-05-houthi-tanker-attack"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-08-06",
+            "d_day": -1,
+            "impact_pct": 6.0,
+            "direction": 1.0,
+            "time_weight": 1.0,
+            "probability": 0.9,
+            "contrib_pct": 5.4,
+            "id": "079550-2026-08-06-q2-earnings"
+          }
+        ],
+        "earnings_signal": "strong_growth",
+        "ret_60d_pct": -19.68,
+        "next_catalyst": {
+          "kind": "catalyst",
+          "type": "geopolitical",
+          "date": "2026-08-07",
+          "d_day": 0,
+          "impact_pct": 0.0,
+          "direction": 1.0,
+          "time_weight": 1.0,
+          "probability": 0.6,
+          "contrib_pct": 0.0,
+          "id": "geo-2026-08-04-hormuz-deal-imminent"
+        }
+      },
+      "delta_vs_prev": {
+        "prev_estimate": 737900.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -4500.0,
+        "entry_cap_delta_krw": null,
+        "news_pct_delta": -3.06,
+        "expected_return_delta_pct": -3.0
+      },
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "earnings_miss_or_guidance_cut",
+          "date": "2026-08-07",
+          "contrib_pct": -3.6,
+          "note": "\"LIG디펜스앤에어로스, 실적 부진 따른 단기 변동성은 기회\"-신한",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=079550"
+        },
+        {
+          "kind": "news_auto",
+          "type": "earnings_surprise_beat",
+          "date": "2026-08-07",
+          "contrib_pct": 3.6,
+          "note": "LIG D&A, 2분기 호실적에도 주가는 '냉랭'...그 이유는? [주...",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=079550"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **733,400원**(+3.9%, 등급 B) · 직전 리포트 대비 ▼4,500원 · 프리미엄 테마+1/뉴스+2/섹터+4/모멘텀-4% · 📰 원인 뉴스: earnings_miss_or_guidance_cut(자동) -3.6%; earnings_surprise_beat(자동) +3.6%",
       "entry_cap_line": "뉴스 반영 신규진입 상한가: — (밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요)"
     },
     {
       "ticker": "010140",
       "name": "삼성중공업",
       "sector": "조선",
-      "current_price": 21850.0,
-      "anchor_price": 21800.0,
+      "current_price": 21700.0,
+      "anchor_price": 21700.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
@@ -2569,23 +2693,23 @@
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -11.92,
-        "pct_of_52w_high": 61.81,
+        "excess60_vs_kospi_pct": -12.01,
+        "pct_of_52w_high": 61.39,
         "ungated": {
           "theme": 2.56,
           "news": 2.94
         }
       },
-      "raw_estimate": 22300.0,
+      "raw_estimate": 22100.0,
       "cap_applied": null,
-      "estimate": 22300.0,
-      "expected_return_pct": 2.1,
+      "estimate": 22100.0,
+      "expected_return_pct": 1.8,
       "entry_cap_price": null,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 12.6,
-        "stop_basis": "ATR 6.3%×2≈손절 12.6%",
+        "stop_frac_pct": 12.9,
+        "stop_basis": "ATR 6.5%×2≈손절 12.9%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
@@ -2706,7 +2830,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -30.41,
+        "ret_60d_pct": -30.89,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2721,23 +2845,23 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 22500.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
+        "prev_estimate": 22300.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
         "estimate_delta_krw": -200.0,
         "entry_cap_delta_krw": null,
         "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.3
+        "expected_return_delta_pct": -0.3
       },
       "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **22,300원**(+2.1%, 등급 B) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스-2/섹터+4/모멘텀-2%",
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **22,100원**(+1.8%, 등급 B) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스-2/섹터+4/모멘텀-2%",
       "entry_cap_line": "뉴스 반영 신규진입 상한가: — (밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요)"
     },
     {
       "ticker": "028260",
       "name": "삼성물산",
       "sector": "지주/건설",
-      "current_price": 332500.0,
-      "anchor_price": 332500.0,
+      "current_price": 325000.0,
+      "anchor_price": 325000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
@@ -2749,23 +2873,23 @@
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -5.07,
-        "pct_of_52w_high": 58.85,
+        "excess60_vs_kospi_pct": -6.41,
+        "pct_of_52w_high": 57.52,
         "ungated": {
           "theme": 0.0,
           "news": 3.56
         }
       },
-      "raw_estimate": 334900.0,
+      "raw_estimate": 327400.0,
       "cap_applied": null,
-      "estimate": 334900.0,
+      "estimate": 327400.0,
       "expected_return_pct": 0.7,
       "entry_cap_price": null,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 18.7,
-        "stop_basis": "ATR 9.4%×2≈손절 18.7%",
+        "stop_frac_pct": 19.4,
+        "stop_basis": "ATR 9.7%×2≈손절 19.4%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
@@ -2864,7 +2988,7 @@
           }
         ],
         "earnings_signal": "decline",
-        "ret_60d_pct": -23.56,
+        "ret_60d_pct": -25.29,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2879,23 +3003,23 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 338500.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -3600.0,
+        "prev_estimate": 334900.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -7500.0,
         "entry_cap_delta_krw": null,
         "news_pct_delta": 0.0,
         "expected_return_delta_pct": 0.0
       },
       "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **334,900원**(+0.7%, 등급 B) · 직전 리포트 대비 ▼3,600원 · 프리미엄 테마+0/뉴스-1/섹터+5/모멘텀-4%",
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **327,400원**(+0.7%, 등급 B) · 직전 리포트 대비 ▼7,500원 · 프리미엄 테마+0/뉴스-1/섹터+5/모멘텀-4%",
       "entry_cap_line": "뉴스 반영 신규진입 상한가: — (밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요)"
     },
     {
       "ticker": "042700",
       "name": "한미반도체",
       "sector": "IT/반도체장비",
-      "current_price": 198400.0,
-      "anchor_price": 198400.0,
+      "current_price": 190700.0,
+      "anchor_price": 190700.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
@@ -2907,23 +3031,23 @@
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -28.95,
-        "pct_of_52w_high": 46.57,
+        "excess60_vs_kospi_pct": -30.6,
+        "pct_of_52w_high": 44.77,
         "ungated": {
           "theme": 5.38,
           "news": -3.28
         }
       },
-      "raw_estimate": 199000.0,
+      "raw_estimate": 191300.0,
       "cap_applied": null,
-      "estimate": 199000.0,
+      "estimate": 191300.0,
       "expected_return_pct": 0.3,
       "entry_cap_price": null,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
         "stop_frac_pct": 20.0,
-        "stop_basis": "ATR 10.0%×2≈손절 20.0%",
+        "stop_basis": "ATR 10.8%×2≈손절 20.0%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
@@ -3044,7 +3168,7 @@
           }
         ],
         "earnings_signal": "sharp_decline",
-        "ret_60d_pct": -47.44,
+        "ret_60d_pct": -49.48,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -3059,51 +3183,51 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 204100.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -5100.0,
+        "prev_estimate": 199000.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -7700.0,
         "entry_cap_delta_krw": null,
         "news_pct_delta": 0.0,
         "expected_return_delta_pct": 0.0
       },
       "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **199,000원**(+0.3%, 등급 B) · 직전 리포트 대비 ▼5,100원 · 프리미엄 테마+2/뉴스-5/섹터+5/모멘텀-2%",
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **191,300원**(+0.3%, 등급 B) · 직전 리포트 대비 ▼7,700원 · 프리미엄 테마+2/뉴스-5/섹터+5/모멘텀-2%",
       "entry_cap_line": "뉴스 반영 신규진입 상한가: — (밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요)"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
       "sector": "2차전지",
-      "current_price": 355500.0,
-      "anchor_price": 355500.0,
+      "current_price": 348000.0,
+      "anchor_price": 348000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.86,
-        "news": -2.67,
+        "news": -3.02,
         "sector": 4.4,
         "momentum": -3.5,
-        "total": -0.91
+        "total": -1.26
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -1.26,
-        "pct_of_52w_high": 67.46,
+        "excess60_vs_kospi_pct": -2.56,
+        "pct_of_52w_high": 66.03,
         "ungated": {
           "theme": 2.87,
-          "news": 2.9
+          "news": 1.75
         }
       },
-      "raw_estimate": 352300.0,
+      "raw_estimate": 343600.0,
       "cap_applied": null,
-      "estimate": 352300.0,
-      "expected_return_pct": -0.9,
+      "estimate": 343600.0,
+      "expected_return_pct": -1.3,
       "entry_cap_price": null,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 11.1,
-        "stop_basis": "ATR 5.5%×2≈손절 11.1%",
+        "stop_frac_pct": 11.3,
+        "stop_basis": "ATR 5.7%×2≈손절 11.3%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
@@ -3179,21 +3303,6 @@
           },
           {
             "kind": "news_auto",
-            "type": "labor_or_litigation_resolved",
-            "date": "2026-07-31",
-            "impact_pct": 2.0,
-            "decay": 0.92,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 5.83,
-            "contrib_pct": 0.0,
-            "note": "“ESS 병목 터널 빠져나오는 LG에너지솔루션, ‘관세 환급+유럽 회복’ 실적 반등 사다리 탄다” - 뉴스퀘스트",
-            "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE1INGRxR3FSeFFPeHlDZ0txdHNSbkpVRTZqZTlIOWRKNFNjUGlqQndadnFEMDdTcHpHZzlDNmdtMGFoNmRyMHpkMTFCcEVMU1VfSEM2S3U3R2lVUExydlNmMS1vbmo5TTdXVWNKTk1RVdIBc0FVX3lxTFAtMHh6ZHo1QkVKRm5tVlJJTXI3THUtVmozMklsY2E1N3VsZktScnQ3SGNfMjBuRFAtRzQ2YldTODZ3WE5yNmVQQldXY1dBV2trRUNLbzVmRVQ0Z1lsOGRySUhQNGhjbXZLdW5LSk1SYy1kVUE?oc=5",
-            "matched_keywords": [
-              "관세환급"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "order_backlog_surprise",
             "date": "2026-08-01",
             "impact_pct": 5.0,
@@ -3216,25 +3325,25 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -8.94,
             "contrib_pct": 1.8,
-            "note": "美 보조금 빼면 마이너스…LG엔솔, 2분기에도 '풍요 속 빈곤' - 블로터",
-            "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1mYW5yN3QwdTZhTURhZ0ItelJMbVZJRGxwbzJobk9FeUUyNUlPTmthUU9IUDlSdEZGeGpoX3gtenU5SFlXcUJNeVpjUHMzeTZOaEFpZ0c5cWtTb0VucnpheWpRMmxacmtL0gFsQVVfeXFMTm5SWXJtdEhkdUVXbk9ZaHg3bThOUUxQR3BOaThxaVVkVkNpaTRMc1lFbms2emo3LVZGUDF4SFpCbVRlRURzcFlGV3RWVkNkajNDMHl2NWNBWW9LMDRzX2tIZWxkeEREVHVnSFhR?oc=5",
+            "note": "보조금 빼면 적자…LG엔솔, 2분기 영업익 1133억원·전년比 77%↓ - v.daum.net",
+            "source_url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE1sdzltUG5MVWVwaFhpSlRJWHJRRW42MHhuNEZqdndabmdmX2IyWmpRekUxWGZIMnNwNHZmbmtSRTJFOVduZmlFWHlicmZxNk11RDdvZQ?oc=5",
             "matched_keywords": [
               "보조금"
             ]
           },
           {
             "kind": "news_auto",
-            "type": "supply_contract_major",
-            "date": "2026-08-06",
-            "impact_pct": 8.0,
-            "decay": 0.99,
+            "type": "tech_breakthrough",
+            "date": "2026-07-30",
+            "impact_pct": 6.0,
+            "decay": 0.91,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 4.75,
-            "note": "포스코퓨처엠, LFP 양극재 첫 공급",
-            "source_url": "https://finance.naver.com/item/news_news.naver?code=373220",
+            "realized_since_event_pct": -8.94,
+            "contrib_pct": 3.6,
+            "note": "“장주기 ESS용 소듐전지 기술 검증…상용화 논의 진행”-LG에너지솔루션 컨콜 - 마켓잉크",
+            "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5vVXg3NXUyNFFUcmdLV1ByUFFWT2R5eVkxamlzV3RBNTAwNnBxNUNIaWx5TlkwRERnX0pldzQ2S01zNXlBMjYxQ1RLU0hVSFIxeDU4Mm42VV83QzRvMzhLb0ZBQllBYjJtNEcwVGR3?oc=5",
             "matched_keywords": [
-              "첫공급"
+              "상용화"
             ]
           },
           {
@@ -3263,7 +3372,7 @@
           }
         ],
         "earnings_signal": "sharp_decline",
-        "ret_60d_pct": -19.75,
+        "ret_60d_pct": -21.44,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -3278,51 +3387,60 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 348800.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": 3500.0,
+        "prev_estimate": 352300.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -8700.0,
         "entry_cap_delta_krw": null,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "news_pct_delta": -0.35,
+        "expected_return_delta_pct": -0.4
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **352,300원**(-0.9%, 등급 B) · 직전 리포트 대비 ▲3,500원 · 프리미엄 테마+1/뉴스-3/섹터+4/모멘텀-4%",
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "tech_breakthrough",
+          "date": "2026-07-30",
+          "contrib_pct": 3.6,
+          "note": "“장주기 ESS용 소듐전지 기술 검증…상용화 논의 진행”-LG에너지솔루션 컨콜 - 마켓잉크",
+          "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5vVXg3NXUyNFFUcmdLV1ByUFFWT2R5eVkxamlzV3RBNTAwNnBxNUNIaWx5TlkwRERnX0pldzQ2S01zNXlBMjYxQ1RLU0hVSFIxeDU4Mm42VV83QzRvMzhLb0ZBQllBYjJtNEcwVGR3?oc=5"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **343,600원**(-1.3%, 등급 B) · 직전 리포트 대비 ▼8,700원 · 프리미엄 테마+1/뉴스-3/섹터+4/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%",
       "entry_cap_line": "뉴스 반영 신규진입 상한가: — (밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요)"
     },
     {
       "ticker": "005380",
       "name": "현대차",
       "sector": "자동차",
-      "current_price": 392500.0,
-      "anchor_price": 392500.0,
+      "current_price": 388500.0,
+      "anchor_price": 388500.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.4,
-        "news": -11.4,
+        "news": -10.91,
         "sector": 3.47,
         "momentum": -1.5,
-        "total": -8.03
+        "total": -7.54
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -20.75,
-        "pct_of_52w_high": 50.13,
+        "excess60_vs_kospi_pct": -20.98,
+        "pct_of_52w_high": 49.62,
         "ungated": {
           "theme": 4.65,
-          "news": -10.05
+          "news": -8.39
         }
       },
-      "raw_estimate": 361000.0,
+      "raw_estimate": 359200.0,
       "cap_applied": null,
-      "estimate": 361000.0,
-      "expected_return_pct": -8.0,
+      "estimate": 359200.0,
+      "expected_return_pct": -7.5,
       "entry_cap_price": null,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 14.2,
-        "stop_basis": "ATR 7.1%×2≈손절 14.2%",
+        "stop_frac_pct": 14.5,
+        "stop_basis": "ATR 7.3%×2≈손절 14.5%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
@@ -3354,7 +3472,7 @@
       "data_layers": {
         "valuation_band": false,
         "consensus_target": false,
-        "price_snapshot": false,
+        "price_snapshot": true,
         "theme_exposure": true,
         "sector_group": true,
         "earnings_signal": true
@@ -3412,14 +3530,14 @@
           {
             "kind": "news_auto",
             "type": "tech_breakthrough",
-            "date": "2026-08-04",
+            "date": "2026-08-07",
             "impact_pct": 6.0,
-            "decay": 0.97,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 1.55,
-            "contrib_pct": 1.93,
-            "note": "자율주행 개발 ‘원팀’체제로… 조기 상용화 나선 현대차그룹 - 아시아투데이",
-            "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1OR1NyQXcwZk1jSGRENVN0dlZjejcwcTlaZDhNTEZBb2tiWTFnM2hBU2VqbTJUbk9xRFN5U09xYkhhOU1PQnJ1MmtzQk4xd19mN1JUOTJrM1FwbnRfUXJ4eWVXOGVqZGZXTTltbGhR?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.6,
+            "note": "하이코어, 현대건설 ‘디에이치 방배’에 나노 모빌리티 첫 상용화 적.....",
+            "source_url": "https://finance.naver.com/item/news_news.naver?code=005380",
             "matched_keywords": [
               "상용화"
             ]
@@ -3427,16 +3545,16 @@
           {
             "kind": "news_global",
             "type": "global_tariff_trade",
-            "date": "2026-08-06",
+            "date": "2026-08-05",
             "impact_pct": -4.0,
             "channel": "policy",
             "transmission": 0.4,
-            "decay": 0.99,
+            "decay": 0.98,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.95,
-            "note": "Trumps tariff on polysilicon cloud outlook for Korean firms - Aju Press",
-            "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE80a3JNcUJjWjU3VE5JTWZYZkM4eXd1eS1OZkl5ZWVrVk9oSlRueHd0U3NBa3RTWFRlVFhWYmdlLUVpRDJmLW8tOFNobFdLY2x5X0pTaVI4NTg2YjTSAVdBVV95cUxNWE9PWWRqR0g1dndlbnhMSlYyVmp1N3Y0eU51RS1ZTzlnSzhGQll2TVlMRG1JeDlGTmZKSmlOVmhVUS0zblJybklrR3lrZ0N0cUUzTG1keUk?oc=5"
+            "realized_since_event_pct": 2.17,
+            "contrib_pct": -0.96,
+            "note": "25 US States File New Lawsuit Against Trump Tariffs - Seoul Economic Daily",
+            "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOY2c5NnVNSDJIN0V0MjM0enlKdGs0QTdSMDF4T0VmRTNLS3NoYWpZbVVJc1BzTXdkTVpHR1JVdllFYUlQenU5YVdoQTBfRENVdlhrN0N6UEplbmctbmVHNFpiQ0NxM2J6d3NrRldJT2Jud3JSdVFnY1E0VC1vZFBJX2QwSFpxSjR4ZGVIenQ5V0wxUGYzNjhrVmNLTXFmNlh6?oc=5"
           },
           {
             "kind": "catalyst",
@@ -3464,7 +3582,7 @@
           }
         ],
         "earnings_signal": "sharp_decline",
-        "ret_60d_pct": -39.24,
+        "ret_60d_pct": -39.86,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -3479,18 +3597,35 @@
         }
       },
       "delta_vs_prev": {
-        "prev_estimate": 369300.0,
-        "prev_as_of": "2026-08-07T09:07:33+09:00",
-        "estimate_delta_krw": -8300.0,
+        "prev_estimate": 361000.0,
+        "prev_as_of": "2026-08-07T09:22:45+09:00",
+        "estimate_delta_krw": -1800.0,
         "entry_cap_delta_krw": null,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "news_pct_delta": 0.49,
+        "expected_return_delta_pct": 0.5
       },
-      "new_news_since_prev": [],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **361,000원**(-8.0%, 등급 B) · 직전 리포트 대비 ▼8,300원 · 프리미엄 테마+1/뉴스-11/섹터+3/모멘텀-2%",
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "tech_breakthrough",
+          "date": "2026-08-07",
+          "contrib_pct": 3.6,
+          "note": "하이코어, 현대건설 ‘디에이치 방배’에 나노 모빌리티 첫 상용화 적.....",
+          "source_url": "https://finance.naver.com/item/news_news.naver?code=005380"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_tariff_trade",
+          "date": "2026-08-05",
+          "contrib_pct": -0.96,
+          "note": "25 US States File New Lawsuit Against Trump Tariffs - Seoul Economic Daily",
+          "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOY2c5NnVNSDJIN0V0MjM0enlKdGs0QTdSMDF4T0VmRTNLS3NoYWpZbVVJc1BzTXdkTVpHR1JVdllFYUlQenU5YVdoQTBfRENVdlhrN0N6UEplbmctbmVHNFpiQ0NxM2J6d3NrRldJT2Jud3JSdVFnY1E0VC1vZFBJX2QwSFpxSjR4ZGVIenQ5V0wxUGYzNjhrVmNLTXFmNlh6?oc=5"
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **359,200원**(-7.5%, 등급 B) · 직전 리포트 대비 ▼1,800원 · 프리미엄 테마+1/뉴스-11/섹터+3/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; global_tariff_trade(해외) -1.0%",
       "entry_cap_line": "뉴스 반영 신규진입 상한가: — (밸류·컨센 미시드 + 프리미엄 약함(기대수익<5%) — R/R 상한가 보류, sunday_strategy 시드 필요)"
     }
   ],
-  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-08-07T09:22:45+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| NAVER(035420) | 215,000 | 218,700 | 255,000 | +18.6% | ▼1,800 | 🟢진입가능 | B |\n| 하나금융지주(086790) | 130,500 | 140,300 | 154,600 | +18.5% | ▼700 | 🟢진입가능 | B |\n| 삼성전자(005930) | 235,250 | 226,800 | 276,700 | +17.6% | ▼3,800 | 🔴+4% 상회 | B |\n| 신한지주(055550) | 106,700 | 109,200 | 120,100 | +12.6% | ▲800 | 🟢진입가능 | B |\n| KB금융(105560) | 171,500 | 174,900 | 192,500 | +12.2% | ▼600 | 🟢진입가능 | B |\n| 카카오(035720) | 38,650 | 38,900 | 42,800 | +10.7% | ▲200 | 🟢진입가능 | B |\n| HD한국조선해양(009540) | 389,000 | 367,700 | 418,800 | +7.7% | ▼5,400 | 🔴+6% 상회 | B |\n| 한화에어로스페이스(012450) | 1,065,000 | 1,002,600 | 1,147,500 | +7.7% | ▼6,500 | 🔴+6% 상회 | B |\n| LIG넥스원(079550) | 690,000 | 604,800 | 737,900 | +6.9% | ▼78,200 | 🔴+14% 상회 | B |\n| SK하이닉스(000660) | 1,494,000 | 1,304,900 | 1,592,000 | +6.6% | ▼140,000 | 🔴+14% 상회 | B |\n| LS ELECTRIC(010120) | 200,000 | 174,300 | 212,600 | +6.3% | ▼3,700 | 🔴+15% 상회 | B |\n| HD현대일렉트릭(267260) | 756,000 | 656,800 | 793,800 | +5.0% | ▼15,800 | 🔴+15% 상회 | B |\n| 삼성SDI(006400) | 461,000 | — | 483,600 | +4.9% | ▲7,800 | — | B |\n| 삼성중공업(010140) | 21,850 | — | 22,300 | +2.1% | ▼200 | — | B |\n| 삼성물산(028260) | 332,500 | — | 334,900 | +0.7% | ▼3,600 | — | B |\n| 한미반도체(042700) | 198,400 | — | 199,000 | +0.3% | ▼5,100 | — | B |\n| LG에너지솔루션(373220) | 355,500 | — | 352,300 | -0.9% | ▲3,500 | — | B |\n| 현대차(005380) | 392,500 | — | 361,000 | -8.0% | ▼8,300 | — | B |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **255,000원**(+18.6%, 등급 B) · 직전 리포트 대비 ▼1,800원 · 프리미엄 테마+3/뉴스+5/섹터+8/모멘텀+2%\n- 뉴스 반영 추정 목표 매도가 **154,600원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼700원 · 프리미엄 테마+0/뉴스+10/섹터+5/모멘텀+3%\n- 뉴스 반영 추정 목표 매도가 **276,700원**(+17.6%, 등급 B) · 직전 리포트 대비 ▼3,800원 · 프리미엄 테마+3/뉴스+12(캡)/섹터+5/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **120,100원**(+12.6%, 등급 B) · 직전 리포트 대비 ▲800원 · 프리미엄 테마+0/뉴스+4/섹터+5/모멘텀+3%\n- 뉴스 반영 추정 목표 매도가 **192,500원**(+12.2%, 등급 B) · 직전 리포트 대비 ▼600원 · 프리미엄 테마+0/뉴스+5/섹터+5/모멘텀+2%\n- 뉴스 반영 추정 목표 매도가 **42,800원**(+10.7%, 등급 B) · 직전 리포트 대비 ▲200원 · 프리미엄 테마+1/뉴스+6/섹터+6/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **418,800원**(+7.7%, 등급 B) · 직전 리포트 대비 ▼5,400원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **1,147,500원**(+7.7%, 등급 B) · 직전 리포트 대비 ▼6,500원 · 프리미엄 테마+2/뉴스+4/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **737,900원**(+6.9%, 등급 B) · 직전 리포트 대비 ▼78,200원 · 프리미엄 테마+1/뉴스+5/섹터+4/모멘텀-4%\n- 뉴스 반영 추정 목표 매도가 **1,592,000원**(+6.6%, 등급 B) · 직전 리포트 대비 ▼140,000원 · 프리미엄 테마+2/뉴스+4/섹터+5/모멘텀-4%\n- 뉴스 반영 추정 목표 매도가 **212,600원**(+6.3%, 등급 B) · 직전 리포트 대비 ▼3,700원 · 프리미엄 테마+1/뉴스+3/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **793,800원**(+5.0%, 등급 B) · 직전 리포트 대비 ▼15,800원 · 프리미엄 테마+1/뉴스+1/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **483,600원**(+4.9%, 등급 B) · 직전 리포트 대비 ▲7,800원 · 프리미엄 테마+0/뉴스+4/섹터+4/모멘텀-4%\n- 뉴스 반영 추정 목표 매도가 **22,300원**(+2.1%, 등급 B) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스-2/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **334,900원**(+0.7%, 등급 B) · 직전 리포트 대비 ▼3,600원 · 프리미엄 테마+0/뉴스-1/섹터+5/모멘텀-4%\n- 뉴스 반영 추정 목표 매도가 **199,000원**(+0.3%, 등급 B) · 직전 리포트 대비 ▼5,100원 · 프리미엄 테마+2/뉴스-5/섹터+5/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **352,300원**(-0.9%, 등급 B) · 직전 리포트 대비 ▲3,500원 · 프리미엄 테마+1/뉴스-3/섹터+4/모멘텀-4%\n- 뉴스 반영 추정 목표 매도가 **361,000원**(-8.0%, 등급 B) · 직전 리포트 대비 ▼8,300원 · 프리미엄 테마+1/뉴스-11/섹터+3/모멘텀-2%\n\n**신규진입 상한가(현재가 위치):**\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **218,700원**(R/R≥1.1·ATR 7.5%×2≈손절 15.1% 기준) · 현재가 215,000원 🟢진입 가능(현재가가 상한가보다 1.7% 낮음) · 직전 리포트 대비 ▼1,800원\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **140,300원**(R/R≥1.1·ATR 4.6%×2≈손절 9.3% 기준) · 현재가 130,500원 🟢진입 가능(현재가가 상한가보다 7.5% 낮음) · 직전 리포트 대비 ▼800원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **226,800원**(R/R≥1.1·ATR 10.1%×2≈손절 20.0% 기준) · 현재가 235,250원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 3.6% 상회) · 직전 리포트 대비 ▼3,300원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **109,200원**(R/R≥1.1·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 106,700원 🟢진입 가능(현재가가 상한가보다 2.3% 낮음) · 직전 리포트 대비 ▲600원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **174,900원**(R/R≥1.1·ATR 4.6%×2≈손절 9.1% 기준) · 현재가 171,500원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음) · 직전 리포트 대비 ▼800원\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **38,900원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 38,650원 🟢진입 가능(현재가가 상한가보다 0.6% 낮음) · 직전 리포트 대비 ▲100원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **367,700원**(R/R≥1.1·ATR 6.3%×2≈손절 12.6% 기준) · 현재가 389,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.5% 상회) · 직전 리포트 대비 ▼5,600원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,002,600원**(R/R≥1.1·ATR 6.6%×2≈손절 13.1% 기준) · 현재가 1,065,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.9% 상회) · 직전 리포트 대비 ▼6,800원\n- LIG넥스원(079550) — 뉴스 반영 신규진입 상한가 **604,800원**(R/R≥1.1·ATR 10.6%×2≈손절 20.0% 기준) · 현재가 690,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.3% 상회) · 직전 리포트 대비 ▼64,100원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,304,900원**(R/R≥1.1·ATR 12.5%×2≈손절 20.0% 기준) · 현재가 1,494,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.7% 상회) · 직전 리포트 대비 ▼114,800원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **174,300원**(R/R≥1.1·ATR 10.3%×2≈손절 20.0% 기준) · 현재가 200,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.8% 상회) · 직전 리포트 대비 ▼3,000원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **656,800원**(R/R≥1.1·ATR 9.5%×2≈손절 19.0% 기준) · 현재가 756,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 13.1% 상회) · 직전 리포트 대비 ▼15,400원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-08-07T10:42:54+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 하나금융지주(086790) | 132,600 | 142,800 | 157,200 | +18.6% | ▲2,600 | 🟢진입가능 | B |\n| NAVER(035420) | 211,000 | 213,300 | 250,000 | +18.5% | ▼5,000 | 🟢진입가능 | B |\n| 삼성전자(005930) | 230,250 | 222,000 | 270,800 | +17.6% | ▼5,900 | 🔴+4% 상회 | B |\n| 신한지주(055550) | 108,950 | 115,800 | 127,500 | +17.0% | ▲7,400 | 🟢진입가능 | B |\n| KB금융(105560) | 175,200 | 181,400 | 199,800 | +14.0% | ▲7,300 | 🟢진입가능 | B |\n| 카카오(035720) | 39,225 | 38,900 | 43,000 | +9.6% | ▲200 | 🔴+1% 상회 | B |\n| 한화에어로스페이스(012450) | 1,068,000 | 1,005,900 | 1,150,800 | +7.8% | ▲3,300 | 🔴+6% 상회 | B |\n| HD한국조선해양(009540) | 391,000 | 369,700 | 421,000 | +7.7% | ▲2,200 | 🔴+6% 상회 | B |\n| SK하이닉스(000660) | 1,419,000 | 1,240,300 | 1,513,200 | +6.6% | ▼78,800 | 🔴+14% 상회 | B |\n| LS ELECTRIC(010120) | 193,100 | 168,200 | 205,200 | +6.3% | ▼7,400 | 🔴+15% 상회 | B |\n| HD현대일렉트릭(267260) | 741,000 | 643,600 | 782,100 | +5.5% | ▼11,700 | 🔴+15% 상회 | B |\n| 삼성SDI(006400) | 442,000 | 398,200 | 466,300 | +5.5% | ▼17,300 | 🔴+11% 상회 | B |\n| LIG넥스원(079550) | 706,000 | — | 733,400 | +3.9% | ▼4,500 | — | B |\n| 삼성중공업(010140) | 21,700 | — | 22,100 | +1.8% | ▼200 | — | B |\n| 삼성물산(028260) | 325,000 | — | 327,400 | +0.7% | ▼7,500 | — | B |\n| 한미반도체(042700) | 190,700 | — | 191,300 | +0.3% | ▼7,700 | — | B |\n| LG에너지솔루션(373220) | 348,000 | — | 343,600 | -1.3% | ▼8,700 | — | B |\n| 현대차(005380) | 388,500 | — | 359,200 | -7.5% | ▼1,800 | — | B |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **157,200원**(+18.6%, 등급 B) · 직전 리포트 대비 ▲2,600원 · 프리미엄 테마+0/뉴스+10/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; policy_support(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **250,000원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼5,000원 · 프리미엄 테마+3/뉴스+6/섹터+8/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.2%\n- 뉴스 반영 추정 목표 매도가 **270,800원**(+17.6%, 등급 B) · 직전 리포트 대비 ▼5,900원 · 프리미엄 테마+3/뉴스+12(캡)/섹터+5/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_surprise_beat(자동) +3.6%\n- 뉴스 반영 추정 목표 매도가 **127,500원**(+17.0%, 등급 B) · 직전 리포트 대비 ▲7,400원 · 프리미엄 테마+0/뉴스+10/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; analyst_target_upgrade(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **199,800원**(+14.0%, 등급 B) · 직전 리포트 대비 ▲7,300원 · 프리미엄 테마+0/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: policy_support(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **43,000원**(+9.6%, 등급 B) · 직전 리포트 대비 ▲200원 · 프리미엄 테마+1/뉴스+4/섹터+6/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +5.4%\n- 뉴스 반영 추정 목표 매도가 **1,150,800원**(+7.8%, 등급 B) · 직전 리포트 대비 ▲3,300원 · 프리미엄 테마+2/뉴스+4/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **421,000원**(+7.7%, 등급 B) · 직전 리포트 대비 ▲2,200원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **1,513,200원**(+6.6%, 등급 B) · 직전 리포트 대비 ▼78,800원 · 프리미엄 테마+2/뉴스+4/섹터+5/모멘텀-4% · 📰 원인 뉴스: buyback_cancellation(자동) +2.4%\n- 뉴스 반영 추정 목표 매도가 **205,200원**(+6.3%, 등급 B) · 직전 리포트 대비 ▼7,400원 · 프리미엄 테마+1/뉴스+3/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **782,100원**(+5.5%, 등급 B) · 직전 리포트 대비 ▼11,700원 · 프리미엄 테마+1/뉴스+2/섹터+4/모멘텀-2% · 📰 원인 뉴스: capex_expansion(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **466,300원**(+5.5%, 등급 B) · 직전 리포트 대비 ▼17,300원 · 프리미엄 테마+0/뉴스+3/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **733,400원**(+3.9%, 등급 B) · 직전 리포트 대비 ▼4,500원 · 프리미엄 테마+1/뉴스+2/섹터+4/모멘텀-4% · 📰 원인 뉴스: earnings_miss_or_guidance_cut(자동) -3.6%; earnings_surprise_beat(자동) +3.6%\n- 뉴스 반영 추정 목표 매도가 **22,100원**(+1.8%, 등급 B) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스-2/섹터+4/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **327,400원**(+0.7%, 등급 B) · 직전 리포트 대비 ▼7,500원 · 프리미엄 테마+0/뉴스-1/섹터+5/모멘텀-4%\n- 뉴스 반영 추정 목표 매도가 **191,300원**(+0.3%, 등급 B) · 직전 리포트 대비 ▼7,700원 · 프리미엄 테마+2/뉴스-5/섹터+5/모멘텀-2%\n- 뉴스 반영 추정 목표 매도가 **343,600원**(-1.3%, 등급 B) · 직전 리포트 대비 ▼8,700원 · 프리미엄 테마+1/뉴스-3/섹터+4/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%\n- 뉴스 반영 추정 목표 매도가 **359,200원**(-7.5%, 등급 B) · 직전 리포트 대비 ▼1,800원 · 프리미엄 테마+1/뉴스-11/섹터+3/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; global_tariff_trade(해외) -1.0%\n\n**신규진입 상한가(현재가 위치):**\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **142,800원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 132,600원 🟢진입 가능(현재가가 상한가보다 7.7% 낮음) · 직전 리포트 대비 ▲2,500원\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **213,300원**(R/R≥1.1·ATR 7.8%×2≈손절 15.6% 기준) · 현재가 211,000원 🟢진입 가능(현재가가 상한가보다 1.1% 낮음) · 직전 리포트 대비 ▼5,400원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **222,000원**(R/R≥1.1·ATR 10.4%×2≈손절 20.0% 기준) · 현재가 230,250원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 3.6% 상회) · 직전 리포트 대비 ▼4,800원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **115,800원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 108,950원 🟢진입 가능(현재가가 상한가보다 6.3% 낮음) · 직전 리포트 대비 ▲6,600원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **181,400원**(R/R≥1.1·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 175,200원 🟢진입 가능(현재가가 상한가보다 3.5% 낮음) · 직전 리포트 대비 ▲6,500원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,005,900원**(R/R≥1.1·ATR 6.5%×2≈손절 13.1% 기준) · 현재가 1,068,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.8% 상회) · 직전 리포트 대비 ▲3,300원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **369,700원**(R/R≥1.1·ATR 6.3%×2≈손절 12.6% 기준) · 현재가 391,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.4% 상회) · 직전 리포트 대비 ▲2,000원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,240,300원**(R/R≥1.1·ATR 13.5%×2≈손절 20.0% 기준) · 현재가 1,419,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.6% 상회) · 직전 리포트 대비 ▼64,600원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **168,200원**(R/R≥1.1·ATR 10.8%×2≈손절 20.0% 기준) · 현재가 193,100원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.9% 상회) · 직전 리포트 대비 ▼6,100원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **643,600원**(R/R≥1.1·ATR 9.8%×2≈손절 19.6% 기준) · 현재가 741,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 13.1% 상회) · 직전 리포트 대비 ▼13,200원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
   "disclaimer": "학습·시뮬레이션 목적의 거친 추정 — 투자 권유 아님. watchlist.target_price 를 자동 갱신하지 않으며, routine 이 dynamic_exit_model 목표가 산정 시 참고 레이어로만 쓴다."
 }

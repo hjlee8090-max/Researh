@@ -1,5 +1,5 @@
 {
- "as_of": "2026-08-07T18:07:42+09:00",
+ "as_of": "2026-08-10T08:39:26+09:00",
  "policy_ref": "policy.dynamic_reprice — 밴드·신호는 매 산출 시점 재계산 정본만 인용. 직전 리포트·주초 계획의 절대가격 이월 금지 (compute_exit_levels 동형). 운용 목표가 자동 덮어쓰기 없음 — 재산정 의무만 발동(참고 레이어 원칙).",
  "regime_tier": "bull",
  "tier_target_mult": 1.4,
@@ -20,7 +20,7 @@
   "target_band": "max(진입 후 최고종가, 현재가) × (1 + [0.7,1.3]×k(tier)×ATR%) — 밸류에이션 천장 캡",
   "reprice_signals": "target_exhausted(진행률≥100%) / target_gap(참조 대비 괴리≥경고) / stop_too_wide(손절폭>2.5×ATR)"
  },
- "signal_count": 1,
+ "signal_count": 2,
  "tickers": {
   "079550": {
    "name": "LIG넥스원",
@@ -34,9 +34,9 @@
     "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
    },
    "target_band": {
-    "low": 859952,
-    "ref": 859952,
-    "high": 859952,
+    "low": 859927,
+    "ref": 859927,
+    "high": 859927,
     "base": 815000,
     "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3] · 밸류에이션 천장 캡",
     "cap_applied": true
@@ -61,20 +61,27 @@
     "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
    },
    "target_band": {
-    "low": 140746,
-    "ref": 143337,
-    "high": 145928,
+    "low": 126453,
+    "ref": 126453,
+    "high": 126453,
     "base": 134700,
-    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3]",
-    "cap_applied": false
+    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3] · 밸류에이션 천장 캡",
+    "cap_applied": true
    },
    "operating": {
     "entry_price": 126471.0,
     "target_price": 144000.0,
-    "stop_price": 120157.0,
-    "target_progress_pct": 43.0
+    "stop_price": 122361.0,
+    "target_progress_pct": 46.9
    },
-   "reprice_signals": []
+   "reprice_signals": [
+    {
+     "code": "target_gap",
+     "severity": "medium",
+     "gap_pct": 13.9,
+     "msg": "운용 목표가 144,000원이 동적 참조 126,453원 대비 13.9% 위 — 18시 재산정 검토. 유지 시 사유를 당일 리포트에 기록(같은 사유의 다음 신호 재사용 금지)"
+    }
+   ]
   },
   "105560": {
    "name": "KB금융",
@@ -88,24 +95,25 @@
     "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
    },
    "target_band": {
-    "low": 183708,
-    "ref": 187097,
-    "high": 190486,
+    "low": 166658,
+    "ref": 166658,
+    "high": 166658,
     "base": 175800,
-    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3]",
-    "cap_applied": false
+    "basis": "max(최고종가, 현재가) × (1 + 1.4×ATR%), 폭 [0.7, 1.3] · 밸류에이션 천장 캡",
+    "cap_applied": true
    },
    "operating": {
     "entry_price": 173172.0,
     "target_price": 195886.0,
-    "stop_price": 155001.0,
-    "target_progress_pct": 10.7
+    "stop_price": 159662.0,
+    "target_progress_pct": 11.6
    },
    "reprice_signals": [
     {
-     "code": "stop_too_wide",
+     "code": "target_gap",
      "severity": "medium",
-     "msg": "손절폭 11.8% > 2.5×ATR(4.6%) — 변동성 대비 과대. 트레일링/본전 상향 검토"
+     "gap_pct": 17.5,
+     "msg": "운용 목표가 195,886원이 동적 참조 166,658원 대비 17.5% 위 — 18시 재산정 검토. 유지 시 사유를 당일 리포트에 기록(같은 사유의 다음 신호 재사용 금지)"
     }
    ]
   },
@@ -277,6 +285,18 @@
     "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
    }
   },
+  "055550": {
+   "name": "신한지주",
+   "role": "watch",
+   "price": 110000.0,
+   "atr_pct": 4.55,
+   "tier_target_mult": 1.4,
+   "entry_band": {
+    "low": 106246,
+    "high": 111251,
+    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
+   }
+  },
   "000270": {
    "name": null,
    "role": "watch",
@@ -286,18 +306,6 @@
    "entry_band": {
     "low": 129052,
     "high": 136849,
-    "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
-   }
-  },
-  "055550": {
-   "name": null,
-   "role": "watch",
-   "price": 110000.0,
-   "atr_pct": 4.55,
-   "tier_target_mult": 1.4,
-   "entry_band": {
-    "low": 106246,
-    "high": 111251,
     "basis": "현재가 −0.75×ATR ~ +0.25×ATR(추격 상한)"
    }
   }

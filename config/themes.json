@@ -1,6 +1,6 @@
 {
   "version": "1.2",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-08-09",
   "purpose": "선행 산업 메가트렌드 레지스트리. score_candidates.py 가 candidate.theme_exposure(0~1) × theme.strength(0~1) 로 thematic_score 를 산출한다. strength 는 향후 전망 강도이며 sunday_policy_review 에서 주기적으로 재검토·감쇠한다. 후보의 theme_exposure 는 0900/sunday_strategy 가 근거(evidence)+출처(source URL)와 함께 채운다.",
   "scoring_note": "thematic_score = min(1.0, Σ(theme.strength × exposure)). theme_exposure 가 없으면 0.3(중립-하). momentum 을 게이트로 유지하므로 전망이 좋아도 급락 종목은 차단된다.",
   "holdings_use": "보유종목에도 테마를 반영하되 '느린 신호'로만 쓴다(회전율 방지). 주간(sunday_strategy)이 1차 — 보유종목이 노출된 테마의 strength 가 직전 대비 크게 하향됐거나(예: 정책 폐기·사이클 둔화) 연결 thesis 가 무효화되면 다음 주 비중 축소·교체 후보로 표시한다. 테마 약화 단독으로 당일 단발 매도는 하지 않고, 손절·트레일링스톱·펀더멘털 신호와 함께 판단한다. strength 상향·테마 강세는 홀드 컨빅션 보강 근거.",
@@ -10,15 +10,29 @@
       "label": "AI 메모리/HBM",
       "strength": 0.95,
       "horizon": "2-4y",
-      "keywords": ["HBM", "HBM4", "AI 메모리", "고대역폭", "데이터센터", "온디바이스 AI"],
-      "note": "AI 데이터센터 수요. 삼성전자·SK하이닉스 등."
+      "keywords": [
+        "HBM",
+        "HBM4",
+        "AI 메모리",
+        "고대역폭",
+        "데이터센터",
+        "온디바이스 AI"
+      ],
+      "note": "AI 데이터센터 수요. 삼성전자·SK하이닉스 등. [2026-08-09 strength 0.95 유지] 8/6 HBM 납품가 우려로 SK하이닉스 -10.37% 를 맞았으나, HBM 공급 부족으로 엔비디아가 루빈 울트라의 HBM4E 12단을 HBM4 8·12단으로 하향 검토하고 AMD 도 메모리 구성 조정을 언급하는 역방향 재료가 나왔다 — 수요 초과 국면이라 국내 2사의 가격 결정 주도권은 유지 전망(헤럴드경제 2026-08-09 06:30 https://biz.heraldcorp.com/article/10834379). 단기 가격 변동과 테마 강도를 분리해 읽는다."
     },
     {
       "id": "humanoid_robotics",
       "label": "휴머노이드/로봇",
       "strength": 0.9,
       "horizon": "3-5y",
-      "keywords": ["로봇", "휴머노이드", "액추에이터", "Boston Dynamics", "자율보행", "로봇 감속기"],
+      "keywords": [
+        "로봇",
+        "휴머노이드",
+        "액추에이터",
+        "Boston Dynamics",
+        "자율보행",
+        "로봇 감속기"
+      ],
       "note": "노동력 대체 메가트렌드. 현대차(보스턴다이내믹스 지분)·삼성·LG·두산 로보틱스 등 — 자동차 섹터 내에서 로봇 노출은 현대차 > 기아."
     },
     {
@@ -26,7 +40,14 @@
       "label": "조선 슈퍼사이클",
       "strength": 0.8,
       "horizon": "3-7y",
-      "keywords": ["LNG선", "수주잔고", "친환경 선박", "FLNG", "특수선", "암모니아 추진"],
+      "keywords": [
+        "LNG선",
+        "수주잔고",
+        "친환경 선박",
+        "FLNG",
+        "특수선",
+        "암모니아 추진"
+      ],
       "note": "친환경 선박 교체·LNG 수요. HD조선·삼성중공업·한화오션."
     },
     {
@@ -34,7 +55,14 @@
       "label": "전력망/원전·AI 전력",
       "strength": 0.75,
       "horizon": "3-6y",
-      "keywords": ["전력망", "변압기", "원전", "SMR", "데이터센터 전력", "전력 인프라"],
+      "keywords": [
+        "전력망",
+        "변압기",
+        "원전",
+        "SMR",
+        "데이터센터 전력",
+        "전력 인프라"
+      ],
       "note": "AI 데이터센터 전력수요·노후 전력망 교체. HD현대일렉트릭·LS일렉트릭 등."
     },
     {
@@ -42,32 +70,81 @@
       "label": "방산 수출",
       "strength": 0.7,
       "horizon": "3-5y",
-      "keywords": ["방산", "K-방산", "방산 수출", "자주포", "미사일", "유럽 재무장"],
-      "note": "지정학 리스크·유럽 재무장. 한화에어로스페이스·현대로템·LIG넥스원."
+      "keywords": [
+        "방산",
+        "K-방산",
+        "방산 수출",
+        "자주포",
+        "미사일",
+        "유럽 재무장"
+      ],
+      "note": "지정학 리스크·유럽 재무장. 한화에어로스페이스·현대로템·LIG넥스원. [2026-08-09 strength 0.70 유지] 구조 축(유럽 재무장·수출 파이프라인)은 불변이나 LIG넥스원 2분기 영업이익이 전분기비 -38.2% 로 꺾여 이익 레벨의 연속 상향 전제는 실측 반증됐다. 순환 축(호르무즈 지정학 웃돈)은 [진행형] 으로 방향 미정 — strength 를 순환 축으로 움직이지 않는다."
     },
     {
       "id": "value_up",
       "label": "밸류업/주주환원",
-      "strength": 0.6,
+      "strength": 0.65,
       "horizon": "1-3y",
-      "keywords": ["밸류업", "자사주", "자사주 소각", "배당 확대", "주주환원", "저PBR"],
-      "note": "정부 밸류업 프로그램·저PBR 재평가. 금융·지주·저PBR 대형주."
+      "keywords": [
+        "밸류업",
+        "자사주",
+        "자사주 소각",
+        "배당 확대",
+        "주주환원",
+        "저PBR"
+      ],
+      "note": "정부 밸류업 프로그램·저PBR 재평가. 금융·지주·저PBR 대형주. [2026-08-09 상향 0.60→0.65] 은행 3종이 5년 PER 밴드 상단을 동시 돌파(하나 8.0>7.51·KB 10.0>9.48·신한 9.0>8.26) — 밴드 이탈이 과열이 아니라 리레이팅 진행의 실측이다. KB·신한 전고점 돌파, 하나·우리 상향 돌파 가능성 제시(하나증권 은행 Weekly 2026-07-13 https://www.hanaw.com/main/research/research/download.cmd?bbsSeq=1287894&attachFileSeq=1&bbsId=&dbType=&bbsCd=2220). 역풍은 금리 — 미 9월 인상 확률 44% 로 예대마진 축은 약화 중이므로 상향폭은 0.05 로 제한한다."
     },
     {
       "id": "ev_battery",
       "label": "전기차/2차전지",
       "strength": 0.55,
       "horizon": "3-7y",
-      "keywords": ["2차전지", "전기차", "배터리", "양극재", "ESS", "전고체"],
+      "keywords": [
+        "2차전지",
+        "전기차",
+        "배터리",
+        "양극재",
+        "ESS",
+        "전고체"
+      ],
       "note": "중기 EV 전환 메가트렌드이나 단기 캐즘·미국 관세 역풍 — strength 보수적."
     },
     {
       "id": "internet_ai_platform",
       "label": "인터넷/AI 플랫폼",
-      "strength": 0.6,
+      "strength": 0.65,
       "horizon": "2-4y",
-      "keywords": ["하이퍼클로바", "HyperCLOVA", "카나나", "Kanana", "AI 검색", "AI 브리핑", "생성형 AI", "AI 에이전트", "에이전틱 커머스", "LLM", "슈퍼앱", "커머스 GMV"],
-      "note": "자체 LLM 기반 검색·광고·커머스 수익화 메가트렌드. NAVER(하이퍼클로바X·AI 브리핑)·카카오(카나나). 전망은 크나 AI 수익화가 실집행·온보딩 속도에 좌우돼 strength 보수적(2026-06-24 추가)."
+      "keywords": [
+        "하이퍼클로바",
+        "HyperCLOVA",
+        "카나나",
+        "Kanana",
+        "AI 검색",
+        "AI 브리핑",
+        "생성형 AI",
+        "AI 에이전트",
+        "에이전틱 커머스",
+        "LLM",
+        "슈퍼앱",
+        "커머스 GMV"
+      ],
+      "note": "네이버 하이퍼클로바X·카카오 카나나 등 국내 LLM 플랫폼. [2026-08-09 상향 0.60→0.65] 인터넷 섹터가 screen_universe 몰입 3/2 충족(rs_inflection·volume_surge·price_reversal), 20일 초과수익 중앙 +32.74%p·NAVER 60일 초과수익 +21.05%p 로 주도 구간 진입. 단 두 종목 모두 모멘텀 절대점수는 미달(NAVER -5.6·카카오 -21.0)이라 상향폭은 0.05 로 제한한다."
+    },
+    {
+      "id": "bio_cdmo",
+      "label": "바이오 CDMO/바이오시밀러",
+      "strength": 0.6,
+      "horizon": "3-6y",
+      "keywords": [
+        "CDMO",
+        "위탁생산",
+        "바이오시밀러",
+        "항체",
+        "공장 증설",
+        "FDA 허가"
+      ],
+      "note": "[2026-08-09 신규 등재] 바이오 섹터가 screen_universe 몰입 3/2 충족(rs_inflection·sector_breadth·price_reversal)이면서 20일 초과수익 중앙 +30.46%p·60일 +26.11%p 로 두 지평 모두 플러스인 유일한 그룹인데 테마 매핑이 없어 thematic 가점 0 이었다. 삼성바이오로직스·셀트리온. 초기 등재이므로 strength 는 중립 상단 0.6 에서 시작하고, 촉매(수주·FDA·증설)가 출처와 함께 확인되면 상향한다."
     }
   ]
 }

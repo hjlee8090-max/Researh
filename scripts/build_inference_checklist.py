@@ -30,7 +30,7 @@ OUT_PATH = ROOT / "state" / "inference_checklist.md"
 HEADER_RE = re.compile(r"^###\s+(.+?)$")
 # build_lessons_index.NEXT_RULE_RE 와 동일 계약 — '다음 추론 시 고려' 포함.
 NEXT_RULE_RE = re.compile(
-    r"\*\*(?:다음 추론 시 고려|다음 적용 룰|다음 진입[^\n]*?시 반영할 룰)\*\*[:：][ \t]*([^\n]+)",
+    r"\*{0,2}(?:다음 추론 시 고려|다음 적용 룰|다음 진입[^\n:：]*?시 반영할 룰)\*{0,2}[:：][ \t]*([^\n]+)",
     re.IGNORECASE,
 )
 # 선제추론 루프가 만든 분류만 체크리스트로 모은다(자기보완 루프 룰과 분리).

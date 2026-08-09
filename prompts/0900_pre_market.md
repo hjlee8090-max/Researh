@@ -255,7 +255,7 @@
    - **최근 분기 실적**(`state/fundamentals.json` 있으면): 매출·영업이익·영업이익률·전기대비 증감·`earnings_signal`. 컨빅션 보강 근거로 쓰되 타이밍 신호로 과신 금지(후행). 데이터 없으면 생략.
    - **리스크 2개** (Bear case) — §1-6에서 구조적 키워드 매칭됐다면 첫 항목으로 우선 기재
    - **컨빅션 점수** 1~5 (5가 가장 강함) — 구조적 악재 매칭 시 -1 자동 조정
-   - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`)
+   - **Pre-mortem 한 줄**: "이 거래가 망한다면 가장 가능성 높은 시나리오는?" (강제 기록, 정책 `require_pre_mortem_one_liner`). **(v2.29)** 진입 R/R 이 tier 하한 턱걸이(하한~+0.2, `policy.reward_risk_management.entry_rr_projection_requirement`)면 "목표 진행률 40% 도달 시 예상 R/R"도 함께 계산해 적는다.
 4. `config/watchlist.json` 업데이트 (`entry_filter_blocks`, `structural_bear_flags`, `pre_mortem` 필드 포함). 후보를 `config/candidates.json` 에 추가·갱신할 때 `theme_exposure`(근거 URL 포함)도 함께 기록해 다음 routine 의 `score_candidates.py` thematic 점수에 반영되게 한다.
 5. **가상 매수 체결**: **체결 직전 §2-PRE 게이트 통과 필수.** 수량은 **§2 공통 사이징**을 따른다. 구조적 악재 매칭 시 `reduced_entry_weight_pct(20%)` 축소. 추세 필터 위배·`risk_off` 차단 설정·`deep_bear`(entry_mode=block) 시 매수 금지. **실적 발표 D-1~당일 신규 진입 보류**(`policy.fundamentals.earnings_blackout`).
    - 슬리피지 0.2% + 수수료 0.015% 반영해 진입가 산정

@@ -59,6 +59,7 @@
   - **종가 vs 목표가 괴리(%)** 계산
   - 정책상 허용 오차 `tolerance_band_pct = 5%` 이내인지 판정
   - 초과 시 사유를 4분류 중 1개로 분류: `매크로` / `섹터` / `개별` / `가정오류`
+  - **(v2.29) 원인 미확인 `개별` 분류는 익일 대표주 동행 여부를 재판정 의무**(`policy.lessons_logging.classification_symmetry_rule`) — 동행이 복원되면 그날 분류를 원래 축(매크로/섹터)으로 되돌리고 전일 산입분은 '단발형'으로 라벨만 남긴다(취소하지 않음).
 - 손절가(유효 red 임계) / 목표가 도달했다면 **종가 기준 가상 청산 체결** 처리
   - 매도가 = 종가 × (1 - slippage 0.002 - tax 0.0018 - commission 0.00015)
   - `portfolio.json`의 cash·positions·realized_pnl·win/loss_count 갱신

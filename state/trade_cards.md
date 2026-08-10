@@ -5,12 +5,25 @@
 > 이전 체결은 reason 한 줄 폴백으로 표시된다. 각 카드의 목적: **이 매매가 논리적이었는지**
 > (thesis·근거·무효화 조건) 와 **결과적으로 옳았는지** (실현손익·t+5 일실) 를 분리해서 검증한다.
 
-_최종 갱신: 2026-08-09T20:02:21+09:00_
+_최종 갱신: 2026-08-10T09:40:40+09:00_
 
 ## 계좌 요약
 - 왕복 14건 · 5승 9패 (승률 35.7%) · 순실현 -271,317원 · PF 0.51 · 기대값 -19,380원/건
 
 ## 카드 (최신순)
+
+### 🟢 매수 — NAVER (035420) · 2026-08-10
+- **체결**: 1주 × 211,454원 = 211,454원
+- **왜 지금 (thesis)**: 계좌는 5주째 주식 비중이 목표 밴드(bull 65~80%) 하한을 27%p 밑돌고 있는데, 그 원인은 현금이 아니라 통과 후보가 없었다는 것이다. 오늘 남아 있던 후보 축 세 개 중 은행은 미 7월 고용 쇼크로 금리 축이 실측 약화되며 보유 2종이 동반 -3%대로 밀렸고, 반도체는 전 종목이 신규진입 상한가를 상회했다. NAVER는 그 두 축 어느 쪽에도 속하지 않으면서 후보 점수 공동 1위(0.679)이고, 5년 PER 밴드 안(valuation ok)이라 은행 3종의 밴드 상단 초과 문제를 공유하지 않는다. 개장 후에도 지수가 +1.9% 오르는 동안 +0.5%로 거의 움직이지 않아 추격 진입이 아니며, 신규진입 상한가 211,700원 아래 0.3% 지점에서 R/R 1.57을 확보한다. 다만 모멘텀 절대점수가 음수이고 52주 고점 대비 69%라 확신 크기가 아니라 관찰 크기로 들어간다 — 계획 2주의 절반인 1주 probe다.
+- **근거**:
+  - {'claim': '후보 점수 공동 1위·지수 대비 상대강도 +23.99%p', 'data': 'state/candidate_scores.json ranked[0] final_score 0.679, components.relative_strength 0.85, rs_excess_vs_kospi_pct 23.99', 'source': 'state/candidate_scores.json (2026-08-10T09:30 스냅샷 동기)'}
+  - {'claim': '밸류에이션 비과열 — 5년 PER 밴드 안(verdict=ok), 천장 262,508원', 'data': 'state/valuation_check.json 035420 verdict=ok, valuation_ceiling_price 262,508', 'source': 'state/valuation_check.json'}
+  - {'claim': '신규진입 상한가 미만 — 211,000원 vs 상한 211,700원(여유 0.3%)', 'data': 'state/target_estimate.json entry_cap_price 211,700 · 추정 목표 247,500(+17.3%, 등급 B)', 'source': 'state/target_estimate.json'}
+  - {'claim': '추격 필터·추세 필터 통과 — 5거래일 누적 +1.69%, entry_filter.passes=true, 2출처 일치 high 신뢰', 'data': 'pre_trade_check ticker_gates 035420 chase_blocked=false runup 1.69% · market_snapshot 035420 confidence high, price_gap_pct 0.0', 'source': 'scripts/pre_trade_check.py --tickers 035420 · state/market_snapshot.json'}
+  - {'claim': '인터넷 섹터 자금 몰입 발자국 충족(3/2) — 20일 초과수익 중앙 +32.74%p', 'data': 'state/universe_screen.json sector_rotation 인터넷 immersion_met=true', 'source': 'config/weekly_plan.json non_overheat_deployment_w33 confirming_signals'}
+- **이 판단이 틀렸다고 인정할 조건 (무효화)**: ①지수 대비 상대강도가 열위로 전환 — screen_universe rs_excess_vs_kospi_pct 가 0 아래로 내려가면 손절가와 무관하게 진입 근거가 사라진다(현재 +23.99%p) ②AI 브리핑 검색 광고 수익화·커머스 GMV 성장의 훼손이 실적·가이던스로 확인 ③5년 PER 밴드 상단(천장 262,508원) 돌파로 비과열 축이라는 진입 사유 자체가 소멸 — 이 경우 목표 도달로 청산하지 축소로 대응하지 않는다
+- **예상 보유**: 30거래일
+- **리스크**: 손절 178,932원 (-15.4%) · 최대손실 약 32,522원
 
 ### 🔴 매도 — 신한지주 (055550) · 2026-08-05 · `SELL_TARGET_TAKE_PROFIT`
 - **체결**: 5주 × 103,190원 (closing_auction)

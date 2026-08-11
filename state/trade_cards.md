@@ -5,12 +5,26 @@
 > 이전 체결은 reason 한 줄 폴백으로 표시된다. 각 카드의 목적: **이 매매가 논리적이었는지**
 > (thesis·근거·무효화 조건) 와 **결과적으로 옳았는지** (실현손익·t+5 일실) 를 분리해서 검증한다.
 
-_최종 갱신: 2026-08-10T20:30:47+09:00_
+_최종 갱신: 2026-08-11T09:38:33+09:00_
 
 ## 계좌 요약
 - 왕복 14건 · 5승 9패 (승률 35.7%) · 순실현 -271,317원 · PF 0.51 · 기대값 -19,380원/건
 
 ## 카드 (최신순)
+
+### 🟢 매수 — 카카오 (035720) · 2026-08-11
+- **체결**: 17주 × 40,036원 = 680,612원
+- **왜 지금 (thesis)**: 이 계좌의 5주째 문제는 현금이 아니라 후보였다 — 주식 비중 42.4%가 bull 목표 밴드(65~80%) 하한을 22.6%p 밑도는데, 남아 있던 후보 축 셋 중 은행은 이미 21.4% 노출된 데다 밸류에이션 밴드 상단을 넘었고(overheat_entry), 반도체는 오늘 SK하이닉스가 5거래일 누적 -12.18%로 추세필터를 이탈했다. 카카오는 두 축 어디에도 속하지 않으면서 5년 PER 밴드 안(verdict=ok)이고, 어제 18시가 오늘 진입의 유일한 선행 조건으로 지정한 '지수 대비 상대강도 회복'이 개장으로 성립했다 — 지수가 -1.02%인 시각에 +1.01%로 +2.03%p 우위다. 진입가 40,036원은 뉴스 반영 신규진입 상한가 40,500원 아래 1.2% 지점이고 R/R 1.33으로 bull 하한 1.1을 넘는다. 다만 52주 고점 대비 57.3%라는 사실은 이 종목이 주도주가 아니라 소외주라는 뜻이므로, 확신이 아니라 목표비중 1슬롯(빈 슬롯 2개 중 하나)만 채운다.
+- **근거**:
+  - {'claim': '어제 18시가 건 유일한 진입 조건 — 카카오 상대강도 회복 — 이 개장으로 성립', 'data': '카카오 39,950원(8/10 종가 39,550 대비 +1.01%) vs KOSPI 6,235.57(8/10 종가 6,299.66 대비 -1.02%) = +2.03%p 우위. 8/10에는 -0.88% vs 지수 +0.65%로 -1.53%p 열위였다', 'source': 'state/market_snapshot.json 2026-08-11T09:22:03+09:00 · config/weekly_plan.json next_day_plan ⑥'}
+  - {'claim': '밸류에이션 비과열 — 5년 PER 밴드 안(verdict=ok). 보유 은행 2종이 공유하는 밴드 상단 초과 문제가 없다', 'data': 'state/valuation_check.json 035720 verdict=ok, current PER 25.99, valuation_ceiling_price 63,503 (하나금융지주·KB금융·신한지주는 overheat_entry)', 'source': 'state/valuation_check.json'}
+  - {'claim': '신규진입 상한가 미만 — 진입가 40,036원 vs 상한 40,500원(여유 1.2%)', 'data': 'state/target_estimate.json 035720 entry_cap 40,500 · 추정 목표 매도가 44,500(+11.4%, 등급 B, 직전 대비 ▲500) · estimate_gate 미차단(기대수익 +11.4%>0)', 'source': 'state/target_estimate.json 2026-08-11T09:22:14+09:00'}
+  - {'claim': '추격·추세 게이트 통과 — 5거래일 누적 +5.41%, entry_filter passes, 2출처 당일가 일치 high', 'data': 'pre_trade_check ticker_gates 035720 chase_blocked=false runup 5.41%(임계 10%) · market_snapshot 035720 confidence high(naver 39,950 / yahoo 39,650, 괴리 0.75%)', 'source': 'scripts/pre_trade_check.py --tickers 035720 (verdict=ok, fresh age=4m, egress open) · state/market_snapshot.json'}
+  - {'claim': '인터넷/AI 플랫폼 섹터 자금 몰입 발자국 4/2 충족', 'data': 'state/universe_screen.json sector_rotation internet_ai_platform immersion_met=true (rs_inflection·volume_surge·sector_breadth·price_reversal 4개 전부), 20일 초과수익 중앙 +30.40%p', 'source': 'state/universe_screen.json 2026-08-11 재산출'}
+  - {'claim': '구조적 악재 키워드 미매칭 — 최근 30일 뉴스 스캔', 'data': 'policy.entry_filters.structural_bear_keywords(관세·규제·제재·소송·리콜·공정위 등 17종) 대비 카카오 최근 30일 뉴스 0건 매칭. 다만 키워드 밖 부정 재료로 카카오엔터 인수금융 4,000억 차환 난항(조선비즈 2026-08-11)·노조 파업 국면(2026-08-11)을 bear case 에 기재', 'source': 'state/news_feed.json tickers.035720 (fetched 2026-08-11T08:06)'}
+- **이 판단이 틀렸다고 인정할 조건 (무효화)**: 손절 36,425원과 별개의 thesis 무효화 조건 — ①지수 대비 상대강도가 다시 열위로 전환(screen_universe rs_excess_vs_kospi_pct 가 0 아래, 현재 +7.45%p) — 이 진입의 유일한 방아쇠가 상대강도 회복이었으므로 그것이 사라지면 손절가와 무관하게 근거가 없다 ②카카오엔터 인수금융 차환 실패가 모회사 자금 부담·손상차손으로 확정 공시 ③2분기에 확인된 수익성 개선(삼성증권 2026-08-07 목표가 상향 근거)이 다음 분기 가이던스에서 되돌려짐 ④5년 PER 밴드 상단(천장 63,503원) 돌파 — 비과열이라는 진입 사유 자체의 소멸
+- **예상 보유**: 30거래일
+- **리스크**: 손절 36,425원 (-9.0%) · 최대손실 약 61,387원
 
 ### 🟢 매수 — NAVER (035420) · 2026-08-10
 - **체결**: 1주 × 211,454원 = 211,454원

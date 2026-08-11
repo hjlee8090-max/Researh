@@ -38,6 +38,7 @@
 1. `state/lessons.md`
 1-1. `state/inference_checklist.md` — 선제 추론 직전 입력(§4 내일 예측 적재에 쓴다)
 1-2. `state/momentum_signal.json` — **수익형 전략 1순위 진입 엔진**(`policy.momentum_strategy`). 종가 평가 후 §4 에서 월간 리밸런스(약 21거래일) 도래 시 `rebalance_changes` 의 enter/exit 만 회전, 보유 종목 추세필터(가격>MA200) 이탈분 청산 후보 표시.
+1-3. `state/investor_flows.json` — **당일 확정 외국인/기관 수급**(fetch_flows.yml 이 16:45 KST 수집·커밋, 있으면). ①오늘 종가 오차 판정·lessons 기록에서 "수급" 원인을 웹검색 대신 이 파일 수치로 인용 ②§4 내일 계획·§3-1 내일 예측 적재에서 **반등·갭업 밴드 상향은 `market.foreign_transition`(순매수 전환) 확인이 전제**(7/29 codify 룰 — `foreign_streak_days ≤ -5` 면 반대 증거로 명시) ③웹 세션은 파일 갱신을 시도하지 않는다(이그레스 차단 — 커밋본이 정본).
 2. `config/policy.json`, `config/weekly_plan.json`, `config/watchlist.json`, `config/portfolio.json`
 3. `state/trade_log.jsonl` (최근 30라인)
 3-1. `config/catalysts.json` (있으면 — §4 다음 거래일 액션의 임박 촉매 반영용, 옵셔널)

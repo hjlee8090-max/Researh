@@ -48,6 +48,7 @@
 > - `config/candidates.json` — 신규 진입 후보 종목 목록
 > - `config/market_calendar.json` — KRX 휴장일 캘린더
 > - `scripts/fetch_market_data.py` — 다중 출처 가격·5거래일 추세 자동 수집 → `state/market_snapshot.json`
+> - `scripts/fetch_investor_flows.py` — (2026-08-11 P0-3) KRX 투자자별 순매수(시장 KOSPI + 보유·후보 종목, 원) 일별 수집 → `state/investor_flows.json` (`fetch_flows.yml` 평일 16:45 KST 수집·커밋 — 18:00 당일치·06:30 전일치 소비. 웹 세션은 커밋본만 읽음. streak/transition 필드가 7/29 "반등 밴드 상향은 외국인 순매수 전환 전제" 룰의 판정 입력)
 > - `scripts/check_market_open.py` — 영업일/휴장일 판정 (모든 평일 routine 의 0-A 단계에서 호출)
 > - `scripts/score_candidates.py` — 후보 자동 점수화 → `state/candidate_scores.json`
 > - `scripts/reconcile_portfolio.py` — trade_log ↔ portfolio 정합성 검증 (audit + 09시 사전 점검)

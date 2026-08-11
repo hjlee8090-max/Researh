@@ -100,6 +100,7 @@
 {"id":"macro-2026-06-fomc","type":"macro","scope":"macro","date":"YYYY-MM-DD","confirmed":true,"importance":"high","expectation":"FOMC 금리결정 — 환율·외국인 수급","affects_sectors":["IT/반도체","금융"],"managed_by":"manual","source_url":"..."}
 ```
 - 보유 종목 high 매크로 촉매가 **D-2 이내** 면 자정 리포트 "보유 종목별 매핑"에 D-day 경보를 넣고 한국 개장 갭 예측의 불확실도를 넓힌다.
+- **(v2.30) 통화정책 이벤트 밴드 룰**(`policy.catalysts.alert_rules.monetary_policy_overlay`): catalysts 의 `event_class=monetary_policy`(금통위·FOMC)가 **D-1/D-0** 이면 ①"한눈에 보기"에 D-day 경보 + "내일(당일) 신규 진입 보류" 1줄 ②갭·종가 예측 밴드의 **하방 꼬리를 의무 개방**(밴드 하단을 실현변동성 연동 최소 반폭의 1.5배 이상) — '예상된 이벤트'도 결과 확정 시점의 포지셔닝·수급 충격은 별도 변수다(7/16 금통위 크래시 -6.37% 3-miss: 이벤트는 등재돼 있었는데 밴드가 "보합~소폭약세"였다).
 - `generated_events`(스크립트 소유)는 직접 수정하지 않는다 — 확정 시 `supersedes` 로 manual 에 덮어쓴다.
 
 ## 2. 한국 시장 연계 분석 (핵심 단계)

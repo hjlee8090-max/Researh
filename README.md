@@ -44,6 +44,7 @@ state/
   ratchet_shadow.json      (v2.20) 본전 래칫 스톱 그림자 관측 — track_ratchet_shadow.py 가 18시 종가 기준 stage·가상 breach·해방가능 heat 기록 (관측 전용, 체결 없음)
   ratchet_shadow_scorecard.json score_ratchet_shadow.py 채점 — 가상 breach 의 t+1/t+5 반사실 손익·noise율·실제 청산 대비 보호액 (일 20시 policy_review §1-8 승격 심사 입력)
   market_snapshot.json     fetch_market_data.py가 생성하는 다중출처 가격·5일추세 스냅샷 — GitHub Actions(fetch_prices.yml)가 수집·커밋해 추적됨(웹 세션 routine 의 1순위 출처)
+  investor_flows.json      (2026-08-11 P0-3) KRX 투자자별 순매수 일별 — 시장(KOSPI)+보유·후보 종목, 외국인 streak(연속 순매수/순매도 일수)·transition(전환) 포함. fetch_flows.yml(평일 16:45 KST)이 수집·커밋, 06:30/18:00 슬롯이 읽음 — "반등 밴드 상향은 외국인 순매수 전환 확인 전제"(7/29 룰)의 판정 데이터
 reports/
   YYYY-MM-DD-00.md         🌙 자정 글로벌 야간 리포트
   YYYY-MM-DD-06.md         🌄 미국장 마감 확정 리포트 (발화 06:30)
@@ -86,6 +87,7 @@ scripts/
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
   estimate_target_price.py 목표주가 추정 v1.1 — 밸류 밴드·컨센·테마(호라이즌할인·추세게이트)·뉴스/촉매(시간감쇠·기반영차감)·섹터 활발성 결합 → state/target_estimate.json
   fetch_news.py            종목 뉴스 자동 수집(Google News RSS 국문·영문+네이버 종목뉴스)·키워드 분류 → state/news_feed.json (fetch_news.yml 평일 07:30/17:40 KST)
+  fetch_investor_flows.py  (2026-08-11 P0-3) KRX 투자자별 순매수 일별 수집(pykrx, KRX_ID/PW) → state/investor_flows.json (fetch_flows.yml 평일 16:45 KST)
   score_target_estimates.py 추정 vs 실현 주간 채점 + 뉴스 키워드 보강 점검 → state/estimate_scorecard.json (sunday_policy_review 0-C)
   fetch_history.py         백테스트용 장기 일봉(~2.5년) 수집 → state/price_history.json (fetch_history.yml 수동/push 트리거)
   backtest_target_model.py 목표주가 추정식 백테스트 — 충격-감쇠·이벤트 스터디·워크포워드 검증, v1.0 vs v1.1 비교 → state/backtest_target_model.json

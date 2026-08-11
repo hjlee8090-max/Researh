@@ -1,0 +1,55 @@
+name: Fetch Investor Flows (KRX)
+
+# 외국인/기관/개인 투자자별 순매수(시장+보유·후보 종목)를 인터넷 되는 러너에서 수집해 커밋한다.
+# 배경: reports/2026-08-10-lessons-loop-data-gap-review.md P0-3 — 수급은 전 실패 사건의
+# 공통 결정변수인데 사후 웹검색 인용뿐이었다. 7/29 codify 룰("반등 밴드 상향은 외국인
+# 순매수 전환 확인이 전제")의 판정 데이터를 공급한다.
+# 웹 세션 routine 은 이그레스 차단으로 직접 수집 불가 — market_snapshot 과 동일하게
+# 커밋본(state/investor_flows.json)을 1순위 출처로 읽는다(06:30 전일치·18:00 당일치).
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/fetch_investor_flows.py"
+  # 07:45 UTC 월~금 = KST 16:45 — 장 마감(15:30) 후 KRX 투자자별 확정치가 집계된 뒤,
+  # 18:00 routine 이 읽기 전에 커밋한다. (KRX 집계 지연 시에도 다음날 06:30 슬롯이 커버)
+  schedule:
+    - cron: "45 7 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-flows
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install pykrx
+        run: pip install pykrx
+      - name: Fetch investor flows
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
+        run: python scripts/fetch_investor_flows.py || echo "flows fetch failed — 기존 커밋본 유지"
+      - name: Commit flows if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/investor_flows.json
+          if git diff --cached --quiet; then
+            echo "no flow changes — skip commit"
+          else
+            git commit -m "data(flows): investor trading flows $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

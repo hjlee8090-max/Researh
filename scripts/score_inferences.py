@@ -21,6 +21,7 @@ routine 이 당일 즉시 채점에 함께 쓴다.
 from __future__ import annotations
 
 import json
+import re
 import statistics
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -31,6 +32,46 @@ KST = timezone(timedelta(hours=9))
 LOG_PATH = ROOT / "state" / "inference_log.jsonl"
 OUT_PATH = ROOT / "state" / "inference_scorecard.json"
 CONF_BANDS = [(0.0, 0.5, "low"), (0.5, 0.65, "mid"), (0.65, 1.01, "high")]
+
+# ---- miss 귀속 정규화 (2026-08-11, 검토 리포트 결함 3 교정) ----------------------
+# 전문 문장을 dict 키로 쓰면 같은 유형의 miss 가 1회짜리로 파편화돼 반복 임계에 오르지
+# 못한다(실측: 79개 키 중 2회 이상 1건). config/miss_patterns.json 의 키워드 레지스트리로
+# 유형 키에 클러스터링하고, 미매칭은 숫자 치환 정규화 문장으로 보존한다(1회성 유지).
+ID_DATE_RE = re.compile(r"inf-(\d{8})-")
+_NUM_RE = re.compile(r"[-+]?\d[\d,.]*\s*(?:%p|%|pt|p\b|원|조|억|건)?")
+
+
+def load_miss_patterns() -> list[dict]:
+    data = load_json("config/miss_patterns.json", {})
+    pats = data.get("patterns") if isinstance(data, dict) else None
+    return [p for p in (pats or []) if isinstance(p, dict) and p.get("keywords")]
+
+
+def _fallback_key(text: str) -> str:
+    t = _NUM_RE.sub("#", text)
+    t = re.sub(r"\s+", " ", t).strip(" .·—-")
+    return t[:80] if t else text[:80]
+
+
+def normalize_miss(text: str, patterns: list[dict]) -> tuple[str, bool]:
+    """(정규화 키, 패턴 매칭 여부). 레지스트리 순서대로 첫 매칭 승."""
+    low = text.casefold()
+    for p in patterns:
+        kws = [str(k) for k in p.get("keywords", [])]
+        min_hits = max(1, int(p.get("min_hits", 1)))
+        if sum(1 for kw in kws if kw.casefold() in low) >= min_hits:
+            return str(p.get("label") or p.get("key")), True
+    return _fallback_key(text), False
+
+
+def record_date(rec: dict) -> str:
+    """레코드 날짜(YYYY-MM-DD) — id 의 inf-YYYYMMDD- 우선, 없으면 ts 앞 10자."""
+    m = ID_DATE_RE.search(str(rec.get("id") or ""))
+    if m:
+        d = m.group(1)
+        return f"{d[:4]}-{d[4:6]}-{d[6:]}"
+    ts = str(rec.get("ts") or "")
+    return ts[:10] if len(ts) >= 10 else ""
 
 
 def load_json(rel: str, default: Any) -> Any:
@@ -153,12 +194,25 @@ def score(preds: list[dict], ra: dict, ms: int) -> dict:
             out["note_pnl"] = "결합된 체결손익 없음(Phase 1 관측 — inference_id 매칭 trade 부재)"
         return out
 
-    # 미흡 요인(miss_attribution) 집계 — 다음 체크리스트 후보
-    miss_factors: dict[str, int] = {}
+    # 미흡 요인(miss_attribution) 집계 — 다음 체크리스트 후보.
+    # (2026-08-11) 정규화 키로 클러스터링해 반복 횟수를 누적하고, 유형별 최신 사례·최근
+    # 발생일을 detail 로 보존한다. miss_factors(키→횟수)는 기존 소비처 호환 형식 유지.
+    patterns = load_miss_patterns()
+    detail: dict[str, dict] = {}
     for r in scored:
         if r.get("outcome") == "miss" and r.get("miss_attribution"):
-            k = str(r["miss_attribution"]).strip()
-            miss_factors[k] = miss_factors.get(k, 0) + 1
+            raw = str(r["miss_attribution"]).strip()
+            key, matched = normalize_miss(raw, patterns)
+            d = detail.setdefault(
+                key, {"count": 0, "last_seen": "", "latest_example": "", "pattern": matched}
+            )
+            d["count"] += 1
+            dt = record_date(r)
+            if dt >= d["last_seen"]:
+                d["last_seen"] = dt
+                d["latest_example"] = raw
+    ordered = sorted(detail.items(), key=lambda kv: (kv[1]["count"], kv[1]["last_seen"]), reverse=True)
+    miss_factors: dict[str, int] = {k: v["count"] for k, v in ordered}
 
     by_slot: dict[str, dict] = {}
     for slot in sorted({r.get("slot", "?") for r in scored}):
@@ -197,7 +251,8 @@ def score(preds: list[dict], ra: dict, ms: int) -> dict:
         "by_slot": by_slot,
         "by_subject_kind": by_kind,
         "by_confidence_band": by_conf,
-        "miss_factors": dict(sorted(miss_factors.items(), key=lambda x: -x[1])),
+        "miss_factors": miss_factors,
+        "miss_factors_detail": {k: v for k, v in ordered},
         "opportunity_cost": opp,
     }
 

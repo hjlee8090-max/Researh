@@ -1,0 +1,67 @@
+{
+  "_doc": "miss 귀속(miss_attribution) 정규화 패턴 레지스트리 — score_inferences.py 가 miss 문장을 유형 키로 클러스터링해 반복 횟수를 누적한다. 배경(2026-08-10 검토 리포트 결함 3): 전문 문장을 dict 키로 쓰면 같은 유형의 miss('급락 익일 반등폭 과소' 등)가 1회짜리 항목 79개로 파편화되어 반복 임계 판정·체크리스트 우선순위에 오르지 못한다. 매칭 규칙: patterns 배열 순서대로 keywords 중 min_hits 개 이상 포함되면 해당 label 로 귀속(첫 매칭 승). 미매칭이면 숫자·날짜를 #으로 치환한 정규화 문장을 키로 유지(1회성 보존 — 놓치는 것보다 남기는 것 우선). 보강 주체: sunday_policy_review §1-5 가 estimate/inference scorecard 점검 시 미매칭 다발 유형을 이 레지스트리에 추가한다(news_keywords.json 재현율 보강 루프와 동형).",
+  "as_of": "2026-08-11",
+  "patterns": [
+    {
+      "key": "event_calendar_missed",
+      "label": "이벤트 캘린더 미확인·강도 과소(휴장일·금통위·FOMC)",
+      "keywords": ["휴장", "공휴일", "제헌절", "금통위", "금리인상", "금리 인상", "FOMC", "거래일 캘린더"],
+      "min_hits": 1
+    },
+    {
+      "key": "afternoon_selloff_missed",
+      "label": "오후 투매·사이드카/서킷브레이커 확산 미반영(오전 관측의 종일 외삽)",
+      "keywords": ["사이드카", "서킷브레이커", "패닉셀", "오후 가속", "오후 확산", "오후 투매", "2차 매도"],
+      "min_hits": 1
+    },
+    {
+      "key": "flow_reversal_missed",
+      "label": "외국인/기관 수급 전환·연속 강도 미반영",
+      "keywords": ["외국인 순매수", "외국인 순매도", "기관 순매수", "기관 순매도", "순매수 전환", "순매도 전환", "수급 전환", "거래일 연속 순매도", "연속 순매도"],
+      "min_hits": 1
+    },
+    {
+      "key": "sell_the_news_missed",
+      "label": "sell-the-news(기대 선반영 되돌림·차익실현) 과소평가",
+      "keywords": ["sell-the-news", "buy-the-rumor", "차익실현", "기대선 미달", "무산", "선반영"],
+      "min_hits": 1
+    },
+    {
+      "key": "rebound_underestimate",
+      "label": "급락 익일·과매도 기술반등 폭 과소평가",
+      "keywords": ["급락 익일", "기술반등", "과매도 반등", "저가매수 반등", "반등 폭", "반등 강도 과소", "만회"],
+      "min_hits": 1
+    },
+    {
+      "key": "narrow_breadth_overtrust",
+      "label": "좁은 반등(소수 주도)의 종가 지지력 과대평가",
+      "keywords": ["좁은 반등", "폭이 좁", "참여 종목", "breadth", "독주 반등", "소수 대형주"],
+      "min_hits": 1
+    },
+    {
+      "key": "divergence_extrapolation",
+      "label": "방어 divergence 를 지수 방향 조건 없이 직선 외삽",
+      "keywords": ["divergence", "방어주 아웃퍼폼", "직선 외삽"],
+      "min_hits": 1
+    },
+    {
+      "key": "stale_snapshot_dismissed",
+      "label": "대형 지수 이동을 stale 스냅샷으로 자동 기각(웹 교차검증 생략)",
+      "keywords": ["stale", "지연 의심", "스냅샷 지연", "스냅샷 이동", "미확정으로 기각"],
+      "min_hits": 1
+    },
+    {
+      "key": "us_kr_decoupling",
+      "label": "미국 야간 신호의 한국 개장 직결 과신(디커플링·전이 강도 오판)",
+      "keywords": ["미국 반도체 강세", "나스닥", "다우 사상최고", "미 지수", "미국장 강세", "TSMC", "마이크론", "Micron", "ADR"],
+      "min_hits": 1
+    },
+    {
+      "key": "gap_band_miss",
+      "label": "KOSPI 개장 갭 방향·밴드 이탈(캐치올 — 위 유형 비해당)",
+      "keywords": ["개장 갭", "갭업", "갭다운", "개장 근사", "밴드 상단 초과", "밴드 하회", "밴드 하단"],
+      "min_hits": 1
+    }
+  ],
+  "fallback_rule": "미매칭 문장은 숫자/퍼센트/금액을 # 으로 치환하고 공백 정규화한 앞 80자를 키로 사용 — 1회성 항목으로 보존된다."
+}

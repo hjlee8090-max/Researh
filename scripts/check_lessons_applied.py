@@ -40,7 +40,8 @@ UNRESOLVED_MARKERS = [
 REPEAT_MARKERS = ["⚠️", "연속", "반복", "재발", "2회", "3회", "4회", "2건째", "3건째", "재차", "또"]
 
 HEADER_RE = re.compile(r"^###\s+(.+?)$")
-COUNTER_LINE_RE = re.compile(r"^-\s*(.+?):\s*(\d+)건")
+# (2026-08-11) 볼드 카운터(`**34건**`) 미판독 교정 — build_lessons_index.py 와 동일 계약.
+COUNTER_LINE_RE = re.compile(r"^-\s*\*{0,2}(.+?)\*{0,2}\s*[:：]\s*\*{0,2}(\d[\d,]*)\s*건")
 # 신호 추출: 따옴표/꺾쇠 안 문구, 백틱 토큰, snake_case/dotted 식별자(영문).
 QUOTED_RE = re.compile(r"[\"'“”‘’「『]([^\"'“”‘’」』]{3,40})[\"'“”‘’」』]")
 BACKTICK_RE = re.compile(r"`([^`]+)`")
@@ -78,7 +79,8 @@ def parse_counter(text: str) -> dict[str, int]:
                 break
             m = COUNTER_LINE_RE.match(line)
             if m:
-                counters[m.group(1).strip()] = int(m.group(2))
+                name = m.group(1).strip().strip("*").strip()
+                counters[name] = int(m.group(2).replace(",", ""))
     return counters
 
 

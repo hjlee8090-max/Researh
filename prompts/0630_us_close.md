@@ -73,6 +73,7 @@
 8. `state/market_snapshot.json` — 0-A 단계 스냅샷
 9. `state/pending_orders.json` — 자정~18시가 적재한 조건부 사전주문(§2-PO 에서 트리거 갱신)
 10. `state/inference_checklist.md` — 선제 추론 직전 입력(과거 빗나간 요인). §2-1 갱신 예측 기록 전 읽는다.
+11. `state/investor_flows.json` — **전일 확정 외국인/기관 수급**(fetch_flows.yml 이 매 영업일 16:45 KST 수집·커밋, 있으면). `market.foreign_streak_days`(연속 순매수/순매도 일수)·`foreign_transition`(부호 전환)이 §2-1 갭 예측의 수급 전제 판정 입력이다.
 
 > **연결 규칙**: 06:30 은 자정 예측의 **확정·정정** 단계다. "자정이 예상한 시나리오가 미국장 마감까지
 > 실현됐는가 / 역전됐는가"를 명시적으로 답한다.
@@ -103,6 +104,14 @@
   **자정 예측 대비 델타**로 제시한다. 지정학 진행형이 근거이면 §0-C 게이트 적용.
 - **갭다운 버퍼 룰**(`policy.entry_filters.overnight_gap_prediction_buffer`): 전일 KOSPI 일간 등락률
   절댓값이 +7% 이상이었다면 기본 갭다운 예측치에 +2%p 추가 하향 버퍼.
+- **수급 전제 판정 (7/29 codify 룰 — 데이터 연결 2026-08-11)**: 반등·갭업 쪽으로 밴드를 상향할 때는
+  `state/investor_flows.json` 의 `market.foreign_transition`(전일 외국인 순매수 전환)을 먼저 확인한다 —
+  전환 미확인이면 상단만 열고 하단은 유지한다. `foreign_streak_days ≤ -5`(연속 순매도 지속)는 반등
+  시나리오의 반대 증거로 factors_considered 에 명시한다(7/8 "11거래일 연속 순매도" 계열 재발 방지).
+- **(v2.30) FOMC 결과 확정일 아침**(`monetary_policy_overlay` — catalysts `event_class=monetary_policy`,
+  결과 발표 03~04시 KST 는 06시 슬롯이 1순위 확정 주체): 결과·회견 톤을 §1 에서 확정하고, 개장 갭
+  예측 밴드의 **하방 꼬리를 의무 개방**(최소 반폭×1.5). 오늘 이 D-0 신규 진입 보류일임을 "한눈에
+  보기"에 1줄 명시한다(금통위 D-0 아침도 동일).
 - **예측 적재**: `state/inference_checklist.md` 를 먼저 읽고, 갱신된 개장 갭 예측을
   `state/inference_log.jsonl` 에 1줄 append(검증 가능 수치+`"horizon":"09:00"`, `checklist_refs` 증빙,
   `slot":"06:00"`). 자정 예측을 대체하는 게 아니라 **마감 확정 반영 갱신본**이며, 09시가 자정본과 함께

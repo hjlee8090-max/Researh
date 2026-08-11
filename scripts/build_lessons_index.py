@@ -22,7 +22,12 @@ LESSONS_PATH = ROOT / "state" / "lessons.md"
 OUT_PATH = ROOT / "state" / "lessons_index.json"
 
 HEADER_RE = re.compile(r"^###\s+(.+?)$")
-CATEGORY_RE = re.compile(r"원인 분류[:\s]*([^\n]+)", re.IGNORECASE)
+# (2026-08-11 교정) 실제 lessons 항목 115/126건이 '- 분류:' 표기를 쓰는데 '원인 분류'만
+# 매칭해 인덱스의 91%가 "기타"로 뭉개졌다(검토 리포트 결함 4). 두 표기 모두 + 볼드 허용.
+# '분류 신뢰도:'·'분류 전환:' 같은 다른 필드는 '분류' 직후 콜론 요구로 배제된다.
+CATEGORY_RE = re.compile(
+    r"^\s*[-*]?\s*\*{0,2}(?:원인\s*)?분류\*{0,2}\s*[:：]\s*([^\n]+)", re.IGNORECASE | re.MULTILINE
+)
 NEXT_RULE_RE = re.compile(
     r"\*{0,2}(?:다음 추론 시 고려|다음 적용 룰|다음 진입[^\n:：]*?시 반영할 룰"
     r"|다음 추천 시 반영할 교훈|다음 routine[^\n:：]*?반영할 룰)\*{0,2}[:：][ \t]*([^\n]+)",
@@ -32,7 +37,10 @@ NEXT_RULE_TRIGGER = (
     "다음 진입", "다음 적용 룰", "다음 추론", "다음 추천 시 반영할 교훈", "다음 routine",
 )
 RULE_BULLET_RE = re.compile(r"^\s*\d+\.\s+(.+?)$")
-COUNTER_LINE_RE = re.compile(r"^-\s*(.+?):\s*(\d+)건")
+# (2026-08-11 교정) 카운터가 볼드로 적히면(`- 선제추론오차: **34건**` / `- **진행 중**: 2건`)
+# 종전 정규식이 미매칭 → 최대 반복 패턴(선제추론오차 34건)이 반복 임계(≥3) 판정에서
+# 통째로 누락됐다(검토 리포트 결함 4 — 8/9 리뷰가 "반복 ≥3은 2개 분류뿐"으로 오보고).
+COUNTER_LINE_RE = re.compile(r"^-\s*\*{0,2}(.+?)\*{0,2}\s*[:：]\s*\*{0,2}(\d[\d,]*)\s*건")
 
 
 def split_sections(text: str) -> list[dict]:
@@ -55,10 +63,13 @@ def split_sections(text: str) -> list[dict]:
 def parse_section(section: dict) -> dict:
     body = "\n".join(section["lines"])
     cat_match = CATEGORY_RE.search(body)
-    category_raw = cat_match.group(1).strip() if cat_match else "분류 없음"
-    # 첫 키워드 매칭만 추출 (매크로 / 섹터 / 개별 / 가정오류 / 루틴)
+    category_raw = cat_match.group(1).strip().strip("*").strip() if cat_match else "분류 없음"
+    # 첫 키워드 매칭만 추출 — 구체 분류(선제추론 계열·운영 계열)를 4대 분류보다 먼저 본다.
     primary = "기타"
-    for key in ("루틴", "가정오류", "개별", "섹터", "매크로"):
+    for key in (
+        "선제추론오차", "기회비용오차", "사전 경보", "절차", "관측",
+        "루틴", "가정오류", "개별", "섹터", "매크로",
+    ):
         if key in category_raw:
             primary = key
             break
@@ -111,7 +122,8 @@ def parse_counter(text: str) -> dict[str, int]:
                 break
             m = COUNTER_LINE_RE.match(line)
             if m:
-                counters[m.group(1).strip()] = int(m.group(2))
+                name = m.group(1).strip().strip("*").strip()
+                counters[name] = int(m.group(2).replace(",", ""))
     return counters
 
 

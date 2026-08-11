@@ -55,43 +55,80 @@ def max_lines() -> int:
     )
 
 
+SECTION_DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+
+
 def collect_lessons_rules() -> list[str]:
-    """선제추론오차/기회비용오차 항목의 '다음 추론 시 고려' 룰(최신 우선)."""
+    """선제추론오차/기회비용오차 항목의 '다음 추론 시 고려' 룰 — 섹션 날짜 내림차순.
+
+    (2026-08-11 교정) 종전엔 파일 등장 순서를 '최신이 위'로 가정했으나, lessons.md 는
+    18시(상단 prepend)와 00/06시·토요 사후분석(하단 append)의 이중 삽입 지점을 가져
+    하단에 붙은 최신 룰이 목록 꼬리 = 상한 절단 1순위가 됐다(검토 리포트 결함 1·2 —
+    7/18 이후 룰 전량 생략 실측). 섹션 헤더의 날짜(### YYYY-MM-DD …)로 정렬해 삽입
+    지점과 무관하게 최신 룰이 앞에 오도록 한다(날짜 없는 섹션은 가장 오래된 것으로 취급).
+    """
     if not LESSONS_PATH.exists():
         return []
     text = LESSONS_PATH.read_text(encoding="utf-8")
-    rules: list[str] = []
+    dated: list[tuple[str, str]] = []  # (date, rule)
     cur_body: list[str] = []
+    cur_date = ""
     cur_is_inf = False
 
     def flush():
         if cur_is_inf:
             body = "\n".join(cur_body)
             for m in NEXT_RULE_RE.finditer(body):
-                rules.append(m.group(1).strip())
+                dated.append((cur_date, m.group(1).strip()))
 
     for raw in text.splitlines():
-        if HEADER_RE.match(raw):
+        hm = HEADER_RE.match(raw)
+        if hm:
             flush()
             cur_body = []
             cur_is_inf = False
+            dm = SECTION_DATE_RE.search(hm.group(1))
+            cur_date = dm.group(1) if dm else ""
             continue
         cur_body.append(raw)
         if any(c in raw for c in INFERENCE_CATS) and ("분류" in raw):
             cur_is_inf = True
     flush()
-    # 최신(파일 상단)이 먼저 오도록 — lessons 는 신규가 위. 중복 제거(순서 보존).
+    # 날짜 내림차순(안정 정렬 — 동일 날짜는 파일 등장 순서 유지) 후 중복 제거(최신 인스턴스 보존).
+    dated.sort(key=lambda t: t[0], reverse=True)
     seen, dedup = set(), []
-    for r in rules:
+    for d, r in dated:
         if r and r not in seen:
             seen.add(r)
-            dedup.append(r)
+            dedup.append(f"[{d[5:7]}/{d[8:10]}] {r}" if d else r)
     return dedup
 
 
 def collect_scorecard_factors() -> list[str]:
+    """scorecard miss 요인 — 반복횟수 내림차순, 동률은 최근 발생일 내림차순.
+
+    (2026-08-11) miss_factors_detail(정규화 클러스터 + last_seen + 최신 사례)을 우선
+    사용한다. 종전 형식(전문 문장 키·삽입순 동률)은 오래된 1회짜리가 앞에 와 최신 miss 가
+    상한에서 잘렸다. detail 부재 시(구버전 scorecard) 기존 형식으로 폴백.
+    """
     sc = load_json(SCORECARD_PATH, {})
-    mf = (sc.get("scoring") or {}).get("miss_factors") or {}
+    scoring = sc.get("scoring") or {}
+    detail = scoring.get("miss_factors_detail")
+    if isinstance(detail, dict) and detail:
+        rows = sorted(detail.items(), key=lambda kv: (kv[1].get("count", 0), kv[1].get("last_seen", "")), reverse=True)
+        out: list[str] = []
+        for label, d in rows:
+            n = d.get("count", 0)
+            seen = d.get("last_seen") or ""
+            mmdd = f"{seen[5:7]}/{seen[8:10]}" if len(seen) >= 10 else "?"
+            head = "반복 빗나감 요인" if n >= 2 else "빗나감 요인"
+            line = f"{head} — {label} ({n}회·최근 {mmdd})"
+            ex = (d.get("latest_example") or "").strip()
+            if d.get("pattern") and ex:  # 유형 라벨엔 최신 사례 1줄을 붙여 맥락 보존
+                line += f" — 최근 사례: {ex[:110]}"
+            out.append(line)
+        return out
+    mf = scoring.get("miss_factors") or {}
     return [f"반복 빗나감 요인 — {k} (지금까지 {v}회)" for k, v in mf.items()]
 
 
@@ -112,19 +149,26 @@ def main() -> int:
         "## 다음 추론 시 반드시 고려할 요인",
         "",
     ]
+    # (2026-08-11 절단 방향 교정) lessons 룰(응축된 행동 지침, 최신순)을 앞에, scorecard
+    # miss 요인(원재료, 빈도·최신순)을 뒤에 둔다 — 상한 절단은 목록 꼬리(빈도·최신성
+    # 하위)부터 일어나므로 '최신 교훈이 잘리던' 종전 동작이 반전된다.
     body: list[str] = []
-    for r in score_factors:
-        body.append(f"- {r}")
     for r in lesson_rules:
+        body.append(f"- {r}")
+    for r in score_factors:
         body.append(f"- {r}")
     if not body:
         body.append("- (아직 누적된 선제추론 교훈 없음 — Phase 1 관측 중. 예측이 쌓이면 자동 채움)")
 
-    # 콘텍스트 예산 캡 — 본문만 자른다(헤더 보존). 잘리면 마지막 줄에 표기.
+    # 콘텍스트 예산 캡 — 본문만 자른다(헤더 보존). 잘리면 마지막 줄에 사실대로 표기.
     budget = max(1, cap - len(head))
     truncated = len(body) > budget
     if truncated:
-        body = body[: budget - 1] + [f"- … (상한 {cap}줄 초과 {len(body) - (budget - 1)}건 생략 — 오래된 항목은 sunset)"]
+        n_cut = len(body) - (budget - 1)
+        body = body[: budget - 1] + [
+            f"- … (상한 {cap}줄 도달 — 빈도·최신성 하위 {n_cut}건 생략. "
+            "전량은 state/inference_scorecard.json miss_factors_detail·state/lessons.md 참조)"
+        ]
 
     OUT_PATH.write_text("\n".join(head + body) + "\n", encoding="utf-8")
     print(f"wrote {OUT_PATH.relative_to(ROOT)} "

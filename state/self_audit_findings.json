@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-09",
+  "as_of": "2026-08-11",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,8 +8,8 @@
       "detail": "손실 스톱 t+5 일실 합계 222731.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-09",
-      "weeks_seen": 5,
+      "last_seen": "2026-08-11",
+      "weeks_seen": 6,
       "status": "open",
       "disposition": {
         "action": "observe",
@@ -40,19 +40,14 @@
     },
     {
       "id": "deployment-below-band",
-      "title": "주식비중 37.9% < 목표 하한 65% — 만성 미배치",
-      "detail": "⚠️ 주식비중 37.9% < 목표 하한 65% — 만성 미배치 계열",
+      "title": "주식비중 56.5% < 목표 하한 65% — 만성 미배치",
+      "detail": "⚠️ 주식비중 56.5% < 목표 하한 65% — 만성 미배치 계열",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-09",
-      "weeks_seen": 5,
+      "last_seen": "2026-08-11",
+      "weeks_seen": 6,
       "status": "open",
-      "disposition": {
-        "action": "patch",
-        "note": "재상정 후 근본 원인 재진단 — 8/9 sunday_strategy 루틴이 커밋 1122c9e 에서 실제 버그를 찾아 교정했다: 인터넷 2종(NAVER·카카오)·바이오 2종의 universe theme 필드가 null 이라 themes.json 테마 가점을 받지 못하고 상대강도로만 랭킹되던 것을 바로잡고 bio_cdmo 테마를 신규 등재(config/universe.json). 8/3 v2.25 패치(회복단계 기준 명문화)는 배치 억제 원인이 아니었음이 드러났다 — 그건 정의 문제였고 이건 랭킹 입력 데이터 버그였다. 교정 후 8/7 종가 기준 전 게이트 통과 신규 후보 3종 확인(신한지주·NAVER·카카오, 여유폭 1.1~3.1%). 정책 파라미터 변경이 아닌 데이터 버그 수정이라 이번 주 패치 동결 규칙과 무관하게 적용 가능했다. 실효성은 아직 미검증 — 배치는 게이트 판정으로만 결정되고(추격 금지), 다음 주 실제 배치 비중 변화로 검증한다. 재발 시(다음 감사에서도 미배치 지속) 이 처분은 자동 무효화·재상정된다.",
-        "date": "2026-08-09",
-        "by": "sunday_policy_review"
-      },
+      "disposition": null,
       "disposition_history": [
         {
           "action": "observe",
@@ -72,26 +67,34 @@
           "date": "2026-08-03",
           "by": "sunday_policy_review",
           "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+        },
+        {
+          "action": "patch",
+          "note": "재상정 후 근본 원인 재진단 — 8/9 sunday_strategy 루틴이 커밋 1122c9e 에서 실제 버그를 찾아 교정했다: 인터넷 2종(NAVER·카카오)·바이오 2종의 universe theme 필드가 null 이라 themes.json 테마 가점을 받지 못하고 상대강도로만 랭킹되던 것을 바로잡고 bio_cdmo 테마를 신규 등재(config/universe.json). 8/3 v2.25 패치(회복단계 기준 명문화)는 배치 억제 원인이 아니었음이 드러났다 — 그건 정의 문제였고 이건 랭킹 입력 데이터 버그였다. 교정 후 8/7 종가 기준 전 게이트 통과 신규 후보 3종 확인(신한지주·NAVER·카카오, 여유폭 1.1~3.1%). 정책 파라미터 변경이 아닌 데이터 버그 수정이라 이번 주 패치 동결 규칙과 무관하게 적용 가능했다. 실효성은 아직 미검증 — 배치는 게이트 판정으로만 결정되고(추격 금지), 다음 주 실제 배치 비중 변화로 검증한다. 재발 시(다음 감사에서도 미배치 지속) 이 처분은 자동 무효화·재상정된다.",
+          "date": "2026-08-09",
+          "by": "sunday_policy_review",
+          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
         }
       ]
     },
     {
       "id": "benchmark-gap-widening",
-      "title": "vs KOSPI 격차 악화 14.68%p → 2.43%p",
+      "title": "vs KOSPI 격차 악화 9.63%p → 6.57%p",
       "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
       "severity": "warn",
-      "first_seen": "2026-08-02",
-      "last_seen": "2026-08-02",
+      "first_seen": "2026-08-11",
+      "last_seen": "2026-08-11",
       "weeks_seen": 1,
-      "status": "resolved",
-      "disposition": {
-        "action": "patch",
-        "note": "detail 이 물은 '미배치/휩쏘/추격 중 어느 경로인가'의 답은 **미배치**다. 7/31 KOSPI +17.91% 반등일에 계좌는 +1.25%에 그쳤다 — 현금 74.3%가 방어에서 벌어둔 우위를 반등 하루에 반납한 구조. 휩쏘·추격 경로는 이번 주 해당 없음(신규 진입 0건·체결 1건은 룰 청산). 처방은 deployment-below-band 와 동일 패치(policy v2.25 단계 기준 확정)이며, 배치 재개 후 다음 감사에서 격차 방향이 뒤집히는지로 검증한다.",
-        "date": "2026-08-03",
-        "by": "sunday_policy_review"
-      },
-      "disposition_history": [],
-      "resolved_date": "2026-08-05"
+      "status": "open",
+      "disposition": null,
+      "disposition_history": [
+        {
+          "action": "patch",
+          "note": "detail 이 물은 '미배치/휩쏘/추격 중 어느 경로인가'의 답은 **미배치**다. 7/31 KOSPI +17.91% 반등일에 계좌는 +1.25%에 그쳤다 — 현금 74.3%가 방어에서 벌어둔 우위를 반등 하루에 반납한 구조. 휩쏘·추격 경로는 이번 주 해당 없음(신규 진입 0건·체결 1건은 룰 청산). 처방은 deployment-below-band 와 동일 패치(policy v2.25 단계 기준 확정)이며, 배치 재개 후 다음 감사에서 격차 방향이 뒤집히는지로 검증한다.",
+          "date": "2026-08-03",
+          "by": "sunday_policy_review"
+        }
+      ]
     },
     {
       "id": "patch-without-validation",
@@ -99,7 +102,7 @@
       "detail": "⚠️ 직전 감사 이후 정책 버전이 올라갔는데 신규 검증 표본(왕복)이 0건 — 패치 동결 검토(검증 없는 패치 누적).",
       "severity": "warn",
       "first_seen": "2026-08-05",
-      "last_seen": "2026-08-09",
+      "last_seen": "2026-08-11",
       "weeks_seen": 1,
       "status": "open",
       "disposition": {
@@ -114,6 +117,7 @@
   "open": [
     "whipsaw-high",
     "deployment-below-band",
+    "benchmark-gap-widening",
     "patch-without-validation"
   ],
   "overdue": [

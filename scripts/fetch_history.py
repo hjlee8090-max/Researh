@@ -32,11 +32,16 @@ TICKERS = {
     "005380": {"name": "현대차", "yahoo": "005380.KS"},
 }
 INDEX = {"naver": "KOSPI", "yahoo": "^KS11", "name": "KOSPI"}
-# 해외 채널 심볼(yahoo 전용) — 고객(NVDA)·동종/섹터(SOXX·TSM)·매크로(^GSPC)
+# 해외 채널 심볼(yahoo 전용) — 고객(NVDA)·동종/섹터(SOXX·TSM·MU·^SOX)·매크로(^GSPC)
+# (2026-08-11 P1-a) MU·^SOX 추가 — 7/16(Micron -8.02%·필라델피아반도체 -2.08%)·
+# 7/8(PHLX -4.65%)·7/14(마이크론 -6.5% miss) 계열: 야간 미 반도체 확정치가 개장 전
+# 슬롯(00/06/09시) 판단의 정식 입력이 된다(reports/2026-08-10-lessons-loop-data-gap-review.md 갭 #2).
 GLOBALS = {
     "NVDA": "NVIDIA",
     "SOXX": "iShares Semiconductor ETF",
     "TSM": "TSMC ADR",
+    "MU": "Micron",
+    "^SOX": "필라델피아 반도체지수",
     "^GSPC": "S&P500",
 }
 

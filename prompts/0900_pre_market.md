@@ -125,7 +125,7 @@
 - **age 가 크다고 confidence 를 강등하지 않는다**(별개 축). 단 fresh 가 아닌(묵은) 가격으로 손절·익절을 그대로 체결하지 않도록 §B-5 안전망을 반드시 적용한다.
 - **(v2.4) 웹 교차확인 가드 (필수)** (`policy.price_data_quality.web_verify_guard`): 웹 실시간가는 `market_snapshot.tickers.<t>.today_ohlc` 와 대조한다. 스냅샷 `close` 대비 **±3% 초과**면 outlier — (a)출처 URL+관측시각 (b)스냅샷보다 최근 (c)`today_ohlc [low,high]` 내 **셋 다 충족할 때만** 채택, 아니면 스냅샷 `close` 보수 채택. **웹 값이 `today_high` 근처면 '고가 오인'으로 버린다.** 출처 URL 없는 '기대감 추정' 촉매 서술 금지·가격 변동 단독 thesis 변경 금지. 보유+후보 동일 적용(6/2 현대차 — lessons archive).
 - **(v2.6) 출처 게재일 검증 (필수)** (`policy.price_data_quality.web_verify_guard.source_date_verification`): 웹 출처의 **게재일을 URL/본문에서 실제로 읽어 기록** — 오늘이 아니거나 스냅샷 `as_of` 보다 과거면 '현재가' 채택 금지('스냅샷보다 최신' 자기 단정 금지). stale 스냅샷 + 단일 출처 대규모 갭의 **'예외' 자가면제 금지** — 동일자 복수 출처 + `today_ohlc` 확인 시에만 채택, 아니면 stale `close` 유지·**'오늘 가격 미검증(stale 유지)' 명시**. CI `source_provenance_gate`(`scripts/check_trade_log_gate.py`)가 묵은 게재일·재활용 종가를 하드 차단(6/8 묵은 기사 오인 사고 — lessons archive).
-- **(v2.23) 지수 스냅샷 지연≠지수 미변동** (`policy.price_data_quality.web_verify_guard.index_snapshot_confirmation`): `market_snapshot.regime`(KOSPI) 의 `as_of` 가 오늘이 아니거나 stale 인데 오늘 확정 매크로 이벤트(금리결정·CPI 등)가 있으면, '지수 미확정'으로 침묵하지 말고 웹 2출처(게재일 오늘)로 실제 KOSPI 종가·등락률을 교차확인해 리포트에 명시한다. 보유 종목 일부의 혼조·보합(방어주 divergence)을 지수 전체 방향의 반증으로 쓰지 않는다 — 지수와 바스켓 방향은 분리 판정(7/16 한은 금리인상 크래시 -6.37%를 '스냅샷 지연'으로 오판·방어주 breadth 로만 판정한 사고 방지 — lessons 2026-07-16).
+- **(v2.23) 지수 스냅샷 지연≠지수 미변동** (`policy.price_data_quality.web_verify_guard.index_snapshot_confirmation`): `market_snapshot.regime`(KOSPI) 의 `as_of` 가 오늘이 아니거나 stale 인데 오늘 확정 매크로 이벤트(금리결정·CPI 등)가 있으면, '지수 미확정'으로 침묵하지 말고 웹 2출처(게재일 오늘)로 실제 KOSPI 종가·등락률을 교차확인해 리포트에 명시한다. 보유 종목 일부의 혼조·보합(방어주 divergence)을 지수 전체 방향의 반증으로 쓰지 않는다 — 지수와 바스켓 방향은 분리 판정(7/16 한은 금리인상 크래시 -6.37%를 '스냅샷 지연'으로 오판·방어주 breadth 로만 판정한 사고 방지 — lessons 2026-07-16). **(v2.31 정합성 확장)**: as_of 가 오늘이어도 지수 인용 전 **지수 vs 대형주 내부 정합성(5%p 초과 괴리)** 1줄 대조 의무 — 스냅샷 지수 등락률 vs 같은 스냅샷 대형주(삼성전자·SK하이닉스 포함 3종 내외) 등락률 평균, |괴리| > 5%p 면 웹 2출처로 실측을 확정하고 확정 전 그 지수 값을 레짐·예측·헤드라인에 쓰지 않는다(7/31 12시 재발 2건째 — 값만 12%p 지연, 삼성전자 +19.1% 모순 미대조).
 
 ## 1. 웹 검색 (필수)
 
@@ -148,6 +148,7 @@
 
 ### 1-1. 야간~새벽 추가 흐름 (자정 이후 미국장 마감까지)
 자정 routine 은 미국장 개장 직후만 봤다. **06시 리포트가 있으면 그 "자정 예측 확정 판정"·갱신 갭 예측을 이어받아 이 단계를 갈음하고(중복 재검색 최소화), 06시 이후 개장까지의 미세 변화만 확인**한다. **06시 리포트가 없으면(미발화) 09시가 직접 미국장 마감(05:00/06:00 KST) 최종 결과를 확인**한다(안전망):
+- **(P1-a 2026-08-11) 미국장 마감 확인의 1순위 출처는 웹검색이 아니라 `state/price_history.json` 의 `global` 마지막 봉**(NVDA·SOXX·TSM·MU·^SOX·^GSPC — fetch_history.yml 06:10/08:30 KST 수집 확정치)이다. 웹은 교차확인·뉴스 맥락용. 반도체 채널(MU·^SOX) -2% 초과 하락은 개장 갭 예측·반도체 후보 진입 판단에 의무 반영한다.
 - "미국 증시 마감 오늘" / "S&P 500 close" / "Nasdaq close" / "Dow Jones close"
 - 자정(또는 06시 갱신) 대비 미국장 추가 흐름: ±X% (꼬리 위/아래?)
 - 새벽 발표 매크로: FOMC 결과 / Fed 인사 발언 / 미국 경제지표

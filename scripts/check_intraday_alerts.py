@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
-"""장중(routine 4회 사이) 보유 종목의 orange/red 단계 이탈을 실시간 감지·경보한다(v2.5).
+"""장중(routine 4회 사이) 보유 종목의 orange/red 단계 이탈을 실시간 감지·경보한다(v2.6).
 
 배경: lessons.md 2026-05-28·05-29 HD조선 — 장중 orange 이탈(저가 407K·405K)을
 09/12/15/18 routine '사이' 시간대에 감지하지 못해 종가 후에야 확인했다.
 policy.entry_filters.intraday_breach_contingency 의 잔여 갭(전면 실시간 모니터)을 채운다.
 이 스크립트는 '경보'만 한다 — 실제 체결은 routine 이 한다(장중 시간 게이트 보존).
+
+(2026-08-11 v2.6 · P1-c) KOSPI 지수 쇼크 감지 추가 — 5~8월 사이드카·서킷브레이커 발동일
+최소 7회를 전부 사후 웹검색으로 인지했고, '발동 후 15시 예측 적중률 급상승' 8회 반복
+실측이 있음에도 발동 자체를 감지하는 장치가 없었다(검토 리포트 §2-3 갭 2·§4-3 갭 #7).
+장중 KOSPI |등락| ≥3%(1단계)/≥5%(2단계, 사이드카급)를 감지해 카톡 신호를 보내고,
+12/15시 슬롯의 재예측 의무(policy.proactive_inference.intraday_shock_rejudgment)를
+발동시킨다. 같은 스냅샷 대형주(삼성전자·SK하이닉스) 등락과의 정합성 1줄 대조(v2.31)를
+경보에 포함해, 지연 지수값 오경보(7/31 계열)를 자기표시한다. 신호 전용 — 체결 없음.
 
 흐름:
 1) state/market_snapshot.json(워크플로가 직전에 fetch_market_data.py 로 갱신)에서 보유 종목
@@ -32,6 +40,9 @@ STATE_PATH = ROOT / "state" / "intraday_alert_state.json"
 OUT_PATH = ROOT / "state" / "intraday_alert.json"
 PENDING_PATH = ROOT / "state" / "pending_orders.json"
 PENDING_FIRED_KEY = "__pending_fired__"  # dedup 캐시 키(intraday_alert_state 에 함께 보존)
+INDEX_SHOCK_KEY = "__index_shock__"  # (v2.6) 지수 쇼크 dedup 캐시 키 — {"date","rank","pct"}
+# (내림차순 판정 — 상위 임계 먼저) |등락| ≥5% = 사이드카급 2단계, ≥3% = 1단계.
+INDEX_SHOCK_LEVELS = [(5.0, 2, "±5% 사이드카급"), (3.0, 1, "±3% 임계")]
 
 RANK = {"green": 0, "yellow": 1, "orange": 2, "red": 3}
 EMOJI = {"green": "🟢", "yellow": "🟡", "orange": "🟠", "red": "🔴"}
@@ -149,6 +160,77 @@ def evaluate_pending_orders(snapshot: dict, policy: dict, prev_fired: list) -> t
     return signals, sorted(fired), "on"
 
 
+def _today_pct_from_history(hist: list | None, today: str) -> float | None:
+    """five_day_history 형 봉 목록에서 (오늘 마지막가 vs 직전 거래일 종가) 등락률(%)."""
+    bars = [b for b in hist or [] if isinstance(b, dict) and b.get("close") and b.get("date")]
+    if len(bars) >= 2 and bars[-1]["date"] == today and bars[-2]["close"]:
+        return round((bars[-1]["close"] - bars[-2]["close"]) / bars[-2]["close"] * 100, 2)
+    return None
+
+
+def evaluate_index_shock(snapshot: dict, prev_state: dict) -> tuple[dict | None, dict]:
+    """(v2.6 · P1-c) 장중 KOSPI 지수 쇼크 감지 — 신호 전용, 하루 단계 에스컬레이션만 경보.
+
+    오늘 등락률 = regime.last_close(방금 fetch 한 장중값, as_of=오늘일 때만) vs
+    price_history.json 지수의 직전 확정 종가. |등락| ≥3%/≥5% 단계를 판정하고,
+    당일 이미 알린 단계 이하는 침묵(dedup). 지수가 stale 이거나 직전 종가를 못 구하면
+    판정하지 않는다(지연 지수값 오경보 방지 — 7/16·7/31 계열).
+    반환: (경보 dict 또는 None, 갱신된 dedup 상태).
+    """
+    regime = snapshot.get("regime") if isinstance(snapshot.get("regime"), dict) else {}
+    today = datetime.now(KST).date().isoformat()
+    prev = prev_state.get(INDEX_SHOCK_KEY) if isinstance(prev_state.get(INDEX_SHOCK_KEY), dict) else {}
+    prev_rank = int(prev.get("rank", 0)) if prev.get("date") == today else 0
+    state: dict[str, Any] = {"date": today, "rank": prev_rank}
+
+    idx_val = regime.get("last_close")
+    if regime.get("as_of") != today or not isinstance(idx_val, (int, float)):
+        return None, state  # 지수 미갱신(stale/휴장) — 판정 안 함
+    bars = (load_json("state/price_history.json", {}).get("index") or {}).get("bars") or []
+    prev_close = None
+    for b in reversed(bars):
+        if isinstance(b, dict) and b.get("date") and b["date"] < today and b.get("close"):
+            prev_close = float(b["close"])
+            break
+    if not prev_close:
+        return None, state  # 직전 확정 종가 부재 — 등락률 산출 불가
+
+    pct = round((float(idx_val) - prev_close) / prev_close * 100, 2)
+    rank, label = 0, ""
+    for thr, r, lab in INDEX_SHOCK_LEVELS:
+        if abs(pct) >= thr:
+            rank, label = r, lab
+            break
+    state.update({"rank": max(rank, prev_rank), "pct": pct})
+    if rank == 0 or rank <= prev_rank:
+        return None, state  # 임계 미달 또는 당일 기알림 단계 — 침묵(상태만 갱신)
+
+    # (v2.31 정합성 1줄 대조) 같은 스냅샷 대형주 등락 평균과 5%p 초과 괴리면 신뢰 유보 표기.
+    ts_map = snapshot.get("tickers") if isinstance(snapshot.get("tickers"), dict) else {}
+    lc_pcts = [
+        p for t in ("005930", "000660")
+        if (p := _today_pct_from_history((ts_map.get(t) or {}).get("five_day_history"), today)) is not None
+    ]
+    if lc_pcts:
+        avg = round(sum(lc_pcts) / len(lc_pcts), 2)
+        consistency = (
+            f" ⚠️ 대형주 평균 {avg:+.1f}% 와 5%p 초과 괴리 — 지수값 신뢰 유보, 웹 2출처 교차확인 필요(v2.31)"
+            if abs(pct - avg) > 5.0 else f" (대형주 평균 {avg:+.1f}% 동행)"
+        )
+    else:
+        consistency = ""
+    direction = "급락" if pct < 0 else "급등"
+    return {
+        "pct": pct, "rank": rank, "level": label, "direction": direction,
+        "index_value": float(idx_val), "prev_close": prev_close,
+        "note": (
+            f"KOSPI {pct:+.2f}% ({prev_close:,.0f}→{float(idx_val):,.0f}) {label} {direction}{consistency}"
+            " — 다음 12/15시 슬롯은 오전 예측 유지 금지·슬롯 시점 재예측 의무"
+            "(policy.proactive_inference.intraday_shock_rejudgment)"
+        ),
+    }, state
+
+
 def maybe_send_kakao(title: str, body: str) -> bool:
     """KAKAO 환경변수가 있으면 send_kakao 모듈을 재사용해 경보 발송."""
     if not (os.environ.get("KAKAO_REST_API_KEY") and os.environ.get("KAKAO_REFRESH_TOKEN")):
@@ -224,7 +306,13 @@ def main() -> int:
     pending_signals, fired_after, pi_mode = evaluate_pending_orders(snapshot, policy, prev_fired)
     new_state[PENDING_FIRED_KEY] = fired_after
 
+    # (v2.6 · P1-c) 장중 지수 쇼크 감지 — 보유 0 이어도 판정한다(재예측 의무 트리거).
+    index_alert, index_shock_state = evaluate_index_shock(snapshot, prev_state)
+    new_state[INDEX_SHOCK_KEY] = index_shock_state
+
     lines: list[str] = []
+    if index_alert:
+        lines.append(f"⚡ {index_alert['note']}")
     for e in escalations:
         lines.append(
             f"{EMOJI[e['tier']]} {e['name']} {e['pct']:+.1f}% "
@@ -234,12 +322,14 @@ def main() -> int:
         cp = f"현재 {int(s['current_price']):,}" if s.get("current_price") else ""
         lines.append(f"📌 [예약] {s['name']} {s.get('action','')} {cp} — {s['note']}")
 
-    should_notify = bool(escalations) or bool(pending_signals)
+    should_notify = bool(escalations) or bool(pending_signals) or bool(index_alert)
     title = ""
     if should_notify:
         if escalations:
             worst = "red" if any(e["tier"] == "red" for e in escalations) else "orange"
             title = f"{EMOJI[worst]} 장중 단계 경보 — 보유 종목 {worst.upper()} 이탈"
+        elif index_alert:
+            title = f"⚡ 장중 지수 쇼크 — KOSPI {index_alert['pct']:+.1f}% ({index_alert['level']})"
         else:
             title = "📌 장중 예약 트리거 충족 — 체결 검토"
     as_of = snapshot.get("as_of", "")
@@ -254,19 +344,24 @@ def main() -> int:
         "escalations": escalations,
         "pending_signals": pending_signals,
         "pending_mode": pi_mode,
+        "index_shock": index_alert,
+        "index_shock_state": index_shock_state,
         "evaluated": evaluated,
     }
     OUT_PATH.parent.mkdir(exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     STATE_PATH.write_text(json.dumps(new_state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    if not positions and not pending_signals:
-        print(f"보유 0·예약신호 0 — 장중 모니터 no-op (pending_mode={pi_mode})")
+    if not positions and not pending_signals and not index_alert:
+        print(f"보유 0·예약신호 0·지수쇼크 없음 — 장중 모니터 no-op (pending_mode={pi_mode})")
         return 0
     print(
         f"intraday_alerts: positions={len(positions)} escalations={len(escalations)} "
-        f"pending_signals={len(pending_signals)}({pi_mode}) should_notify={should_notify}"
+        f"pending_signals={len(pending_signals)}({pi_mode}) "
+        f"index_shock={'-' if not index_alert else index_alert['pct']} should_notify={should_notify}"
     )
+    if index_alert:
+        print(f"  [지수쇼크] {index_alert['note'][:120]}")
     for e in escalations:
         print(f"  [{e['tier'].upper()}] {e['name']} {e['pct']:+.1f}% (prev={e['prev_tier']})")
     for s in pending_signals:

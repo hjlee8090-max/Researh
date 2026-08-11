@@ -106,6 +106,13 @@ def fetch_naver(ticker: str) -> list[dict[str, Any]]:
             bar["volume"] = float(r[5]) if len(r) > 5 and r[5] not in (None, "") else None
         except (ValueError, TypeError):
             bar["volume"] = None
+        try:  # 외국인소진율(r[6], %) — (2026-08-11 P1-a) 종전엔 도착하고도 버려지던 컬럼.
+            # 종목별 외국인 지분 추세의 공짜 선행 지표(investor_flows 수급 데이터의 보조 축).
+            bar["foreign_ownership_pct"] = (
+                float(r[6]) if len(r) > 6 and r[6] not in (None, "") else None
+            )
+        except (ValueError, TypeError):
+            bar["foreign_ownership_pct"] = None
         out.append(bar)
     return out[-260:]
 
@@ -560,6 +567,23 @@ def build_ticker_snapshot(
     last_volume = primary_hist[-1].get("volume") if primary_hist else None
     # v2.9 — '공격' 모드 가격구조 반등 신호(5일선 회복 + higher-low).
     structure = price_structure(primary_hist) if primary_hist else {"price_reversal": None}
+    # (2026-08-11 P1-a) 외국인소진율 요약 — naver 응답에 매 수집 도착하고도 버려지던
+    # 컬럼(r[6])을 표면화한다. 종목별 외국인 지분 추세(수준·5/20일 변화)로,
+    # state/investor_flows.json(일별 순매수 대금)의 보조 축이다. naver 전용(yahoo/krx 없음).
+    f_own = [
+        b.get("foreign_ownership_pct")
+        for b in (naver_hist or [])
+        if b.get("foreign_ownership_pct") is not None
+    ]
+    foreign_ownership = (
+        {
+            "pct": f_own[-1],
+            "chg_5d_pp": round(f_own[-1] - f_own[-6], 2) if len(f_own) >= 6 else None,
+            "chg_20d_pp": round(f_own[-1] - f_own[-21], 2) if len(f_own) >= 21 else None,
+        }
+        if f_own
+        else None
+    )
     # 오늘자 OHLC(시가/고가/저가/현재가) — 웹 교차확인이 '개장/장중 고가'를 '현재가'로 오인하는 것을
     # 막기 위한 범위 맥락(policy.price_data_quality.web_verify_guard). 마지막 캔들 날짜가 오늘일 때만 채운다.
     last_bar = primary_hist[-1] if primary_hist else None
@@ -619,6 +643,7 @@ def build_ticker_snapshot(
             "volume": last_volume,
             "vol_ratio_20d": vol_ratio,
         },
+        "foreign_ownership": foreign_ownership,
         "structure": structure,
         "entry_filter": {},  # main() 의 apply_entry_filter 가 레짐 tier 확정 후 채운다(v2.7)
     }

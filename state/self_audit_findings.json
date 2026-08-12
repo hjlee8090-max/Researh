@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-11",
+  "as_of": "2026-08-12",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,7 +8,7 @@
       "detail": "손실 스톱 t+5 일실 합계 222731.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-11",
+      "last_seen": "2026-08-12",
       "weeks_seen": 6,
       "status": "open",
       "disposition": {
@@ -44,7 +44,7 @@
       "detail": "⚠️ 주식비중 56.5% < 목표 하한 65% — 만성 미배치 계열",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-11",
+      "last_seen": "2026-08-12",
       "weeks_seen": 6,
       "status": "open",
       "disposition": null,
@@ -85,7 +85,7 @@
       "first_seen": "2026-08-11",
       "last_seen": "2026-08-11",
       "weeks_seen": 1,
-      "status": "open",
+      "status": "resolved",
       "disposition": null,
       "disposition_history": [
         {
@@ -94,7 +94,8 @@
           "date": "2026-08-03",
           "by": "sunday_policy_review"
         }
-      ]
+      ],
+      "resolved_date": "2026-08-12"
     },
     {
       "id": "patch-without-validation",
@@ -104,21 +105,20 @@
       "first_seen": "2026-08-05",
       "last_seen": "2026-08-11",
       "weeks_seen": 1,
-      "status": "open",
+      "status": "resolved",
       "disposition": {
         "action": "observe",
         "note": "패치 동결 규칙(감사 처방⑤) 발동 확인 — 직전 감사 대비 policy v2.27→v2.28 버전 증가 + 신규 왕복 0건(누적 왕복은 13→14건이나 이는 v2.28 patch 이전 체결 1건 반영분, v2.28 이후 신규 체결은 0건). 이번 리뷰의 정책 패치는 버그 수정·게이트 강화(deployment-below-band 의 universe theme 교정 등)만 반영했고 전략 파라미터(사이징·임계·목표) 변경은 없음 — 동결 규칙 준수. 신규 왕복 표본이 쌓일 때까지(권장 3건+) 동결 유지, 다음 감사에서 재확인.",
         "date": "2026-08-09",
         "by": "sunday_policy_review"
       },
-      "disposition_history": []
+      "disposition_history": [],
+      "resolved_date": "2026-08-12"
     }
   ],
   "open": [
     "whipsaw-high",
-    "deployment-below-band",
-    "benchmark-gap-widening",
-    "patch-without-validation"
+    "deployment-below-band"
   ],
   "overdue": [
     "deployment-below-band"

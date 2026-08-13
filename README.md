@@ -80,6 +80,7 @@ prompts/ (추가)
   earnings_preview.md      Phase 2 — 실적 발표 전 beat/inline/miss 시나리오 + 발표 후 자기채점 (이벤트 기반, 0900·1800 호출)
 docs/ (추가)
   policy_changelog.md      policy.json changelog 전문 (policy 엔 최근 5건만 — compact_state.py 이관)
+  policy_rationale.md      (v2.33 D) policy 룰의 유래·사고 사례·설계 배경 산문 전문 — 본문엔 ref 스텁만. check_lessons_applied haystack 포함
   plan_context_compaction.md  콘텍스트 압축·연결 보강 계획서 (2026-06-12)
 scripts/
   fetch_market_data.py     네이버 + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출

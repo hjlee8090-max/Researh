@@ -25,6 +25,7 @@
 > - `audit_pipeline.audit_context_budget` — 핫패스 크기 임계(`policy.context_budget.audit_thresholds`) 초과 WARN
 > - `audit_pipeline.audit_reports` 확장 — 당일 00시 슬롯 누락 WARN(월요일 미발화 표면화) + '한눈에 보기' 운영 용어 노출 WARN
 > - `check_lessons_applied.py` haystack 에 `docs/policy_changelog.md` 포함 (changelog 분리에 따른 오탐 방지)
+- (v2.33 D) haystack 에 `docs/policy_rationale.md` 추가 — policy 본문 산문 이관분(유래·사례 전문)의 오탐 방지. 신규 policy 룰의 유래 서술은 처음부터 rationale 에 적는다(본문엔 룰·파라미터·ref 만)
 > - 보유 R/R 검토 하한 = 진입과 동일 `regime_adaptive_rr.min_rr_by_tier` (1800 §2-2·audit 통일, tier 미확정 1.2 폴백)
 
 > **신규 추가 (2026-06-02, v2.3 장중 시간 정책)**

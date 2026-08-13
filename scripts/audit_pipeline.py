@@ -1113,8 +1113,9 @@ def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
             "WARN",
             "핫패스 콘텍스트 예산 초과: " + "; ".join(over)
             + " — 처방: watchlist/watch_items/history/lessons 갱신체인은 compact_state.py, "
-            "lessons 본문은 ✅codify 이관(sunday_policy_review §1-6), policy.json 은 note 산문의 "
-            "docs/policy_changelog.md 이관 검토(자동 압축기 없음 — 수동)",
+            "lessons 본문은 ✅codify 이관(sunday_policy_review §1-6 수지 균형 의무), policy.json 은 "
+            "유래·사례 산문의 docs/policy_rationale.md 이관(v2.33 관례 — 신규 룰은 본문에 "
+            "룰·파라미터·ref 만)",
         ))
     else:
         messages.append(result("OK", "핫패스 콘텍스트 예산(watchlist/policy/weekly_plan/lessons/history) 정상"))

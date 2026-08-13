@@ -171,6 +171,17 @@ note·origin·structural_note 산문(50%, 42K자)을 `docs/policy_rationale.md`(
 조건도 동일: check_lessons_applied haystack에 rationale 파일 추가(미반영 오탐 방지).
 "자동 압축기 없는 유일한 핫패스"를 해소하는 작업이며, 룰 의미는 1글자도 바꾸지 않는다.
 
+> ✅ **1차 구현 완료 (2026-08-13, policy v2.33)** — 전 필드 판독 후 **순수 이력만** 23필드
+> (7,876자) 이관, 139KB→130KB(-6.3%). 실행 지시가 섞인 2필드(structural_note·max_positions_note)는
+> 지시 보존 스텁. 검증: check_lessons_applied 전후 완전 동일(hard=0·soft=0·applied=3).
+> **구현 중 실측 정정 — 당초 "42K자 이관" 추정은 과대**: 산문 42K자 중 300자+ 대형 필드는
+> 15K자뿐이고 나머지는 180개 필드에 파편화, 판독 결과 대형 필드의 상당수(estimate_gate·
+> sector_rotation_reentry·leader_widening 등)는 **규범을 포함해 이관 불가**였다. 잔여 감량
+> (130KB→95KB 예산)은 ①규범 purpose 의 룰/유래 분리 재작성(의미 변경 위험 — 사용자 승인 필요)
+> ②예산 임계 재조정 ③구조 변경(룰 본문 단일 소스화) 중 정책 결정 사안 — P2 로 상정
+> (2026-06-12 프롬프트 감량의 "잔여는 구조 변경 필요" 결론과 동형). **향후 유입 차단이 실질 효과**:
+> 신규 룰 유래 서술은 처음부터 rationale 에 적는 관례를 §3 패치 관례에 명문화했다.
+
 ### E. lessons 처리량 균형 — P1
 
 §1-6 이관을 재량에서 **수지 균형 의무**로: 매주 policy-review는 "이관 건수 ≥ 지난주 신규 유입 건수"

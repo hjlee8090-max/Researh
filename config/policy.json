@@ -1,7 +1,8 @@
 {
-  "version": "2.32",
+  "version": "2.33",
   "last_updated": "2026-08-13",
   "changelog": [
+    "2.33: policy 본문 다이어트 1차 — 유래·사고 사례·설계 배경 산문 23필드(7,876자)를 docs/policy_rationale.md 로 이관, 본문엔 ref 스텁(실행 지시가 섞인 2필드는 지시 보존 스텁). 룰·파라미터·게이트 무변경 — 규범 포함 purpose(estimate_gate·sector_rotation_reentry·leader_widening·discovery_gate·block_if_cumulative 등)는 유지. check_lessons_applied haystack 에 rationale 포함(P1 선반영)이라 반영 판정 오탐 없음. 근거: docs/plan_removal_exclusion.md §5-D — policy 는 '자동 압축기 없는 유일한 핫패스'였고 산문 50%(42K자)가 크기 본체. 신규 룰 관례: 유래 서술은 rationale 에, 본문엔 룰·파라미터·ref 만.",
     "2.32: 콘텍스트 압축 커버리지 확장 P0 (근거: docs/plan_removal_exclusion.md §5-A·B — 2026-08-12 감사 핫패스 예산 5항목 전부 초과, 종결 주문 90%·과거 촉매 79% 잔존 실측). compact_state 신규 이관 5종(pending_orders 종결 7일+·catalysts manual 과거 7일+·watchlist 상위 노트 12건 초과분·weekend_review 날짜키 14일+·inference_log 채점완료 90일+) + build_inference_checklist 바이트 캡 집행(줄 캡만 집행하던 단위 불일치 해소) + compact 담체 주 1회→매일(weekly_compact.yml 19:00 KST, 19:30 감사 직전). 소비자 계약 검증 완료(check_intraday_alerts active만·sync_pending_orders active SELL만·estimate_target_price 과거촉매 D-7 스킵과 보존창 정렬). 매매 행동 무변경 — retention 상세는 context_budget.retention.",
     "2.31: P1 게이트 2종 — 지수 실측을 놓치지 않기 계열(근거: reports/2026-08-10-lessons-loop-data-gap-review.md §2-3, 2026-08-11 사용자 P1 구현 지시). ①index_snapshot_confirmation 에 consistency_check 신설 — 트리거를 '날짜(as_of/stale)'에서 '지수 vs 대형주 내부 정합성(5%p 초과 괴리)'로 확장(lessons 2026-07-31 12시 재발 2건째의 자기 기록 '확장 필요' 이행 — 7/16 실제 크래시를 지연으로 기각·7/31 지연 값을 실측으로 신뢰, 반대 방향 동일 결함의 양방향 봉인). ②proactive_inference.intraday_shock_rejudgment 신설 — 장중 KOSPI |±3%| 발동일의 12/15시는 오전 예측 유지 금지·슬롯 시점 재예측 의무 ('사이드카 후 15시 정확' 8회 반복의 룰화). check_intraday_alerts.py 에 index_shock 감지(±3%/±5%, 카톡 신호 전용) 추가. 함께(P1-a, 정책 외): fetch_history GLOBALS 에 MU·^SOX 추가+06:10 KST cron, 00/06/09시 프롬프트가 price_history.global 야간 확정치를 1순위로 읽도록 배선, fetch_market_data 가 네이버 외국인소진율(r[6])을 foreign_ownership 블록으로 표면화. 게이트 강화·데이터 배선 성격 — 전략 파라미터 변경 아님(백테스트 불요).",
     "2.30: 통화정책 이벤트 상시 게이트 신설(catalysts.alert_rules.monetary_policy_overlay, 근거: reports/2026-08-10-lessons-loop-data-gap-review.md P0-4 — 7/16 금통위 크래시 -6.37% 3-miss·7/17 제헌절 미인지 계열의 '캘린더 1주 시야' 구조 결함). ①2026 잔여 통화정책 일정 선제 일괄 등재 — 금통위 8/27·10/22·11/26(BOK 공표)·FOMC 9/15~16·10/27~28·12/8~9(Fed 공표), manual_events event_class=monetary_policy ②D-1/D-0 신규 진입 보류(v2.11 축소 진입의 통화정책 예외 — 보유 청산·리밸런스 정상) ③이벤트일 예측 밴드 하방 꼬리 의무 개방(band_width_rule 최소 반폭×1.5) ④연간 일정 공표 즉시 선제 등재 절차 명문화. 함께: P0-3 수급 수집(fetch_investor_flows.py→state/investor_flows.json, 06:30/18:00 배선), P0-1/P0-2 자기보완 루프 환류 수리(build_inference_checklist 최신 우선 절단·miss 정규화 클러스터링 config/miss_patterns.json·카운터/분류 파서 볼드 대응 — 스크립트 수리라 정책 파라미터 불변). 데이터 등재+게이트 성격 — 전략 파라미터 변경 아님(백테스트 불요), 2026-08-11 사용자 P0 구현 지시.",
@@ -120,7 +121,7 @@
       "enforced_since": "2026-07-07",
       "kospi_abs_daily_move_pct": 5.0,
       "rule": "KOSPI 일간 |등락|≥5% 인 날의 종목 손절/트레일링 '종가 이탈' 확정은 당일 체결하지 않고 익일 종가 재확인 후 체결한다(2일 연속 이탈 시 익일 closing_auction 체결). 즉시 체결 예외: ①종가가 유효 임계를 추가로 1.0×ATR% 이상 관통(급락 가속) ②개별 악재로 thesis 무효화 판정 동반 — 예외 체결 시 trade_log SELL 항목에 shock_deferral_ack(어느 예외인지 + 수치)를 기록한다.",
-      "purpose": "v2.22(2026-07-06 감사 처방④) — 실현 손실 청산 6건 전부가 지수 급락일(-3.25%/-5.4%/-8.4%/-9.99% 등)에 격발됐고 6건 전부 청산 후 15거래일 내 +8~16% 회복(개별 thesis 훼손 0건). 종목 스톱이 지수 일중 변동에 격발되는 휩쏘를 '이틀 연속 종가 이탈' 요구로 완충한다. 반대 위험(진짜 폭락 방치)은 ATR 관통 예외 + red 하드 플로어(-20%)가 방어.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §risk.index_shock_stop_deferral.purpose (v2.33 이관)",
       "ack_field": "shock_deferral_ack",
       "note": "check_trade_log_gate 의 index_shock_stop_gate 가 검증: 쇼크일 SELL 스톱 체결인데 deferral 이력(reason 에 '익일 재확인' 또는 shock_deferral_ack)이 없으면 위반. 쇼크일 판정은 price_history.json 지수 종가 기준."
     },
@@ -132,7 +133,7 @@
     },
     "breakeven_ratchet": {
       "mode": "shadow",
-      "purpose": "v2.20 — 본전 래칫 스톱(그림자 관측 전용). 트레일링 활성화(목표진행 70%) 전 구간에서 손절선이 진입가-2×ATR 에 고정된 채 주가만 오르면 open_risk 가 부풀어 히트 예산을 잠근다(7/2 실측: LIG넥스원 1종목=예산 42%, deploy 권고 137만원 vs 히트 잔여 0원). 이익이 ATR 단위로 진행되면 스톱을 본전 이상으로만 올려(래칫 — 하향 없음) 예산을 재활용하고 좌측 꼬리를 자른다. 실증: 6/23 보호손절 +25,369원. 반대 위험: 본전 노이즈 체결(5/28 KB금융 give-back 교훈) — ATR 게이트·종가 판정으로 완충하고 그림자 채점으로 net 실익 입증 후에만 라이브 전환. 전문: reports/2026-07-02-position-management-research.md P1.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §risk.breakeven_ratchet.purpose (v2.33 이관)",
       "basis": "close",
       "steps": [
         {
@@ -169,7 +170,7 @@
     "max_single_trade_risk_pct_of_equity": 2.0,
     "portfolio_heat_budget_pct_of_equity": 6.0,
     "portfolio_heat_budget_by_tier": {
-      "purpose": "v2.5 — 히트 예산을 시장 레짐 tier 에 따라 차등한다. flat 6% 는 단일거래 2%·손절 ~10% 조합에서 종목당 비중 ~20% × 3종목 = ≈60% 에서 막혀 strong_bull 목표비중(80~95%)에 닿지 못했다(강세장 미배치). 강세 tier 일수록 예산을 키워 breadth(종목 수)로 목표비중을 채우게 한다. compute_allocation.py 가 snapshot.regime.tier(raw_tier)로 이 표를 조회하며, tier 가 unknown 이거나 표에 없으면 portfolio_heat_budget_pct_of_equity(6.0) 로 폴백한다. target_equity_pct 밴드(market_regime.dynamic_sizing)와 짝이 되도록 설계: strong_bull 9.0% ÷ 종목당 2% = 4.5종목 × ~20% ≈ 90%(밴드 중앙).",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §risk.portfolio_heat_budget_by_tier.purpose (v2.33 이관)",
       "strong_bull": 9.0,
       "bull": 7.5,
       "neutral": 6.0,
@@ -178,7 +179,7 @@
       "backstop_note": "히트 예산 상향은 '동시 전부 손절 시 잠재 최대손실'의 상한을 키우는 것이지 손절폭·단일거래 상한을 푸는 것이 아니다. 실현 손실의 차단기는 여전히 max_weekly_drawdown_pct(-5%)와 weekly_recovery_plan 의 defensive 단계(누적 -5% 에서 신규 진입 중단)다. 강세장에서 상관 동시손절 확률이 낮다는 가정 위에서만 9% 예산이 정당화되며, 약세 tier 로 내려갈수록 예산을 조여 자본을 보존한다."
     },
     "max_single_trade_risk_pct_of_equity_by_tier": {
-      "purpose": "v2.7 — 평면 단일거래 상한 2% 가 손절폭(ATR2배 14~18% 또는 -10% 플로어)과 곱해져 종목당 포지션을 ~98만원(=equity×2%÷10%)에 묶어, strong_bull 목표비중(80~95%)에 수학적으로 닿지 못하게 했다(2주+ 운용: strong_bull 인데 현금 100%·누적 -1.8%, 최근 거래에서 종목당 100만원을 넘긴 적이 없음). portfolio_heat_budget_by_tier 와 대칭으로 tier별 단일거래 상한을 둬 강세장에선 종목당 비중을 키우고(strong_bull 3.5%×equity÷손절10%≈종목당 ~30%) 약세장에선 조인다. compute_allocation.py 가 raw_tier 로 이 표를 조회해 per_trade_risk_pct·per_trade_risk_basis·single_trade_risk_ceiling_krw 를 산출하며, tier 가 unknown 이거나 표에 없으면 max_single_trade_risk_pct_of_equity(2.0)로 폴백한다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §risk.max_single_trade_risk_pct_of_equity_by_tier.purpose (v2.33 이관)",
       "strong_bull": 3.5,
       "bull": 3.0,
       "neutral": 2.0,
@@ -396,7 +397,7 @@
     },
     "pre_trade_gate": {
       "enabled": true,
-      "purpose": "v2.2 — 2026-06-01 레이스(스케줄 fetch_prices 가 routine 의 0-1 git pull 직후 도착 → routine 이 60시간 묵은 5/29 스냅샷으로 삼성전자 신규매수를 체결, 신선본은 09:13·10:37 에 별도 커밋) 재발 방지. 매수·매도를 trade_log/portfolio 에 기록(booking)하기 직전 스냅샷을 재동기화·재검증한다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §price_data_quality.pre_trade_gate.purpose (v2.33 이관)",
       "script": "scripts/pre_trade_check.py",
       "procedure": [
         "1) git pull --rebase 로 스케줄 fetch 가 늦게 도착했는지 다시 받는다.",
@@ -412,7 +413,7 @@
     },
     "trade_provenance_gate": {
       "enabled": true,
-      "purpose": "v2.2 — pre_trade_gate(프롬프트 의존)를 우회해 묵은/미검증 가격으로 체결되는 것을 CI 에서 하드 차단하는 마지막 안전장치. 모든 booking(BUY/SELL 계열) trade_log 항목은 price_source 를 기록해야 하며, scripts/check_trade_log_gate.py 가 위반 시 exit 1 → audit_pipeline(build_and_notify) 빌드 FAIL + auto_merge_routines 병합 차단을 일으킨다(프롬프트가 무시돼도 묵은 가격 체결이 main 에 도달하지 못함).",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §price_data_quality.trade_provenance_gate.purpose (v2.33 이관)",
       "script": "scripts/check_trade_log_gate.py",
       "price_source_required_since": "2026-06-02",
       "allowed_price_sources": [
@@ -431,7 +432,7 @@
     },
     "data_freshness": {
       "enabled": true,
-      "purpose": "v2.1 — 스냅샷의 '수집 시각(as_of) vs routine 실행 시각' 차이(age, 분)를 추적·차등 적용한다. 직전까지 stale 키(=직접 수집 실패)만 봤고 데이터 노화(age)는 무시해, GitHub Actions 가 routine 1시간 전 성공 수집한 가격을 갓 나온 high 데이터처럼 매매에 썼다('stale 키 없음 ≠ 신선함'). (외부 dispatch 트리거 전환 후) 외부 스케줄러가 routine 5분 전 dispatch 로 수집하므로 age 는 보통 fresh(~5분)지만, 외부 트리거 지연·실패 시 백업 cron(약 1시간 전) 수집본으로 age 가 커질 수 있어 age 를 명시·게이트한다. compute_allocation.py 가 snapshot_age_min 과 freshness 등급을 state/allocation.json 에 기록하고, 각 routine 0-B 가 이를 읽어 적용한다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §price_data_quality.data_freshness.purpose (v2.33 이관)",
       "fresh_max_min": 20,
       "intraday_acceptable_max_min": 75,
       "grades": {
@@ -445,7 +446,7 @@
       "note": "외부 dispatch 전환 후 스냅샷은 보통 fresh 이며, 외부 트리거 지연·실패로 age 가 커진 경우에도 매매를 '차단'하지 않고 '인지·보정'한다. age 가 큰 것 자체로 confidence 를 강등하지 않는다 — confidence(2출처 일치)와 freshness(나이)는 별개 축이며, 둘을 함께 표기한다."
     },
     "web_verify_guard": {
-      "purpose": "v2.4 — 웹 교차확인(live_verify)이 묵은 값/개장 고가를 '현재가'로 잘못 채택하고 그 위에 없는 촉매를 지어내 결론을 뒤집는 것을 막는다. (2026-06-02 현대차: 스냅샷 710,000(12:40, naver+yahoo 2출처 high, today_high=772,000)을 두고 웹 754,000(개장 스파이크, today_high 근처)을 '현재가'로 채택 → '+4.29% 급등·관세 완화 기대감 추정' 허구 서사 → 비중 상한 초과·thesis 약화·진입 불가 결론. 실제 종가는 729,000(-2.80%)로 정반대. 스냅샷이 이미 today_ohlc=시가770,000/고가772,000/저가697,000/현재710,000 을 갖고 있었는데 무시됐다.)",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §price_data_quality.web_verify_guard.purpose (v2.33 이관)",
       "anchor": "가격 판단의 1차 앵커는 high/medium 신뢰도 2출처 스냅샷의 close 와 today_ohlc(market_snapshot.tickers.<t>.today_ohlc — 시가/고가/저가/현재가)다. 웹 교차확인은 스냅샷의 '대체'가 아니라 '확인'이다.",
       "max_web_vs_snapshot_deviation_pct": 3.0,
       "outlier_rule": "웹 값이 앵커(스냅샷 close, high/medium 신뢰)에서 max_web_vs_snapshot_deviation_pct(±3%)를 넘게 벗어나면 outlier 로 본다. outlier 는 (a)출처 URL + 관측 시각을 명시하고 (b)그 시각이 스냅샷 as_of 보다 더 최근이며 (c)today_ohlc 의 [low, high] 범위 안일 때만 채택한다. 셋 중 하나라도 불충족이면 웹 값을 버리고 스냅샷 close 를 쓴다(보수). 특히 웹 값이 today_high 에 가깝고 스냅샷 close 가 그보다 낮으면 '개장/장중 고가 오인'으로 간주해 채택 금지한다(현대차 754,000≈today_high 772,000 사례).",
@@ -454,14 +455,14 @@
       "conflict_resolution": "웹과 스냅샷이 임계 초과로 충돌하고 outlier_rule 로 해소되지 않으면, 결정(진입/청산/단계)에는 더 보수적인 값을 쓰고 confidence 를 1단계 강등하며 리포트에 '웹/스냅샷 가격 충돌 — 보수 채택' 1줄을 남긴다. 충돌하는 더 높은 값으로 '진입 차단·thesis 약화' 같은 단정 결론을 내리지 않는다.",
       "applies_to": "모든 routine(09/12/15/18)의 웹 교차확인. 보유종목뿐 아니라 후보(candidate) 평가에도 동일 적용(현대차는 후보였다). booking 시에는 trade_provenance_gate 의 web_verified+verify_url 규칙과 함께 적용한다.",
       "source_date_verification": {
-        "purpose": "v2.6 — 웹 교차확인(live_verify)이 '오늘'이 아닌 묵은 날짜의 기사를 현재 시세로 도용하는 것을 막는다. (2026-06-08: 6/8 09시 routine 이 stale 6/5 스냅샷을 두고 웹검색이 돌려준 실제 2026-06-01자 MBC 기사(imnews.imbc.com/.../6826849_37004.html, KOSPI 종가 8,788.38·삼성전자 급등·젠슨황 방한)를 '6/8 시세'로 오인 도용 → 삼성전자 ORANGE→GREEN 허구 해소·리포트/lessons/portfolio 동반 오염. web_verify_guard 의 '스냅샷보다 최신' 조건(outlier_rule (b))을 LLM 이 '6/8 장중'으로 거짓 자기인증했고, 출처 게재일이 실제로 6/1 임을 강제 확인하는 절차가 없었다.)",
+        "purpose": "유래·사례 전문: docs/policy_rationale.md §price_data_quality.web_verify_guard.source_date_verification.purpose (v2.33 이관)",
         "rule": "웹 교차확인으로 '오늘 현재가/시황'을 채택할 때, 출처(뉴스·기사)의 published date(게재일)를 반드시 URL/본문에서 실제로 읽어 기록한다(예: URL path /YYYY/MM/DD/, 기사 상단 일자). 출처 게재일이 오늘(routine 일자)이 아니거나 스냅샷 as_of 보다 과거이면 '현재가'로 채택 금지 — 동일자(오늘) 출처를 다시 찾거나, 없으면 스냅샷 close 를 stale 로 보수 채택하고 리포트에 '오늘 가격 미검증(stale 유지)'로 명시한다.",
         "no_self_certified_recency": "'스냅샷보다 최신'·'오늘 장중' 같은 최신성 판정을 출처 게재일 확인 없이 자기 단정하지 않는다(outlier_rule (b) 의 게재일 확인 의무화). URL/페이지에서 실제 게재일 토큰을 읽을 수 없으면 '게재일 미확인'으로 적고 그 출처를 현재가 근거로 쓰지 않는다.",
         "large_gap_exception_banned_on_stale": "스냅샷이 stale 인데 단일 웹 출처가 max_web_vs_snapshot_deviation_pct(±3%)를 크게 넘는 갭(예: +10%)을 주장하면 '대규모 갭업 예외' 류의 자체 면제를 적용하지 않는다 — 동일자(오늘) 복수 출처가 today_ohlc 와 함께 확인될 때만 채택하고, 아니면 stale close 를 유지한다. (2026-06-08 삼성전자 +10% 갭업 '예외' 자가면제가 사고의 직접 트리거였다.)",
         "enforced_by_ci": "config/policy.json.price_data_quality.source_provenance_gate (scripts/check_trade_log_gate.py) 가 묵은 출처 게재일·재활용 종가를 CI 에서 하드 차단한다."
       },
       "index_snapshot_confirmation": {
-        "purpose": "v2.23 — KOSPI 지수(regime.last_close) 스냅샷이 지연(as_of≠오늘)인 상태에서 실제로는 지수가 크게 움직였는데(±3% 초과) 09/12/15시가 이를 '스냅샷 지연·미확정'으로 자동 기각하고 보유 종목 breadth(개별주 혼조)만으로 방향을 판정해 '지수 잔잔' 오도 서사를 낸 것을 막는다. (2026-07-16 사고: 한은 기준금리 인상發 KOSPI -6.37% 크래시를 09/12/15시가 방어주 혼조 보합만 보고 '미확정'으로 처리 — 방어주 divergence 로 breadth 가 잔잔해도 지수 방향의 반증이 아니다. 18시·웹 2출처 교차로 뒤늦게 정정.) ⚠️ 2026-07-31 12시 반대 방향 재발(2건째): as_of=오늘·stale 아님인데 지수 값만 12%p 지연(5,643.73 vs 실측 6,300선) — '날짜' 트리거가 발동하지 않았고 같은 스냅샷의 삼성전자 +19.1%·SK하이닉스 +22.2% 와의 모순도 대조되지 않았다. v2.31 이 트리거를 '지수 vs 대형주 내부 정합성(5%p 초과 괴리)'로 확장.",
+        "purpose": "유래·사례 전문: docs/policy_rationale.md §price_data_quality.web_verify_guard.index_snapshot_confirmation.purpose (v2.33 이관)",
         "trigger": "regime(market_snapshot.regime).as_of 가 오늘이 아니거나 stale 이고, 그날 확인된 매크로 이벤트(0000/0900 이 표시한 금리결정·CPI·지정학 등 high-importance 확정 이벤트)가 있거나 개별 보유·후보 종목의 스냅샷 변동이 이례적으로 큰 경우. (v2.31 확장) 또는 — as_of 가 오늘이고 stale 이 아니어도 — 아래 consistency_check 의 지수 vs 대형주 내부 정합성 괴리가 5%p 를 초과하는 경우.",
         "rule": "위 트리거 시 '지수 미확정'으로 침묵하지 말고, KOSPI 지수를 웹 2출처(게재일 오늘)로 교차확인해 실제 종가/등락률을 리포트에 명시한다. 방어주·비반도체 등 일부 종목의 혼조·보합은 지수 전체 방향의 반증으로 쓰지 않는다 — 지수와 개별 바스켓 방향은 분리 판정한다. 교차확인도 불가하면(웹 차단 등) '지수 당일 미확인(stale, 방향 불명)'으로만 적고 '잔잔/보합'류 방향 단정을 금지한다.",
         "applies_to": "09/12/15시 routine 의 지수 판정. 18시는 종가 확정 book-of-record 이므로 기존 source_date_verification 으로 충분히 커버됨.",
@@ -475,7 +476,7 @@
     },
     "source_provenance_gate": {
       "enabled": true,
-      "purpose": "v2.6 — web_verify_guard.source_date_verification(프롬프트 의존)를 우회해 묵은 날짜의 기사가 '오늘 시세'로 trade_log 에 기록되는 것을 CI 에서 하드 차단하는 마지막 안전장치(trade_provenance_gate·trade_timing_gate 와 동일 패턴). 프롬프트가 무시돼도 묵은 출처 도용이 main 에 도달하지 못하게 한다. (2026-06-08 사고: 6/1자 MBC 기사를 6/8 시세로 도용 — 당시 이 게이트가 있었으면 recycled_value_gate 가 'KOSPI 8788=6/1 종가 재활용'으로 차단했다.)",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §price_data_quality.source_provenance_gate.purpose (v2.33 이관)",
       "script": "scripts/check_trade_log_gate.py",
       "enforced_since": "2026-06-08",
       "source_date_gate": {
@@ -500,7 +501,7 @@
     }
   },
   "market_hours": {
-    "purpose": "v2.3 — 장중 시간(세션) 정책. 직전까지 영업일(요일/공휴일)만 판정하고 '시각'은 보지 않아, 18시 routine 이 종가 도달 손절을 routine 실행 시각(18:00)으로 체결 기록하는 등 한국장 거래 시간(정규장 09:00~15:30) 밖의 체결이 trade_log 에 남았다(2026-06-01 SELL_ORANGE_STOP ts=18:00). 정규장에서만 실시간 체결을 허용하고, 마감 후 routine 은 종가 기준 청산만 하도록 명문화한다.",
+    "purpose": "유래·사례 전문: docs/policy_rationale.md §market_hours.purpose (v2.33 이관)",
     "timezone": "Asia/Seoul",
     "calendar_sessions_ref": "config/market_calendar.json.sessions (정규장 09:00~15:30·개장/마감 동시호가·시간외·반장)",
     "guard_script": "scripts/check_market_session.py",
@@ -586,7 +587,7 @@
     "rr_formula": "R/R = (target_price - current_price) / (current_price - stop_price). current_price 가 신뢰도 high·medium 일 때만 계산. low 면 'R/R 계산 보류' 로 표기.",
     "regime_adaptive_rr": {
       "enabled": true,
-      "purpose": "v2.0 — 추세추종 전략과 고정 R/R 게이트의 충돌 해소. 강세 tier 에서는 모멘텀 종목이 이미 상승해 목표가까지 reward 가 줄고 -10% 손절까지 risk 는 남아 R/R 이 구조적으로 1.2 밑으로 떨어진다(예: 삼성전자 5/29 R/R=0.63 으로 진입 봉쇄). tier 별 하한을 차등 적용하고, 목표가는 dynamic_exit_model.target_price_rule 로 저항선·모멘텀 반영해 상향(reward 확보)한다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §reward_risk_management.regime_adaptive_rr.purpose (v2.33 이관)",
       "min_rr_by_tier": {
         "strong_bull": 1.0,
         "bull": 1.1,
@@ -611,7 +612,7 @@
       ],
       "max_age_hours": 24,
       "target_gap_warn_pct": 20.0,
-      "purpose": "v2.24 — 매수측 estimate_gate(기대수익<0 신규진입 차단, v2.12)의 보유측 대응물. 신규 진입은 음수 추정을 차단하면서 보유 종목은 기대수익이 음수로 전환·지속돼도 아무 룰이 발동하지 않던 매수/매도 비대칭을 닫는다(2026-07-20 실측: 한미반도체 추정 기대수익 -5.3%(B) 인데 운용 목표가는 현재가 +50% 위 고정·무반응, 트레일링 활성화 진행률도 부풀려진 정적 목표가 기준이라 보호 전환이 구조적으로 지연). A/B 등급 추정의 기대수익이 임계 미만인 기록이 target_estimate_log.jsonl 에서 consecutive_reports 회 연속이면 compute_exit_levels 가 exit_levels.json 의 tickers.<t>.estimate.review_required=true 로 표면화한다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §reward_risk_management.holding_estimate_review.purpose (v2.33 이관)",
       "action": "review_required=true 종목은 18시 §2-2 재조정을 R/R 하한 미달과 동일 의무로 발동 — (a)목표가 재조정(재산정 후 컨센×1.15·밸류에이션 천장 캡 동일 적용) / (b)손절가 상향(트레일링 활성화·강화) / (c)50% 부분 익절 중 택1 을 당일 결정해 watchlist 코멘트에 review_reason 과 함께 기록. 보류는 1영업일 한도. 자동 청산·watchlist 목표가 자동 덮어쓰기는 하지 않는다(참고 레이어 원칙 불변 — 행동 의무만 발생).",
       "why_sign_only": "추정 수치는 상방 낙관 편향(estimate_scorecard 5td 기대 +10.2% vs 실현 -4.2%·중앙오차 -10.4%p, 20td -19.4%p)이라 목표가에 수치를 그대로 이식하면 편향을 실행에 수입한다. 부호(음수)의 유효성은 실증됨(gate_cost: 차단표본 fwd20 중앙값 -21.9%·양수율 0%) — 부호·지속성만 연결하고 수치 연결(캘리브레이션·수축 계수)은 표본 누적 후 sunday_policy_review 별도 상정.",
       "missing_data_rule": "등급 C(현재가 폴백 앵커)·추정 누락·as_of 가 max_age_hours 초과 stale 이면 게이트를 만들지 않는다(결측이 강제 룰이 되는 래칫 방지 — estimate_gate 와 동형). streak 도 A/B 등급 + 임계 미만 기록만 잇고, 기록 공백·등급 이탈에서 끊는다(보수).",
@@ -634,7 +635,7 @@
       }
     },
     "entry_rr_projection_requirement": {
-      "purpose": "진입 시 R/R 이 tier 하한 턱걸이(하한~하한+0.2)인 종목은 목표 진행률이 오르면 R/R 이 필연적으로 하락한다 — 2026-08-07 하나금융지주 실측(이틀 연속 손절 상향에도 하한 미복원, 원인은 진입 시점 손절폭이 목표까지 거리 대비 처음부터 넓었던 것). 사후 재조정이 아니라 진입 시점에 이 궤적을 예상해 두면 rr_breach_forced_action 발동을 '기습'이 아니라 '예정된 이벤트'로 다룰 수 있다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §reward_risk_management.entry_rr_projection_requirement.purpose (v2.33 이관)",
       "trigger_band_above_min_rr": 0.2,
       "requirement": "min_rr_by_tier[tier] ~ +0.2 구간에서 진입하는 종목은 pre_mortem 한 줄에 '목표 진행률 40% 도달 시 예상 R/R' 을 함께 계산해 기록한다.",
       "added": "2026-08-09"
@@ -642,7 +643,7 @@
   },
   "dynamic_reprice": {
     "enabled": true,
-    "purpose": "2달 운용 관찰(2026-08-05 사용자 검토 요청): 목표 매수/매도 금액이 주간 계획·직전 리포트의 절대가격 앵커로 고정되고 시장이 움직여도 틀을 유지하려는 경직성 보완. 실측 — 신한지주 목표 103,000 이 목표 진행률 215%(최고 종가 109,200)에도 고정, 추정 기준선 118,700 대비 -13% 방치. 기존 장치의 사각: rr_breach_forced_action(v2.26)은 R/R '하락'만, holding_estimate_review(v2.24)는 기대수익 '음수 전환'만 발동 — 목표 '초과 소진'과 매수 밴드의 시세 이탈은 무신호였다.",
+    "purpose": "유래·사례 전문: docs/policy_rationale.md §dynamic_reprice.purpose (v2.33 이관)",
     "bands_source": "state/dynamic_bands.json (scripts/compute_dynamic_bands.py — fetch_prices 워크플로가 시세 수집마다, routine 이 09/12/15/18시 데이터 준비 단계에서 재산정). 매수/매도 참조가격은 이 파일의 당회 산출값만 인용한다 — 직전 리포트·주초 계획의 절대가격 이월 금지(compute_exit_levels 손계산·이월 금지 원칙과 동형).",
     "tier_target_atr_mult": {
       "strong_bull": 1.6,
@@ -751,7 +752,7 @@
       "advisory_min_pct_of_52w_high": 70.0
     },
     "relative_strength": {
-      "purpose": "v2.5 — 섹터 로테이션/상대강도 축. 개별 종목의 절대 모멘텀(ret60)만 보면 '오르는 장'에서 후행 섹터(예: 반도체 주도장의 조선·금융)도 양(+)이라 채택돼 지수를 못 따라간다(2주 운용: 조선 3회·금융 3회 연속 손실, KOSPI +8.8% 인데 -1.77%). KOSPI 대비 '초과수익(excess return)'을 점수화해 지금 자금이 쏠리는 주도 섹터에 가중한다. benchmark=KOSPI 60일 수익률(market_snapshot.regime.ret_60d_pct, fetch_market_data 가 ^KS11 로 산출). 지수 데이터가 없으면(unknown) 0.5 중립 폴백으로 왜곡하지 않는다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §entry_filters.relative_strength.purpose (v2.33 이관)",
       "benchmark": "market_snapshot.regime.ret_60d_pct",
       "excess_return_score_bands": "excess = stock.ret_60d_pct − KOSPI.ret_60d_pct. ≥+30%p→1.0 / ≥+10%p→0.85 / ≥0%p→0.65 / ≥−10%p→0.4 / ≥−25%p→0.2 / <−25%p→0.05",
       "score_blend_weights": {
@@ -764,7 +765,7 @@
       "blend_note": "v2.0 의 momentum 0.35·thematic 0.20·confidence 0.20·thesis 0.25 를 재조정해 relative_strength 0.20 을 신설하고 나머지를 비례 축소했다(합 1.0). momentum 은 여전히 급락 회피 게이트로 entry_filter 에서 -7% 누적을 차단한다 — relative_strength 는 '주도 섹터 우대' 가중일 뿐 게이트가 아니다."
     },
     "post_surge_cooldown": {
-      "purpose": "v2.5 codify — lessons.md 2026-05-28 HD조선 교훈 ①(수주·호재 발표 직후 급등한 종목은 1~2일 소화 기간 후 진입, 급등 당일·다음날 진입 시 차익실현 노출 위험). HD조선 5/27 LNG 5조2511억 수주 급등 직후(09:10) 진입 → 5/28~6/1 매물 소화·섹터 소외로 orange 청산(-43,098). 급등 직후 진입의 차익실현 노출을 게이트한다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §entry_filters.post_surge_cooldown.purpose (v2.33 이관)",
       "single_day_surge_pct": 8.0,
       "cooldown_trading_days": 1,
       "rule": "직전 거래일 일간 등락률(today_ohlc close/전일 close − 1)이 single_day_surge_pct(+8%) 이상으로 급등했거나, '수주·계약·호재' 촉매(출처 URL 동반)로 당일 급등한 종목은 신규 진입을 cooldown_trading_days(1거래일) 이연한다. 이연 중에는 candidate 로 추적하되 booking 하지 않고, 소화(cool-down) 후 추세필터·R/R 재확인 시 진입한다. 트레일링스톱 상향·기존 보유 평가에는 적용하지 않는다(신규 진입 게이트 한정).",
@@ -806,7 +807,7 @@
       "preemptive_partial_exit": "보유 종목 종가가 orange 경계의 +3% 이내로 3거래일 연속 근접하면(장중 이탈·종가 회복 반복 패턴) 4거래일째 전량 청산을 기다리지 말고 3거래일째 50% 부분청산을 검토한다(lessons.md 2026-06-01 HD조선 교훈 ③)."
     },
     "overnight_gap_prediction_buffer": {
-      "purpose": "codify(2026-06-07 policy-review) — lessons.md 2026-05-22 루틴 오차(KOSPI 역대 최대 급등 다음날 갭다운 예측 -1~-2.5% vs 실제 -4.21%, 2%p 과소 추정). 표준 버퍼(±1%)로 추정해 차익실현 규모를 과소 평가한 갭을 gate 한다. prompts/0000_global.md §2-1 자정 갭다운 예측 단계에 적용.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §entry_filters.overnight_gap_prediction_buffer.purpose (v2.33 이관)",
       "trigger_abs_change_pct": 7.0,
       "additional_downside_buffer_pct": 2.0,
       "rule": "자정 routine 이 KOSPI 전일 일간 등락률 절댓값이 trigger_abs_change_pct(+7%) 이상임을 확인하면, 다음날 갭다운 예측 기준치에 additional_downside_buffer_pct(+2%p) 추가 하향 버퍼를 적용한다 (예: 기본 -1.5% 추정 → 조정 -3.5%). 갭업 예측에는 적용하지 않는다(하방 보수 원칙). 이 규칙은 lessons.md 에서 2번 관찰됐다(5/22 갭다운 과소 추정, 5/28 역대 최고 경신 후 차익실현).",
@@ -843,7 +844,7 @@
     "sensitivity_mode": "auto",
     "sensitivity": "medium",
     "sensitivity_by_tier": {
-      "purpose": "v2.10 — 시장 상황(레짐 tier)에 따라 바닥 재진입 민감도를 자동 조정한다. 강세장은 섹터 로테이션이 강하고 침체 섹터가 강하게 반등하므로 일찍(aggressive) 잡고, 약세장은 떨어지는 칼날·가짜 바닥이 많으므로 충분히 확인(conservative)한 뒤만 잡는다. screen_universe.py 가 snapshot.regime.tier 로 조회하며(sensitivity_mode=auto), tier 가 unknown 이거나 mode 가 고정값(aggressive/medium/conservative)이면 sensitivity 폴백.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §sector_rotation_reentry.sensitivity_by_tier.purpose (v2.33 이관)",
       "strong_bull": "aggressive",
       "bull": "medium",
       "neutral": "medium",
@@ -903,7 +904,7 @@
   "position_sizing": {
     "initial_capital_krw": 5000000,
     "max_positions": 6,
-    "max_positions_note": "v2.20 — momentum_strategy.config.top_n(6)과 동기 유지. 5 로 남아 있던 동안 바스켓 만석(6종목) 시 compute_allocation 의 vacant_slots = max(0, 5−6) = 0 이 영구화돼 09시 §2-C deploy 경로가 사문화됐다(2026-06-30 top_n 10→6 축소 때 미동기화 — reports/2026-07-02-position-management-research.md 병목 B). top_n 변경 시 이 값을 함께 조정한다.",
+    "max_positions_note": "momentum_strategy.config.top_n(6)과 동기 유지 — top_n 변경 시 이 값을 함께 조정. 유래 전문: docs/policy_rationale.md §position_sizing.max_positions_note",
     "max_position_weight_pct": 35.0,
     "min_cash_weight_pct": 5.0,
     "default_entry_weight_pct": 30.0,
@@ -914,7 +915,7 @@
       "is_hard_ceiling": true,
       "ref": "risk.max_single_trade_risk_pct_of_equity_by_tier[tier] (없으면 평면 risk.max_single_trade_risk_pct_of_equity 2.0%) + risk.portfolio_heat_budget_by_tier[tier] (없으면 평면 6.0%). v2.7: 두 상한 모두 레짐 tier 연동 — compute_allocation.py 의 per_trade_risk_pct·per_trade_risk_basis·portfolio_heat.budget_basis 를 사이징에 사용한다.",
       "rule": "어떤 사이징 경로(리스크기반·목표비중·deploy·고가주 floor 보정)도 (1)단일 신규 진입의 예상 손실 = 수량 × (진입가 − 동적손절가) 이 equity × max_single_trade_risk_pct_of_equity 를 넘거나, (2)진입 후 전 포지션 합산 손절위험이 equity × portfolio_heat_budget_pct_of_equity 를 넘게 만들 수 없다. 둘 중 더 타이트한 쪽으로 정수 수량 내림하고, 결과가 0 이면 진입하지 않는다. deploy override·target-weight 우선보다 이 두 상한이 항상 우선한다.",
-      "structural_note": "max_position_weight_pct(35%) × 손절폭(예: red −10%) = equity 의 3.5% 로 단일거래 상한(2.0%)·heat 예산(6.0%)과 충돌할 수 있다. 이때 리스크 상한이 비중을 끌어내리는 것이 의도된 동작이다. 강세장 완전배치를 원하면 (i)손절폭 타이트화 (ii)max_positions 상향 (iii)두 상한 상향 중 정책 결정으로 택한다. (2026-06-01 사용자 결정: 단일거래 1.5→2.0% 상향 + 합산 heat 6.0% 예산 도입 — 종목 수 기반 배치를 허용하되 누적 리스크를 통제.) (2026-06-08 사용자 결정·v2.7: (iii) 두 상한을 tier별로 차등 — strong_bull 단일거래 3.5%·heat 9% 로 종목당 비중을 ~30%까지 키워 목표비중 도달, 약세 tier 로 갈수록 조임. 손절폭은 그대로 두고 max_single_trade_risk_pct_of_equity_by_tier·portfolio_heat_budget_by_tier 로 푼다.)",
+      "structural_note": "상한이 목표비중을 끌어내리는 충돌은 의도된 동작(자본보존 우선). 배경·결정 이력 전문: docs/policy_rationale.md §position_sizing.single_trade_risk_cap.structural_note",
       "one_share_probe_exception": "v2.11 — 1주 리스크(진입가−동적손절가)가 단일거래 ceiling 을 초과해 영구 매수불가가 되는 고가·고ATR 종목(예: SK하이닉스 — 후보 점수 1위·60일 +106% 인데 1주 risk 320,142 > ceiling 173,648 로 전 기간 차단)은, ①score 상위 2위 이내 ②tier strong_bull/bull ③손절을 ATR 대신 red 유효임계 캡으로 타이트하게 ④최대 1주 probe — 4조건 동시 충족 시 ceiling 의 200% 까지 예외 허용한다. heat 예산·종목당 비중 35% 캡은 그대로 적용(우회 불가)."
     },
     "high_price_floor_correction": "고가주 floor 반올림 보정 — 산출 수량 × 진입가가 목표비중(target_krw)의 min_fill_ratio_of_target 미만이면 +1주를 검토하되, +1주 후에도 single_trade_risk_cap(단일거래 리스크 상한)과 종목당 비중 상한(35%)을 모두 지킬 때만 허용한다. 둘 중 하나라도 위반하면 +1 하지 않고 작은 수량(또는 0)을 유지한다. (v2.0 의 무조건 +1 이 리스크 상한을 우회하던 문제 보정)",
@@ -1197,7 +1198,7 @@
       "note": "보류/HOLD/blocked 도 shadow 로 채점 — 미배치(false negative) 1급 오차. forgone 실측 종가만·레짐 보정(risk_off 면제). 입력: candidate_scores.ranked block_reasons 자동 shadow."
     },
     "band_width_rule": {
-      "purpose": "예측 밴드 폭이 시장 국면과 무관하게 평시 ±5% 대로 고정돼, 실현변동성이 폭발한 구간에서 구조적으로 좁아지던 문제를 막는다. 2026-07-30 18시(5,300~5,880)·07-31 09시(5,420~5,850) 두 예측이 같은 원인으로 연속 상단 12% 초과 miss 했고, 같은 날 15시(6,380~6,720)는 적중했다 — 차이는 예측력이 아니라 그 시점에 변동성이 이미 보였는지였다.",
+      "purpose": "유래·사례 전문: docs/policy_rationale.md §proactive_inference.band_width_rule.purpose (v2.33 이관)",
       "realized_vol_lookback_days": 3,
       "trigger_realized_abs_move_pct": 5.0,
       "min_band_multiple_of_realized": 2.0,

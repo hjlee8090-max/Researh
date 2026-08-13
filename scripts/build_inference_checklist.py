@@ -46,12 +46,21 @@ def load_json(path: Path, default):
         return default
 
 
-def max_lines() -> int:
-    pol = load_json(ROOT / "config" / "policy.json", {})
-    return int(
-        pol.get("context_budget", {})
+def load_caps() -> tuple[int, int]:
+    """policy.context_budget.audit_thresholds 의 줄·바이트 캡을 함께 읽는다.
+
+    (2026-08-13 P0 A-6, docs/plan_removal_exclusion.md) 종전엔 줄 캡(40)만 집행해
+    줄당 수백 바이트 항목이 바이트 캡(4,000B)을 구조적으로 위반했다(실측 14,644B —
+    audit_context_budget 만성 WARN). 캡 단위 불일치 해소: 두 캡을 모두 집행한다.
+    """
+    th = (
+        load_json(ROOT / "config" / "policy.json", {})
+        .get("context_budget", {})
         .get("audit_thresholds", {})
-        .get("inference_checklist_max_lines", 40)
+    )
+    return (
+        int(th.get("inference_checklist_max_lines", 40)),
+        int(th.get("inference_checklist_max_bytes", 4000)),
     )
 
 
@@ -133,7 +142,7 @@ def collect_scorecard_factors() -> list[str]:
 
 
 def main() -> int:
-    cap = max_lines()
+    cap, cap_bytes = load_caps()
     lesson_rules = collect_lessons_rules()
     score_factors = collect_scorecard_factors()
     now = datetime.now(KST).isoformat(timespec="seconds")
@@ -161,19 +170,30 @@ def main() -> int:
         body.append("- (아직 누적된 선제추론 교훈 없음 — Phase 1 관측 중. 예측이 쌓이면 자동 채움)")
 
     # 콘텍스트 예산 캡 — 본문만 자른다(헤더 보존). 잘리면 마지막 줄에 사실대로 표기.
-    budget = max(1, cap - len(head))
-    truncated = len(body) > budget
-    if truncated:
-        n_cut = len(body) - (budget - 1)
-        body = body[: budget - 1] + [
-            f"- … (상한 {cap}줄 도달 — 빈도·최신성 하위 {n_cut}건 생략. "
-            "전량은 state/inference_scorecard.json miss_factors_detail·state/lessons.md 참조)"
-        ]
+    # 줄 캡과 바이트 캡을 모두 만족하는 최대 보존 건수를 찾는다(절단은 목록 꼬리 =
+    # 빈도·최신성 하위부터). 통째 절단만 하고 문장 중간은 자르지 않는다(의미 훼손 방지).
+    def notice(n_cut: int) -> str:
+        return (f"- … (상한 {cap}줄/{cap_bytes:,}B 도달 — 빈도·최신성 하위 {n_cut}건 생략. "
+                "전량은 state/inference_scorecard.json miss_factors_detail·state/lessons.md 참조)")
 
-    OUT_PATH.write_text("\n".join(head + body) + "\n", encoding="utf-8")
+    def render(keep_n: int) -> str:
+        kept = body[:keep_n]
+        if keep_n < len(body):
+            kept = kept + [notice(len(body) - keep_n)]
+        return "\n".join(head + kept) + "\n"
+
+    line_budget = max(1, cap - len(head)) - 1  # 절단 표기 줄 자리 확보
+    keep_n = len(body) if len(body) <= line_budget + 1 else line_budget
+    while keep_n > 0 and len(render(keep_n).encode("utf-8")) > cap_bytes:
+        keep_n -= 1
+    truncated = keep_n < len(body)
+
+    text = render(keep_n)
+    OUT_PATH.write_text(text, encoding="utf-8")
     print(f"wrote {OUT_PATH.relative_to(ROOT)} "
           f"(lesson_rules={len(lesson_rules)} score_factors={len(score_factors)} "
-          f"lines={len(head) + len(body)}/{cap}{' TRUNCATED' if truncated else ''})")
+          f"lines={text.count(chr(10))}/{cap} bytes={len(text.encode('utf-8'))}/{cap_bytes}"
+          f"{' TRUNCATED' if truncated else ''})")
     return 0
 
 

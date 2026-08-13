@@ -115,6 +115,12 @@
 
 ### A. compact_state.py 커버리지 확장 — P0, 스크립트만·매매 행동 무변경
 
+> ✅ **구현 완료 (2026-08-13, policy v2.32)** — A-1~A-6 전건. 검증: dry-run→실행→재실행 멱등(2회차 변경 0),
+> 스키마 검사 전후 diff(inference_log 위반 전부 보존·pending_orders resolved_hold enum 위반은 이관으로 소멸),
+> sync_pending_orders 정상, active 주문 10건 보존, 체크리스트 3,736B≤4,000B로 예산 WARN 소멸.
+> 실행 효과 실측: pending_orders 131KB→62KB(-53%)·catalysts 72KB→44KB(-39%)·watchlist -13KB.
+> 데이터 정리는 커밋에 포함하지 않음(루틴과의 머지 충돌 방지) — 머지 후 일간 워크플로가 수행.
+
 | # | 대상 | 규칙 | 예상 효과 |
 |---|---|---|---|
 | A-1 | pending_orders.json | status ∈ {expired, filled, cancelled, resolved_*} → `state/pending_orders_archive.jsonl` 이관 (트리거 평가 대상은 active뿐 — check_intraday_alerts 확인 후) | 131KB → ~15KB |
@@ -126,10 +132,12 @@
 
 ### B. 집행 캐던스·담체 — P0
 
-- B-1. `weekly_compact.yml` → **daily로 승격** (평일 19:30 pipeline_audit 직후 또는 별도 cron).
+- B-1. ✅ **구현 완료 (2026-08-13)** `weekly_compact.yml` → **daily로 승격** — 매일 19:00 KST
+  (18시 슬롯 push 이후·19:30 pipeline_audit 직전 → 당일 감사가 압축 후 상태를 측정).
   compact는 멱등·결정적이라 무해. "주 1회 이벤트에 걸린 위생"을 "매일 도는 위생"으로.
-- B-2. 아카이브 루틴 미발화 시 리포트 응축(YYYY-Www-archive.md)도 Actions 폴백으로 소급 생성 검토
-  (W32 미발화 실측 — 압축은 이중화됐는데 응축은 아직 단일 담체).
+- B-2. (미착수) 아카이브 루틴 미발화 시 리포트 응축(YYYY-Www-archive.md)도 Actions 폴백으로 소급 생성 검토
+  (W32 미발화 실측 — 압축은 이중화됐는데 응축은 아직 단일 담체). 응축은 LLM 작업이라 결정적
+  워크플로로는 목차형 인덱스 생성까지만 가능 — 범위 결정이 필요해 P1 로 이월.
 
 ### C. 지식 일몰의 닫힌 루프 — P1, 이번 연구의 핵심
 
@@ -205,7 +213,10 @@ audit은 프롬프트 크기의 **전주 대비 순증**을 INFO로 추적한다
 
 ## 8. 적용 순서 제안
 
-1. **1주차 (P0)**: A-1~A-6 + B-1 — 스크립트·워크플로만, 행동 무변경. 예산 WARN 5건 중 3건+ 소멸 목표.
+1. **1주차 (P0)**: ✅ 완료(2026-08-13) A-1~A-6 + B-1 — 스크립트·워크플로만, 행동 무변경.
+   실측: 예산 WARN 은 checklist 1건 즉시 소멸 + 예산 밖 누적원 2종(pending_orders -53%·catalysts -39%) 봉합.
+   watchlist(보유 코멘트가 부피 본체)·policy(D)·weekly_plan(weekly_thesis 산문)·lessons(E)는
+   P1 의 지식 계층 작업 없이는 예산 안으로 안 들어온다 — 당초 "3건+ 소멸" 추정은 과대였음(정정).
 2. **2주차 (P1)**: C-2(findings 편입)·E(lessons 수지 균형) — 기존 루프 재사용이라 저위험.
    C-1(expiry 등록)은 WARN 모드로 시작.
 3. **3주차+ (P1~P2)**: D(policy 다이어트 — 큰 diff라 별도 커밋)·C-3(룰 원장, 신규 룰부터)·

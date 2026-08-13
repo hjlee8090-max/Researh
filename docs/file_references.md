@@ -312,11 +312,12 @@
 - 작성: 18시 routine §4(내일 if-then 의 수치 트리거 분기). 소비: 09시 routine §1-PO(게이트 통과 후 집행·status 갱신) + `check_intraday_alerts.py`(장중 트리거 신호).
 - 스키마: 파일 상단 `schema` 키. status active→triggered/expired/cancelled. Tier 2 는 카톡 승인 후 반자동.
 
-### `scripts/compact_state.py` (신규 v2.13 — 콘텍스트 예산)
-- 읽기: `config/watchlist.json`·`config/portfolio.json`·`config/weekly_plan.json`·`config/policy.json` + 기존 archive 파일들
-- 쓰기: 위 4개 config(압축) + `state/watchlist_archive.json`·`state/watch_items_archive.jsonl`·`state/portfolio_history.jsonl`·`docs/policy_changelog.md`(전문 보존)
-- 실행: 일요일 21시 `sunday_archive` §0-2 (commit 범위에 config/state/docs 포함) + 수동. 멱등, `--dry-run` 지원.
+### `scripts/compact_state.py` (신규 v2.13 — 콘텍스트 예산 · v2.32 P0 커버리지 확장)
+- 읽기: `config/watchlist.json`·`config/portfolio.json`·`config/weekly_plan.json`·`config/policy.json`·`config/catalysts.json`·`state/pending_orders.json`·`state/inference_log.jsonl`·`state/target_estimate_log.jsonl`·`state/lessons.md` + 기존 archive 파일들
+- 쓰기: 위 config/state(압축) + `state/watchlist_archive.json`(청산 종목·코멘트·상위 comments/cross_check_notes)·`state/watch_items_archive.jsonl`·`state/portfolio_history.jsonl`·`docs/policy_changelog.md`·`state/pending_orders_archive.jsonl`(종결 7일+ 주문·날짜형 _meta 키)·`state/catalysts_archive.jsonl`(manual 과거 7일+)·`state/weekly_plan_archive.jsonl`(weekend_review 날짜키 14일+)·`state/inference_log_archive.jsonl`(채점완료 90일+)·`state/target_estimate_log_archive.jsonl`·`state/lessons_archive.md`(갱신 체인)
+- 실행: **매일 19:00 KST `weekly_compact.yml`(v2.32 일간 승격 — 19:30 감사 직전이라 당일 감사가 압축 후 상태 측정)** + 일요일 21시 `sunday_archive` §0-2 + 수동. 멱등, `--dry-run` 지원.
 - 원칙: 학습 재료 삭제 없음(이관만) · 청산 종목 candidates 자동 재등록 금지(재발굴은 universe→screen_universe) · 보존 개수는 `policy.context_budget.retention`.
+- P0 소비자 계약(2026-08-13 검증): `check_intraday_alerts`(status active 만 평가)·`sync_pending_orders`(active SELL 만)·`estimate_target_price`(과거 촉매 days_until<-7 스킵 — `catalysts_manual_past_keep_days` 7 미만 금지)·`score_inferences`(스코어카드 = 90일 롤링창, target_estimate 선례와 동일)·`check_state_schema`(미채점·위반 라인 보존으로 보정 표면 유지). 설계 전문: `docs/plan_removal_exclusion.md` §5-A.
 
 ### `scripts/estimate_target_price.py` (목표주가 추정 레이어 v1.x)
 - 읽기: `config/valuation.json`·`state/consensus.json`(기준가), `config/themes.json`·`config/news_impact.json`·`config/news_keywords.json`·`config/catalysts.json`·`state/news_feed.json`(테마·뉴스/촉매 프리미엄), `state/universe_screen.json`(섹터), `state/market_snapshot.json`·`state/price_history.json`(추세 게이트·기반영 차감), `config/watchlist.json`·`config/candidates.json`·`config/portfolio.json`·`config/policy.json`, 참고 `state/fundamentals.json`·`state/valuation_check.json`

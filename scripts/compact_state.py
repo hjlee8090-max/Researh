@@ -19,8 +19,22 @@ portfolio.history 33건·policy.changelog 22건이 매 routine 콘텍스트를 �
    config 에는 최근 KEEP_HISTORY 개 유지.
 4. policy.changelog — 전체를 docs/policy_changelog.md 에 누적 기록 후 최근 KEEP_CHANGELOG 개 유지.
 
-실행: 일요일 21시 sunday_archive routine §0-B + 수동. `--dry-run` 으로 변경량만 미리 본다.
-표준 라이브러리만 사용.
+P0 커버리지 확장 (2026-08-13, docs/plan_removal_exclusion.md §5-A — 매매 행동 무변경):
+5. pending_orders — 종결 상태(expired/filled/cancelled/resolved_*) 주문 중 기준일이
+   KEEP_TERMINAL_ORDER_DAYS 를 지난 것 + 오래된 날짜형 _meta 키를 archive 로 이관.
+   check_intraday_alerts(status active 만 평가)·sync_pending_orders(active SELL 만) 무영향.
+6. catalysts.manual_events — 이벤트일이 KEEP_PAST_CATALYST_DAYS 를 지난 과거분 이관.
+   estimate_target_price 의 과거 촉매 사용창(days_until < -7 스킵)과 정확히 정렬.
+7. watchlist 상위 comments·cross_check_notes — 최근 KEEP_TOP_NOTES 건 유지(초과분 archive).
+   stocks[].comments 와 동일 원칙 — 종전엔 상위 필드가 미커버 성장원이었다.
+8. weekly_plan.weekend_review — 날짜 키(saturday_review_YYYY_MM_DD 류)가
+   KEEP_WEEKEND_REVIEW_DAYS 를 지난 것 이관 (5주+ 주차 키 누적 실측).
+9. inference_log — 채점 완료(outcome hit/partial/miss) + INFERENCE_LOG_KEEP_DAYS 경과
+   예측·결과 라인 이관. target_estimate_log 90일 보존창과 동일 관례(스코어카드는 롤링창).
+   미채점·형식 위반 라인은 보존(채점·보정 표면 유지).
+
+실행: 매일 19:00 KST weekly_compact.yml(일간 승격) + 일요일 21시 sunday_archive routine §0-B + 수동.
+`--dry-run` 으로 변경량만 미리 본다. 표준 라이브러리만 사용.
 """
 from __future__ import annotations
 
@@ -54,6 +68,28 @@ LESSONS_ARCHIVE = ROOT / "state" / "lessons_archive.md"
 # lessons.md "최종 갱신" 라인의 "이전 갱신:" 체인 보존 개수 — 무압축 시 한 줄이 ~10KB 까지
 # 자라던 무한 누적원 (2026-07-08 진단). 초과분은 lessons_archive.md 전문 보존.
 KEEP_UPDATE_CHAIN = 2
+
+# --- P0 커버리지 확장 (2026-08-13, docs/plan_removal_exclusion.md §5-A) ---
+PENDING_ORDERS = ROOT / "state" / "pending_orders.json"
+PENDING_ARCHIVE = ROOT / "state" / "pending_orders_archive.jsonl"
+CATALYSTS = ROOT / "config" / "catalysts.json"
+CATALYSTS_ARCHIVE = ROOT / "state" / "catalysts_archive.jsonl"
+WEEKLY_PLAN_ARCHIVE = ROOT / "state" / "weekly_plan_archive.jsonl"
+INFERENCE_LOG = ROOT / "state" / "inference_log.jsonl"
+INFERENCE_LOG_ARCHIVE = ROOT / "state" / "inference_log_archive.jsonl"
+# 종결 주문 보존 일수 — 0900 만료 정리·리포트 회고가 보는 단기 창을 덮는다.
+KEEP_TERMINAL_ORDER_DAYS = 7
+# 과거 촉매 보존 일수 — estimate_target_price.catalyst 가 days_until < -7 을 스킵하므로
+# 이 값은 7 미만으로 줄이면 안 된다(소비자 계약).
+KEEP_PAST_CATALYST_DAYS = 7
+# watchlist 상위 comments·cross_check_notes 보존 건수 — stocks[].comments(12)와 동일.
+KEEP_TOP_NOTES = 12
+# weekend_review 날짜 키 보존 일수 — 현재 주 + 직전 주.
+KEEP_WEEKEND_REVIEW_DAYS = 14
+# inference_log 채점 완료분 보존 일수 — TARGET_LOG_KEEP_DAYS(90)와 동일 관례.
+# 스코어카드(score_inferences)는 이 보존창의 롤링 통계가 된다(target_estimate 선례와 동일).
+INFERENCE_LOG_KEEP_DAYS = 90
+TERMINAL_ORDER_STATUSES = ("expired", "filled", "cancelled")
 
 
 def now_kst() -> str:
@@ -118,7 +154,27 @@ def compact_watchlist(dry: bool) -> dict:
                 "stock": stock,
             })
 
-    if evicted or trimmed_total:
+    # P0 A-3: 상위(파일 최상위) comments·cross_check_notes 도 동일 원칙으로 최근분만 유지.
+    # 두 배열 모두 최신이 뒤(append) — stocks[].comments 와 같은 방향. 소비자는 LLM 콘텍스트뿐
+    # (스크립트 reader 없음 — send_kakao 는 stocks[].comments 만 읽는다).
+    top_trimmed = 0
+    for field, bucket_key in (("comments", "trimmed_top_comments"),
+                              ("cross_check_notes", "trimmed_cross_check_notes")):
+        items = watchlist.get(field)
+        if not isinstance(items, list) or len(items) <= KEEP_TOP_NOTES:
+            continue
+        overflow, watchlist[field] = items[:-KEEP_TOP_NOTES], items[-KEEP_TOP_NOTES:]
+        bucket = archive.setdefault(bucket_key, [])
+        seen_ts = {c.get("ts") for c in bucket if isinstance(c, dict)}
+        for c in overflow:
+            if isinstance(c, dict):
+                if c.get("ts") not in seen_ts:
+                    bucket.append(c)
+            elif c not in bucket:  # 평문 문자열 항목 (상위 comments 실데이터)
+                bucket.append(c)
+        top_trimmed += len(overflow)
+
+    if evicted or trimmed_total or top_trimmed:
         watchlist["stocks"] = kept_stocks
         watchlist["last_updated"] = now_kst()
         archive["last_updated"] = now_kst()
@@ -127,6 +183,7 @@ def compact_watchlist(dry: bool) -> dict:
     return {
         "evicted_stocks": [s.get("ticker") for s in evicted],
         "trimmed_comments": trimmed_total,
+        "trimmed_top_notes": top_trimmed,
         "kept_stocks": len(kept_stocks),
     }
 
@@ -286,6 +343,219 @@ def compact_lessons_update_chain(dry: bool) -> dict:
     }
 
 
+def parse_ymd(value) -> str:
+    """값에서 YYYY-MM-DD 를 뽑는다. 실패 시 '' (보수적 — 날짜 불명은 이관하지 않는 쪽으로)."""
+    s = str(value or "")[:10]
+    try:
+        datetime.strptime(s, "%Y-%m-%d")
+        return s
+    except ValueError:
+        return ""
+
+
+def append_jsonl_dedup(path: Path, records: list[dict], dry: bool) -> int:
+    """records 를 path 에 1줄 1건 append. 동일 라인은 중복 적재하지 않는다(멱등)."""
+    if not records or dry:
+        return len(records)
+    existing: set[str] = set()
+    if path.exists():
+        existing = set(path.read_text(encoding="utf-8").splitlines())
+    appended = 0
+    with path.open("a", encoding="utf-8") as fh:
+        for rec in records:
+            line = json.dumps(rec, ensure_ascii=False)
+            if line not in existing:
+                fh.write(line + "\n")
+                appended += 1
+    return appended
+
+
+def compact_pending_orders(dry: bool) -> dict:
+    """P0 A-1 — 종결 상태 주문·오래된 날짜형 _meta 키를 archive 로 이관.
+
+    실측(2026-08-13): orders 101건 중 종결 91건(90%)이 잔존해 131KB. 소비자 계약:
+    check_intraday_alerts 는 status ∈ (None, active) 만 평가, sync_pending_orders 는
+    active SELL 만 갱신, 0900 프롬프트 만료 정리는 당일 valid_until 만 본다 — 종결 7일+
+    주문은 어떤 소비자도 읽지 않는다.
+    """
+    if not PENDING_ORDERS.exists():
+        return {"skipped": "missing"}
+    data = read_json(PENDING_ORDERS)
+    orders = data.get("orders")
+    if not isinstance(orders, list):
+        return {"skipped": "orders 리스트 부재"}
+    cutoff = (datetime.now(KST).date() - timedelta(days=KEEP_TERMINAL_ORDER_DAYS)).isoformat()
+    stamp = now_kst()
+
+    kept, moved = [], []
+    for order in orders:
+        if not isinstance(order, dict):
+            kept.append(order)
+            continue
+        status = str(order.get("status") or "")
+        terminal = status in TERMINAL_ORDER_STATUSES or status.startswith("resolved")
+        # 기준일: valid_until → id(po-YYYYMMDD-n) 순. 날짜 불명 종결 주문은 보수적으로 보존.
+        ref = parse_ymd(order.get("valid_until"))
+        if not ref:
+            oid = str(order.get("id") or "")
+            if len(oid) >= 11 and oid.startswith("po-"):
+                raw = oid[3:11]
+                ref = parse_ymd(f"{raw[:4]}-{raw[4:6]}-{raw[6:8]}")
+        if terminal and ref and ref < cutoff:
+            moved.append({"archived_at": stamp, "kind": "order", "order": order})
+        else:
+            kept.append(order)
+
+    # 날짜형 메타 키(_meta_0600_YYYYMMDD 류) — 보존창 지난 것 이관.
+    meta_moved = []
+    for key in list(data.keys()):
+        if not key.startswith("_meta_"):
+            continue
+        tail = key.rsplit("_", 1)[-1]
+        ref = parse_ymd(f"{tail[:4]}-{tail[4:6]}-{tail[6:8]}") if len(tail) == 8 and tail.isdigit() else ""
+        if ref and ref < cutoff:
+            meta_moved.append({"archived_at": stamp, "kind": "meta", "key": key, "value": data.pop(key)})
+
+    if moved or meta_moved:
+        data["orders"] = kept
+        append_jsonl_dedup(PENDING_ARCHIVE, moved + meta_moved, dry)
+        write_json(PENDING_ORDERS, data, dry)
+    return {"orders_total": len(orders), "kept": len(kept), "moved": len(moved),
+            "meta_keys_moved": len(meta_moved), "cutoff": cutoff}
+
+
+def compact_catalysts_manual(dry: bool) -> dict:
+    """P0 A-2 — manual_events 의 과거 이벤트를 archive 로 이관.
+
+    실측(2026-08-13): 42건 중 과거일 33건(79%) 잔존. 보존창 7일은 소비자 계약과 정렬:
+    estimate_target_price 는 days_until < -7 이벤트를 스킵하고(진짜 하한), D-day 경보·
+    진입 보류·earnings_preview D+1 채점은 모두 그보다 짧은 창을 쓴다. generated_events 는
+    fetch_catalysts 가 매주 재생성(스크립트 소유)하므로 대상 아님.
+    """
+    if not CATALYSTS.exists():
+        return {"skipped": "missing"}
+    data = read_json(CATALYSTS)
+    events = data.get("manual_events")
+    if not isinstance(events, list):
+        return {"skipped": "manual_events 리스트 부재"}
+    cutoff = (datetime.now(KST).date() - timedelta(days=KEEP_PAST_CATALYST_DAYS)).isoformat()
+    stamp = now_kst()
+
+    kept, moved = [], []
+    for ev in events:
+        ref = parse_ymd(ev.get("date")) if isinstance(ev, dict) else ""
+        if ref and ref < cutoff:
+            moved.append({"archived_at": stamp, "kind": "manual_event", "event": ev})
+        else:
+            kept.append(ev)  # 날짜 불명·미래·보존창 내 이벤트는 보존
+
+    if moved:
+        data["manual_events"] = kept
+        append_jsonl_dedup(CATALYSTS_ARCHIVE, moved, dry)
+        write_json(CATALYSTS, data, dry)
+    return {"manual_total": len(events), "kept": len(kept), "moved": len(moved), "cutoff": cutoff}
+
+
+def compact_weekend_review(dry: bool) -> dict:
+    """P0 A-4 — weekly_plan.weekend_review 의 날짜 키 누적을 이관.
+
+    실측(2026-08-13): saturday_review_2026_07_04 부터 5주+ 주차 키가 누적.
+    week_id·last_completed·required_outputs 등 비날짜 키와 최근 2주분은 보존.
+    weekend_review 는 check_state_schema 의 weekly_plan 필수 키가 아니다.
+    """
+    plan = read_json(WEEKLY_PLAN)
+    review = plan.get("weekend_review")
+    if not isinstance(review, dict):
+        return {"skipped": "weekend_review dict 아님"}
+    cutoff = (datetime.now(KST).date() - timedelta(days=KEEP_WEEKEND_REVIEW_DAYS)).isoformat()
+    stamp = now_kst()
+
+    moved = []
+    for key in list(review.keys()):
+        m = key.rsplit("_", 3)  # <이름>_YYYY_MM_DD 꼬리 날짜 추출
+        ref = parse_ymd("-".join(m[-3:])) if len(m) == 4 else ""
+        if ref and ref < cutoff:
+            moved.append({"archived_at": stamp, "kind": "weekend_review",
+                          "week_id": plan.get("week_id"), "key": key, "value": review.pop(key)})
+
+    if moved:
+        append_jsonl_dedup(WEEKLY_PLAN_ARCHIVE, moved, dry)
+        write_json(WEEKLY_PLAN, plan, dry)
+    return {"keys_total": len(review) + len(moved), "kept": len(review), "moved": len(moved),
+            "cutoff": cutoff}
+
+
+def compact_inference_log(dry: bool) -> dict:
+    """P0 A-5 — 채점 완료 + 보존창(90일) 경과 예측·결과 라인을 archive 로 이관.
+
+    target_estimate_log 와 동일 관례(TARGET_LOG_KEEP_DAYS=90). 스코어카드는 보존창의
+    롤링 통계가 된다(min_samples 가드 유지). 이관 조건은 보수적으로:
+    - 예측 라인(prediction 보유)이 outcome ∈ {hit, partial, miss} 로 확정됐고
+      (자체 필드 또는 같은 id 의 결과 라인), ts/id 날짜가 cutoff 이전일 때만
+      예측 라인 + 해당 id 의 결과 라인을 함께 이관한다.
+    - 미채점·형식 위반·shadow(realized 전용)·_meta 라인은 전부 보존
+      (채점·보정 표면 유지 — check_state_schema 의 수리 대상을 숨기지 않는다).
+    """
+    if not INFERENCE_LOG.exists():
+        return {"skipped": "missing"}
+    cutoff = (datetime.now(KST).date() - timedelta(days=INFERENCE_LOG_KEEP_DAYS)).isoformat()
+    stamp = now_kst()
+    raw_lines = [l for l in INFERENCE_LOG.read_text(encoding="utf-8").splitlines() if l.strip()]
+
+    parsed: list[tuple[str, dict | None]] = []
+    for line in raw_lines:
+        try:
+            rec = json.loads(line)
+            parsed.append((line, rec if isinstance(rec, dict) else None))
+        except json.JSONDecodeError:
+            parsed.append((line, None))
+
+    # id → 종결 outcome 여부 (예측 자체 필드 + 결과 라인 병합 — score_inferences 매칭 규칙과 동일)
+    terminal_outcomes = {"hit", "partial", "miss"}
+    scored_ids: set[str] = set()
+    for _, rec in parsed:
+        if rec and rec.get("id") and rec.get("outcome") in terminal_outcomes:
+            scored_ids.add(str(rec["id"]))
+
+    def pred_date(rec: dict) -> str:
+        ref = parse_ymd(rec.get("ts"))
+        if ref:
+            return ref
+        rid = str(rec.get("id") or "")
+        if rid.startswith("inf-") and len(rid) >= 12:
+            raw = rid[4:12]
+            return parse_ymd(f"{raw[:4]}-{raw[4:6]}-{raw[6:8]}")
+        return ""
+
+    # 이관 대상 예측 id 확정 (예측 라인 기준으로만 판단)
+    move_ids: set[str] = set()
+    for _, rec in parsed:
+        if not rec or "prediction" not in rec:
+            continue
+        rid = str(rec.get("id") or "")
+        if rid and rid in scored_ids:
+            ref = pred_date(rec)
+            if ref and ref < cutoff:
+                move_ids.add(rid)
+
+    kept_lines, moved_records = [], []
+    for line, rec in parsed:
+        rid = str(rec.get("id")) if rec and rec.get("id") else ""
+        is_pair_line = rec is not None and rid in move_ids and (
+            "prediction" in rec or "outcome" in rec or "realized" in rec)
+        if is_pair_line:
+            moved_records.append({"archived_at": stamp, "kind": "inference", "line": rec})
+        else:
+            kept_lines.append(line)
+
+    if moved_records and not dry:
+        append_jsonl_dedup(INFERENCE_LOG_ARCHIVE, moved_records, dry)
+        INFERENCE_LOG.write_text("\n".join(kept_lines) + ("\n" if kept_lines else ""),
+                                 encoding="utf-8")
+    return {"lines_total": len(parsed), "kept": len(kept_lines), "moved": len(moved_records),
+            "moved_predictions": len(move_ids), "cutoff": cutoff}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="핫패스 config 누적 필드 압축 (archive 이관)")
     parser.add_argument("--dry-run", action="store_true", help="변경량만 출력하고 파일은 건드리지 않음")
@@ -300,6 +570,11 @@ def main() -> int:
         "policy_changelog": compact_policy_changelog(args.dry_run),
         "target_estimate_log": compact_target_estimate_log(args.dry_run),
         "lessons_update_chain": compact_lessons_update_chain(args.dry_run),
+        # P0 커버리지 확장 (2026-08-13, docs/plan_removal_exclusion.md §5-A)
+        "pending_orders": compact_pending_orders(args.dry_run),
+        "catalysts_manual": compact_catalysts_manual(args.dry_run),
+        "weekend_review": compact_weekend_review(args.dry_run),
+        "inference_log": compact_inference_log(args.dry_run),
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0

@@ -38,8 +38,12 @@ state/
   pending_orders.json      (Phase 3) 조건부 사전주문(선제 커밋) — 18시가 작성, 06시가 미국장 마감 확정으로 트리거 값만 갱신(체결·status 변경 없음), check_intraday_alerts 가 장중 트리거 평가·카톡 신호만, 체결은 09시 routine 이 게이트 통과 후·Tier2 승인
   trade_log.jsonl          모든 의사결정 이력 (라인당 1 JSON)
   audit_log.jsonl          파이프라인 자동 점검 이력
-  watchlist_archive.json   watchlist 에서 이관된 청산 종목 전체 기록 + 오래된 코멘트 (compact_state.py)
+  watchlist_archive.json   watchlist 에서 이관된 청산 종목 전체 기록 + 오래된 코멘트·상위 노트 (compact_state.py)
   watch_items_archive.jsonl weekly_plan.watch_items 만료분 보존 (compact_state.py)
+  pending_orders_archive.jsonl (v2.32 P0) 종결 상태(expired/filled/cancelled/resolved_*) 7일+ 주문 보존 — routine 은 읽지 않음
+  catalysts_archive.jsonl  (v2.32 P0) manual_events 과거 7일+ 이벤트 보존 (estimate 의 과거촉매 사용창 D-7 과 정렬)
+  weekly_plan_archive.jsonl (v2.32 P0) weekend_review 날짜 키 14일+ 보존
+  inference_log_archive.jsonl (v2.32 P0) 채점 완료 + 90일 경과 예측·결과 라인 보존 (스코어카드는 90일 롤링창)
   portfolio_history.jsonl  일일 equity 스냅샷 전체 이력 (config/portfolio.json 엔 최근 10개만)
   ratchet_shadow.json      (v2.20) 본전 래칫 스톱 그림자 관측 — track_ratchet_shadow.py 가 18시 종가 기준 stage·가상 breach·해방가능 heat 기록 (관측 전용, 체결 없음)
   ratchet_shadow_scorecard.json score_ratchet_shadow.py 채점 — 가상 breach 의 t+1/t+5 반사실 손익·noise율·실제 청산 대비 보호액 (일 20시 policy_review §1-8 승격 심사 입력)
@@ -81,7 +85,7 @@ scripts/
   fetch_market_data.py     네이버 + Yahoo Finance 다중출처 가격 수집 + 5거래일 추세 자동 산출
   fetch_catalysts.py       종목별 다가오는 촉매 추정 (정기보고서 법정기한 + DART list.json 보정) → config/catalysts.json
   fetch_consensus.py       증권사 컨센서스 수집 (FnGuide — 목표주가·투자의견·추정치) → state/consensus.json (Phase 2 earnings-preview 입력)
-  compact_state.py         핫패스 콘텍스트 압축 — watchlist 청산종목·코멘트/watch_items/history/changelog 를 archive 로 이관 (일 21시 archive routine + 수동, 멱등·--dry-run)
+  compact_state.py         핫패스 콘텍스트 압축 — watchlist 청산종목·코멘트·상위노트/watch_items/history/changelog/종결 pending_orders/과거 manual 촉매/weekend_review 날짜키/채점완료 inference_log 를 archive 로 이관 (매일 19:00 KST weekly_compact.yml + 일 21시 archive routine + 수동, 멱등·--dry-run — v2.32 P0 확장)
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹
@@ -165,11 +169,12 @@ scripts/
 매 routine 이 의무로 읽는 핫패스 파일(watchlist·policy·weekly_plan·portfolio·lessons)이 무한 누적되면
 콘텍스트 오버 → 규칙 누락·판단 열화로 이어진다 (2026-06-12 진단: 의무 적재 ~500KB, watchlist 1,945줄).
 - **원칙**: 학습 재료는 삭제하지 않고 **archive 로 이관** — git + archive 파일에 전문 보존, 핫패스에서만 제거
-- **압축기**: `scripts/compact_state.py` (일요일 21시 archive routine 이 실행, 멱등·`--dry-run`)
-  - watchlist: 청산 종목 → `state/watchlist_archive.json` (재발굴은 universe→screen_universe 경로 — candidates 자동 재등록 금지), 보유 코멘트 최근 12개 유지
-  - weekly_plan.watch_items ≤15개 (18시·일요일 전략이 재작성으로 1차 정리 — 초과분 archive)
+- **압축기**: `scripts/compact_state.py` (매일 19:00 KST `weekly_compact.yml` + 일요일 21시 archive routine, 멱등·`--dry-run`)
+  - watchlist: 청산 종목 → `state/watchlist_archive.json` (재발굴은 universe→screen_universe 경로 — candidates 자동 재등록 금지), 보유 코멘트 최근 12개 + 상위 comments·cross_check_notes 최근 12건 유지
+  - weekly_plan.watch_items ≤15개 (18시·일요일 전략이 재작성으로 1차 정리 — 초과분 archive) + weekend_review 날짜 키 최근 14일
   - portfolio.history 최근 10개 (전체는 `state/portfolio_history.jsonl`)
   - policy.changelog 최근 5건 (전문은 `docs/policy_changelog.md`)
+  - (v2.32 P0 — `docs/plan_removal_exclusion.md`) pending_orders 종결 7일+·catalysts manual 과거 7일+·inference_log 채점완료 90일+ 이관, 체크리스트 바이트 캡 집행. **누적이 자동이면 제거도 자동** — 압축 담체를 주 1회에서 매일로 승격
 - **감시**: `audit_pipeline.audit_context_budget` 가 크기 임계 초과를 매일 WARN (매매 룰 래칫 감시와 동형의 크기 래칫 감시)
 - lessons.md 는 ✅codify 확정 항목만 본문을 `state/lessons_archive.md` 로 이관 (sunday_policy_review §1-6 — 카운터·미반영 항목 불변)
 

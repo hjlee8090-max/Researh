@@ -26,6 +26,9 @@
 > - `audit_pipeline.audit_reports` 확장 — 당일 00시 슬롯 누락 WARN(월요일 미발화 표면화) + '한눈에 보기' 운영 용어 노출 WARN
 > - `check_lessons_applied.py` haystack 에 `docs/policy_changelog.md` 포함 (changelog 분리에 따른 오탐 방지)
 - (v2.33 D) haystack 에 `docs/policy_rationale.md` 추가 — policy 본문 산문 이관분(유래·사례 전문)의 오탐 방지. 신규 policy 룰의 유래 서술은 처음부터 rationale 에 적는다(본문엔 룰·파라미터·ref 만)
+- (v2.32~33 P1·P2 신규) `scripts/check_policy_hygiene.py` — 읽기: policy.json + prompts/scripts/workflows 말뭉치 + `state/policy_keys_baseline.json`(커밋 대상, 1회 생성 후 자동 갱신 없음) / 쓰기: `state/policy_hygiene.json`(gitignore). weekly_self_audit.yml 이 self_audit 직전 실행, self_audit 이 findings(policy-dead-config-*·policy-unregistered-rules·policy-review-due·lessons-balance)로 편입
+- (v2.33 F·G) `audit_pipeline.audit_context_budget` — 읽기·쓰기: `state/context_budget_state.json`(streak·프롬프트 크기 스냅샷, pipeline_audit 워크플로가 커밋). 연속 14일+ 예산 초과 = FAIL 승격(발송 후 런만 적색), 7일 대비 프롬프트 순증 INFO
+- (v2.33 B-2) `scripts/build_week_archive_fallback.py` — 읽기: `reports/YYYY-MM-DD-{00..18}.md` / 쓰기: `reports/YYYY-Www-archive.md`(부재 주만, fallback-index 마커). weekly_compact.yml 실행. audit 이 마커를 감지해 루틴 미발화 WARN 유지
 > - 보유 R/R 검토 하한 = 진입과 동일 `regime_adaptive_rr.min_rr_by_tier` (1800 §2-2·audit 통일, tier 미확정 1.2 폴백)
 
 > **신규 추가 (2026-06-02, v2.3 장중 시간 정책)**

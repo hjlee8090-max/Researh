@@ -995,16 +995,32 @@ def audit_slot_matrix(messages: list[str]) -> None:
     sundays = [today - timedelta(days=back) for back in range(1, 36)
                if (today - timedelta(days=back)).weekday() == 6][:5]
     missing_archives = []
+    fallback_archives = []  # P2 B-2 (v2.33) — 기계 폴백 인덱스는 '있음'이되 루틴 미발화 신호는 유지
     for d in sundays:
         iso = d.isocalendar()
         archive_name = f"{iso[0]}-W{iso[1]:02d}-archive.md"
-        if not (reports_dir / archive_name).exists():
+        archive_path = reports_dir / archive_name
+        if not archive_path.exists():
             missing_archives.append(f"{archive_name}(일요일 {d.isoformat()})")
+        else:
+            try:
+                head = archive_path.read_text(encoding="utf-8", errors="ignore")[:400]
+            except OSError:
+                head = ""
+            if "fallback-index" in head:
+                fallback_archives.append(archive_name)
     if missing_archives:
         messages.append(result(
             "WARN",
             "주간 아카이브 누락(최근 5주 상시 점검): " + ", ".join(missing_archives)
             + " — 소급 생성 또는 일 21시 아카이브 루틴 등록 상태 확인",
+        ))
+    if fallback_archives:
+        messages.append(result(
+            "WARN",
+            "주간 아카이브가 기계 폴백 인덱스로 대체됨(LLM 응축 아님): " + ", ".join(fallback_archives)
+            + " — 일 21시 아카이브 루틴 미발화 신호. claude.ai/code/routines 등록 상태 확인. "
+            "다음 일요일 루틴이 정상 발화하면 폴백 파일을 정식 응축으로 덮어써도 된다",
         ))
 
 
@@ -1079,45 +1095,99 @@ CONTEXT_BUDGET = {
 PROMPT_INFO_BYTES = 35_000   # 참고 표시(성장 추적)
 PROMPT_WARN_BYTES = 60_000   # 경고 — 프롬프트 감량 필요
 
+# --- P2 F·G (v2.33, docs/plan_removal_exclusion.md §5-F·G — 2026-08-13 사용자 승인) ---
+# F: 같은 항목이 CONTEXT_ESCALATE_DAYS 이상 연속 예산 초과면 WARN → FAIL 승격.
+#    WARN 만성화(경보 피로)가 5개 파일 동시 초과 방치의 직접 원인이었다(§2-A 실측).
+#    14일 ≈ 10영업일 — schema_gate 의 '10영업일 연속' strict 승격 기준과 대칭.
+#    FAIL 은 리포트·카톡 발송 후 런만 빨갛게 만든다(pipeline_audit 의 품질/전송 분리 구조).
+# G: 프롬프트 크기의 7일 전 대비 순증을 추적 — 절대 상한만으론 재비대를 못 잡는다
+#    (0900 실측: 6/12 수동 감량 후 +37% 재비대).
+CONTEXT_STATE = ROOT / "state" / "context_budget_state.json"
+CONTEXT_ESCALATE_DAYS = 14        # 연속 초과 일수(달력) — 이상이면 FAIL
+CONTEXT_STREAK_GAP_DAYS = 3       # 감사 미실행 공백 허용 — 초과 시 새 streak 으로 리셋
+PROMPT_GROWTH_INFO_BYTES = 1_024  # 7일 전 대비 이 이상 커지면 INFO
+PROMPT_SIZES_KEEP = 35            # 크기 스냅샷 보존 일수 (자체 보존창 — P1 원칙)
+
 
 def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
     """매 routine 이 의무 적재하는 핫패스 파일의 크기 래칫 감시.
 
     매매 룰 래칫(blocked_day_rate)과 동형의 '콘텍스트 래칫' 안전장치 — 무한 누적 필드가
     다시 자라면 compact_state.py 실행(또는 정책 검토)을 촉구한다.
+    v2.33 F: 만성 초과(14일+ 연속)는 FAIL 로 승격한다. streak 은
+    state/context_budget_state.json 에 영속(pipeline_audit 워크플로가 커밋).
     """
-    over: list[str] = []
+    over_items: list[tuple[str, str]] = []  # (안정 키, 표시 문자열)
     for rel, limits in CONTEXT_BUDGET.items():
         path = ROOT / rel
         if not path.exists():
             continue
         size = path.stat().st_size
         if size > limits.get("max_bytes", float("inf")):
-            over.append(f"{rel} {size:,}B>{limits['max_bytes']:,}B")
+            over_items.append((rel, f"{rel} {size:,}B>{limits['max_bytes']:,}B"))
             continue
         max_lines = limits.get("max_lines")
         if max_lines:
             n_lines = path.read_text(encoding="utf-8").count("\n") + 1
             if n_lines > max_lines:
-                over.append(f"{rel} {n_lines:,}줄>{max_lines:,}줄")
+                over_items.append((rel, f"{rel} {n_lines:,}줄>{max_lines:,}줄"))
 
     weekly = data.get("config/weekly_plan.json")
     if isinstance(weekly, dict) and len(weekly.get("watch_items") or []) > 20:
-        over.append(f"weekly_plan.watch_items {len(weekly['watch_items'])}개>20개")
+        over_items.append(("weekly_plan.watch_items", f"weekly_plan.watch_items {len(weekly['watch_items'])}개>20개"))
     portfolio = data.get("config/portfolio.json")
     if isinstance(portfolio, dict) and len(portfolio.get("history") or []) > 20:
-        over.append(f"portfolio.history {len(portfolio['history'])}건>20건")
+        over_items.append(("portfolio.history", f"portfolio.history {len(portfolio['history'])}건>20건"))
 
-    if over:
+    # streak 영속화 — 같은 날짜 중복 실행(감사 2경로: pipeline_audit + build_and_notify)은
+    # last 만 갱신되므로 멱등. 예산 내로 복귀한 항목은 streak 을 지운다(해소).
+    try:
+        state = json.loads(CONTEXT_STATE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        state = {}
+    streaks: dict = state.setdefault("streaks", {})
+    today = datetime.now(KST).date()
+    today_s = today.isoformat()
+    over_keys = {k for k, _ in over_items}
+    for key in [k for k in streaks if k not in over_keys]:
+        del streaks[key]
+    warn_labels: list[str] = []
+    fail_labels: list[str] = []
+    for key, disp in over_items:
+        cur = streaks.get(key)
+        if isinstance(cur, dict):
+            try:
+                gap = (today - datetime.fromisoformat(cur["last"]).date()).days
+            except (KeyError, ValueError):
+                gap = None
+            if gap is None or gap > CONTEXT_STREAK_GAP_DAYS:
+                cur = None
+        if not isinstance(cur, dict):
+            cur = {"since": today_s}
+        cur["last"] = today_s
+        streaks[key] = cur
+        days = (today - datetime.fromisoformat(cur["since"]).date()).days + 1
+        label = f"{disp} (연속 {days}일째)"
+        (fail_labels if days >= CONTEXT_ESCALATE_DAYS else warn_labels).append(label)
+
+    prescription = (
+        " — 처방: watchlist/watch_items/history/lessons 갱신체인은 compact_state.py, "
+        "lessons 본문은 ✅codify 이관(sunday_policy_review §1-6 수지 균형 의무), policy.json 은 "
+        "유래·사례 산문의 docs/policy_rationale.md 이관(v2.33 관례 — 신규 룰은 본문에 "
+        "룰·파라미터·ref 만)"
+    )
+    if fail_labels:
         messages.append(result(
-            "WARN",
-            "핫패스 콘텍스트 예산 초과: " + "; ".join(over)
-            + " — 처방: watchlist/watch_items/history/lessons 갱신체인은 compact_state.py, "
-            "lessons 본문은 ✅codify 이관(sunday_policy_review §1-6 수지 균형 의무), policy.json 은 "
-            "유래·사례 산문의 docs/policy_rationale.md 이관(v2.33 관례 — 신규 룰은 본문에 "
-            "룰·파라미터·ref 만)",
+            "FAIL",
+            "콘텍스트 예산 만성 초과(v2.33 F — 연속 "
+            f"{CONTEXT_ESCALATE_DAYS}일+ 로 WARN 승격): " + "; ".join(fail_labels)
+            + prescription
+            + ". 감량이 불가능하면 임계 재조정을 sunday_policy_review 정식 패치(근거 명기)로 결정한다"
+            " — 만성 WARN 방치가 이 승격의 도입 사유다",
         ))
-    else:
+    if warn_labels:
+        messages.append(result("WARN", "핫패스 콘텍스트 예산 초과: " + "; ".join(warn_labels) + prescription))
+    if not fail_labels and not warn_labels:
         messages.append(result("OK", "핫패스 콘텍스트 예산(watchlist/policy/weekly_plan/lessons/history) 정상"))
 
     # P1 C-4 (v2.32, docs/plan_removal_exclusion.md §5-C) — glossary 용어 수 감시.
@@ -1134,14 +1204,44 @@ def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
             messages.append(result("INFO", f"glossary 용어 {n_terms}개 (캡 200 접근 — 성장 추적)"))
 
     heavy = []
+    prompt_sizes: dict[str, int] = {}
     for p in sorted((ROOT / "prompts").glob("*.md")):
         size = p.stat().st_size
+        prompt_sizes[p.name] = size
         if size > PROMPT_WARN_BYTES:
             messages.append(result("WARN", f"프롬프트 감량 필요: prompts/{p.name} {size:,}B (상한 {PROMPT_WARN_BYTES:,}B)"))
         elif size > PROMPT_INFO_BYTES:
             heavy.append(f"{p.name} {size:,}B")
     if heavy:
         messages.append(result("INFO", "프롬프트 크기 추적: " + ", ".join(heavy) + f" (참고 기준 {PROMPT_INFO_BYTES:,}B)"))
+
+    # P2 G (v2.33) — 프롬프트 순증 추적: 7일+ 전 스냅샷 대비 PROMPT_GROWTH_INFO_BYTES 이상
+    # 커진 프롬프트를 INFO 로 표면화. sunday_policy_review §3 의 순증 금지 관례(추가 시 은퇴
+    # 명시)가 지켜지는지의 기계 지표다.
+    hist: list = state.setdefault("prompt_sizes", [])
+    if hist and hist[-1].get("date") == today_s:
+        hist[-1]["sizes"] = prompt_sizes
+    else:
+        hist.append({"date": today_s, "sizes": prompt_sizes})
+    del hist[:-PROMPT_SIZES_KEEP]
+    baseline = next((e for e in reversed(hist)
+                     if (today - datetime.fromisoformat(e["date"]).date()).days >= 7), None)
+    if baseline:
+        grown = []
+        for name, size in prompt_sizes.items():
+            delta = size - int(baseline["sizes"].get(name, size))
+            if delta >= PROMPT_GROWTH_INFO_BYTES:
+                grown.append(f"{name} +{delta:,}B")
+        if grown:
+            messages.append(result(
+                "INFO",
+                f"프롬프트 순증({baseline['date']} 대비): " + "; ".join(grown)
+                + " — 순증 금지 관례(§3, 추가 시 기존 문구 은퇴 명시) 준수 점검",
+            ))
+    try:
+        CONTEXT_STATE.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    except OSError:
+        pass  # 상태 저장 실패가 감사 자체를 막지 않는다 (다음 실행에서 streak 재시작)
 
 
 def audit_inference_loop(messages: list[str]) -> None:

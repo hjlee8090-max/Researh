@@ -64,7 +64,7 @@ jobs:
         run: |
           git config user.name "kospi-autoflow-bot"
           git config user.email "hjlee8090@gmail.com"
-          git add reports/ state/audit_log.jsonl state/rule_attribution.json state/exit_tracking.json state/trade_cards.md config/weekly_plan.json
+          git add reports/ state/audit_log.jsonl state/rule_attribution.json state/exit_tracking.json state/trade_cards.md state/context_budget_state.json config/weekly_plan.json
           if git diff --cached --quiet; then
             echo "No audit changes"
             echo "message=audit: $(date -u +%Y-%m-%d) pipeline health report" >> "$GITHUB_OUTPUT"

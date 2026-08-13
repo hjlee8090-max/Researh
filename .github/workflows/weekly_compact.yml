@@ -35,11 +35,16 @@ jobs:
         run: python scripts/compact_state.py --dry-run
       - name: Compact
         run: python scripts/compact_state.py
+      # P2 B-2 (v2.33, docs/plan_removal_exclusion.md §5-B): 아카이브 루틴 미발화 주의
+      # 주간 아카이브를 '한눈에 보기' 인덱스로 소급 생성(멱등 — 있으면 무동작).
+      # 폴백 파일의 fallback-index 마커를 audit 이 감지해 루틴 미발화 WARN 은 유지된다.
+      - name: Week archive fallback (missing weeks only)
+        run: python scripts/build_week_archive_fallback.py || true
       - name: Commit & push
         run: |
           git config user.name "kospi-autoflow-bot"
           git config user.email "hjlee8090@gmail.com"
-          git add config/ state/ docs/policy_changelog.md
+          git add config/ state/ reports/ docs/policy_changelog.md
           if git diff --cached --quiet; then
             echo "no compaction changes"
             exit 0

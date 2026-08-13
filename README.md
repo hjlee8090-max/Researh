@@ -44,6 +44,8 @@ state/
   catalysts_archive.jsonl  (v2.32 P0) manual_events 과거 7일+ 이벤트 보존 (estimate 의 과거촉매 사용창 D-7 과 정렬)
   weekly_plan_archive.jsonl (v2.32 P0) weekend_review 날짜 키 14일+ 보존
   inference_log_archive.jsonl (v2.32 P0) 채점 완료 + 90일 경과 예측·결과 라인 보존 (스코어카드는 90일 롤링창)
+  policy_keys_baseline.json (v2.32 C-3) 룰 원장 baseline — 이후 추가 policy 키는 날짜 근거+review_by 요구(warn)
+  context_budget_state.json (v2.33 F·G) 콘텍스트 예산 연속 초과 streak(14일+ = 감사 FAIL 승격) + 프롬프트 크기 스냅샷(순증 추적)
   portfolio_history.jsonl  일일 equity 스냅샷 전체 이력 (config/portfolio.json 엔 최근 10개만)
   ratchet_shadow.json      (v2.20) 본전 래칫 스톱 그림자 관측 — track_ratchet_shadow.py 가 18시 종가 기준 stage·가상 breach·해방가능 heat 기록 (관측 전용, 체결 없음)
   ratchet_shadow_scorecard.json score_ratchet_shadow.py 채점 — 가상 breach 의 t+1/t+5 반사실 손익·noise율·실제 청산 대비 보호액 (일 20시 policy_review §1-8 승격 심사 입력)
@@ -87,6 +89,8 @@ scripts/
   fetch_catalysts.py       종목별 다가오는 촉매 추정 (정기보고서 법정기한 + DART list.json 보정) → config/catalysts.json
   fetch_consensus.py       증권사 컨센서스 수집 (FnGuide — 목표주가·투자의견·추정치) → state/consensus.json (Phase 2 earnings-preview 입력)
   compact_state.py         핫패스 콘텍스트 압축 — watchlist 청산종목·코멘트·상위노트/watch_items/history/changelog/종결 pending_orders/과거 manual 촉매/weekend_review 날짜키/채점완료 inference_log 를 archive 로 이관 (매일 19:00 KST weekly_compact.yml + 일 21시 archive routine + 수동, 멱등·--dry-run — v2.32 P0 확장)
+  check_policy_hygiene.py  (v2.32 C-2·C-3) policy dead config 스캔 + 룰 원장(신규 키 등록 메타·review_by 도래) — self_audit findings 로 편입돼 14일 무처분 FAIL
+  build_week_archive_fallback.py (v2.33 B-2) 아카이브 루틴 미발화 주의 주간 아카이브를 '한눈에 보기' 인덱스로 소급 생성 (fallback-index 마커 — 감사가 미발화 WARN 유지)
   check_market_open.py     KRX 영업일/휴장일 판정 (exit 0=영업, 10=주말, 11=공휴일)
   check_market_session.py  KRX 장중 세션·체결모드 판정 (live/closing_price/none) — 18시 종가청산만, 마감후 신규진입 금지
   score_candidates.py      후보 종목 자동 점수화 (추세·신뢰도·thesis·악재) → 09시 routine 진입 후보 랭킹

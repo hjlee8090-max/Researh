@@ -28,13 +28,18 @@ jobs:
         run: python scripts/rule_attribution.py || true
       - name: Render trade cards
         run: python scripts/render_trade_cards.py || true
+      # P1 C-2·C-3 (v2.32, docs/plan_removal_exclusion.md §5-C): policy 위생 스캔을 본 감사
+      # 직전에 실행 — dead config·미등록 신규 룰·review_by 도래가 findings 로 편입되어
+      # 기존 14일 무처분 follow-up gate 가 처분을 강제한다.
+      - name: Policy hygiene scan
+        run: python scripts/check_policy_hygiene.py || true
       - name: Self audit
         run: python scripts/self_audit.py
       - name: Commit self-audit outputs
         run: |
           git config user.name "kospi-autoflow-bot"
           git config user.email "hjlee8090@gmail.com"
-          git add reports/ state/self_audit.json state/self_audit_findings.json state/trade_cards.md state/rule_attribution.json state/exit_tracking.json
+          git add reports/ state/self_audit.json state/self_audit_findings.json state/trade_cards.md state/rule_attribution.json state/exit_tracking.json state/policy_keys_baseline.json
           if git diff --cached --quiet; then
             echo "no self-audit changes"
             exit 0

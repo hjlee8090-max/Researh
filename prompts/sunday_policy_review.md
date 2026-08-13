@@ -24,6 +24,9 @@
   - 분류(매크로/섹터/개별/가정오류/루틴)별 항목 수
   - 모든 "다음 적용 룰" 추출 목록
   - 누적 카운트 ≥ 3 인 분류 (반복 패턴)
+  - `rule_sunset` (v2.32 C-1) — expiry 등록 룰의 만료 도래 목록(§1-2-b 입력) + 차단·상한 류인데
+    `(expiry: YYYY-MM-DD)` 미표기인 신규 룰 목록(등록 촉구 — warn 모드)
+  - `archive_candidates`·`throughput` (v2.32 E) — codify 30일+ 미응축 섹션 목록 + 주간 유입 통계(§1-6 입력)
 - 이 JSON 을 1차 입력으로 사용한다. lessons.md 본문은 검증 시에만 참조.
 
 ## 0-B. 교훈 반영 자동 대조 (미반영 강제 표면화)
@@ -85,10 +88,22 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
 - **realized_pnl_sum 이 2주 연속 음(-)이거나 post_exit_t5_forgone_sum 이 큰 양수(조기청산 비용)인 청산 룰은 패치 후보로 자동 상정**한다(임계·배수·조건 조정안 제시).
 - `blocked_day_rate_pct` 가 40% 이상이면 차단 룰 과잉(래칫) 신호 — `lessons_rule_sunset` 만료 대상·완화 후보를 식별한다.
 - lessons 발 즉석 제한 룰의 expiry(`policy.lessons_rule_sunset` 기본 5거래일) 도래 여부를 점검해 만료/승격을 분류한다.
+  - (v2.32 C-1) 점검 목록은 `lessons_index.rule_sunset.expired` 를 그대로 쓴다 — 각 만료 룰에
+    **만료(실효 확정·lessons 에 1줄)/승격(누적 근거 2회+ → policy 정식 필드)** 판정을 기입한다.
+  - `rule_sunset.unregistered`(차단·상한 류인데 expiry 미표기)가 있으면 해당 lessons 항목에
+    `(expiry: YYYY-MM-DD)` 를 추가 기입한다 — 일몰 제도에 대상을 공급하는 입구 등록.
+  - `state/policy_hygiene.json` 의 `review_due`(policy 룰 review_by 도래)도 같은 기준으로
+    연장(review_by 갱신·근거 명기)/완화/제거를 판정한다.
 
-### 1-3. policy 미사용 필드 점검
-`policy.json` 에 정의됐지만 어느 prompt/script 에서도 참조하지 않는 필드를 찾는다 (dead config).
-- 삭제 후보 / 활성화 후보 중 분류
+### 1-3. policy 미사용 필드 점검 (v2.32 C-2 — 스크립트화·처분 강제)
+`python scripts/check_policy_hygiene.py` 를 실행하고 `state/policy_hygiene.json` 을 읽는다
+(수동 grep 스캔 폐지 — 2026-08-09 리뷰까지 6주째 '식별만 반복'되던 수동 한계의 해소).
+- `dead_configs` 각각에 **처분 3택을 이번 리뷰에서 실행**한다: ①삭제(제거 — 전문은 git 히스토리 보존)
+  ②`_doc` 접두 개명(문서 전용 선언 — 이후 스캔 면제) ③참조 배선(활성화).
+- dead config 는 17시 self-audit 이 findings(`policy-dead-config-*`)로 편입한다 — **§0-0 처분
+  의무의 대상**이며 14일 무처분이면 follow-up gate FAIL. "다음 주에 결정" 이월은 구조적으로 불가.
+- `unregistered_new_rules`(등록 메타 없는 신규 룰)는 해당 룰에 날짜 근거 + `review_by`(또는
+  expiry)를 추가 기입한다 — 신규 룰은 일몰(재검토 기한)이 기본값(baseline 이전 키는 그랜드파더).
 
 ### 1-4. prompt 간 일관성
 같은 룰(예: trend filter -7%)이 여러 prompt 에 분산돼 있을 때 표현이 일치하는지 확인.
@@ -105,6 +120,9 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
   버려지고 있으면 ①출처 URL+게재일 확인 후 `config/news_impact.json` manual_news 승격 또는
   ②`config/news_keywords.json` 키워드 추가. **오분류(방향 반대)** 발견 시 exclude 키워드 추가
   ('관세 환급'·'Exempts Autos' 패턴). `silent_types` 는 unclassified 와 대조해 구멍/뉴스부재를 구분.
+  - (v2.32 C-4 — 배제 측) 보강과 대칭으로: **90일+ 무매칭 silent 키워드는 분기 1회(월초 첫 리뷰)
+    비활성 검토를 상정**한다. 삭제가 아니라 검토 상정이며(재현율 우선 원칙 유지), 비활성 결정 시
+    키워드를 레지스트리에서 빼고 그 사실을 lessons '루틴' 분류로 1줄 기록한다(복원 가능 — git 보존).
 - **estimate_gate 손익 채점 (v2.12)**: `gate_cost` 를 점검한다 — 게이트가 차단한 종목의
   이후 20거래일 실현 수익 중앙값 ≥ +3% 또는 양(+)수익 비율 ≥ 60%(n≥5)면 `alpha_block_alert` —
   **게이트가 알파를 차단 중**이므로 임계(block_if_expected_return_below_pct) 완화를 패치 후보로
@@ -117,11 +135,19 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
   (기준 사후 변경 금지). verdict=wire 계열일 때만 score_candidates 배선을 패치 후보로 상정.
 - 보강·승격 내역은 lessons.md 에 '루틴' 분류로 1줄 기록한다(키워드 레지스트리 변경 이력 추적).
 
-### 1-6. lessons.md 응축 (콘텍스트 예산 — `policy.context_budget`)
+### 1-6. lessons.md 응축 (콘텍스트 예산 — `policy.context_budget`, v2.32 E 수지 균형 의무)
 이번 리뷰에서 **codify 확정**(policy/prompts/CI 반영 완료 + 반영 위치 확인)된 lessons 항목은:
 - 전문(원문 그대로)을 `state/lessons_archive.md` 에 append 하고,
 - lessons.md 본문을 "분류·요약 1~2줄·✅ codify 반영 위치·전문 이관 표기" 4줄로 교체한다.
 - **불변 보존**: `### ` 헤딩 원문, `- 분류:`/`- 원인 분류:` 라인, 누적 패턴 카운터, 미반영·진행 중(in-progress) 항목 전체. 응축 후 `python scripts/build_lessons_index.py` 를 재실행해 entries 수·카운터가 변하지 않았는지 확인한다.
+- **(v2.32 E) 수지 균형 의무 — 응축은 재량이 아니라 의무다**: 매 리뷰는
+  ①이번 이관 건수 ≥ `lessons_index.throughput.new_entries_7d`(주간 유입) 또는
+  ②lessons.md ≤ `context_budget.audit_thresholds.lessons_max_bytes`(60KB) — 둘 중 하나를 충족한다.
+  이관 대상 1순위는 `lessons_index.archive_candidates`(codify 30일+ 미응축, 오래된 순 정렬).
+  둘 다 미충족이면 산출물 1 §6 사용자 액션에 사유를 1줄로 명시한다(침묵 이월 금지 —
+  17시 self-audit 의 `lessons-balance` finding 이 open 인 동안 §0-0 처분 의무가 반복 적용된다).
+  근거: 유입은 자동·매일, 이관은 주 1회 재량이던 대역폭 비대칭이 279KB(예산 4.7×)를 만들었다
+  (docs/plan_removal_exclusion.md §3-1).
 
 ### 1-7. 선제 추론 루프 채점·자격 심사 (inference_scorecard — Phase 1→2)
 `state/inference_scorecard.json`(0-D 생성)을 점검한다(자기보완 루프의 estimate 채점 §1-5 와 대칭):

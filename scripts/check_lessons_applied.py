@@ -41,6 +41,36 @@ UNRESOLVED_MARKERS = [
 # 반복/재발 신호 — 있으면 hard(우선 강제)로 승격.
 REPEAT_MARKERS = ["⚠️", "연속", "반복", "재발", "2회", "3회", "4회", "2건째", "3건째", "재차", "또"]
 
+# --- P1 C-1 (2026-08-13, docs/plan_removal_exclusion.md §5-C) — expiry 등록 게이트(warn) ---
+# 차단·상한 류 '다음 적용 룰'은 (expiry: YYYY-MM-DD) 표기 의무(policy.lessons_rule_sunset 기본
+# 5거래일). 제도(v2.11)만 있고 등록이 0건이라 일몰 심사 대상이 늘 비어 있었다(2026-08-09 리뷰 실측).
+# build_lessons_index.py 와 동일 계약 — 발효일 이전 섹션은 그랜드파더.
+RULE_INTRO_RE = re.compile(
+    r"\*{0,2}(?:다음 적용 룰|다음 진입[^\n:：]*?시 반영할 룰)\*{0,2}[:：][ \t]*([^\n]+)")
+EXPIRY_RE = re.compile(r"\(\s*(?:expiry|만료)\s*[:：]?\s*(\d{4}-\d{2}-\d{2})\s*\)")
+SUNSET_KEYWORDS = ("차단", "보류", "금지", "상한", "캡", "축소", "냉각", "제한")
+SUNSET_MANDATE_SINCE = "2026-08-13"
+SECTION_DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+
+
+def scan_sunset_unregistered(sections: list[dict]) -> list[dict]:
+    out: list[dict] = []
+    for sec in sections:
+        dm = SECTION_DATE_RE.search(sec["title"])
+        sec_date = dm.group(1) if dm else ""
+        if sec_date < SUNSET_MANDATE_SINCE:
+            continue
+        for line in sec["lines"]:
+            m = RULE_INTRO_RE.search(line)
+            if not m:
+                continue
+            rule = m.group(1).strip()
+            if any(k in rule for k in SUNSET_KEYWORDS) and not EXPIRY_RE.search(rule):
+                out.append({"section": sec["title"], "rule": rule[:200],
+                            "why": "차단·상한 류 룰 — (expiry: YYYY-MM-DD) 미표기 "
+                                   "(기본 5거래일, policy.lessons_rule_sunset)"})
+    return out
+
 HEADER_RE = re.compile(r"^###\s+(.+?)$")
 # (2026-08-11) 볼드 카운터(`**34건**`) 미판독 교정 — build_lessons_index.py 와 동일 계약.
 COUNTER_LINE_RE = re.compile(r"^-\s*\*{0,2}(.+?)\*{0,2}\s*[:：]\s*\*{0,2}(\d[\d,]*)\s*건")
@@ -123,12 +153,14 @@ def main() -> int:
         return 1
     text = LESSONS_PATH.read_text(encoding="utf-8")
 
-    # haystack = policy.json + changelog 전문(docs 분리분) + 모든 prompts/*.md (소문자).
-    # compact_state.py 가 policy.changelog 를 docs/policy_changelog.md 로 이관하므로,
-    # 과거 changelog 에만 남은 반영 신호가 '미반영' 오탐이 되지 않도록 함께 grep 한다.
+    # haystack = policy.json + changelog·rationale 전문(docs 분리분) + 모든 prompts/*.md (소문자).
+    # compact_state.py 가 policy.changelog 를 docs/policy_changelog.md 로 이관하고,
+    # P1 D(v2.32, docs/plan_removal_exclusion.md §5-D)가 policy 의 이력 산문을
+    # docs/policy_rationale.md 로 이관하므로, 이관분에만 남은 반영 신호가
+    # '미반영' 오탐이 되지 않도록 함께 grep 한다(2026-06-12 changelog 분리와 동일 조건).
     parts: list[str] = []
     haystack_files: list[str] = []
-    for rel in ("config/policy.json", "docs/policy_changelog.md"):
+    for rel in ("config/policy.json", "docs/policy_changelog.md", "docs/policy_rationale.md"):
         path = ROOT / rel
         if path.exists():
             parts.append(path.read_text(encoding="utf-8"))
@@ -184,6 +216,7 @@ def main() -> int:
                 soft.append(item)
 
     repeated_3plus = {k: v for k, v in counter.items() if v >= 3}
+    sunset_unregistered = scan_sunset_unregistered(sections)
 
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
@@ -194,12 +227,14 @@ def main() -> int:
         "open_items_manual": manual,
         "resolved_items": resolved,
         "repeated_3plus": repeated_3plus,
+        "sunset_unregistered": sunset_unregistered,
         "summary": {
             "hard": len(hard),
             "soft": len(soft),
             "manual_review": len(manual),
             "likely_applied": len(resolved),
             "repeated_3plus": list(repeated_3plus),
+            "sunset_unregistered": len(sunset_unregistered),
         },
     }
     OUT_PATH.parent.mkdir(exist_ok=True)
@@ -207,12 +242,15 @@ def main() -> int:
 
     print(
         f"lessons_applied: hard={len(hard)} soft={len(soft)} manual={len(manual)} "
-        f"applied={len(resolved)} repeated_3plus={list(repeated_3plus)}"
+        f"applied={len(resolved)} repeated_3plus={list(repeated_3plus)} "
+        f"sunset_unregistered={len(sunset_unregistered)}"
     )
     for it in hard:
         print(f"  [HARD 미반영] {it['section']} :: {it['marker_line'][:120]}")
     for it in soft:
         print(f"  [soft 미반영] {it['section']} :: {it['marker_line'][:120]}")
+    for it in sunset_unregistered:
+        print(f"  [일몰 미등록] {it['section']} :: {it['rule'][:120]}")
 
     enforce = os.environ.get("LESSONS_ENFORCE", "").strip().lower() in ("1", "true", "yes", "on")
     if enforce and hard:

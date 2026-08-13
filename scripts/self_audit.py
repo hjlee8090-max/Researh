@@ -220,6 +220,47 @@ def audit_deployment(portfolio: dict, alloc: dict, policy: dict) -> dict:
     return out
 
 
+def audit_policy_hygiene() -> dict:
+    """P1 C-2·C-3 (v2.32, docs/plan_removal_exclusion.md §5-C) — policy 위생 스캔 결과 적재.
+
+    state/policy_hygiene.json 은 weekly_self_audit.yml 이 본 감사 직전에
+    scripts/check_policy_hygiene.py 로 생성한다. 부재·낡음(8일+)이면 직접 재생성을 시도하고,
+    그래도 없으면 빈 결과(감시 항목 없음)로 강등 — 감사 자체를 막지 않는다.
+    """
+    path = ROOT / "state" / "policy_hygiene.json"
+    data = load_json(path, {})
+    as_of = str(data.get("as_of") or "")[:10]
+    stale = True
+    if as_of:
+        try:
+            stale = (datetime.now(KST).date() - datetime.fromisoformat(as_of).date()).days > 8
+        except ValueError:
+            stale = True
+    if stale:
+        try:
+            import check_policy_hygiene as cph  # 모듈 재사용 — reconcile_portfolio import 와 동일 관례
+            cph.main()
+            data = load_json(path, {})
+        except Exception:
+            data = data or {}
+    return {
+        "as_of": data.get("as_of"),
+        "dead_configs": data.get("dead_configs") or [],
+        "unregistered_new_rules": data.get("unregistered_new_rules") or [],
+        "review_due": data.get("review_due") or [],
+    }
+
+
+def audit_lessons_balance(policy: dict) -> dict:
+    """P1 E (v2.32) — lessons.md 크기 vs 콘텍스트 예산. 유입(자동·매일)과 이관(§1-6 주 1회
+    재량)의 처리량 격차가 4.7× 초과(279KB vs 60KB)로 실측된 만성 불균형의 기계 감시."""
+    path = ROOT / "state" / "lessons.md"
+    size = path.stat().st_size if path.exists() else 0
+    max_bytes = int(((policy.get("context_budget") or {}).get("audit_thresholds") or {})
+                    .get("lessons_max_bytes", 60000))
+    return {"size_bytes": size, "max_bytes": max_bytes, "over": size > max_bytes}
+
+
 # ── findings 수명 관리 (검사 → 처분 → 보완 검증 닫힌 루프) ─────────────────────
 def extract_findings(m: dict, prev_metrics: dict | None) -> list[dict]:
     """이번 감사에서 트리거된 finding 목록 — 안정 ID + 사람이 읽는 title + 지표 스냅샷."""
@@ -269,6 +310,48 @@ def extract_findings(m: dict, prev_metrics: dict | None) -> list[dict]:
             "id": "benchmark-gap-widening",
             "title": f"vs KOSPI 격차 악화 {prev_gap}%p → {cur_gap}%p",
             "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
+            "severity": "warn",
+        })
+
+    # P1 C-2·C-3·E (v2.32, docs/plan_removal_exclusion.md §5-C·E) — 지식 위생을 findings
+    # 수명 루프에 편입. dead config 가 6주째 '식별만 반복'되던 무한 이월을, 기존 14일
+    # 무처분 follow-up gate FAIL 루프 재사용으로 닫는다(새 루프 신설 없음).
+    ph = m.get("policy_hygiene") or {}
+    for key in (ph.get("dead_configs") or [])[:8]:
+        out.append({
+            "id": f"policy-dead-config-{key}",
+            "title": f"policy dead config: {key} — 어느 prompt/script/workflow 도 참조하지 않음",
+            "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). "
+                      "근거: state/policy_hygiene.json (check_policy_hygiene.py)",
+            "severity": "warn",
+        })
+    unreg = ph.get("unregistered_new_rules") or []
+    if unreg:
+        out.append({
+            "id": "policy-unregistered-rules",
+            "title": f"등록 메타 없는 신규 policy 룰 {len(unreg)}건 — 룰 원장 게이트(warn)",
+            "detail": "; ".join(f"{u.get('path')}(결측: {'/'.join(u.get('missing') or [])})"
+                                for u in unreg[:5])
+                      + " — 신규 룰은 날짜 근거 + review_by/expiry 를 요구(일몰이 기본값, P3 원칙)",
+            "severity": "warn",
+        })
+    due = ph.get("review_due") or []
+    if due:
+        out.append({
+            "id": "policy-review-due",
+            "title": f"재검토 기한(review_by) 도래 policy 룰 {len(due)}건 — 일몰 심사 대상",
+            "detail": "; ".join(f"{d.get('path')}({d.get('review_by')})" for d in due[:5])
+                      + " — sunday_policy_review 가 연장(review_by 갱신)/완화/제거를 판정",
+            "severity": "warn",
+        })
+    lb = m.get("lessons_balance") or {}
+    if lb.get("over"):
+        out.append({
+            "id": "lessons-balance",
+            "title": f"lessons.md {lb.get('size_bytes', 0):,}B > 예산 {lb.get('max_bytes', 0):,}B — 이관 처리량 부족",
+            "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입"
+                      "(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. "
+                      "이관 대상 1순위는 lessons_index.archive_candidates.",
             "severity": "warn",
         })
     return out
@@ -496,6 +579,8 @@ def main() -> int:
         "deployment": audit_deployment(portfolio, alloc, policy),
         "overlay": audit_overlay(),
         "policy_version": str(policy.get("version", "?")),
+        "policy_hygiene": audit_policy_hygiene(),
+        "lessons_balance": audit_lessons_balance(policy),
     }
 
     # findings 수명 병합 — 검사가 '보완 요구'로, 다음 검사가 '보완 검증'으로 이어진다.

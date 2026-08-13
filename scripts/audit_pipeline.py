@@ -1119,6 +1119,19 @@ def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
     else:
         messages.append(result("OK", "핫패스 콘텍스트 예산(watchlist/policy/weekly_plan/lessons/history) 정상"))
 
+    # P1 C-4 (v2.32, docs/plan_removal_exclusion.md §5-C) — glossary 용어 수 감시.
+    # 설계상 append-only(재정의 금지·신규 1줄 등재)라 유일하게 캡이 없던 지식 파일.
+    # 자동 이관은 없음(어떤 용어가 기초 용어인지는 LLM 판단) — 측정·경보만.
+    glossary = ROOT / "state" / "glossary.md"
+    if glossary.exists():
+        n_terms = sum(1 for l in glossary.read_text(encoding="utf-8").splitlines()
+                      if l.lstrip().startswith("- **"))
+        if n_terms > 200:
+            messages.append(result("WARN", f"glossary 용어 {n_terms}개 > 캡 200 — 사용 빈도 하위 용어의 "
+                                           "archive 이관을 sunday_policy_review 에 상정"))
+        elif n_terms > 180:
+            messages.append(result("INFO", f"glossary 용어 {n_terms}개 (캡 200 접근 — 성장 추적)"))
+
     heavy = []
     for p in sorted((ROOT / "prompts").glob("*.md")):
         size = p.stat().st_size
@@ -1291,6 +1304,16 @@ def audit_lessons_applied(messages: list[str]) -> None:
         messages.append(result("OK", "lessons.md 자기-인지 미반영(반복/단발) 교훈 없음"))
     if manual:
         messages.append(result("INFO", f"교훈 수동검토 {len(manual)}건(자동 검증 불가 앵커 부재) — sunday_policy_review 확인"))
+    # P1 C-1 (v2.32, docs/plan_removal_exclusion.md §5-C) — 차단·상한 류 신규 룰의 expiry 미표기.
+    # warn 모드: 등록을 촉구만 한다. 일몰 제도(lessons_rule_sunset v2.11)에 대상을 공급하는 입구 게이트.
+    sunset_missing = payload.get("sunset_unregistered", [])
+    if sunset_missing:
+        heads = "; ".join(f"{it.get('section')}" for it in sunset_missing[:3])
+        messages.append(result(
+            "WARN",
+            f"일몰 미등록 룰 {len(sunset_missing)}건 — 차단·상한 류 '다음 적용 룰'에 "
+            f"(expiry: YYYY-MM-DD) 표기 필요(기본 5거래일, policy.lessons_rule_sunset): {heads}",
+        ))
 
 
 def audit_trade_provenance(messages: list[str]) -> None:

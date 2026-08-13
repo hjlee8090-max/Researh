@@ -141,6 +141,14 @@
 
 ### C. 지식 일몰의 닫힌 루프 — P1, 이번 연구의 핵심
 
+> ✅ **구현 완료 (2026-08-13, policy v2.32)** — C-1(입구 게이트 warn 모드: 1800 작성 의무 +
+> check_lessons_applied `sunset_unregistered` 일일 WARN + build_lessons_index `rule_sunset` 파싱,
+> 발효 2026-08-13 이후 섹션만·기존 룰 그랜드파더) · C-2(check_policy_hygiene.py 신설 —
+> dead config 3종(weekly_cycle·rebalance_rules·disclaimers)이 findings 로 편입 실측,
+> 14일 무처분 FAIL 루프 재사용) · C-3(policy_keys_baseline.json 원장 — 신규 1·2레벨 키에
+> 날짜 근거+review_by 요구, warn) · C-4(silent 키워드 분기 비활성 검토 §1-5 + glossary 200용어
+> 캡 감시). 검증: 인덱스 기존 계약 필드 전후 동일, hard=0/soft=0 불변, findings 4건 정상 적재.
+
 - C-1. **등록 게이트**: lessons에 "다음 적용 룰"을 적을 때 진입 차단·비중 상한 류는
   `(expiry: YYYY-MM-DD)` 표기를 의무화. check_lessons_applied가 표기 누락을 WARN으로 표면화하고,
   build_lessons_index가 expiry를 파싱해 만료 목록을 §1-2-b에 자동 상정한다.
@@ -169,6 +177,12 @@ note·origin·structural_note 산문(50%, 42K자)을 `docs/policy_rationale.md`(
 또는 "lessons.md ≤ 60KB" 중 하나를 충족해야 한다. build_lessons_index가 이관 후보(codify 완료 +
 30일 경과 + 카운터 무관 항목)를 자동 목록화해 리뷰의 판단 비용을 낮춘다.
 불변 보존(헤딩·분류 라인·누적 카운터·미반영 항목)은 기존 §1-6 규칙 그대로.
+
+> ✅ **구현 완료 (2026-08-13, policy v2.32)** — §1-6 수지 균형 의무 명문화 + `lessons-balance`
+> finding(60KB 초과 시 open — §0-0 처분 의무 반복 적용) + archive_candidates·throughput 자동 산출.
+> **구현 중 실측 정정**: codify 확정 16개 섹션은 §1-6 이 이미 전부 4줄로 응축해 두었다(후보 0건).
+> 279KB 의 본체는 **미codify 항목 119+개 × 평균 ~2KB + 주간 유입 31건** — 병목은 '응축'이 아니라
+> **codify 처분 속도**다. 수지 균형 의무는 그 처분(§1-1 반영→codify→응축)을 주 단위로 압박한다.
 
 ### F. WARN 에스컬레이션 — P2
 
@@ -217,9 +231,9 @@ audit은 프롬프트 크기의 **전주 대비 순증**을 INFO로 추적한다
    실측: 예산 WARN 은 checklist 1건 즉시 소멸 + 예산 밖 누적원 2종(pending_orders -53%·catalysts -39%) 봉합.
    watchlist(보유 코멘트가 부피 본체)·policy(D)·weekly_plan(weekly_thesis 산문)·lessons(E)는
    P1 의 지식 계층 작업 없이는 예산 안으로 안 들어온다 — 당초 "3건+ 소멸" 추정은 과대였음(정정).
-2. **2주차 (P1)**: C-2(findings 편입)·E(lessons 수지 균형) — 기존 루프 재사용이라 저위험.
-   C-1(expiry 등록)은 WARN 모드로 시작.
-3. **3주차+ (P1~P2)**: D(policy 다이어트 — 큰 diff라 별도 커밋)·C-3(룰 원장, 신규 룰부터)·
+2. **2주차 (P1)**: ✅ 완료(2026-08-13, 1주차와 동일 세션에서 선행 구현) C-1(WARN 모드)·
+   C-2(findings 편입 — dead config 3종 즉시 적재 실측)·C-3(원장 baseline)·C-4(경량판)·E(수지 균형).
+3. **3주차+ (P1~P2)**: D(policy 다이어트 — 큰 diff라 별도 커밋)·
    F·G(사용자 승인 항목 포함) — sunday_policy_review 안건으로 상정.
 
 > 본 문서는 설계 연구이며, 구현 커밋은 포함하지 않는다. 산출물: `docs/plan_removal_exclusion.md`.

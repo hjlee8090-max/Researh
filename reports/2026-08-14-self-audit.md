@@ -9,11 +9,11 @@
 |---|---|
 | A. 원장 정합성 | ✅ 일치 |
 | B. 계좌 성과 | 왕복 14건 · 승률 35.7% · PF 0.51 · 순실현 -271,317원 |
-| C. vs KOSPI (2026-05-20~) | 계좌 -3.692% vs KOSPI -2.92% → **격차 -0.77%p** |
+| C. vs KOSPI (2026-05-20~) | 계좌 -3.436% vs KOSPI -2.92% → **격차 -0.52%p** |
 | D. 스톱 휩쏘 | 손실 스톱 7건 중 t+5 채점 7건 · 휩쏘 5건 (71.4%) · 일실 합계 +222,731원 |
 | E. 게이트 위반 | 총 0건 (provenance 0 · timing 0 · chase 0 · shock 0 · card 0) |
-| F. 패치 vs 검증 | policy v2.34 (직전 감사 v2.31) · 신규 왕복 0건 |
-| G. 배치 | 주식 57.0% (tier bull, 목표 [65, 80]) · heat 잔여 129861원 |
+| F. 패치 vs 검증 | policy v2.34 (직전 감사 v2.34) · 신규 왕복 0건 |
+| G. 배치 | 주식 57.1% (tier bull, 목표 [65, 80]) · heat 잔여 118021원 |
 | H. 오버레이 백테스트 | 판정 있음(아래) |
 
 ## ⚠️ 이번 주 조치 필요 (findings — 처분 의무)
@@ -23,13 +23,16 @@
 | id | 항목 | 경과 | 처분 상태 |
 |---|---|---|---|
 | `whipsaw-high` | 스톱 휩쏘율 71.4% — 노이즈 저점 매도 반복 | 6주째 | observe — 재확인(08-09): ratchet_shadow breach 확정 2/3건(07-26 1건 대비 +1)·관측 |
-| `deployment-below-band` | 주식비중 57.0% < 목표 하한 65% — 만성 미배치 | 6주째 🔴overdue | **무처분** (패치 처분 후에도 재발 — 보완 효과 없음, 재상정) |
-| `benchmark-gap-widening` | vs KOSPI 격차 악화 1.43%p → -0.77%p | 1주째 | **무처분** |
-| `patch-without-validation` | 검증 표본 없는 정책 패치 — 패치 동결 규칙 발동 | 1주째 | **무처분** |
+| `deployment-below-band` | 주식비중 57.1% < 목표 하한 65% — 만성 미배치 | 6주째 🔴overdue | **무처분** (패치 처분 후에도 재발 — 보완 효과 없음, 재상정) |
 | `policy-dead-config-disclaimers` | policy dead config: disclaimers — 어느 prompt/script/workflow 도 참조하지 않음 | 1주째 | **무처분** |
 | `policy-dead-config-rebalance_rules` | policy dead config: rebalance_rules — 어느 prompt/script/workflow 도 참조하지 않음 | 1주째 | **무처분** |
 | `policy-dead-config-weekly_cycle` | policy dead config: weekly_cycle — 어느 prompt/script/workflow 도 참조하지 않음 | 1주째 | **무처분** |
 | `lessons-balance` | lessons.md 294,426B > 예산 60,000B — 이관 처리량 부족 | 1주째 | **무처분** |
+
+## ✅ 이번 주 해소 확인 (보완 검증)
+
+- `benchmark-gap-widening` vs KOSPI 격차 악화 1.43%p → -0.77%p — 지표 정상화로 자동 해소
+- `patch-without-validation` 검증 표본 없는 정책 패치 — 패치 동결 규칙 발동 — 지표 정상화로 자동 해소
 
 ## H. 청산 오버레이 백테스트 판정 (요약 인용)
 

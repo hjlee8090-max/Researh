@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-13",
+  "as_of": "2026-08-14",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,7 +8,7 @@
       "detail": "손실 스톱 t+5 일실 합계 222731.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-13",
+      "last_seen": "2026-08-14",
       "weeks_seen": 6,
       "status": "open",
       "disposition": {
@@ -44,7 +44,7 @@
       "detail": "⚠️ 주식비중 57.0% < 목표 하한 65% — 만성 미배치 계열",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-13",
+      "last_seen": "2026-08-14",
       "weeks_seen": 6,
       "status": "open",
       "disposition": null,
@@ -79,11 +79,11 @@
     },
     {
       "id": "benchmark-gap-widening",
-      "title": "vs KOSPI 격차 악화 6.07%p → 1.43%p",
+      "title": "vs KOSPI 격차 악화 1.43%p → -0.77%p",
       "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
       "severity": "warn",
       "first_seen": "2026-08-13",
-      "last_seen": "2026-08-13",
+      "last_seen": "2026-08-14",
       "weeks_seen": 1,
       "status": "open",
       "disposition": null,
@@ -101,24 +101,78 @@
       "title": "검증 표본 없는 정책 패치 — 패치 동결 규칙 발동",
       "detail": "⚠️ 직전 감사 이후 정책 버전이 올라갔는데 신규 검증 표본(왕복)이 0건 — 패치 동결 검토(검증 없는 패치 누적).",
       "severity": "warn",
-      "first_seen": "2026-08-05",
-      "last_seen": "2026-08-11",
+      "first_seen": "2026-08-14",
+      "last_seen": "2026-08-14",
       "weeks_seen": 1,
-      "status": "resolved",
-      "disposition": {
-        "action": "observe",
-        "note": "패치 동결 규칙(감사 처방⑤) 발동 확인 — 직전 감사 대비 policy v2.27→v2.28 버전 증가 + 신규 왕복 0건(누적 왕복은 13→14건이나 이는 v2.28 patch 이전 체결 1건 반영분, v2.28 이후 신규 체결은 0건). 이번 리뷰의 정책 패치는 버그 수정·게이트 강화(deployment-below-band 의 universe theme 교정 등)만 반영했고 전략 파라미터(사이징·임계·목표) 변경은 없음 — 동결 규칙 준수. 신규 왕복 표본이 쌓일 때까지(권장 3건+) 동결 유지, 다음 감사에서 재확인.",
-        "date": "2026-08-09",
-        "by": "sunday_policy_review"
-      },
-      "disposition_history": [],
-      "resolved_date": "2026-08-12"
+      "status": "open",
+      "disposition": null,
+      "disposition_history": [
+        {
+          "action": "observe",
+          "note": "패치 동결 규칙(감사 처방⑤) 발동 확인 — 직전 감사 대비 policy v2.27→v2.28 버전 증가 + 신규 왕복 0건(누적 왕복은 13→14건이나 이는 v2.28 patch 이전 체결 1건 반영분, v2.28 이후 신규 체결은 0건). 이번 리뷰의 정책 패치는 버그 수정·게이트 강화(deployment-below-band 의 universe theme 교정 등)만 반영했고 전략 파라미터(사이징·임계·목표) 변경은 없음 — 동결 규칙 준수. 신규 왕복 표본이 쌓일 때까지(권장 3건+) 동결 유지, 다음 감사에서 재확인.",
+          "date": "2026-08-09",
+          "by": "sunday_policy_review"
+        }
+      ]
+    },
+    {
+      "id": "policy-dead-config-disclaimers",
+      "title": "policy dead config: disclaimers — 어느 prompt/script/workflow 도 참조하지 않음",
+      "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
+      "severity": "warn",
+      "first_seen": "2026-08-14",
+      "last_seen": "2026-08-14",
+      "weeks_seen": 1,
+      "status": "open",
+      "disposition": null,
+      "disposition_history": []
+    },
+    {
+      "id": "policy-dead-config-rebalance_rules",
+      "title": "policy dead config: rebalance_rules — 어느 prompt/script/workflow 도 참조하지 않음",
+      "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
+      "severity": "warn",
+      "first_seen": "2026-08-14",
+      "last_seen": "2026-08-14",
+      "weeks_seen": 1,
+      "status": "open",
+      "disposition": null,
+      "disposition_history": []
+    },
+    {
+      "id": "policy-dead-config-weekly_cycle",
+      "title": "policy dead config: weekly_cycle — 어느 prompt/script/workflow 도 참조하지 않음",
+      "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
+      "severity": "warn",
+      "first_seen": "2026-08-14",
+      "last_seen": "2026-08-14",
+      "weeks_seen": 1,
+      "status": "open",
+      "disposition": null,
+      "disposition_history": []
+    },
+    {
+      "id": "lessons-balance",
+      "title": "lessons.md 294,426B > 예산 60,000B — 이관 처리량 부족",
+      "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. 이관 대상 1순위는 lessons_index.archive_candidates.",
+      "severity": "warn",
+      "first_seen": "2026-08-14",
+      "last_seen": "2026-08-14",
+      "weeks_seen": 1,
+      "status": "open",
+      "disposition": null,
+      "disposition_history": []
     }
   ],
   "open": [
     "whipsaw-high",
     "deployment-below-band",
-    "benchmark-gap-widening"
+    "benchmark-gap-widening",
+    "patch-without-validation",
+    "policy-dead-config-disclaimers",
+    "policy-dead-config-rebalance_rules",
+    "policy-dead-config-weekly_cycle",
+    "lessons-balance"
   ],
   "overdue": [
     "deployment-below-band"

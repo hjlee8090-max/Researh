@@ -9,7 +9,7 @@
 |---|---|
 | A. 원장 정합성 | ✅ 일치 |
 | B. 계좌 성과 | 왕복 14건 · 승률 35.7% · PF 0.51 · 순실현 -271,317원 |
-| C. vs KOSPI (2026-05-20~) | 계좌 -3.436% vs KOSPI -2.92% → **격차 -0.52%p** |
+| C. vs KOSPI (2026-05-20~) | 계좌 -3.337% vs KOSPI -2.92% → **격차 -0.42%p** |
 | D. 스톱 휩쏘 | 손실 스톱 7건 중 t+5 채점 7건 · 휩쏘 5건 (71.4%) · 일실 합계 +222,731원 |
 | E. 게이트 위반 | 총 0건 (provenance 0 · timing 0 · chase 0 · shock 0 · card 0) |
 | F. 패치 vs 검증 | policy v2.34 (직전 감사 v2.34) · 신규 왕복 0건 |
@@ -27,7 +27,7 @@
 | `policy-dead-config-disclaimers` | policy dead config: disclaimers — 어느 prompt/script/workflow 도 참조하지 않음 | 1주째 | **무처분** |
 | `policy-dead-config-rebalance_rules` | policy dead config: rebalance_rules — 어느 prompt/script/workflow 도 참조하지 않음 | 1주째 | **무처분** |
 | `policy-dead-config-weekly_cycle` | policy dead config: weekly_cycle — 어느 prompt/script/workflow 도 참조하지 않음 | 1주째 | **무처분** |
-| `lessons-balance` | lessons.md 294,426B > 예산 60,000B — 이관 처리량 부족 | 1주째 | **무처분** |
+| `lessons-balance` | lessons.md 307,133B > 예산 60,000B — 이관 처리량 부족 | 1주째 | **무처분** |
 
 ## ✅ 이번 주 해소 확인 (보완 검증)
 

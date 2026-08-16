@@ -50,6 +50,10 @@ COUNTER_LINE_RE = re.compile(r"^-\s*\*{0,2}(.+?)\*{0,2}\s*[:：]\s*\*{0,2}(\d[\d
 # --- P1 C-1·E (2026-08-13, docs/plan_removal_exclusion.md §5-C·E) ---
 SECTION_DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 EXPIRY_RE = re.compile(r"\(\s*(?:expiry|만료)\s*[:：]?\s*(\d{4}-\d{2}-\d{2})\s*\)")
+# 진입 차단·비중 상한이 아니라 기록 규약·형식·버그수정 류임을 저자가 명시적으로 밝힌 경우의 면제 표기.
+# (2026-08-16 policy_review v2.35 — SUNSET_KEYWORDS 가 "축소/제한/보류" 등을 포함하는 방법론 문구까지
+#  차단·상한 룰로 오탐지해 매주 동일 항목이 unregistered 로 재상정되는 잡음을 줄인다.)
+NO_EXPIRY_RE = re.compile(r"\(\s*expiry\s*없음")
 # 진입 차단·비중 상한 류 판별 키워드 — policy.lessons_rule_sunset 의 일몰 대상 정의와 동일 계열.
 SUNSET_KEYWORDS = ("차단", "보류", "금지", "상한", "캡", "축소", "냉각", "제한")
 # expiry 표기 의무의 발효일 — 이전 섹션의 룰은 그랜드파더(소급 경고로 목록이 잠기는 것 방지).
@@ -148,6 +152,7 @@ def build_rule_sunset(parsed: list[dict], sections: list[dict], today: str) -> d
     """P1 C-1 — 룰 expiry 등록·만료 현황. 섹션 날짜는 헤딩의 첫 YYYY-MM-DD."""
     registered: list[dict] = []
     unregistered: list[dict] = []
+    exempted: list[dict] = []
     for p, s in zip(parsed, sections):
         dm = SECTION_DATE_RE.search(s["title"])
         sec_date = dm.group(1) if dm else ""
@@ -158,6 +163,9 @@ def build_rule_sunset(parsed: list[dict], sections: list[dict], today: str) -> d
                     "source_title": p["title"], "rule": rule[:200], "expiry": em.group(1),
                     "expired": em.group(1) < today,
                 })
+            elif NO_EXPIRY_RE.search(rule):
+                exempted.append({"source_title": p["title"], "rule": rule[:200],
+                                  "section_date": sec_date})
             elif (any(k in rule for k in SUNSET_KEYWORDS)
                   and sec_date >= SUNSET_MANDATE_SINCE):
                 unregistered.append({"source_title": p["title"], "rule": rule[:200],
@@ -167,8 +175,10 @@ def build_rule_sunset(parsed: list[dict], sections: list[dict], today: str) -> d
         "registered": registered,
         "expired": [r for r in registered if r["expired"]],
         "unregistered": unregistered,
+        "exempted": exempted,
         "note": "expired = §1-2-b 만료/승격 판정 대상. unregistered = 발효일 이후 차단·상한 류인데 "
-                "(expiry: YYYY-MM-DD) 미표기 — 기본 5거래일(policy.lessons_rule_sunset). warn 모드.",
+                "(expiry: YYYY-MM-DD) 미표기 — 기본 5거래일(policy.lessons_rule_sunset). warn 모드. "
+                "exempted = 저자가 '(expiry 없음 — ...)' 로 차단·상한이 아님을 명시한 기록 규약류.",
     }
 
 

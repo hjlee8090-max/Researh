@@ -25,7 +25,11 @@
   — 하단은 눌림 매수, 상단은 추격 상한. estimate 의 entry_cap 이 있으면 상단을 캡.
 - 매도 목표 참조 밴드(보유): base = max(진입 후 최고 종가, 현재가),
   ref = base × (1 + k×ATR%), 밴드 = base × (1 + [0.7, 1.3]×k×ATR%).
-  valuation_check 의 밸류에이션 천장이 있으면 ref·상단을 캡(cap_applied 표기).
+  valuation_check 의 verdict=="cap_target" 일 때만 밸류에이션 천장으로 ref·상단을 캡한다
+  (cap_applied 표기). verdict!="cap_target"(예: ok·overheat_entry)이면 천장값이 있어도
+  캡을 적용하지 않는다 — 2026-08-16 policy_review 수정(v2.35): verdict 무관하게 캡을 걸어
+  하나금융지주·KB금융의 실재하지 않는 target_gap 을 매일 만들던 결함 수정. 근거: lessons.md
+  2026-08-14 "가정오류(운영) — 결함이라고 확정한 신호가 사흘째 같은 자리에서 다시 나왔다".
 - reprice_signals(보유):
   target_exhausted  목표 진행률 ≥ 100% — 목표가 이미 소진. (a)종가 익절 판정
                     (b)목표 재산정+trade_log REPRICE (c)트레일링 전용 전환 중 당일 택1
@@ -110,6 +114,7 @@ def build_ticker(
     exit_info: dict | None = None,
     entry_cap: float | None = None,
     valuation_ceiling: float | None = None,
+    valuation_verdict: str | None = None,
 ) -> dict:
     """1개 종목의 밴드·신호 산출. 가격/ATR 결측이면 결측 사유만 담은 dict 반환."""
     price = None
@@ -153,7 +158,7 @@ def build_ticker(
     t_low = base * (1 + sp_lo * k_mult * atr_frac)
     t_high = base * (1 + sp_hi * k_mult * atr_frac)
     cap_applied = False
-    if valuation_ceiling:
+    if valuation_ceiling and valuation_verdict == "cap_target":
         if ref > valuation_ceiling:
             ref = valuation_ceiling
             cap_applied = True
@@ -253,6 +258,7 @@ def compute(portfolio: dict, snapshot: dict, exit_levels: dict, estimates: dict,
             exit_info=exit_tickers.get(ticker) if isinstance(exit_tickers, dict) else None,
             entry_cap=_num(est.get("entry_cap")),
             valuation_ceiling=_num(val.get("valuation_ceiling_price")),
+            valuation_verdict=val.get("verdict"),
         )
         signal_count += len(entry.get("reprice_signals") or [])
         out_tickers[str(ticker)] = entry

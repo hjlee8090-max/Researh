@@ -102,7 +102,7 @@
 - 18:00 — 오늘 결과를 weekly_plan에 반영하고 watch_items 갱신
 
 ## 6. 산출물 1: config/weekly_plan.json 갱신
-> **레거시 신뢰도 서술 이월 금지**: `watch_items`·`daily_bridge` 작성 시 과거 리포트의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 서술을 복제하지 않는다 (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). 신뢰도·진입 가능 여부는 최신 `market_snapshot.json` 의 `confidence`·`entry_filter.passes` 만 근거로 한다.
+> **레거시 신뢰도 서술 이월 금지**: `watch_items`·`daily_bridge` 작성 시 과거 리포트의 "fetch 차단 / stooq·Yahoo 403 / data confidence=low / 신규 진입 보류" 서술을 복제하지 않는다 (2026-05-26 네이버+Yahoo 2출처 수집으로 해결됨). 신뢰도·진입 가능 여부는 최신 `market_snapshot.json` 의 `confidence`(1순위 출처)·`entry_filter.passes` 만 근거로 한다. `stale` 키는 직전 정기 수집본 보존을 뜻할 뿐 그 자체로 low 가 아니다 — **stale ≠ low.** (2026-08-16 policy_review v2.35 — §1-4 prompt 간 일관성 점검에서 이 문구만 누락 확인돼 정렬. 이 prompt 자체는 saturday_review/sunday_strategy 로 대체된 레거시 호환용이라 스케줄 미등록.)
 
 다음 필드를 갱신한다.
 - `week_id`

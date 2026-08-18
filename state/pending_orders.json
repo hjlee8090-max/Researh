@@ -1,1100 +1,1160 @@
 {
-  "_meta": "조건부 사전주문(선제 커밋). W27 전략전환: 듀얼모멘텀 바스켓 일괄 배치(docs/strategy_momentum.md). 체결은 6/30 09시 routine 이 pre_trade_gate(가격신뢰도·heat·R/R) 통과 후 — 개장 fresh 가격으로 종목당 30% 상한 내 수량 재산정. 가격 차단(403) 시 policy.momentum_strategy.cash_trap_fix 에 따라 커밋된 신호·스냅샷을 medium 출처로 인정.",
-  "schema": {
-    "id": "po-YYYYMMDD-N",
-    "created_slot": "sunday_strategy",
-    "ticker": "XXXXXX",
-    "name": "종목명",
-    "action": "BUY|SELL",
-    "trigger": {
-      "type": "price_below|market_open",
-      "value": 0
-    },
-    "size_shares": 0,
-    "size_hint": "basket_deploy",
-    "tier": 1,
-    "price_source_required": "snapshot_or_web",
-    "valid_until": "YYYY-MM-DDTHH:MM:00+09:00",
-    "strategy": "dual_momentum_w27",
-    "status": "active"
+ "_meta": "조건부 사전주문(선제 커밋). W27 전략전환: 듀얼모멘텀 바스켓 일괄 배치(docs/strategy_momentum.md). 체결은 6/30 09시 routine 이 pre_trade_gate(가격신뢰도·heat·R/R) 통과 후 — 개장 fresh 가격으로 종목당 30% 상한 내 수량 재산정. 가격 차단(403) 시 policy.momentum_strategy.cash_trap_fix 에 따라 커밋된 신호·스냅샷을 medium 출처로 인정.",
+ "schema": {
+  "id": "po-YYYYMMDD-N",
+  "created_slot": "sunday_strategy",
+  "ticker": "XXXXXX",
+  "name": "종목명",
+  "action": "BUY|SELL",
+  "trigger": {
+   "type": "price_below|market_open",
+   "value": 0
   },
-  "orders": [
-    {
-      "id": "po-20260807-1",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 675146
-      },
-      "size_shares": 1,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-10T15:30:00+09:00",
-      "inference_id": "inf-20260807-1800-2",
-      "status": "expired",
-      "note": "손절 종가 이탈 시 전량(1주 단주라 부분 축소 없음). 값은 exit_levels 정본(무변경). 장중 관통은 신호만 — 체결은 8/10 종가 판정 후.",
-      "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260807-2",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 859927
-      },
-      "size_shares": 1,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-10T15:30:00+09:00",
-      "inference_id": "inf-20260807-1800-2",
-      "status": "expired",
-      "note": "목표 도달 익절. 목표 진행률 63.0%로 트레일링(활성 70%)은 여전히 미활성. │ 8/10 09:00 — 밸류에이션 천장 캡 적용으로 목표 859,952 → 859,927 동기화(-25원).",
-      "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260807-3",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 122361
-      },
-      "size_shares": 4,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-10T15:30:00+09:00",
-      "inference_id": "inf-20260807-1800-3",
-      "status": "expired",
-      "note": "8/7 18시 §2-2 손절 상향 반영(120,157 → 122,361·exit_levels 샹들리에 잔여선 정본). 트리거값 표류 방지를 위해 po 를 EOD 확정값으로 재적재한다.",
-      "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260807-4",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 144000
-      },
-      "size_shares": 4,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-10T15:30:00+09:00",
-      "inference_id": "inf-20260807-1800-3",
-      "status": "expired",
-      "note": "목표 도달 익절. 종가가 144,000 을 넘길 때만 발동(장중 도달은 사유 아님). 목표 진행률 46.9%로 트레일링 미활성.",
-      "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260807-5",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "size_shares": 3,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-10T15:30:00+09:00",
-      "inference_id": "inf-20260807-1800-3",
-      "status": "expired",
-      "note": "8/7 18시 §2-2 손절 상향 반영(155,001 → 159,662·dynamic_bands stop_too_wide 해소). R/R 0.966 → 1.245.",
-      "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260807-6",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 195886
-      },
-      "size_shares": 3,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-10T15:30:00+09:00",
-      "inference_id": "inf-20260807-1800-3",
-      "status": "expired",
-      "note": "목표 도달 익절. 목표 진행률 11.6%로 트레일링 미활성.",
-      "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260810-1",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 704858
-      },
-      "size_shares": 1,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "inference_id": "inf-20260810-1800-2",
-      "status": "expired",
-      "note": "§2-2 (b)로 오늘 상향한 손절 704,858(=exit_levels 트레일 1차선 정본). 종가 이탈 시 전량 — 1주 단주라 '50% 부분익절'과 전량 청산이 같은 행동이다. 장중 관통은 신호만. | 06:00 마감 확정 검토 — 서부텍사스산 원유 82.31달러(+5.28%)·브렌트 87.85달러 마감으로 지정학 웃돈 유지 확인, 자정의 '마감 전 합의 발표 → 갭다운' 분기는 불발 확정. 손절선은 최고종가·변동성 산식 값이라 야간 변수의 입력이 아니므로 트리거 무변경. 체결은 09시 게이트 후. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260810-2",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 859927
-      },
-      "size_shares": 1,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "inference_id": "inf-20260810-1800-2",
-      "status": "expired",
-      "note": "목표 859,927(밸류에이션 천장 캡·무변경). 종가 도달 시 전량 익절. 8/10 종가 823,000 은 목표의 95.7% 지점. | 06:00 마감 확정 검토 — 밸류에이션 천장 캡이라 미국장 마감 변수의 입력 대상이 아니다. 트리거 무변경. 트레일링 활성선 823,524원과 8/10 종가 823,000원의 간격은 524원(0.06%)이며 활성 판정은 오늘 종가가 한다. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260810-3",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 122361
-      },
-      "size_shares": 4,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "inference_id": "inf-20260810-1800-3",
-      "status": "expired",
-      "note": "손절 122,361(무변경·exit_levels 샹들리에 잔여선 정본). 8/10 종가 130,400 대비 -6.17% 이격. | 06:00 마감 확정 검토 — 미 10년물 4.713%(+6.2bp) 월중 최고 마감으로 금리 축에 야간 상방 입력 발생(자정 '입력 없음' 판정 정정). 손절은 샹들리에 잔여선 정본이라 트리거 무변경, 개장 갭 예상만 -1.5~+1.5% → -0.8~+2.0%로 상향. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260810-4",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 144000
-      },
-      "size_shares": 4,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "inference_id": "inf-20260810-1800-3",
-      "status": "expired",
-      "note": "목표 144,000 — 8/10 18시 §2-2 에서 재산정하지 않고 유지하기로 결론한 값. | 06:00 마감 확정 검토 — 금리 상승은 목표가 앵커(밸류 천장·추정목표)의 입력이 아니므로 트리거 무변경. 8/12 미 소비자물가가 이 축의 다음 판정 시점. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260810-5",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "size_shares": 3,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "inference_id": "inf-20260810-1800-3",
-      "status": "expired",
-      "note": "손절 159,662(무변경). 8/10 종가 171,700 대비 -7.01% 이격. | 06:00 마감 확정 검토 — 하나금융지주와 동일 축(미 10년물 4.713% 마감). 손절 트리거 무변경, 개장 갭 예상만 상향. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260810-6",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "size_shares": 3,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "inference_id": "inf-20260810-1800-3",
-      "status": "expired",
-      "note": "**8/10 18시 §2-2 (a) 재산정 목표 192,600**(직전 195,886). 트리거값이 바뀐 유일한 주문이다. | 06:00 마감 확정 검토 — 8/10 재산정 목표 192,600 유지. 미국장 마감 변수는 재산정 입력이 아니라 트리거 무변경. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260810-7",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 178932
-      },
-      "size_shares": 1,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "status": "expired",
-      "note": "손절 178,932(진입 시 설정·무변경). 8/10 종가 211,500 대비 -15.40% 이격. | 06:00 마감 확정 검토 — 나스닥 -0.32%·엔비디아 -2.9%·인텔 -4.1% 마감으로 미 기술주 순풍 없음. 손절 트리거 무변경, 개장 갭 예상 -1.5~+1.0% → -1.8~+0.7%. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260810-8",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262508
-      },
-      "size_shares": 1,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "status": "expired",
-      "note": "목표 262,508 = 5년 PER 밴드 상단 = thesis 소프트 무효화선. 8/10 18시 §2-2 에서 유지 결론(하향 시 R/R 1.035 로 하한 이탈). | 06:00 마감 확정 검토 — 목표는 5년 밴드 상단 기준선이라 야간 변수 입력 없음. 트리거 무변경. 개장가가 진입 상한 209,800원 아래면 잔여 1주 집행 창이 열린다(판정은 09시 게이트). | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260811-1",
-      "created_slot": "09:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 36425
-      },
-      "size_shares": 17,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "strategy": "non_overheat_deployment_w33",
-      "status": "expired",
-      "inference_id": "inf-20260811-0900-2",
-      "note": "오늘 09:35 진입분의 동적 손절 36,425(= 진입가 40,036 − 2×ATR14 1,805.36). 유효 red 임계 -11.30% 환산 35,512 보다 타이트한 쪽 채택. 종가 이탈 시 전량 — 장중 관통은 신호일 뿐.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260811-2",
-      "created_slot": "09:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 44840
-      },
-      "size_shares": 17,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-08-11T15:30:00+09:00",
-      "strategy": "non_overheat_deployment_w33",
-      "status": "expired",
-      "inference_id": "inf-20260811-0900-2",
-      "note": "목표 44,840 — 앵커 5개 중 하위 3개 밀집대(44,500~44,840)의 상단. 종가 도달 시 전량 익절. 진입 대비 +12.0% 지점이라 당일 도달 확률은 낮게 본다.",
-      "expired_at": "2026-08-11T15:30:00+09:00",
-      "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
-    },
-    {
-      "id": "po-20260811-3",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 704858
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "손절 — exit_levels 정본(트레일 1차선과 동일선). 종가 이탈 시 익일 closing_auction 청산",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 호르무즈 [진행형] 이 해소가 아니라 경색으로 굳고(이란 외무장관 협상 재개 불가·트럼프 배상 거부) WTI 83.16달러(+1.34%, 4거래일 연속 상승)로 마감해 방산 지정학 웃돈 유지. 손절 704,858 유지(원화 exit_levels 정본·미국 마감 무관, 이동 0). 개장 갭 밴드 741,000~794,000 하단이 손절선보다 5.1% 위라 개장 갭만으로는 닿지 않는다. 09시 pre_trade_gate 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 745,000원이 손절 704,858원 위 +5.35%. 트리거 미충족·status active 유지. 값 이동 0(exit_levels 재산출 정본 동일). 체결 판정은 종가.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-4",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 859927
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "목표 — 밸류에이션 천장 캡 적용값. 종가 도달 시 익일 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 859,927 유지(밸류에이션 천장 캡·원화 기준, 이동 0). 호르무즈 최종 타결 미성립으로 lig_ceiling_reset_w33 무효화 트리거 1번이 발동하지 않아 목표 재검토 사유 없음. 목표 진행률 69.6%로 트레일링 활성 문턱(70%) 미달 유지. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 745,000원이 목표 859,927원 아래 -13.4%. 트리거 미충족·값 이동 0. 목표 진행률 69.6%로 트레일 활성 문턱(70%) 미달 유지.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-5",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 122361
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 미 10년물 4.73%→4.69%(-2bp)·9월 인상 확률 51%→46% 부근으로 자정의 은행 금리 순풍이 마감까지 되밀렸다(안전자산 선호가 유가발 인플레 기대를 이김). 손절 122,361 유지(원화 exit_levels 정본, 이동 0). 개장 갭 밴드 125,100~130,300 하단이 손절선보다 2.2% 위 — 개장만으로는 미도달. 트레일 1차선 125,163 은 밴드 하단 안이나 목표 진행률 48.0%로 활성 문턱 미달이라 발동 대상 아님. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 130,200원이 손절 122,361원 위 +6.41%. 트리거 미충족·값 이동 0. 오늘 종가가 은행 열위 3일차 판정일이며 미 7월 소비자물가(21:30 KST)는 판정 뒤.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-6",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "목표 — 8/11 18시 재산정값(144,000 → 143,600, 추정 앵커 정렬)",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 143,600 유지(8/11 18시 추정 앵커 정렬값·원화 기준, 이동 0). 금리 되밀림은 목표가 산정 입력이 아니라 개장 방향 입력이라 재산정 사유 없음. 오늘 종가가 은행 열위 3일차 판정일이며 되돌림 지표 미 7월 CPI(21:30 KST)는 판정 뒤에 온다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 130,200원이 목표 143,600원 아래 -9.3%. 트리거 미충족·값 이동 0(8/11 재산정값 유지).",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-7",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 하나금융지주와 동일한 금리 축(10년물 -2bp·9월 인상 확률 하락). 손절 159,662 유지(원화 exit_levels 정본, 이동 0). 개장 갭 밴드 163,300~169,900 하단이 손절선보다 2.3% 위. 트레일 1차선 163,301 이 밴드 하단과 사실상 같은 자리이나 목표 진행률 13.5%로 활성 문턱 미달 — 발동 대상 아님. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 167,750원이 손절 159,662원 위 +5.07%. 트리거 미충족·값 이동 0.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-8",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "목표 — 8/10 재산정값 유지(8/11 target_gap 은 추정 앵커 급변으로 재산정 보류)",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 192,600 유지(8/10 재산정값·원화 기준, 이동 0). 8/11 18시가 건 재판정 조건(8/12·8/13 종가 기준 2거래일 연속 추정 앵커 175,000 아래)은 종가 데이터가 필요해 06:00 판정 대상이 아니다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 167,750원이 목표 192,600원 아래 -12.9%. 값 이동 0. 8/11 이 건 재판정 조건(2거래일 연속 추정 앵커 175,000 아래)은 오늘 앵커 190,300원으로 **1일차 불성립** — 연속 카운터 미개시.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-9",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 178932
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "손절 — 진입 시 −2.0×ATR14",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 나스닥 -0.60%(알파벳·애플·아마존 AI 캐펙스 부담)와 금리 하락에 따른 할인율 완화가 상쇄. 손절 178,932 유지(원화 기준·진입 시 -2.0×ATR14, 이동 0). 개장 갭 밴드 210,800~217,200 은 자정과 동일하며 하단이 손절선보다 17.8% 위. 잔여 1주 진입 게이트(근사가 209,000 아래)는 밴드 하단이 그 위라 개장만으로는 열리지 않을 공산. 09시 게이트 후 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 217,500원이 손절 178,932원 위 +21.6%. 트리거 미충족·값 이동 0. 손절폭 17.7%가 2.5×ATR(6.7%) 초과인 `stop_too_wide` 는 18시 §2-2 안건으로 예고.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-10",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262508
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "목표 — 5년 PER 밴드 상단(천장). 도달 시 목표 청산이지 축소가 아니다",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 262,508 유지(5년 PER 밴드 상단·원화 기준, 이동 0). 미국장 마감이 옮길 수 있는 값이 아니다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 217,500원이 목표 262,508원 아래 -17.1%. 트리거 미충족·값 이동 0.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-11",
-      "created_slot": "18:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 36956
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "손절 — 8/11 18시 상향값(36,425 → 36,956, exit_levels 샹들리에 잔여선 정본)",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 카카오 개별 재료 야간 0건, 인터넷 축은 나스닥 약세와 금리 하락이 상쇄. 손절 36,956 유지(8/11 18시 상향값·exit_levels 정본, 이동 0). 개장 갭 밴드 39,900~41,700 하단이 손절선보다 8.0% 위. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 40,750원이 손절 36,956원 위 +10.3%. 트리거 미충족·값 이동 0.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260811-12",
-      "created_slot": "18:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 44840
-      },
-      "valid_until": "2026-08-12T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-11T18:10:00+09:00",
-      "reason": "목표 — 동적 진입가×1.12 앵커",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 44,840 유지(동적 진입가×1.12 앵커·원화 기준, 이동 0). 재조정 의무가 재발하는 41,960(목표 진행률 40%)은 갱신 밴드 상단 41,700 밖으로 나가, 개장 갭만으로 재발선을 터치할 확률을 자정 12% → 8%로 낮춘다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
-      "note_0900": "8/12 09:00 개장 점검 — 근사 40,750원이 목표 44,840원 아래 -9.1%. 값 이동 0. 재조정 재발선 41,960원(목표 진행률 40%)은 오전 고가 41,450원이 -1.2% 아래로 미달.",
-      "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
-    },
-    {
-      "id": "po-20260812-1",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 704858
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "손절 — exit_levels 정본. §2-2 R/R 미달은 산술적 압축으로 판정해 값 이동 0",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 손절 704,858(원화·exit_levels 정본)은 미국장 마감이 옮기는 값이 아니다. 갱신 개장 밴드 하단 776,200 이 트리거보다 +10.1% 위라 개장 갭만으로 닿지 않는다. 호르무즈 [진행형 지속] 확정.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-2",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 859927
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "목표 — 밸류에이션 천장 캡 적용값(cap_target). 종가 도달 시 익일 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 목표 859,927(밸류에이션 천장 캡)은 세 앵커가 한 점이라 마감 확정으로 움직일 여지 0. 갱신 밴드 상단 803,800 이 트리거 아래.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-3",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 122361
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 손절 122,361 은 갱신 밴드 하단 127,300 보다 -3.9% 아래. 미 10년물 4.682% 되돌림으로 은행 금리 역풍은 축소됐으나 트리거 값 근거(exit_levels 샹들리에)는 불변.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-4",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "목표 — 8/11 재산정값 유지. 8/12 target_gap 은 캡 오적용 판정으로 재산정 사유 아님",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 목표 143,600(8/11 재산정값)은 원화 앵커라 마감 확정 반영분 없음. 갱신 밴드 상단 129,800 이 트리거 아래.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-5",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 손절 159,662 는 갱신 밴드 하단 165,200 보다 -3.4% 아래이며 트레일 1차선 163,406 도 하단 아래라 개장 갭 단독 발동 없음.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-6",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "목표 — 8/10 재산정값 유지. 추정 앵커 166,700 로 '2거래일 연속 175,000 아래' 1일차 성립, 8/13 종가가 2일차면 재산정 집행",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 목표 192,600 은 추정 앵커 175,000 미만 2일차 판정(18시 종가 소관) 전까지 불변. 06시는 판정 주체가 아니다.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-7",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 186537
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "손절 — 8/12 18시 상향값(178,932 → 186,537, exit_levels 샹들리에 잔여선 정본·stop_too_wide 해소)",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 손절 186,537(8/12 상향값)은 갱신 밴드 하단 214,400 보다 -13.0% 아래. 나스닥 +0.54% 마감으로 하방 재료 추가 없음.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-8",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262508
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "목표 — 5년 PER 밴드 상단(천장). 도달 시 목표 청산이지 축소가 아니다",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 목표 262,508(5년 PER 밴드 상단)은 원화 천장 앵커라 마감 확정으로 이동 없음.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-9",
-      "created_slot": "18:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 36956
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "손절 — 8/11 18시 상향값(exit_levels 샹들리에 잔여선 정본)",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 손절 36,956 은 갱신 밴드 하단 39,350 보다 -6.1% 아래. 밤사이 개별 재료 0건.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260812-10",
-      "created_slot": "18:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 44840
-      },
-      "valid_until": "2026-08-13T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-12T18:20:00+09:00",
-      "reason": "목표 — 동적 진입가×1.12 앵커",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 재계산 — 이동 0. 목표 44,840(동적 진입가×1.12 앵커) 불변. 60일 상대강도 부호 판정은 18시 소관.",
-      "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
-    },
-    {
-      "id": "po-20260813-1",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 716723
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "트레일 1차선 — exit_levels 정본(최고 종가 837,000 × (1 − 1.5×ATR 9.58%)). 오늘 트레일링 정식 활성화(목표 진행률 81.1%)로 손절선이 704,858 에서 이 값으로 올라왔다. 이탈 시 50% 부분익절이나 1주 보유라 실무상 전량.",
-      "inference_id": "inf-20260813-1800-2",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 자정 if-then ②(브렌트 86.0달러 아래 마감 또는 호르무즈 타결) 불성립(86.91달러·-2.27%, 협상 교착). 지정학 웃돈 감가 개시 조건 미충족으로 트레일 1차선 이동 0. 09시 최우선 점검 유지.",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-2",
-      "created_slot": "18:00",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 859927
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "목표 — 진행률 81.1%. 도달 시 종가 익절 판정.",
-      "inference_id": "inf-20260813-1800-2",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 목표 859,927(exit_levels 정본) 이동 0. 개장 도달 확률 8%(자정 10%에서 하향, 브렌트 추가 하락으로 상단 밴드 0.5%p 축소).",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-3",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 122361
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "손절 — exit_levels 정본. 이동 0.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 미 10년물 4.65% 마감(임계 4.60% 불성립)으로 은행 thesis 강등 없음. 손절선 이동 0.",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-4",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "목표 — target_gap 신호는 캡 오적용으로 종결, 목표 이동 0.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 목표 143,600 이동 0. target_gap 신호는 캡 오적용으로 2026-08-13 종결, 재산정 근거로 쓰지 않는다(lessons 인용).",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-5",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "손절 — exit_levels 정본. 이동 0.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 금리 축 역풍 확정이나 정본 임계 미달. 손절선 이동 0. 최근접 경보(손절까지 -5.0%)로 09시 이격 확인.",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-6",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "목표 — 추정 앵커 182,400 이 175,000 위로 복귀해 2거래일 연속 조건 불성립, 재산정 미발동. 이동 0.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 목표 192,600 이동 0. 추정 앵커 182,400 이 175,000 위 유지로 재판정 카운터 0일차 지속.",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-7",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 198052
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "손절 — 샹들리에 잔여선 정본(최고 종가 226,500 × (1 − 2.0×ATR 6.28%)). stop_too_wide 해소로 186,537 에서 상향.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 나스닥 100 +1.15%·금리 하락으로 개장 우호이나 손절선은 최고 종가(226,500) 산출값 그대로. 이동 0.",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-8",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262481
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "목표 — 밸류에이션 천장 재산출(262,508 → 262,481) 정렬.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 목표 262,481(밸류에이션 천장 정렬) 이동 0.",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-9",
-      "created_slot": "18:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 36956
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "손절 — exit_levels 정본. 이동 0.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 인터넷 축 호재 확정, 자회사 파업 예고가 상단 상쇄. 손절선 이동 0.",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260813-10",
-      "created_slot": "18:00",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 44840
-      },
-      "valid_until": "2026-08-14T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-13T18:20:00+09:00",
-      "reason": "목표 — 이동 0.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600": "06:00 마감 확정 — 목표 44,840 이동 0. 오늘 D+3 도래로 목표가 오차 산입 개시(판정은 18시).",
-      "updated_at": "2026-08-14T06:30:00+09:00"
-    },
-    {
-      "id": "po-20260814-1",
-      "status": "active",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 718606
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "inference_id": "inf-20260814-1800-3"
-    },
-    {
-      "id": "po-20260814-2",
-      "status": "active",
-      "ticker": "079550",
-      "name": "LIG넥스원",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 859927
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "inference_id": "inf-20260814-1800-3"
-    },
-    {
-      "id": "po-20260814-3",
-      "status": "active",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 122604
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
-    },
-    {
-      "id": "po-20260814-4",
-      "status": "active",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
-    },
-    {
-      "id": "po-20260814-5",
-      "status": "active",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
-    },
-    {
-      "id": "po-20260814-6",
-      "status": "active",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
-    },
-    {
-      "id": "po-20260814-7",
-      "status": "active",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 198052
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
-    },
-    {
-      "id": "po-20260814-8",
-      "status": "active",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262481
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
-    },
-    {
-      "id": "po-20260814-9",
-      "status": "active",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 36956
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "inference_id": "inf-20260814-1800-2"
-    },
-    {
-      "id": "po-20260814-10",
-      "status": "active",
-      "ticker": "035720",
-      "name": "카카오",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 44840
-      },
-      "valid_until": "2026-08-18T15:30:00+09:00",
-      "tier": 0,
-      "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "inference_id": "inf-20260814-1800-2"
-    }
-  ],
-  "as_of": "2026-08-14T18:20:00+09:00",
-  "_meta_last_touch": "2026-07-17T06:40:00+09:00 06:00 미국장 마감 확정 — po-20260716-1 신한 목표매도(110,829) 메모만 갱신(원화 목표가·미 마감 무관, 트리거 불변·status active). 한국 폐장으로 체결·trade_log 없음.",
-  "_last_slot_touch": "2026-08-13T06:30:00+09:00 (06:00 미국장 마감 확정)",
-  "_last_trigger_review": "2026-08-11T09:40:00+09:00",
-  "_last_slot_update": "2026-08-13T18:20:00+09:00 (18:00 EOD — 8/12분 10건 만료 처리 + 8/13 갱신 임계 10건 재적재. 이동한 값은 LIG넥스원 손절 704,858→716,723 · NAVER 손절 186,537→198,052 · NAVER 목표 262,508→262,481 세 개다.)",
-  "_meta_0600_20260812": "2026-08-12 06:00 미국장 마감 확정 — active 10건 전부 트리거 값 변경 0건(모두 원화 손절·목표선으로 미국장 마감이 옮길 수 있는 값이 아님). 갱신 사유는 각 주문 note_0600 참조. 한국 폐장(execution_mode=none)으로 체결·status 변경 없음 — 집행은 09시 pre_trade_gate 통과 후.",
-  "_meta_0600_20260813": "06:00 §2-2 트리거 갱신 — active 10건 전부 트리거 값 변경 0. 10건 모두 원화 손절·목표선이라 미국장 마감(S&P500 +0.26%·SOXX +2.32%·미10년물 4.682%)이 옮길 수 있는 값이 아니다. 한국장 폐장(execution_mode=none) — 체결·trade_log 기록 없음, status 불변. 집행은 09시 pre_trade_gate 통과 후. kill_switch 미발동."
+  "size_shares": 0,
+  "size_hint": "basket_deploy",
+  "tier": 1,
+  "price_source_required": "snapshot_or_web",
+  "valid_until": "YYYY-MM-DDTHH:MM:00+09:00",
+  "strategy": "dual_momentum_w27",
+  "status": "active"
+ },
+ "orders": [
+  {
+   "id": "po-20260807-1",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 675146
+   },
+   "size_shares": 1,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-10T15:30:00+09:00",
+   "inference_id": "inf-20260807-1800-2",
+   "status": "expired",
+   "note": "손절 종가 이탈 시 전량(1주 단주라 부분 축소 없음). 값은 exit_levels 정본(무변경). 장중 관통은 신호만 — 체결은 8/10 종가 판정 후.",
+   "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260807-2",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 859927
+   },
+   "size_shares": 1,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-10T15:30:00+09:00",
+   "inference_id": "inf-20260807-1800-2",
+   "status": "expired",
+   "note": "목표 도달 익절. 목표 진행률 63.0%로 트레일링(활성 70%)은 여전히 미활성. │ 8/10 09:00 — 밸류에이션 천장 캡 적용으로 목표 859,952 → 859,927 동기화(-25원).",
+   "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260807-3",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 122361
+   },
+   "size_shares": 4,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-10T15:30:00+09:00",
+   "inference_id": "inf-20260807-1800-3",
+   "status": "expired",
+   "note": "8/7 18시 §2-2 손절 상향 반영(120,157 → 122,361·exit_levels 샹들리에 잔여선 정본). 트리거값 표류 방지를 위해 po 를 EOD 확정값으로 재적재한다.",
+   "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260807-4",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 144000
+   },
+   "size_shares": 4,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-10T15:30:00+09:00",
+   "inference_id": "inf-20260807-1800-3",
+   "status": "expired",
+   "note": "목표 도달 익절. 종가가 144,000 을 넘길 때만 발동(장중 도달은 사유 아님). 목표 진행률 46.9%로 트레일링 미활성.",
+   "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260807-5",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "size_shares": 3,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-10T15:30:00+09:00",
+   "inference_id": "inf-20260807-1800-3",
+   "status": "expired",
+   "note": "8/7 18시 §2-2 손절 상향 반영(155,001 → 159,662·dynamic_bands stop_too_wide 해소). R/R 0.966 → 1.245.",
+   "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260807-6",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 195886
+   },
+   "size_shares": 3,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-10T15:30:00+09:00",
+   "inference_id": "inf-20260807-1800-3",
+   "status": "expired",
+   "note": "목표 도달 익절. 목표 진행률 11.6%로 트레일링 미활성.",
+   "expired_note": "8/10 종가 판정 완료 — 트리거 미도달(무체결). 8/10 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260810-1",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 704858
+   },
+   "size_shares": 1,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "inference_id": "inf-20260810-1800-2",
+   "status": "expired",
+   "note": "§2-2 (b)로 오늘 상향한 손절 704,858(=exit_levels 트레일 1차선 정본). 종가 이탈 시 전량 — 1주 단주라 '50% 부분익절'과 전량 청산이 같은 행동이다. 장중 관통은 신호만. | 06:00 마감 확정 검토 — 서부텍사스산 원유 82.31달러(+5.28%)·브렌트 87.85달러 마감으로 지정학 웃돈 유지 확인, 자정의 '마감 전 합의 발표 → 갭다운' 분기는 불발 확정. 손절선은 최고종가·변동성 산식 값이라 야간 변수의 입력이 아니므로 트리거 무변경. 체결은 09시 게이트 후. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260810-2",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 859927
+   },
+   "size_shares": 1,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "inference_id": "inf-20260810-1800-2",
+   "status": "expired",
+   "note": "목표 859,927(밸류에이션 천장 캡·무변경). 종가 도달 시 전량 익절. 8/10 종가 823,000 은 목표의 95.7% 지점. | 06:00 마감 확정 검토 — 밸류에이션 천장 캡이라 미국장 마감 변수의 입력 대상이 아니다. 트리거 무변경. 트레일링 활성선 823,524원과 8/10 종가 823,000원의 간격은 524원(0.06%)이며 활성 판정은 오늘 종가가 한다. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260810-3",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 122361
+   },
+   "size_shares": 4,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "inference_id": "inf-20260810-1800-3",
+   "status": "expired",
+   "note": "손절 122,361(무변경·exit_levels 샹들리에 잔여선 정본). 8/10 종가 130,400 대비 -6.17% 이격. | 06:00 마감 확정 검토 — 미 10년물 4.713%(+6.2bp) 월중 최고 마감으로 금리 축에 야간 상방 입력 발생(자정 '입력 없음' 판정 정정). 손절은 샹들리에 잔여선 정본이라 트리거 무변경, 개장 갭 예상만 -1.5~+1.5% → -0.8~+2.0%로 상향. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260810-4",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 144000
+   },
+   "size_shares": 4,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "inference_id": "inf-20260810-1800-3",
+   "status": "expired",
+   "note": "목표 144,000 — 8/10 18시 §2-2 에서 재산정하지 않고 유지하기로 결론한 값. | 06:00 마감 확정 검토 — 금리 상승은 목표가 앵커(밸류 천장·추정목표)의 입력이 아니므로 트리거 무변경. 8/12 미 소비자물가가 이 축의 다음 판정 시점. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260810-5",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "size_shares": 3,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "inference_id": "inf-20260810-1800-3",
+   "status": "expired",
+   "note": "손절 159,662(무변경). 8/10 종가 171,700 대비 -7.01% 이격. | 06:00 마감 확정 검토 — 하나금융지주와 동일 축(미 10년물 4.713% 마감). 손절 트리거 무변경, 개장 갭 예상만 상향. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260810-6",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "size_shares": 3,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "inference_id": "inf-20260810-1800-3",
+   "status": "expired",
+   "note": "**8/10 18시 §2-2 (a) 재산정 목표 192,600**(직전 195,886). 트리거값이 바뀐 유일한 주문이다. | 06:00 마감 확정 검토 — 8/10 재산정 목표 192,600 유지. 미국장 마감 변수는 재산정 입력이 아니라 트리거 무변경. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260810-7",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 178932
+   },
+   "size_shares": 1,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "status": "expired",
+   "note": "손절 178,932(진입 시 설정·무변경). 8/10 종가 211,500 대비 -15.40% 이격. | 06:00 마감 확정 검토 — 나스닥 -0.32%·엔비디아 -2.9%·인텔 -4.1% 마감으로 미 기술주 순풍 없음. 손절 트리거 무변경, 개장 갭 예상 -1.5~+1.0% → -1.8~+0.7%. | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260810-8",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262508
+   },
+   "size_shares": 1,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "status": "expired",
+   "note": "목표 262,508 = 5년 PER 밴드 상단 = thesis 소프트 무효화선. 8/10 18시 §2-2 에서 유지 결론(하향 시 R/R 1.035 로 하한 이탈). | 06:00 마감 확정 검토 — 목표는 5년 밴드 상단 기준선이라 야간 변수 입력 없음. 트리거 무변경. 개장가가 진입 상한 209,800원 아래면 잔여 1주 집행 창이 열린다(판정은 09시 게이트). | 09:00 개장 점검 — 트리거 미충족(check_intraday_alerts pending_signals=0), 값 무변경. 06시 갱신본 그대로 승계.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260811-1",
+   "created_slot": "09:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 36425
+   },
+   "size_shares": 17,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "strategy": "non_overheat_deployment_w33",
+   "status": "expired",
+   "inference_id": "inf-20260811-0900-2",
+   "note": "오늘 09:35 진입분의 동적 손절 36,425(= 진입가 40,036 − 2×ATR14 1,805.36). 유효 red 임계 -11.30% 환산 35,512 보다 타이트한 쪽 채택. 종가 이탈 시 전량 — 장중 관통은 신호일 뿐.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260811-2",
+   "created_slot": "09:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 44840
+   },
+   "size_shares": 17,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-11T15:30:00+09:00",
+   "strategy": "non_overheat_deployment_w33",
+   "status": "expired",
+   "inference_id": "inf-20260811-0900-2",
+   "note": "목표 44,840 — 앵커 5개 중 하위 3개 밀집대(44,500~44,840)의 상단. 종가 도달 시 전량 익절. 진입 대비 +12.0% 지점이라 당일 도달 확률은 낮게 본다.",
+   "expired_at": "2026-08-11T15:30:00+09:00",
+   "expiry_note": "8/11 정규장 마감까지 트리거 미도달 — 8/11 18시가 EOD 확정 임계로 재적재(po-20260811-3~12)"
+  },
+  {
+   "id": "po-20260811-3",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 704858
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "손절 — exit_levels 정본(트레일 1차선과 동일선). 종가 이탈 시 익일 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 호르무즈 [진행형] 이 해소가 아니라 경색으로 굳고(이란 외무장관 협상 재개 불가·트럼프 배상 거부) WTI 83.16달러(+1.34%, 4거래일 연속 상승)로 마감해 방산 지정학 웃돈 유지. 손절 704,858 유지(원화 exit_levels 정본·미국 마감 무관, 이동 0). 개장 갭 밴드 741,000~794,000 하단이 손절선보다 5.1% 위라 개장 갭만으로는 닿지 않는다. 09시 pre_trade_gate 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 745,000원이 손절 704,858원 위 +5.35%. 트리거 미충족·status active 유지. 값 이동 0(exit_levels 재산출 정본 동일). 체결 판정은 종가.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-4",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 859927
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "목표 — 밸류에이션 천장 캡 적용값. 종가 도달 시 익일 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 859,927 유지(밸류에이션 천장 캡·원화 기준, 이동 0). 호르무즈 최종 타결 미성립으로 lig_ceiling_reset_w33 무효화 트리거 1번이 발동하지 않아 목표 재검토 사유 없음. 목표 진행률 69.6%로 트레일링 활성 문턱(70%) 미달 유지. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 745,000원이 목표 859,927원 아래 -13.4%. 트리거 미충족·값 이동 0. 목표 진행률 69.6%로 트레일 활성 문턱(70%) 미달 유지.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-5",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 122361
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 미 10년물 4.73%→4.69%(-2bp)·9월 인상 확률 51%→46% 부근으로 자정의 은행 금리 순풍이 마감까지 되밀렸다(안전자산 선호가 유가발 인플레 기대를 이김). 손절 122,361 유지(원화 exit_levels 정본, 이동 0). 개장 갭 밴드 125,100~130,300 하단이 손절선보다 2.2% 위 — 개장만으로는 미도달. 트레일 1차선 125,163 은 밴드 하단 안이나 목표 진행률 48.0%로 활성 문턱 미달이라 발동 대상 아님. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 130,200원이 손절 122,361원 위 +6.41%. 트리거 미충족·값 이동 0. 오늘 종가가 은행 열위 3일차 판정일이며 미 7월 소비자물가(21:30 KST)는 판정 뒤.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-6",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "목표 — 8/11 18시 재산정값(144,000 → 143,600, 추정 앵커 정렬)",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 143,600 유지(8/11 18시 추정 앵커 정렬값·원화 기준, 이동 0). 금리 되밀림은 목표가 산정 입력이 아니라 개장 방향 입력이라 재산정 사유 없음. 오늘 종가가 은행 열위 3일차 판정일이며 되돌림 지표 미 7월 CPI(21:30 KST)는 판정 뒤에 온다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 130,200원이 목표 143,600원 아래 -9.3%. 트리거 미충족·값 이동 0(8/11 재산정값 유지).",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-7",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 하나금융지주와 동일한 금리 축(10년물 -2bp·9월 인상 확률 하락). 손절 159,662 유지(원화 exit_levels 정본, 이동 0). 개장 갭 밴드 163,300~169,900 하단이 손절선보다 2.3% 위. 트레일 1차선 163,301 이 밴드 하단과 사실상 같은 자리이나 목표 진행률 13.5%로 활성 문턱 미달 — 발동 대상 아님. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 167,750원이 손절 159,662원 위 +5.07%. 트리거 미충족·값 이동 0.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-8",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "목표 — 8/10 재산정값 유지(8/11 target_gap 은 추정 앵커 급변으로 재산정 보류)",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 192,600 유지(8/10 재산정값·원화 기준, 이동 0). 8/11 18시가 건 재판정 조건(8/12·8/13 종가 기준 2거래일 연속 추정 앵커 175,000 아래)은 종가 데이터가 필요해 06:00 판정 대상이 아니다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 167,750원이 목표 192,600원 아래 -12.9%. 값 이동 0. 8/11 이 건 재판정 조건(2거래일 연속 추정 앵커 175,000 아래)은 오늘 앵커 190,300원으로 **1일차 불성립** — 연속 카운터 미개시.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-9",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 178932
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "손절 — 진입 시 −2.0×ATR14",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 나스닥 -0.60%(알파벳·애플·아마존 AI 캐펙스 부담)와 금리 하락에 따른 할인율 완화가 상쇄. 손절 178,932 유지(원화 기준·진입 시 -2.0×ATR14, 이동 0). 개장 갭 밴드 210,800~217,200 은 자정과 동일하며 하단이 손절선보다 17.8% 위. 잔여 1주 진입 게이트(근사가 209,000 아래)는 밴드 하단이 그 위라 개장만으로는 열리지 않을 공산. 09시 게이트 후 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 217,500원이 손절 178,932원 위 +21.6%. 트리거 미충족·값 이동 0. 손절폭 17.7%가 2.5×ATR(6.7%) 초과인 `stop_too_wide` 는 18시 §2-2 안건으로 예고.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-10",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262508
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "목표 — 5년 PER 밴드 상단(천장). 도달 시 목표 청산이지 축소가 아니다",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 262,508 유지(5년 PER 밴드 상단·원화 기준, 이동 0). 미국장 마감이 옮길 수 있는 값이 아니다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 217,500원이 목표 262,508원 아래 -17.1%. 트리거 미충족·값 이동 0.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-11",
+   "created_slot": "18:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 36956
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "손절 — 8/11 18시 상향값(36,425 → 36,956, exit_levels 샹들리에 잔여선 정본)",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 카카오 개별 재료 야간 0건, 인터넷 축은 나스닥 약세와 금리 하락이 상쇄. 손절 36,956 유지(8/11 18시 상향값·exit_levels 정본, 이동 0). 개장 갭 밴드 39,900~41,700 하단이 손절선보다 8.0% 위. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 40,750원이 손절 36,956원 위 +10.3%. 트리거 미충족·값 이동 0.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260811-12",
+   "created_slot": "18:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 44840
+   },
+   "valid_until": "2026-08-12T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-11T18:10:00+09:00",
+   "reason": "목표 — 동적 진입가×1.12 앵커",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "8/12 06:00 미국장 마감 확정 — 목표 44,840 유지(동적 진입가×1.12 앵커·원화 기준, 이동 0). 재조정 의무가 재발하는 41,960(목표 진행률 40%)은 갱신 밴드 상단 41,700 밖으로 나가, 개장 갭만으로 재발선을 터치할 확률을 자정 12% → 8%로 낮춘다. 09시 게이트 후 종가 판정 — 06:00 은 메모만 갱신(status active 불변).",
+   "note_0900": "8/12 09:00 개장 점검 — 근사 40,750원이 목표 44,840원 아래 -9.1%. 값 이동 0. 재조정 재발선 41,960원(목표 진행률 40%)은 오전 고가 41,450원이 -1.2% 아래로 미달.",
+   "expired_note": "valid_until 2026-08-12 15:30 경과 — 8/12 18시 EOD 정리. 종가 판정 결과 트리거 미충족(체결 0건). 8/13 분은 po-20260812-* 로 재적재."
+  },
+  {
+   "id": "po-20260812-1",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 704858
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "손절 — exit_levels 정본. §2-2 R/R 미달은 산술적 압축으로 판정해 값 이동 0",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 손절 704,858(원화·exit_levels 정본)은 미국장 마감이 옮기는 값이 아니다. 갱신 개장 밴드 하단 776,200 이 트리거보다 +10.1% 위라 개장 갭만으로 닿지 않는다. 호르무즈 [진행형 지속] 확정.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-2",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 859927
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "목표 — 밸류에이션 천장 캡 적용값(cap_target). 종가 도달 시 익일 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 목표 859,927(밸류에이션 천장 캡)은 세 앵커가 한 점이라 마감 확정으로 움직일 여지 0. 갱신 밴드 상단 803,800 이 트리거 아래.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-3",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 122361
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 손절 122,361 은 갱신 밴드 하단 127,300 보다 -3.9% 아래. 미 10년물 4.682% 되돌림으로 은행 금리 역풍은 축소됐으나 트리거 값 근거(exit_levels 샹들리에)는 불변.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-4",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "목표 — 8/11 재산정값 유지. 8/12 target_gap 은 캡 오적용 판정으로 재산정 사유 아님",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 목표 143,600(8/11 재산정값)은 원화 앵커라 마감 확정 반영분 없음. 갱신 밴드 상단 129,800 이 트리거 아래.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-5",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "손절 — exit_levels 샹들리에 잔여선 정본",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 손절 159,662 는 갱신 밴드 하단 165,200 보다 -3.4% 아래이며 트레일 1차선 163,406 도 하단 아래라 개장 갭 단독 발동 없음.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-6",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "목표 — 8/10 재산정값 유지. 추정 앵커 166,700 로 '2거래일 연속 175,000 아래' 1일차 성립, 8/13 종가가 2일차면 재산정 집행",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 목표 192,600 은 추정 앵커 175,000 미만 2일차 판정(18시 종가 소관) 전까지 불변. 06시는 판정 주체가 아니다.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-7",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 186537
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "손절 — 8/12 18시 상향값(178,932 → 186,537, exit_levels 샹들리에 잔여선 정본·stop_too_wide 해소)",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 손절 186,537(8/12 상향값)은 갱신 밴드 하단 214,400 보다 -13.0% 아래. 나스닥 +0.54% 마감으로 하방 재료 추가 없음.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-8",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262508
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "목표 — 5년 PER 밴드 상단(천장). 도달 시 목표 청산이지 축소가 아니다",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 목표 262,508(5년 PER 밴드 상단)은 원화 천장 앵커라 마감 확정으로 이동 없음.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-9",
+   "created_slot": "18:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 36956
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "손절 — 8/11 18시 상향값(exit_levels 샹들리에 잔여선 정본)",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 손절 36,956 은 갱신 밴드 하단 39,350 보다 -6.1% 아래. 밤사이 개별 재료 0건.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260812-10",
+   "created_slot": "18:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 44840
+   },
+   "valid_until": "2026-08-13T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-12T18:20:00+09:00",
+   "reason": "목표 — 동적 진입가×1.12 앵커",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 재계산 — 이동 0. 목표 44,840(동적 진입가×1.12 앵커) 불변. 60일 상대강도 부호 판정은 18시 소관.",
+   "expired_note": "8/13 15:30 만료 — 트리거 미도달(체결 0건). 8/13 18시가 갱신 임계로 재적재."
+  },
+  {
+   "id": "po-20260813-1",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 716723
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "트레일 1차선 — exit_levels 정본(최고 종가 837,000 × (1 − 1.5×ATR 9.58%)). 오늘 트레일링 정식 활성화(목표 진행률 81.1%)로 손절선이 704,858 에서 이 값으로 올라왔다. 이탈 시 50% 부분익절이나 1주 보유라 실무상 전량.",
+   "inference_id": "inf-20260813-1800-2",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 자정 if-then ②(브렌트 86.0달러 아래 마감 또는 호르무즈 타결) 불성립(86.91달러·-2.27%, 협상 교착). 지정학 웃돈 감가 개시 조건 미충족으로 트레일 1차선 이동 0. 09시 최우선 점검 유지.",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-2",
+   "created_slot": "18:00",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 859927
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "목표 — 진행률 81.1%. 도달 시 종가 익절 판정.",
+   "inference_id": "inf-20260813-1800-2",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 목표 859,927(exit_levels 정본) 이동 0. 개장 도달 확률 8%(자정 10%에서 하향, 브렌트 추가 하락으로 상단 밴드 0.5%p 축소).",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-3",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 122361
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "손절 — exit_levels 정본. 이동 0.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 미 10년물 4.65% 마감(임계 4.60% 불성립)으로 은행 thesis 강등 없음. 손절선 이동 0.",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-4",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "목표 — target_gap 신호는 캡 오적용으로 종결, 목표 이동 0.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 목표 143,600 이동 0. target_gap 신호는 캡 오적용으로 2026-08-13 종결, 재산정 근거로 쓰지 않는다(lessons 인용).",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-5",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "손절 — exit_levels 정본. 이동 0.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 금리 축 역풍 확정이나 정본 임계 미달. 손절선 이동 0. 최근접 경보(손절까지 -5.0%)로 09시 이격 확인.",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-6",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "목표 — 추정 앵커 182,400 이 175,000 위로 복귀해 2거래일 연속 조건 불성립, 재산정 미발동. 이동 0.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 목표 192,600 이동 0. 추정 앵커 182,400 이 175,000 위 유지로 재판정 카운터 0일차 지속.",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-7",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "손절 — 샹들리에 잔여선 정본(최고 종가 226,500 × (1 − 2.0×ATR 6.28%)). stop_too_wide 해소로 186,537 에서 상향.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 나스닥 100 +1.15%·금리 하락으로 개장 우호이나 손절선은 최고 종가(226,500) 산출값 그대로. 이동 0.",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-8",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262481
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "목표 — 밸류에이션 천장 재산출(262,508 → 262,481) 정렬.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 목표 262,481(밸류에이션 천장 정렬) 이동 0.",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-9",
+   "created_slot": "18:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 36956
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "손절 — exit_levels 정본. 이동 0.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 인터넷 축 호재 확정, 자회사 파업 예고가 상단 상쇄. 손절선 이동 0.",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260813-10",
+   "created_slot": "18:00",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 44840
+   },
+   "valid_until": "2026-08-14T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-13T18:20:00+09:00",
+   "reason": "목표 — 이동 0.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600": "06:00 마감 확정 — 목표 44,840 이동 0. 오늘 D+3 도래로 목표가 오차 산입 개시(판정은 18시).",
+   "updated_at": "2026-08-14T06:30:00+09:00"
+  },
+  {
+   "id": "po-20260814-1",
+   "status": "active",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 718606
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "inference_id": "inf-20260814-1800-3"
+  },
+  {
+   "id": "po-20260814-2",
+   "status": "active",
+   "ticker": "079550",
+   "name": "LIG넥스원",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 859927
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "inference_id": "inf-20260814-1800-3"
+  },
+  {
+   "id": "po-20260814-3",
+   "status": "active",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 122604
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
+  },
+  {
+   "id": "po-20260814-4",
+   "status": "active",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
+  },
+  {
+   "id": "po-20260814-5",
+   "status": "active",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
+  },
+  {
+   "id": "po-20260814-6",
+   "status": "active",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
+  },
+  {
+   "id": "po-20260814-7",
+   "status": "cancelled",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "expired_note": "8/18 09:30 NAVER 추가매수로 감시 수량 1 → 2주 변경 — po-20260818-3 이 승계."
+  },
+  {
+   "id": "po-20260814-8",
+   "status": "active",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262481
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다."
+  },
+  {
+   "id": "po-20260814-9",
+   "status": "cancelled",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 36956
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 손절/트레일 정본선 이탈 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "inference_id": "inf-20260814-1800-2",
+   "expired_note": "8/18 09:28 포지션 전량 청산(thesis invalidation — excess_60d -1.83%p)으로 감시 대상 소멸. 가격 트리거(손절 36,956·목표 44,840) 어느 쪽도 도달하지 않았다."
+  },
+  {
+   "id": "po-20260814-10",
+   "status": "cancelled",
+   "ticker": "035720",
+   "name": "카카오",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 44840
+   },
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "tier": 0,
+   "note": "8/14 18:00 EOD 확정값 재적재. 목표 도달 감시. **3일 휴장(8/15 광복절·8/17 대체공휴일)을 건너뛰는 유효기간**이며 체결은 8/18 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "inference_id": "inf-20260814-1800-2",
+   "expired_note": "8/18 09:28 포지션 전량 청산(thesis invalidation — excess_60d -1.83%p)으로 감시 대상 소멸. 가격 트리거(손절 36,956·목표 44,840) 어느 쪽도 도달하지 않았다."
+  },
+  {
+   "id": "po-20260818-1",
+   "created_slot": "09:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 96269
+   },
+   "size_shares": 2,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "strategy": "deployment_close_the_band_w34",
+   "inference_id": null,
+   "status": "active",
+   "note": "8/18 09:32 신규 진입분 손절 감시. 값은 exit_levels 정본(진입가 −2×ATR14). 장중 관통은 신호일 뿐이고 판정·체결은 종가 기준(policy.risk.exit_execution) — 오늘 18시가 EOD 확정값으로 재적재한다."
+  },
+  {
+   "id": "po-20260818-2",
+   "created_slot": "09:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 117853
+   },
+   "size_shares": 2,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "strategy": "deployment_close_the_band_w34",
+   "inference_id": null,
+   "status": "active",
+   "note": "8/18 09:32 신규 진입분 목표 도달 익절 감시. 목표 진행률 -1.8% 로 트레일링(활성 70%) 미활성."
+  },
+  {
+   "id": "po-20260818-3",
+   "created_slot": "09:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "size_shares": 2,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-08-18T15:30:00+09:00",
+   "strategy": "deployment_close_the_band_w34",
+   "inference_id": null,
+   "status": "active",
+   "note": "8/18 09:30 추가매수로 수량 1 → 2주. 손절선 198,052 은 exit_levels 정본 무변경이고 감시 수량만 갱신한다(기존 po-20260814-7 은 수량 갱신 대상이라 종료)."
+  }
+ ],
+ "as_of": "2026-08-18T09:35:00+09:00",
+ "_meta_last_touch": "2026-07-17T06:40:00+09:00 06:00 미국장 마감 확정 — po-20260716-1 신한 목표매도(110,829) 메모만 갱신(원화 목표가·미 마감 무관, 트리거 불변·status active). 한국 폐장으로 체결·trade_log 없음.",
+ "_last_slot_touch": "2026-08-13T06:30:00+09:00 (06:00 미국장 마감 확정)",
+ "_last_trigger_review": "2026-08-11T09:40:00+09:00",
+ "_last_slot_update": "2026-08-13T18:20:00+09:00 (18:00 EOD — 8/12분 10건 만료 처리 + 8/13 갱신 임계 10건 재적재. 이동한 값은 LIG넥스원 손절 704,858→716,723 · NAVER 손절 186,537→198,052 · NAVER 목표 262,508→262,481 세 개다.)",
+ "_meta_0600_20260812": "2026-08-12 06:00 미국장 마감 확정 — active 10건 전부 트리거 값 변경 0건(모두 원화 손절·목표선으로 미국장 마감이 옮길 수 있는 값이 아님). 갱신 사유는 각 주문 note_0600 참조. 한국 폐장(execution_mode=none)으로 체결·status 변경 없음 — 집행은 09시 pre_trade_gate 통과 후.",
+ "_meta_0600_20260813": "06:00 §2-2 트리거 갱신 — active 10건 전부 트리거 값 변경 0. 10건 모두 원화 손절·목표선이라 미국장 마감(S&P500 +0.26%·SOXX +2.32%·미10년물 4.682%)이 옮길 수 있는 값이 아니다. 한국장 폐장(execution_mode=none) — 체결·trade_log 기록 없음, status 불변. 집행은 09시 pre_trade_gate 통과 후. kill_switch 미발동."
 }

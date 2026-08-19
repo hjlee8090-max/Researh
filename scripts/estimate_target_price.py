@@ -66,6 +66,17 @@ v1.3 (2026-06-10 섹터·해외 백테스트 보정 — backtest_sector_global.p
      분산된 종목은 전이가 약함(β 0.03~0.10) — 단일 채널 계수가 과대평가할 수 있어 auto
      factor(0.6)·추세 게이트가 추가 완충.
 
+v1.6 (2026-08-19 폭락일 진단 — 리포트 09시 매매가표가 서사와 반대로 낙관 표시된 건):
+  ⑦ 기반영분 차감(②)의 부호 가드 — 뉴스와 반대 방향으로 움직인 실현분은 차감하지 않는다.
+     기존 식 `c = base×감쇠 - 실현초과수익` 은 실현분이 음수면 뺄셈이 덧셈이 돼, 호재 뒤
+     주가가 빠질수록 가산점이 커졌다(감쇠로 소멸한 몫이 상한까지 부활 — 상한 clamp 가
+     일부만 막았다). 08-19 실측: 호재 20건에 +6.6%p 과대 가산, 악재 1건에 -1.6%p 과대
+     차감(주가가 악재와 반대로 올라 벌점이 커진 경우). apply_realized_guard() 로 일원화.
+  ⑧ 델타 비교 기준을 '로그 마지막 행' → '직전 리포트 슬롯'으로 교정. 한 슬롯 안에서
+     routine 이 여러 번 돌아(08-19 아침 08:29·08:55·09:07·09:21) 09시 리포트의
+     '직전 리포트 대비' Δ가 14분치만 담겼고 부호까지 뒤집혔다. report_slot_key() 로
+     실행 시각을 슬롯에 묶고, 슬롯이 다른 마지막 행과 비교한다.
+
 출력: state/target_estimate.json — 종목별 추정가·프리미엄 분해·섹터 활성화 예상 시점·
 신뢰등급(A/B/C, 가용 데이터 레이어 수) + 리포트용 markdown 섹션.
 watchlist 의 target_price 를 자동으로 덮어쓰지 않는다 — routine 이 참고하는 추정 레이어.
@@ -94,11 +105,50 @@ def load_json(rel: str, default: Any) -> Any:
         return default
 
 
-def previous_estimates() -> dict[str, dict]:
-    """직전 리포트(target_estimate_log.jsonl 마지막 행)의 종목별 추정 스냅샷 — 델타 산출용.
+SLOT_HOURS = (0, 6, 9, 12, 15, 18)
+SLOT_PREP_MIN = 45  # routine 은 슬롯 시각 최대 45분 전부터 돈다(08:29 실행 = 09시 슬롯)
+_AS_OF_RE = re.compile(r'"as_of"\s*:\s*"([^"]+)"')
 
-    로그에 append 하기 '전' 마지막 행이 곧 직전 routine(리포트)의 추정이다. 종목별로
-    {estimate, expected_return_pct, premium_pct, news 지문, _as_of} 를 돌려준다. 없으면 {}.
+
+def report_slot_key(dt: datetime) -> str:
+    """실행 시각 → 리포트 슬롯 키('YYYY-MM-DD-HH'). 같은 슬롯의 재실행을 하나로 묶는다.
+
+    한 슬롯의 routine 은 여러 번 실행된다(2026-08-19: 08:29·08:55·09:07·09:21 = 전부 09시
+    슬롯). 슬롯 경계는 '슬롯 시각 - SLOT_PREP_MIN'이고 다음 경계 전까지 같은 슬롯으로 본다.
+    23:15 이후 실행은 다음 날 00시 슬롯이다.
+    """
+    minutes = dt.hour * 60 + dt.minute
+    if minutes >= 24 * 60 - SLOT_PREP_MIN:
+        return f"{(dt.date() + timedelta(days=1)).isoformat()}-00"
+    slot = SLOT_HOURS[0]
+    for h in SLOT_HOURS:
+        if minutes >= h * 60 - SLOT_PREP_MIN:
+            slot = h
+    return f"{dt.date().isoformat()}-{slot:02d}"
+
+
+def _slot_of_record(rec_slot: Any, as_of: str | None) -> str | None:
+    """로그 행의 슬롯 키. 신규 행은 저장된 slot 을, 구 행은 as_of 에서 역산한다."""
+    if isinstance(rec_slot, str) and rec_slot:
+        return rec_slot
+    if not as_of:
+        return None
+    try:
+        return report_slot_key(datetime.fromisoformat(as_of).astimezone(KST))
+    except ValueError:
+        return None
+
+
+def previous_estimates(current_slot: str | None = None) -> dict[str, dict]:
+    """직전 **리포트 슬롯**의 종목별 추정 스냅샷 — 델타 산출용.
+
+    로그 마지막 행을 그대로 쓰면 '직전 리포트'가 아니라 '몇 분 전 재실행'과 비교하게 된다.
+    2026-08-19 09시가 그 사례다 — 그날 아침에만 08:29·08:55·09:07·09:21 네 번 돌아서
+    09시 리포트의 Δ가 14분치만 담겼고, 18시 대비로는 하락인 종목이 상승(▲)으로 표기됐다
+    (NAVER 표기 ▲14,900 / 실제 ▼6,000). 그래서 슬롯 키가 지금과 다른 마지막 행을 고른다.
+
+    종목별로 {estimate, expected_return_pct, premium_pct, news 지문, _as_of, _slot} 을
+    돌려준다. 없으면 {}.
     """
     path = ROOT / "state" / "target_estimate_log.jsonl"
     if not path.exists():
@@ -107,8 +157,13 @@ def previous_estimates() -> dict[str, dict]:
     try:
         with path.open(encoding="utf-8") as f:
             for line in f:
-                if line.strip():
-                    last = line
+                if not line.strip():
+                    continue
+                if current_slot:
+                    m = _AS_OF_RE.search(line)
+                    if m and _slot_of_record(None, m.group(1)) == current_slot:
+                        continue  # 같은 슬롯의 재실행 — 직전 리포트가 아니다
+                last = line
     except OSError:
         return {}
     if not last:
@@ -117,10 +172,11 @@ def previous_estimates() -> dict[str, dict]:
         rec = json.loads(last)
     except json.JSONDecodeError:
         return {}
+    slot = _slot_of_record(rec.get("slot"), rec.get("as_of"))
     out: dict[str, dict] = {}
     for e in rec.get("estimates", []) or []:
         if isinstance(e, dict) and e.get("ticker"):
-            out[e["ticker"]] = {**e, "_as_of": rec.get("as_of"), "_date": rec.get("date")}
+            out[e["ticker"]] = {**e, "_as_of": rec.get("as_of"), "_date": rec.get("date"), "_slot": slot}
     return out
 
 
@@ -384,6 +440,24 @@ def ticker_group(ticker: str) -> str | None:
     return v.get("group") or GROUP_FALLBACK.get(ticker)
 
 
+def apply_realized_guard(c: float, cap: float, realized: float | None) -> float:
+    """뉴스 기반영분 차감(v1.1 ②) — 뉴스와 **같은 방향**으로 이미 움직인 만큼만 가산점에서 뺀다.
+
+    반대 방향 실현분은 0으로 막는다(v1.6, 2026-08-19). 막지 않으면 부호가 뒤집혀
+    '뺄셈이 덧셈'이 된다 — 호재 뒤 주가가 빠질수록 가산점이 커지고, 시간감쇠로 이미
+    소멸한 몫이 cap 까지 되살아난다. 실측(08-19): 호재 20건 +6.6%p 과대 가산, 악재 1건
+    -1.6%p 과대 차감. 대표 사례는 삼성전자 6/5 HBM4 뉴스로, 75일 경과·감쇠 0.17 이라
+    1.3%p 여야 할 기여가 3.9%p 로 복원돼 있었다.
+
+    cap 은 그 항목의 기여 상한(manual=base, auto=base×auto_factor, 해외=전이 후 유효임팩트).
+    """
+    if realized is None:
+        return c
+    same_dir = max(0.0, realized) if cap >= 0 else min(0.0, realized)
+    c = c - same_dir
+    return max(0.0, min(cap, c)) if cap >= 0 else min(0.0, max(cap, c))
+
+
 def news_premium(
     ticker: str, cfg: dict, events: list[dict], earnings_signal: str | None, today: date,
     realized_since: Any = None, auto_items: list[dict] | None = None,
@@ -421,10 +495,7 @@ def news_premium(
         # v1.1 ② 기반영분 차감 — 뉴스가 이미 가격을 움직인 만큼 가산점에서 뺀다(이중계상 방지).
         # 양(+)뉴스: [0, impact] 클램프(역행했어도 테이블 초과 금지). 음(-)뉴스: [impact, 0].
         realized = realized_since(n["date"]) if realized_since and n.get("date") else None
-        if realized is not None:
-            c = c - realized
-            c = max(0.0, min(base, c)) if base >= 0 else min(0.0, max(base, c))
-        c = round(c, 2)
+        c = round(apply_realized_guard(c, base, realized), 2)
         total += c
         manual_seen.append((n.get("type") or "", d))
         contribs.append({
@@ -457,10 +528,7 @@ def news_premium(
         base = _num((type_table.get(ntype) or {}).get("impact_pct")) or 0.0
         c = base * decay * auto_factor
         realized = realized_since(it["published"]) if realized_since else None
-        if realized is not None:
-            c = c - realized
-            c = max(0.0, min(base * auto_factor, c)) if base >= 0 else min(0.0, max(base * auto_factor, c))
-        c = round(c, 2)
+        c = round(apply_realized_guard(c, base * auto_factor, realized), 2)
         total += c
         contribs.append({
             "kind": "news_auto", "type": ntype, "date": it.get("published"),
@@ -494,10 +562,7 @@ def news_premium(
         eff = base * tcoef * auto_factor  # 유효 임팩트 상한(전이·자동 할인 후)
         c = eff * decay
         realized = realized_since(it["published"]) if realized_since else None
-        if realized is not None:
-            c = c - realized
-            c = max(0.0, min(eff, c)) if eff >= 0 else min(0.0, max(eff, c))
-        c = round(c, 2)
+        c = round(apply_realized_guard(c, eff, realized), 2)
         if c == 0.0 and tcoef == 0.0:
             continue  # macro 등 전이 0 채널은 기여 없음 — 노이즈 제거
         total += c
@@ -1018,9 +1083,11 @@ def main() -> int:
 
     results.sort(key=lambda r: (r["expected_return_pct"] is None, -(r["expected_return_pct"] or 0)))
 
-    # v1.4 델타 — 직전 리포트(로그 마지막 행) 대비 추정목표가·뉴스 프리미엄 변동 + '직전 이후 새/변경 뉴스'.
-    # 같은 날 여러 routine 이 돌면 직전 행=직전 슬롯이므로 '리포트마다 변경값'이 자연히 산출된다.
-    prev_map = previous_estimates()
+    # v1.4 델타 — 직전 **리포트 슬롯** 대비 추정목표가·뉴스 프리미엄 변동 + '직전 이후 새/변경 뉴스'.
+    # 로그 마지막 행 = 직전 슬롯이 아니다. 한 슬롯 안에서 routine 이 여러 번 돌기 때문에
+    # 슬롯 키가 지금과 다른 마지막 행을 비교 기준으로 쓴다(2026-08-19 델타 부호 반전 사고).
+    current_slot = report_slot_key(now)
+    prev_map = previous_estimates(current_slot)
     for r in results:
         prev = prev_map.get(r["ticker"])
         np_now = r["detail"]["news_parts"] or []
@@ -1047,6 +1114,7 @@ def main() -> int:
             delta = {
                 "prev_estimate": prev.get("estimate"),
                 "prev_as_of": prev.get("_as_of"),
+                "prev_slot": prev.get("_slot"),
                 "estimate_delta_krw": round(de, -2) if de is not None else None,
                 "entry_cap_delta_krw": round(fb_now - fb_prev, -2) if fb_now is not None and fb_prev is not None else None,
                 "news_pct_delta": round(pn_now - pn_prev, 2) if pn_now is not None and pn_prev is not None else None,
@@ -1085,6 +1153,7 @@ def main() -> int:
     log_rec = {
         "as_of": as_of,
         "date": as_of[:10],
+        "slot": current_slot,
         "model": "v1.5",
         "estimates": [
             {

@@ -458,6 +458,17 @@ def apply_realized_guard(c: float, cap: float, realized: float | None) -> float:
     return max(0.0, min(cap, c)) if cap >= 0 else min(0.0, max(cap, c))
 
 
+def _pick_rank(it: dict) -> tuple:
+    """유형당 대표 기사 선정 기준 — 키워드 매칭 수 우선, 동률이면 최신.
+
+    최신순 단독으로 뽑으면 같은 유형의 홍보성 기사가 본류 기사를 밀어낸다
+    (2026-08-19: 채권 매도 본류 대신 'XCSH ETF Launches… as Treasury Yields Surge'
+    가 rate_shock 대표로 선정). 가산점 크기는 유형 테이블에서 오므로 값은 같지만
+    리포트에 실리는 근거 링크가 홍보자료가 된다.
+    """
+    return (len(it.get("matched_keywords") or []), it.get("published") or "")
+
+
 def news_premium(
     ticker: str, cfg: dict, events: list[dict], earnings_signal: str | None, today: date,
     realized_since: Any = None, auto_items: list[dict] | None = None,
@@ -512,16 +523,16 @@ def news_premium(
     for it in auto_items or []:
         if not isinstance(it, dict) or not it.get("type") or not it.get("published"):
             continue
+        # 대표 기사 선정은 '신선도 창 안'에서만 경쟁시킨다 — 창 밖 기사가 대표로 뽑히면
+        # 뒤이은 나이 필터에서 그 유형이 통째로 사라져, 창 안의 유효한 기사까지 잃는다.
+        d = _parse_date(it.get("published"))
+        if d is None or not (0 <= (today - d).days <= auto_max_age):
+            continue
         cur = latest_by_type.get(it["type"])
-        if cur is None or it["published"] > (cur.get("published") or ""):
+        if cur is None or _pick_rank(it) > _pick_rank(cur):
             latest_by_type[it["type"]] = it
     for ntype, it in sorted(latest_by_type.items()):
-        d = _parse_date(it.get("published"))
-        if d is None:
-            continue
-        days_since = (today - d).days
-        if days_since < 0 or days_since > auto_max_age:
-            continue
+        days_since = (today - _parse_date(it["published"])).days
         if any(t == ntype and abs((d - md).days) <= 5 for t, md in manual_seen):
             continue  # 같은 유형 manual 기록 존재 — 검증된 쪽 우선
         decay = max(0.0, 1.0 - days_since / decay_days)
@@ -544,18 +555,20 @@ def news_premium(
     for it in global_items or []:
         if not isinstance(it, dict) or not it.get("type") or not it.get("published"):
             continue
-        if ticker not in (it.get("affects_tickers") or []):
+        # affects_all — 시장 전체에 걸리는 매크로/레짐 뉴스(지수 성분). 종목 열거 대신
+        # 플래그로 전 종목에 적용한다. 채널 전이계수가 크기를 정한다.
+        if not it.get("affects_all") and ticker not in (it.get("affects_tickers") or []):
+            continue
+        # 대표 기사 선정은 '신선도 창 안'에서만 경쟁시킨다 — 창 밖 기사가 대표로 뽑히면
+        # 뒤이은 나이 필터에서 그 유형이 통째로 사라져, 창 안의 유효한 기사까지 잃는다.
+        d = _parse_date(it.get("published"))
+        if d is None or not (0 <= (today - d).days <= auto_max_age):
             continue
         cur = g_latest.get(it["type"])
-        if cur is None or it["published"] > (cur.get("published") or ""):
+        if cur is None or _pick_rank(it) > _pick_rank(cur):
             g_latest[it["type"]] = it
     for ntype, it in sorted(g_latest.items()):
-        d = _parse_date(it.get("published"))
-        if d is None:
-            continue
-        days_since = (today - d).days
-        if days_since < 0 or days_since > auto_max_age:
-            continue
+        days_since = (today - _parse_date(it["published"])).days
         decay = max(0.0, 1.0 - days_since / decay_days)
         base = _num(it.get("impact_pct")) or 0.0
         tcoef = float(trans.get(it.get("channel") or "", 0.0))
@@ -563,8 +576,8 @@ def news_premium(
         c = eff * decay
         realized = realized_since(it["published"]) if realized_since else None
         c = round(apply_realized_guard(c, eff, realized), 2)
-        if c == 0.0 and tcoef == 0.0:
-            continue  # macro 등 전이 0 채널은 기여 없음 — 노이즈 제거
+        if c == 0.0:
+            continue  # 기여 0 은 기록하지 않는다 — 전이 0 채널이든 임팩트 0 유형이든 동일
         total += c
         contribs.append({
             "kind": "news_global", "type": ntype, "date": it.get("published"),

@@ -254,6 +254,7 @@ def collect_global(kw_cfg: dict, max_age: int, prev_global: list) -> list[dict]:
             out.append({
                 **it, "query_id": q.get("id"), "channel": q.get("channel"),
                 "affects_tickers": q.get("affects_tickers", []),
+                "affects_all": bool(q.get("affects_all")),
                 "affects_group": q.get("affects_group"),
                 "type": c["type"], "impact_pct": c["impact_pct"],
                 "matched_keywords": c["matched_keywords"],

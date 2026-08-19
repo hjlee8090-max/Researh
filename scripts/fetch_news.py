@@ -133,7 +133,54 @@ def fetch_naver_item_news(ticker: str) -> list[dict]:
 
 
 # ── 분류 ─────────────────────────────────────────────────────────────────────
-def classify(title: str, type_keywords: dict, impact_table: dict) -> dict | None:
+ARROW_RE = re.compile(r"[\u2192\u27a1]|->")
+_QUOTES = "'\"\u2018\u2019\u201c\u201d\u300c\u300d"
+
+
+def alias_spec(raw: Any, name: str) -> dict:
+    """ticker_aliases 항목을 {any, exclude} 로 정규화. 구 포맷(list)도 그대로 받는다."""
+    if isinstance(raw, dict):
+        return {"any": raw.get("any") or [name], "exclude": raw.get("exclude") or []}
+    if isinstance(raw, list) and raw:
+        return {"any": raw, "exclude": []}
+    return {"any": [name], "exclude": []}
+
+
+def alias_hit(title: str, spec: dict) -> bool:
+    """제목이 이 종목을 가리키는가. 계열사명을 먼저 지우고 남은 자리에서 별칭을 찾는다.
+
+    '카카오뱅크 노사…'는 카카오(035720)가 아니라 카카오뱅크(323410) 기사인데, 단순
+    부분일치는 '카카오'가 걸려 통과시킨다(2026-08-19: 카카오 분류뉴스 1건 전부 오귀속).
+    계열사명을 지운 뒤 검사하므로 '카카오, 카카오뱅크 지분 매각'처럼 본체가 함께
+    언급된 기사는 그대로 남는다.
+    """
+    t = norm(title)
+    for x in spec.get("exclude", []):
+        t = t.replace(norm(x), " ")
+    return any(norm(a) in t for a in spec.get("any", []) if a)
+
+
+def is_demotion_swap(t: str, alias_any: list[str]) -> bool:
+    """'최선호주 A\u2192B' 처럼 우리 종목이 화살표 앞에 있으면 강등 기사다.
+
+    '최선호주'\u00b7'톱픽'은 종목이 목록에서 빠질 때도 제목에 그대로 남아 호재로 뒤집힌다
+    (2026-08-19: 모건스탠리 최선호주 교체 기사 2건이 +3.0% 로 분류). 숫자 교체
+    ('목표가 10만원\u219212만원')와 구분하려고 두 조건을 함께 본다 — 화살표 직전이
+    우리 종목명으로 끝나고, 화살표 직후가 숫자가 아니어야 한다.
+    """
+    names = [norm(a) for a in alias_any if a]
+    for m in ARROW_RE.finditer(t):
+        head = t[: m.start()].rstrip(_QUOTES)
+        tail = t[m.end() :].lstrip(_QUOTES)
+        if not tail or tail[0].isdigit():
+            continue
+        if any(head.endswith(a) for a in names) and not any(a in tail for a in names):
+            return True
+    return False
+
+
+def classify(title: str, type_keywords: dict, impact_table: dict,
+             alias_any: list[str] | None = None) -> dict | None:
     """헤드라인 1건을 뉴스 유형으로 분류. 매칭 없으면 None(→ unclassified 보존)."""
     t = norm(title)
     matched: list[dict] = []
@@ -143,6 +190,8 @@ def classify(title: str, type_keywords: dict, impact_table: dict) -> dict | None
         hits = [x for x in kw.get("any", []) if norm(x) in t]
         if not hits:
             continue
+        if kw.get("swap_guard") and is_demotion_swap(t, alias_any or []):
+            continue  # 'A→B' 교체 기사 — 우리 종목은 빠지는 쪽이다
         boosted = [x for x in kw.get("boost", []) if norm(x) in t]
         matched.append({
             "type": ntype,
@@ -252,7 +301,8 @@ def main() -> int:
     out_tickers: dict[str, Any] = {}
     total_classified = total_uncls = fetched_ok = 0
     for ticker, name in tickers.items():
-        names = aliases.get(ticker, [name])
+        spec = alias_spec(aliases.get(ticker), name)
+        names = spec["any"]
         raw_items = fetch_google_rss(names[0], max_age) + fetch_naver_item_news(ticker)
         if not raw_items:
             kept = prev.get(ticker)
@@ -273,10 +323,15 @@ def main() -> int:
             if it.get("published") and it["published"] < cutoff:
                 continue
             # 종목 관련성: 별칭 포함 또는 종목 전용 피드(naver_item_news)
-            relevant = it["feed"] == "naver_item_news" or any(norm(a) in norm(it["title"]) for a in names)
+            named = alias_hit(it["title"], spec)
+            relevant = it["feed"] == "naver_item_news" or named
             if not relevant:
                 continue
-            c = classify(it["title"], type_keywords, impact_table)
+            # 종목페이지 피드라도 제목이 이 종목을 가리키지 않으면 분류하지 않는다.
+            # 네이버 종목뉴스에는 시황·칼럼·타사 기사가 섞여 들어와, 관련성 무검사로
+            # 통과시키면 남의 회사 재료가 가산점이 된다(2026-08-19: 신한지주 페이지의
+            # '농심 목표가 상향' 기사가 +3.0% 로 분류). 재현율은 unclassified 로 지킨다.
+            c = classify(it["title"], type_keywords, impact_table, names) if named else None
             if c:
                 classified.append({
                     **it, "type": c["primary"]["type"],

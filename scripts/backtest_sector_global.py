@@ -70,6 +70,31 @@ def beta(pairs: list[tuple[float, float]]) -> float | None:
     return round(sum((x - mx) * (y - my) for x, y in pairs) / varx, 3) if varx else None
 
 
+def regress(pairs: list[tuple[float, float]]) -> dict:
+    """단순회귀 y = a + b·x. (beta, corr, se, t, n) 반환. 표본 10 미만이면 전부 None.
+
+    t 통계량을 함께 내는 이유: 계수를 '0으로 둘지'를 눈대중이 아니라 유의성으로 정하기
+    위해서다. |t| < 2 면 0과 구분되지 않는다고 본다.
+    """
+    n = len(pairs)
+    if n < 10:
+        return {"n": n, "beta": None, "corr": None, "se": None, "t": None}
+    xs, ys = [p[0] for p in pairs], [p[1] for p in pairs]
+    mx, my = statistics.mean(xs), statistics.mean(ys)
+    sxx = sum((x - mx) ** 2 for x in xs)
+    if not sxx:
+        return {"n": n, "beta": None, "corr": None, "se": None, "t": None}
+    b = sum((x - mx) * (y - my) for x, y in pairs) / sxx
+    a = my - b * mx
+    sse = sum((y - (a + b * x)) ** 2 for x, y in pairs)
+    se = (sse / (n - 2) / sxx) ** 0.5 if n > 2 and sse > 0 else None
+    return {
+        "n": n, "beta": round(b, 3), "corr": corr(pairs),
+        "se": round(se, 3) if se else None,
+        "t": round(b / se, 2) if se else None,
+    }
+
+
 def clamp01(x: float) -> float:
     return max(0.0, min(1.0, x))
 
@@ -103,47 +128,109 @@ def excess_fwd(closes: list, idx: list, i: int, h: int) -> float | None:
 
 
 # ── 1. 오버나이트 전이계수 ────────────────────────────────────────────────────
-def overnight_transmission(history: dict, dates: list[str], tickers: dict, idx_close: list[float]) -> dict:
+BETA_TARGETS = ("005930", "000660", "009540", "005380")  # v1.0 대조군(계수 이력 비교용)
+
+
+def _us_returns(g: dict) -> list[tuple[str, float]]:
+    bars = g.get("bars") or []
+    out = []
+    for i in range(1, len(bars)):
+        if bars[i - 1]["close"] and bars[i]["close"]:
+            out.append((bars[i]["date"], pct(bars[i]["close"], bars[i - 1]["close"])))
+    return out
+
+
+def _next_kr_day(dates: list[str], us_d: str, cursor: int) -> tuple[int, str | None]:
+    """미국 d일 종가(≈KST d+1 새벽) 이후 첫 한국 거래일."""
+    while cursor < len(dates) and dates[cursor] <= us_d:
+        cursor += 1
+    return cursor, (dates[cursor] if cursor < len(dates) else None)
+
+
+def overnight_transmission(history: dict, dates: list[str], tickers: dict, idx_close: list[float],
+                           universe: tuple[str, ...] | None = None) -> dict:
+    """미국 오버나이트 수익률 → 다음 한국 거래일 수익률 β.
+
+    v1.1 (2026-08-19) — 두 가지 기준을 함께 낸다:
+      beta_*        : 한국 종목의 **초과수익**(KOSPI 대비) 기준. v1.0 과 동일 정의.
+      beta_total_*  : 한국 종목의 **절대수익** 기준.
+    목표주가는 절대 가격(원)이라 프리미엄이 곱해지는 대상도 절대값이다. 초과수익 기준
+    β 는 시장 전체 충격을 KOSPI 가 흡수하므로 정의상 0 에 가까워지는데, 그걸 근거로
+    매크로 채널 전이를 0 으로 둔 것이 2026-08-19 사고의 원인이다 — 어젯밤 반도체
+    급락(할인율 충격)이 목표가에 한 푼도 반영되지 않았다.
+    """
     out: dict[str, Any] = {}
-    kr_ret_ex: dict[str, dict[str, float]] = {}  # ticker -> date -> 당일 초과수익
+    targets = tuple(universe) if universe else BETA_TARGETS
+    kr_ex: dict[str, dict[str, float]] = {}
+    kr_tot: dict[str, dict[str, float]] = {}
     for t, v in tickers.items():
-        m: dict[str, float] = {}
+        me, mt = {}, {}
         for i in range(1, len(dates)):
             c0, c1 = v["close"][i - 1], v["close"][i]
             if c0 and c1:
-                m[dates[i]] = pct(c1, c0) - pct(idx_close[i], idx_close[i - 1])
-        kr_ret_ex[t] = m
+                r = pct(c1, c0)
+                mt[dates[i]] = r
+                me[dates[i]] = r - pct(idx_close[i], idx_close[i - 1])
+        kr_ex[t], kr_tot[t] = me, mt
 
     for sym, g in (history.get("global") or {}).items():
-        bars = g.get("bars") or []
-        us_ret: list[tuple[str, float]] = []  # (us_date, ret)
-        for i in range(1, len(bars)):
-            if bars[i - 1]["close"] and bars[i]["close"]:
-                us_ret.append((bars[i]["date"], pct(bars[i]["close"], bars[i - 1]["close"])))
+        us_ret = _us_returns(g)
         sym_out = {}
-        for t in ("005930", "000660", "009540", "005380"):
-            if t not in kr_ret_ex:
+        for t in targets:
+            if t not in kr_ex:
                 continue
-            pairs, big = [], []
+            ex, ex_big, tot, tot_big = [], [], [], []
             di = 0
             for us_d, r in us_ret:
-                # 미국 d일 종가(≈KST d+1 새벽) → 그 이후 첫 한국 거래일의 초과수익
-                while di < len(dates) and dates[di] <= us_d:
-                    di += 1
-                if di >= len(dates):
+                di, kr_d = _next_kr_day(dates, us_d, di)
+                if kr_d is None:
                     break
-                kr_d = dates[di]
-                y = kr_ret_ex[t].get(kr_d)
-                if y is None:
+                ye, yt = kr_ex[t].get(kr_d), kr_tot[t].get(kr_d)
+                if ye is None or yt is None:
                     continue
-                pairs.append((r, y))
+                ex.append((r, ye)); tot.append((r, yt))
                 if abs(r) >= 2.0:
-                    big.append((r, y))
+                    ex_big.append((r, ye)); tot_big.append((r, yt))
+            re_, rb = regress(ex), regress(ex_big)
+            rt, rtb = regress(tot), regress(tot_big)
             sym_out[t] = {
-                "n": len(pairs), "beta_all": beta(pairs), "corr_all": corr(pairs),
-                "n_big": len(big), "beta_big_moves": beta(big), "corr_big_moves": corr(big),
+                # v1.0 호환 필드(초과수익 기준)
+                "n": re_["n"], "beta_all": re_["beta"], "corr_all": re_["corr"],
+                "n_big": rb["n"], "beta_big_moves": rb["beta"], "corr_big_moves": rb["corr"],
+                # v1.1 추가 — 절대수익 기준 + 유의성
+                "beta_excess_big_t": rb["t"],
+                "beta_total_all": rt["beta"], "corr_total_all": rt["corr"],
+                "beta_total_big": rtb["beta"], "corr_total_big": rtb["corr"],
+                "beta_total_big_t": rtb["t"], "beta_total_big_se": rtb["se"],
             }
         out[sym] = {"name": g.get("name"), "targets": sym_out}
+    return out
+
+
+def index_transmission(history: dict, dates: list[str], idx_close: list[float]) -> dict:
+    """미국 오버나이트 → 다음 한국 거래일 **KOSPI 지수 자체**의 β.
+
+    종목 절대수익 β 는 대략 '지수 β + 초과수익 β' 로 분해된다. 초과수익 기준만 보던
+    기존 방식이 통째로 버린 것이 바로 이 지수 β 다 — 매크로 채널의 실체가 여기 있다.
+    """
+    kr_idx: dict[str, float] = {}
+    for i in range(1, len(dates)):
+        kr_idx[dates[i]] = pct(idx_close[i], idx_close[i - 1])
+    out = {}
+    for sym, g in (history.get("global") or {}).items():
+        pairs, big = [], []
+        di = 0
+        for us_d, r in _us_returns(g):
+            di, kr_d = _next_kr_day(dates, us_d, di)
+            if kr_d is None:
+                break
+            y = kr_idx.get(kr_d)
+            if y is None:
+                continue
+            pairs.append((r, y))
+            if abs(r) >= 2.0:
+                big.append((r, y))
+        out[sym] = {"name": g.get("name"), "all": regress(pairs), "big_moves": regress(big)}
     return out
 
 
@@ -257,18 +344,42 @@ def ship_walk_forward(dates, tickers, idx_close, sv_rows_by_group: dict) -> dict
     return results
 
 
+def estimate_universe(tickers: dict) -> tuple[str, ...]:
+    """estimate_target_price 와 같은 모집단(후보 ∪ 보유) 중 가격이력이 있는 종목."""
+    want: list[str] = []
+    for c in etp.load_json("config/candidates.json", {}).get("candidates", []):
+        if isinstance(c, dict) and c.get("ticker"):
+            want.append(c["ticker"])
+    for pos in etp.load_json("config/portfolio.json", {}).get("positions", []):
+        if isinstance(pos, dict) and pos.get("ticker") and (pos.get("shares") or 0) > 0:
+            want.append(pos["ticker"])
+    seen, out = set(), []
+    for t in want:
+        if t in tickers and t not in seen:
+            seen.add(t); out.append(t)
+    return tuple(out)
+
+
 def main() -> int:
     history = load_history()
     dates, tickers, idx_close = align(history)
     print(f"aligned {len(dates)} KR days, {len(tickers)} tickers, global={list((history.get('global') or {}).keys())}")
 
-    print("\n── 1. 오버나이트 전이계수 (미국 전일 → 한국 당일 초과수익 β) ──")
-    trans = overnight_transmission(history, dates, tickers, idx_close)
+    print("\n── 1-0. 지수 전이 (미국 전일 → 다음 한국 거래일 KOSPI β) ──")
+    idx_trans = index_transmission(history, dates, idx_close)
+    for sym, v in idx_trans.items():
+        b = v["big_moves"]
+        print(f"  {sym}→KOSPI: β큰뉴스(|2%|+) {b['beta']} (corr {b['corr']}, t={b['t']}, n={b['n']}) | "
+              f"β전체 {v['all']['beta']} (corr {v['all']['corr']}, n={v['all']['n']})")
+
+    print("\n── 1. 오버나이트 전이계수 (미국 전일 → 한국 당일 β) ──")
+    est_universe = estimate_universe(tickers)
+    trans = overnight_transmission(history, dates, tickers, idx_close, est_universe)
     for sym, v in trans.items():
-        for t, s in v["targets"].items():
+        for t, st in v["targets"].items():
             nm = tickers[t]["name"]
-            print(f"  {sym}→{nm}: β전체 {s['beta_all']} (corr {s['corr_all']}, n={s['n']}) | "
-                  f"β큰뉴스(|2%|+) {s['beta_big_moves']} (corr {s['corr_big_moves']}, n={s['n_big']})")
+            print(f"  {sym}→{nm}: 초과 β {st['beta_big_moves']} (t={st['beta_excess_big_t']}) | "
+                  f"절대 β {st['beta_total_big']} (corr {st['corr_total_big']}, t={st['beta_total_big_t']}, n={st['n_big']})")
 
     print("\n── 2. 섹터값 vs 사다리 예측력 (그룹별 corr) ──")
     grid = {}
@@ -309,6 +420,7 @@ def main() -> int:
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "window": {"start": dates[0], "end": dates[-1], "days": len(dates)},
+        "index_transmission": idx_trans,
         "overnight_transmission": trans,
         "sector_value_grid": {str(w): {"avg_sv_corr20": grid[w]["avg_sv_corr20"],
                                        "per_group": grid[w]["per_group"]} for w in grid},

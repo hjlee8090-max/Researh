@@ -257,10 +257,34 @@ def duplicated_consensus_tickers(consensus: dict, min_group: int = 3) -> set[str
     }
 
 
+BAND_WIDTH_CAP_DEFAULT = 3.0  # 밴드 상단은 하단의 이 배수까지만 인정 (config/valuation.json 로 조정)
+
+
 def anchor_price(
-    val_cfg: dict, consensus_target: float | None, current: float | None
+    val_cfg: dict, consensus_target: float | None, current: float | None,
+    width_cap: float = BAND_WIDTH_CAP_DEFAULT,
 ) -> tuple[float | None, str, bool]:
-    """기준가 산출. (anchor, basis 설명, 밸류 밴드 사용 여부) 반환."""
+    """기준가 산출. (anchor, basis 설명, 밸류 밴드 사용 여부) 반환.
+
+    v1.7 밴드 폭 가드 — 5년 멀티플 밴드가 너무 넓으면 중앙값이 적정가가 아니라 임의값이
+    된다(LS ELECTRIC PER 24.2~72.2 = 5.0배 폭). 상단을 하단×width_cap 으로 잘라 유효
+    밴드를 만든 뒤 중앙값을 쓴다. backtest_valuation_anchor 실측(2024-01~2026-08, 18종):
+
+      캡      β(D+120)  β(D+250)   수준(오늘)   수준(250일)
+      없음     0.098     0.211      0.95       0.79    ← 현행. 기울기가 5~10배 과대주장
+      3.5      0.125     0.263      1.01       0.81
+      3.0      0.141     0.295      1.04       0.83    ← 채택
+      2.5      0.163     0.338      1.11       0.87
+      2.0      0.190     0.393      1.22       0.95    ← 기울기는 낫지만 수준이 과보수
+
+    기울기는 캡을 조일수록 좋아지고 수준은 나빠지는 상충이라 지배해가 없다. 3.0 은
+    기울기를 45% 개선하면서 수준(오늘 1.04)을 목표대 0.90~0.95 근처에 두는 절충이고,
+    폭 3.0 초과 8종에만 걸려 '가드'의 성격을 유지한다(2.0 은 15/18 에 걸려 재설계다).
+    수준 판정은 '오늘' 기준을 1순위로 본다 — 과거 구간은 현재 BPS/EPS 스냅샷을 과거
+    가격에 대는 편향으로 비율이 체계적으로 낮게 나온다(2년 0.54 · 250일 0.79 · 오늘 0.95).
+    밴드 하단만 쓰는 안은 기울기가 가장 좋지만(β 0.285) 수준이 최악(중앙비율 1.39) —
+    종목 내 demean 패널이 수준 오차를 지우므로 기울기만 보면 잘못 고른다.
+    """
     fair = None
     # 기준가(anchor)에 쓸 수 있는 밴드 품질 화이트리스트:
     #   None/verified = 사람·일요일 루틴이 출처 검증 후 시드한 실측 5년 밴드
@@ -279,14 +303,19 @@ def anchor_price(
         base, band = _num(val_cfg.get("eps_fwd")), val_cfg.get("per_band_5y")
     lo = _num(band[0]) if isinstance(band, list) and len(band) == 2 else None
     hi = _num(band[1]) if isinstance(band, list) and len(band) == 2 else None
+    capped = False
     if base and lo is not None and hi is not None and not approx_band:
-        fair = base * (lo + hi) / 2.0
+        hi_eff = hi
+        if width_cap and lo > 0 and hi > lo * width_cap:
+            hi_eff, capped = lo * width_cap, True
+        fair = base * (lo + hi_eff) / 2.0
 
     parts: list[str] = []
     values: list[float] = []
     if fair:
         values.append(fair)
-        parts.append(f"{metric} 밴드 중앙값 적정가 {fair:,.0f}")
+        note = f"(밴드 폭 {hi / lo:.1f}배 → 상단 {width_cap:.1f}배로 캡)" if capped else ""
+        parts.append(f"{metric} 밴드 중앙값 적정가 {fair:,.0f}{note}")
     if consensus_target:
         values.append(consensus_target)
         parts.append(f"컨센서스 목표가 {consensus_target:,.0f}")
@@ -895,7 +924,11 @@ def main() -> int:
 
     candidates = load_json("config/candidates.json", {}).get("candidates", [])
     watchlist = load_json("config/watchlist.json", {}).get("stocks", [])
-    valuation = load_json("config/valuation.json", {}).get("tickers", {})
+    valuation_cfg = load_json("config/valuation.json", {})
+    valuation = valuation_cfg.get("tickers", {})
+    band_width_cap = _num(valuation_cfg.get("band_width_cap"))
+    if band_width_cap is None and "band_width_cap" not in valuation_cfg:
+        band_width_cap = BAND_WIDTH_CAP_DEFAULT  # 키 자체가 없으면 기본값, null 이면 캡 해제
     themes = {
         t.get("id"): t for t in load_json("config/themes.json", {}).get("themes", [])
         if isinstance(t, dict) and t.get("id")
@@ -958,7 +991,9 @@ def main() -> int:
         earnings_signal = fund.get("earnings_signal")
         val_cfg = valuation.get(ticker, {}) if isinstance(valuation, dict) else {}
 
-        anchor, anchor_basis, anchor_uses_band = anchor_price(val_cfg, cons_target, current)
+        anchor, anchor_basis, anchor_uses_band = anchor_price(
+            val_cfg, cons_target, current, band_width_cap or 0.0
+        )
 
         ticker_events = [e for e in all_events if isinstance(e, dict) and e.get("ticker") == ticker]
         news_pct_raw, news_parts = news_premium(

@@ -531,6 +531,9 @@ def ticker_group(ticker: str) -> str | None:
     return v.get("group") or GROUP_FALLBACK.get(ticker)
 
 
+MACRO_AXIS_TYPES = {"global_rate_shock", "global_risk_off", "global_rate_relief", "global_macro_event"}
+
+
 def apply_realized_guard(c: float, cap: float, realized: float | None) -> float:
     """뉴스 기반영분 차감(v1.1 ②) — 뉴스와 **같은 방향**으로 이미 움직인 만큼만 가산점에서 뺀다.
 
@@ -623,7 +626,8 @@ def news_premium(
         if cur is None or _pick_rank(it) > _pick_rank(cur):
             latest_by_type[it["type"]] = it
     for ntype, it in sorted(latest_by_type.items()):
-        days_since = (today - _parse_date(it["published"])).days
+        d = _parse_date(it["published"])
+        days_since = (today - d).days
         if any(t == ntype and abs((d - md).days) <= 5 for t, md in manual_seen):
             continue  # 같은 유형 manual 기록 존재 — 검증된 쪽 우선
         decay = max(0.0, 1.0 - days_since / decay_days)
@@ -648,7 +652,13 @@ def news_premium(
             continue
         # affects_all — 시장 전체에 걸리는 매크로/레짐 뉴스(지수 성분). 종목 열거 대신
         # 플래그로 전 종목에 적용한다. 채널 전이계수가 크기를 정한다.
-        if not it.get("affects_all") and ticker not in (it.get("affects_tickers") or []):
+        # 단, 시장축 유형만 — 매크로 쿼리가 낚아온 개별축 유형(관세 등)이 전 종목에
+        # 퍼지는 것을 막는다(2026-08-20: 'S&P 500 LIVE … tariff' 헤드라인이
+        # global_tariff_trade 로 분류돼 카카오·은행에까지 -0.60 씩 붙던 건).
+        if it.get("affects_all"):
+            if it.get("type") not in MACRO_AXIS_TYPES:
+                continue
+        elif ticker not in (it.get("affects_tickers") or []):
             continue
         # 대표 기사 선정은 '신선도 창 안'에서만 경쟁시킨다 — 창 밖 기사가 대표로 뽑히면
         # 뒤이은 나이 필터에서 그 유형이 통째로 사라져, 창 안의 유효한 기사까지 잃는다.
@@ -1190,10 +1200,11 @@ def main() -> int:
             "entry_cap_caution": entry_cap_caution,
             "sector_activation": sector_eta,
             "sector_signals": sector_summary,
-            # 밴드 이탈 시 등급 1단계 강등 — 기준가의 밸류 성분이 '설명력 없는 레이어'가
-            # 됐다는 신뢰도 표시다(가격은 불변). A→B, B→C, C 는 유지.
-            "grade": ({"A": "B", "B": "C"}.get(grade(layers), grade(layers))
-                      if (band_fresh or {}).get("detached") and anchor_uses_band else grade(layers)),
+            # 밴드 이탈 시 등급 강등은 A→B 까지만 — B→C 로 내리면 estimate_gate
+            # (allowed_grades A/B)가 C 를 결측 취급으로 건너뛰어, 기대수익 음수 종목의
+            # 신규진입 차단이 오히려 풀린다(안전장치 약화). 신뢰도 표시는 ⚠밴드이탈이 담당.
+            "grade": ("B" if grade(layers) == "A" and (band_fresh or {}).get("detached") and anchor_uses_band
+                      else grade(layers)),
             "grade_capped_by_band": bool((band_fresh or {}).get("detached") and anchor_uses_band),
             "band_freshness": band_fresh,
             "data_layers": layers,

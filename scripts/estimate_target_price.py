@@ -331,6 +331,68 @@ def anchor_price(
     return None, "기준가 산출 불가(현재가·밸류·컨센 전부 결측)", False
 
 
+BAND_DETACH_TOLERANCE = 0.05  # 밴드 폭의 5% 밖으로 나가야 이탈로 본다(경계 진동 무시)
+
+
+def band_freshness(val_cfg: dict, current: float | None,
+                   closes: list[float] | None = None,
+                   tol: float = BAND_DETACH_TOLERANCE) -> dict | None:
+    """밴드가 아직 이 종목을 설명하는가. (위치·이탈 여부·재시드 필요) 반환.
+
+    v1.8 (2026-08-19) — config 의 `*_band_5y` 는 이름과 달리 **price_history 638일
+    (약 2.5년) 실측 멀티플의 5/95 퍼센타일**이다(fetch_valuation.multiple_bands).
+    즉 '어디서 거래해야 하는가'가 아니라 '어디서 거래해왔는가'의 기록이고, 종목이
+    새 레짐으로 넘어가면 창 안에 이미 끝난 구간이 남는다. 카카오가 그 사례다 —
+    현재 PER 27.5 가 밴드 하단 40.4 보다 낮아 114거래일째 밴드 밖인데, 기준가는
+    여전히 밴드 중앙 54.6 으로의 회귀를 가정해 상승여력의 대부분을 만든다.
+
+    **가격은 바꾸지 않는다.** 밴드 이탈 후 되돌림 여부를 실측해 봤으나 유효표본이
+    11종(그중 카카오 -53.7%·NAVER -32.5% 는 계속 하락)이고, '이탈 지속일수가 길수록
+    나쁘다'는 가설은 데이터가 기각했다(60일 초과 이탈의 fwd60 중앙값 +19.8%).
+    근거 없는 가격 규칙 대신 신뢰도 강등과 표기로만 반영하고, 재시드 판단은
+    sunday_strategy 로 넘긴다(참고 레이어 원칙 유지).
+    """
+    metric = (val_cfg.get("preferred_metric") or "PBR").upper()
+    base = _num(val_cfg.get("eps_fwd") if metric == "PER" else val_cfg.get("bps"))
+    band = val_cfg.get("per_band_5y") if metric == "PER" else val_cfg.get("pbr_band_5y")
+    lo = _num(band[0]) if isinstance(band, list) and len(band) == 2 else None
+    hi = _num(band[1]) if isinstance(band, list) and len(band) == 2 else None
+    if not base or lo is None or hi is None or hi <= lo or not current:
+        return None
+    cur_mult = current / base
+    pos = (cur_mult - lo) / (hi - lo)
+    detached = pos < -tol or pos > 1 + tol
+    # 연속 이탈 거래일수 — 재시드 시급도 판단용 맥락(자체로는 규칙이 아니다. 지속일수가
+    # 길수록 나쁘다는 가설은 실측에서 기각됐다).
+    days = None
+    if closes:
+        days = 0
+        for c in reversed(closes):
+            if not c:
+                continue
+            q = (c / base - lo) / (hi - lo)
+            if q < -tol or q > 1 + tol:
+                days += 1
+            else:
+                break
+    return {
+        "metric": metric,
+        "current_multiple": round(cur_mult, 2),
+        "band": [lo, hi],
+        "position": round(pos, 3),
+        "detached": detached,
+        "direction": ("below" if pos < 0 else "above") if detached else None,
+        "days_outside": days,
+        "reseed_required": detached,
+        "note": (
+            f"현재 {metric} {cur_mult:.1f}가 밴드({lo:.1f}~{hi:.1f}) "
+            f"{'아래' if pos < 0 else '위'}로 이탈"
+            f"{f'({days}거래일째)' if days else ''} — 밴드 창(약 2.5년)이 이 종목의 "
+            f"현재 레짐을 설명하지 못한다. 주간 루틴 재시드 대상"
+        ) if detached else None,
+    }
+
+
 def trend_gate(excess60_pct: float | None) -> float:
     """v1.1 ① — 테마·양(+)뉴스 프리미엄의 실현 계수. '스토리는 자금이 따라올 때만 가격이 된다.'
 
@@ -765,7 +827,9 @@ def build_news_target_line(r: dict) -> str:
     up = f"{r['expected_return_pct']:+.1f}%" if r.get("expected_return_pct") is not None else "—"
     p = r.get("premium_pct", {})
     cap = "(캡)" if abs(_num(p.get("news")) or 0) >= 12.0 else ""
-    parts = [f"뉴스 반영 추정 목표 매도가 **{r['estimate']:,.0f}원**({up}, 등급 {r['grade']})"]
+    bf = r.get("band_freshness") or {}
+    band_note = " · ⚠밴드이탈" if bf.get("detached") else ""
+    parts = [f"뉴스 반영 추정 목표 매도가 **{r['estimate']:,.0f}원**({up}, 등급 {r['grade']}{band_note})"]
     d = r.get("delta_vs_prev") or {}
     dv = d.get("estimate_delta_krw")
     if dv:
@@ -906,6 +970,9 @@ def build_report_section(rows: list[dict], as_of: str) -> str:
     lines += [
         "",
         "> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.",
+        "> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 "
+        "설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 "
+        "레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.",
         "> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.",
         "> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
     ]
@@ -954,6 +1021,7 @@ def main() -> int:
         load_json("config/news_keywords.json", {}).get("global_news", {}).get("channel_transmission", {})
     )
     sector_values = sector_values_from_history()  # v1.3 ⑤ — 그룹별 연속 섹터값(없으면 빈 dict)
+    price_hist = load_json("state/price_history.json", {})  # 밴드 이탈 지속일수 산출용
 
     # 추정 대상: 후보 전체 ∪ 실보유 종목. 후보 항목이 테마 노출·섹터 정보를 가진 1차 소스.
     by_ticker: dict[str, dict] = {}
@@ -1075,6 +1143,10 @@ def main() -> int:
         falling_knife = bool(in_buy_zone and ret60 is not None and ret60 <= knife_thr)
         entry_cap_caution = f"falling knife(60일 {ret60:+.0f}%) — 추격 금지(추세 약세)" if falling_knife else None
 
+        band_fresh = band_freshness(
+            val_cfg, current,
+            [b.get("close") for b in ((price_hist.get("tickers") or {}).get(ticker) or {}).get("bars") or []],
+        )
         layers = {
             "valuation_band": anchor_uses_band,
             "consensus_target": bool(cons_target),
@@ -1118,7 +1190,12 @@ def main() -> int:
             "entry_cap_caution": entry_cap_caution,
             "sector_activation": sector_eta,
             "sector_signals": sector_summary,
-            "grade": grade(layers),
+            # 밴드 이탈 시 등급 1단계 강등 — 기준가의 밸류 성분이 '설명력 없는 레이어'가
+            # 됐다는 신뢰도 표시다(가격은 불변). A→B, B→C, C 는 유지.
+            "grade": ({"A": "B", "B": "C"}.get(grade(layers), grade(layers))
+                      if (band_fresh or {}).get("detached") and anchor_uses_band else grade(layers)),
+            "grade_capped_by_band": bool((band_fresh or {}).get("detached") and anchor_uses_band),
+            "band_freshness": band_fresh,
             "data_layers": layers,
             "detail": {
                 "theme_parts": theme_parts,

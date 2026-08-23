@@ -89,6 +89,10 @@ v2.4 — 웹 교차확인(live_verify)이 묵은 값/개장 고가를 '현재가
 
 v2.5 — 섹터 로테이션/상대강도 축. 개별 종목의 절대 모멘텀(ret60)만 보면 '오르는 장'에서 후행 섹터(예: 반도체 주도장의 조선·금융)도 양(+)이라 채택돼 지수를 못 따라간다(2주 운용: 조선 3회·금융 3회 연속 손실, KOSPI +8.8% 인데 -1.77%). KOSPI 대비 '초과수익(excess return)'을 점수화해 지금 자금이 쏠리는 주도 섹터에 가중한다. benchmark=KOSPI 60일 수익률(market_snapshot.regime.ret_60d_pct, fetch_market_data 가 ^KS11 로 산출). 지수 데이터가 없으면(unknown) 0.5 중립 폴백으로 왜곡하지 않는다.
 
+## §_doc_rebalance_rules (v2.35 policy-review dead-config 처분)
+
+check_policy_hygiene.py 가 2주 연속 `disclaimers`·`rebalance_rules`·`weekly_cycle` 를 dead config(어느 prompt/script 도 참조하지 않음)로 표면화, self_audit findings 로 14일 무처분 overdue 상태였다(§0-0 처분 의무). 2026-08-23 리뷰 처분: ①`disclaimers` — 삭제. 값은 이미 11개 prompt 파일(0000_global·0900_pre_market·1200_midday·1500_close·1800_report·0630_us_close·saturday_review·sunday_strategy·sunday_archive·sunday_policy_review·weekend_report)에 리터럴 텍스트로 하드코딩돼 있어 이 config 를 읽는 코드가 애초에 없었다(그랜드파더 필드 — wiring 없이 문서로만 존재). ②`weekly_cycle` — 삭제. `weekend_report_output: reports/YYYY-MM-DD-weekend.md` 는 현재 실제 산출물 명명(saturday-review·sunday-strategy·policy-review·archive)과 불일치하는 구식 스킴이라 보존 시 오히려 오도. 로직(주간 연동)은 이미 weekly_plan.json·각 prompt 의 0-단계 로 구현됨. ③`rebalance_rules` — `_doc_rebalance_rules` 로 개명(문서 전용 선언). 스왑 판정 자체는 이미 risk 손절(-10%/tier ATR)·momentum_signal·lessons_rule_sunset 로 구현돼 있어 삭제해도 손실은 없으나, "손실/모멘텀둔화/반복패턴" 3원칙이 사람이 읽는 요약으로 유용해 삭제 대신 문서화 보존을 택함(3택 중 배선 활성화는 스왑 로직 이중화 위험이 있어 배제). 세 항목 모두 §1-3 처분 3택 중 하나를 택했으며 policy.json 본문에는 참조만 남긴다.
+
 ## §price_data_quality.source_provenance_gate.purpose
 
 v2.6 — web_verify_guard.source_date_verification(프롬프트 의존)를 우회해 묵은 날짜의 기사가 '오늘 시세'로 trade_log 에 기록되는 것을 CI 에서 하드 차단하는 마지막 안전장치(trade_provenance_gate·trade_timing_gate 와 동일 패턴). 프롬프트가 무시돼도 묵은 출처 도용이 main 에 도달하지 못하게 한다. (2026-06-08 사고: 6/1자 MBC 기사를 6/8 시세로 도용 — 당시 이 게이트가 있었으면 recycled_value_gate 가 'KOSPI 8788=6/1 종가 재활용'으로 차단했다.)

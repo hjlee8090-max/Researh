@@ -1,6 +1,6 @@
 {
   "version": "1.3",
-  "last_updated": "2026-08-16",
+  "last_updated": "2026-08-23",
   "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
   "candidates": [
     {
@@ -358,6 +358,44 @@
         "type": "promote_manual",
         "note": "screen_universe promote_suggestions 는 0건이었다(랭킹 상위가 이미 전부 추적 중이라는 판정) — 신한지주만 candidates 밖에 있어 그 판정에서 누락됐다. 수동 승격."
       }
+    },
+    {
+      "ticker": "207940",
+      "name": "삼성바이오로직스",
+      "sector": "바이오",
+      "thesis_id": "bio_axis_zero_exposure_w35",
+      "rationale": "CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다.",
+      "theme_exposure": [
+        {
+          "theme": "bio_cdmo",
+          "exposure": 0.9,
+          "evidence": "글로벌 CDMO 1위급 생산능력. 2Q26 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%), 상반기 누적 영업이익 1조1,672억원(+29%). 5공장 인증용 배치 진입 + 미국 록빌 거점 + 펩타이드로 성장 다각화. 창립 이래 누적 수주 217억 달러(CMO 115건·CDO 176건).",
+          "source": "https://www.mt.co.kr/thebio/2026/08/04/2026080410295661718",
+          "source_date": "2026-08-04"
+        }
+      ],
+      "structural_bear_flags": [],
+      "first_added": "2026-08-23",
+      "note": "2026-08-23 일요일 전략 신규 등재. **등재는 '스코어링 대상 편입'이지 게이트 통과 선언이 아니다** — momentum 절대점수 1.29 로 screen_universe 의 engine promote 임계(score_authority.promote_score_min=30.0)를 밑돌아 promote_suggestions 에는 뜨지 않았고, 등재 근거는 상대강도(60일 초과수익 +22.94%p)와 bio_cdmo 몰입 충족(2/2, 20일·60일 초과수익 중앙 +14.66/+20.25%p — 몰입 충족 그룹 중 두 지평 모두 플러스인 유일한 축)이다. 임계 미달 상태에서 진입을 집행하지 않으며, 두 기준이 갈리는 구조 자체는 policy_review 안건이다. 사이징 주의: 1,551,000원/주라 위험예산 내 수량이 **1주**로 떨어져 부분익절 불가·트레일 실효 없음(W34 결정룰 명시 대상)."
+    },
+    {
+      "ticker": "068270",
+      "name": "셀트리온",
+      "sector": "바이오",
+      "thesis_id": "bio_axis_zero_exposure_w35",
+      "rationale": "바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.",
+      "theme_exposure": [
+        {
+          "theme": "bio_cdmo",
+          "exposure": 0.7,
+          "evidence": "바이오시밀러 포트폴리오 확대 — 2026년 제약·바이오 대장주 상위권. 8월 첫째 주 5거래일 연속 상승(182,200원 → 199,300원, +9.4%)으로 바이오 섹터 몰입의 폭(sector_breadth) 축을 삼성바이오로직스와 함께 구성한다. CDMO 직접 노출은 삼성바이오로직스보다 낮아 exposure 는 보수적으로 0.7.",
+          "source": "https://www.joongangenews.com/news/articleView.html?idxno=538709",
+          "source_date": "2026-08-08"
+        }
+      ],
+      "structural_bear_flags": [],
+      "first_added": "2026-08-23",
+      "note": "2026-08-23 일요일 전략 신규 등재. momentum 절대점수 -7.78 로 engine promote 임계(30.0) 미달이며 price_reversal=false — **삼성바이오로직스보다 축 안에서 후행하는 쪽**이다. 등재 근거는 상대강도와 축 몰입이고, 진입 판정은 valuation·target_estimate 앵커 산출 후 09시·15시 슬롯이 한다. 축 안에서 수량 확보(부분익절 가능)가 되는 유일한 쪽이라는 점이 삼성바이오로직스와의 차이다."
     }
   ],
   "evaluation_rules": {
@@ -385,6 +423,13 @@
       "date": "2026-08-16",
       "by": "sunday_strategy",
       "change": "theme_exposure 결측 2건(삼성물산·삼성SDI) 신규 등재 + 현대차 humanoid_robotics 0.5→0.6 근거 URL 보강. 결측 종목은 themes.json 가점을 받지 못한 채 상대강도로만 랭킹되던 상태였다(8/9 인터넷·바이오 null 교정과 동일 유형의 잔여분).",
+      "source_note": "모든 신규 evidence 에 출처 URL + 게재일 동반(web_verify_guard.source_date_verification)"
+    },
+    {
+      "date": "2026-08-23",
+      "by": "sunday_strategy",
+      "change": "바이오 축 2종 신규 등재(207940 삼성바이오로직스 · 068270 셀트리온). bio_cdmo 는 2026-08-09 에 테마만 등재되고 후보 종목이 만들어지지 않은 채 두 주가 지난 축이며, 8/23 screen_universe 기준 몰입 충족 10개 그룹 중 **20일·60일 초과수익이 둘 다 플러스인 유일한 그룹**(중앙 +14.66%p / +20.25%p)이다. 계좌 노출은 0.",
+      "gate_note": "두 종목 모두 momentum 절대점수가 score_authority.promote_score_min(30.0) 미달이라 promote_suggestions 에는 뜨지 않았다. 등재는 스코어링 대상 편입이며 진입 게이트 통과 선언이 아니다 — 임계 미달 상태에서 진입 집행 금지, 상대강도 권위와 momentum 절대점수 권위가 갈리는 구조는 policy_review 안건으로 올린다.",
       "source_note": "모든 신규 evidence 에 출처 URL + 게재일 동반(web_verify_guard.source_date_verification)"
     }
   ]

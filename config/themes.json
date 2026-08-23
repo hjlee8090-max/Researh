@@ -1,6 +1,6 @@
 {
   "version": "1.2",
-  "last_updated": "2026-08-16",
+  "last_updated": "2026-08-23",
   "purpose": "선행 산업 메가트렌드 레지스트리. score_candidates.py 가 candidate.theme_exposure(0~1) × theme.strength(0~1) 로 thematic_score 를 산출한다. strength 는 향후 전망 강도이며 sunday_policy_review 에서 주기적으로 재검토·감쇠한다. 후보의 theme_exposure 는 0900/sunday_strategy 가 근거(evidence)+출처(source URL)와 함께 채운다.",
   "scoring_note": "thematic_score = min(1.0, Σ(theme.strength × exposure)). theme_exposure 가 없으면 0.3(중립-하). momentum 을 게이트로 유지하므로 전망이 좋아도 급락 종목은 차단된다.",
   "holdings_use": "보유종목에도 테마를 반영하되 '느린 신호'로만 쓴다(회전율 방지). 주간(sunday_strategy)이 1차 — 보유종목이 노출된 테마의 strength 가 직전 대비 크게 하향됐거나(예: 정책 폐기·사이클 둔화) 연결 thesis 가 무효화되면 다음 주 비중 축소·교체 후보로 표시한다. 테마 약화 단독으로 당일 단발 매도는 하지 않고, 손절·트레일링스톱·펀더멘털 신호와 함께 판단한다. strength 상향·테마 강세는 홀드 컨빅션 보강 근거.",
@@ -53,7 +53,7 @@
     {
       "id": "power_grid_ai",
       "label": "전력망/원전·AI 전력",
-      "strength": 0.75,
+      "strength": 0.65,
       "horizon": "3-6y",
       "keywords": [
         "전력망",
@@ -63,7 +63,7 @@
         "데이터센터 전력",
         "전력 인프라"
       ],
-      "note": "AI 데이터센터 전력수요·노후 전력망 교체. HD현대일렉트릭·LS일렉트릭 등. [2026-08-16] 노출 종목 확장 — 삼성물산(데이터센터 EPC: 삼성SDS 와 춘천 2.4MW 모듈러 AI 데이터센터 8월 착공, 약 600억원, https://sateconomy.co.kr/news/view/1065589855673642 · 2026-07-28)과 삼성SDI(ESS: 기후에너지환경부 '2026년 AI 활용 ESS 구축 지원 사업' 낙찰 물량의 66% 가 삼성SDI 셀 채택, https://www.lawissue.co.kr/view.php?ud=2026071317331727249817d053b9_12 · 2026-07-13)를 candidates.json theme_exposure 에 등재했다. 전력망 테마를 '변압기(HD현대일렉트릭·LS ELECTRIC)' 로만 좁게 잡던 누락 교정."
+      "note": "AI 데이터센터 전력수요·노후 전력망 교체. HD현대일렉트릭·LS일렉트릭 등. [2026-08-16] 노출 종목 확장 — 삼성물산(데이터센터 EPC: 삼성SDS 와 춘천 2.4MW 모듈러 AI 데이터센터 8월 착공, 약 600억원, https://sateconomy.co.kr/news/view/1065589855673642 · 2026-07-28)과 삼성SDI(ESS: 기후에너지환경부 '2026년 AI 활용 ESS 구축 지원 사업' 낙찰 물량의 66% 가 삼성SDI 셀 채택, https://www.lawissue.co.kr/view.php?ud=2026071317331727249817d053b9_12 · 2026-07-13)를 candidates.json theme_exposure 에 등재했다. 전력망 테마를 '변압기(HD현대일렉트릭·LS ELECTRIC)' 로만 좁게 잡던 누락 교정. [2026-08-23 strength 0.75 → 0.65 하향] 근거는 자금 흐름이다 — screen_universe 몰입 신호가 **0/2**(rs_inflection·volume_surge·sector_breadth·price_reversal 전부 미점등)이고 4종 중앙 초과수익이 20일 -10.98%p·60일 -20.55%p 로 10개 그룹 중 최하위권이다. 테마의 서사(AI 데이터센터 전력수요)가 틀렸다는 뜻이 아니라 **시장이 지금 그 서사에 지불하지 않고 있다**는 뜻이며, 둘을 구분해 적는다(8/21 LIG넥스원 교훈 — 입력 미훼손 ≠ 가격 방어). 보유 중 이 테마에 묶인 것은 삼성물산의 보조축(exposure 0.5) 하나이고 주축인 value_up(60일 초과 +18.55%p·종목 자체 +10.33%p)은 살아 있으므로 holdings_use 규칙상 **교체 후보로 표시하지 않고 관찰로 둔다**. 반대로 신규 진입 판정에서는 이 하향이 HD현대일렉트릭(60일 초과 -23.4%p·momentum -33.3)을 후보에서 내리는 근거로 직접 쓰인다."
     },
     {
       "id": "defense_export",
@@ -144,7 +144,7 @@
         "공장 증설",
         "FDA 허가"
       ],
-      "note": "[2026-08-09 신규 등재] 바이오 섹터가 screen_universe 몰입 3/2 충족(rs_inflection·sector_breadth·price_reversal)이면서 20일 초과수익 중앙 +30.46%p·60일 +26.11%p 로 두 지평 모두 플러스인 유일한 그룹인데 테마 매핑이 없어 thematic 가점 0 이었다. 삼성바이오로직스·셀트리온. 초기 등재이므로 strength 는 중립 상단 0.6 에서 시작하고, 촉매(수주·FDA·증설)가 출처와 함께 확인되면 상향한다."
+      "note": "[2026-08-09 신규 등재] 바이오 섹터가 screen_universe 몰입 3/2 충족(rs_inflection·sector_breadth·price_reversal)이면서 20일 초과수익 중앙 +30.46%p·60일 +26.11%p 로 두 지평 모두 플러스인 유일한 그룹인데 테마 매핑이 없어 thematic 가점 0 이었다. 삼성바이오로직스·셀트리온. 초기 등재이므로 strength 는 중립 상단 0.6 에서 시작하고, 촉매(수주·FDA·증설)가 출처와 함께 확인되면 상향한다. [2026-08-23 strength 0.60 유지 · 후보 등재] 두 지평 초과수익 중앙값은 8/09 등재 시점(+30.46%p / +26.11%p)보다 낮아진 +14.66%p / +20.25%p 다 — 축은 식었지만 **몰입 충족 그룹 중 20일·60일이 둘 다 플러스인 유일한 그룹**이라는 상대적 위치는 그대로다. 식은 만큼 strength 를 올리지 않고 0.60 을 유지하되, 두 주 동안 비어 있던 '노출 종목 없음' 상태를 닫아 config/candidates.json 에 삼성바이오로직스(0.9)·셀트리온(0.7)을 등재했다. 테마 등재와 후보 등재 사이가 끊기면 테마 가점이 어느 종목에도 실리지 않는다."
     }
   ]
 }

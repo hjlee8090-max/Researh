@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-08-09",
+  "last_updated": "2026-08-23",
   "purpose": "신규 진입 후보의 '모집단'(screening universe). scripts/screen_universe.py 가 이 풀을 상대강도(KOSPI 대비 60일 초과수익)+테마로 주간 랭킹해, config/candidates.json 에 없는 주도주를 '승격 제안'하고 만성 후행주를 '회전아웃 제안'한다(state/universe_screen.json). 후보가 손으로 넣은 소수 종목에 고정돼 섹터 로테이션에 못 따라가던 발굴 부재(v2.7 이전: 발굴 스크립트 0·프롬프트 지시문뿐)를 해소한다.",
   "ownership": "candidates.json 을 자동 수정하지 않는다 — screen_universe.py 는 제안만 만든다. 최종 승격·제거는 sunday_strategy(주간) 또는 0900 미배치 분기(tradable<2)에서 routine 이 thesis·theme_exposure(근거 URL 포함)와 함께 candidates.json 에 반영한다(환각 방지: 근거 없는 자동 추가 금지).",
   "theme_note": "theme 은 config/themes.json 의 id 와 맞춘다(strength × exposure = thematic 우대). 적절한 테마가 없으면 null — 그 종목은 상대강도로만 랭킹된다(테마 가점 0).",
@@ -211,14 +211,14 @@
       "name": "삼성바이오로직스",
       "sector": "바이오",
       "theme": "bio_cdmo",
-      "exposure": 0.0
+      "exposure": 0.9
     },
     {
       "ticker": "068270",
       "name": "셀트리온",
       "sector": "바이오",
       "theme": "bio_cdmo",
-      "exposure": 0.0
+      "exposure": 0.7
     },
     {
       "ticker": "011200",
@@ -240,5 +240,6 @@
       "theme": "humanoid_robotics"
     }
   ],
-  "pool_note_20260809": "[2026-08-09 sunday_strategy] ①인터넷 2종(NAVER·카카오)·바이오 2종(삼성바이오로직스·셀트리온)의 theme 이 null 이라 themes.json 에 존재하는 internet_ai_platform(0.65)·신규 bio_cdmo(0.60) 가점을 받지 못하고 상대강도로만 랭킹되던 것을 매핑했다 — 설정 누락 교정이며 두 섹터 모두 이번 주 몰입 신호 3/2 충족 그룹이다. ②humanoid_robotics 는 themes.json 최고 strength(0.9)인데 모집단에 순수 노출 종목이 없어 현대차·기아(exposure 0.5)로만 대리되고 있었다 — 두산로보틱스(454910)·레인보우로보틱스(277810)를 추가한다. 두 종목은 price_history 시드 전이라 다음 주간 수집까지 data_ok=false 로 랭킹에서 빠진다(정상)."
+  "pool_note_20260809": "[2026-08-09 sunday_strategy] ①인터넷 2종(NAVER·카카오)·바이오 2종(삼성바이오로직스·셀트리온)의 theme 이 null 이라 themes.json 에 존재하는 internet_ai_platform(0.65)·신규 bio_cdmo(0.60) 가점을 받지 못하고 상대강도로만 랭킹되던 것을 매핑했다 — 설정 누락 교정이며 두 섹터 모두 이번 주 몰입 신호 3/2 충족 그룹이다. ②humanoid_robotics 는 themes.json 최고 strength(0.9)인데 모집단에 순수 노출 종목이 없어 현대차·기아(exposure 0.5)로만 대리되고 있었다 — 두산로보틱스(454910)·레인보우로보틱스(277810)를 추가한다. 두 종목은 price_history 시드 전이라 다음 주간 수집까지 data_ok=false 로 랭킹에서 빠진다(정상).",
+  "pool_note_20260823": "바이오 2종(207940·068270)의 theme exposure 를 0.0 → 0.9/0.7 로 채웠다. 두 종목은 모집단에는 있었으나 exposure 0.0 이라 테마 가점을 받지 못한 채 상대강도로만 랭킹되던 상태였고(8/9 인터넷·바이오 null 교정의 잔여분), 같은 날 config/candidates.json 에도 등재했다. 근거·출처는 candidates.json 의 theme_exposure 참조."
 }

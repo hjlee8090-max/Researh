@@ -1,9 +1,9 @@
 {
- "as_of": "2026-07-21T15:44:41+09:00",
+ "as_of": "2026-08-23T20:20:41+09:00",
  "window": {
   "t0_first": "2026-06-11",
-  "t0_last": "2026-07-10",
-  "n_days": 22
+  "t0_last": "2026-08-13",
+  "n_days": 45
  },
  "params": {
   "tilt_bands": "≥+15%:+1.0 / +5~15:+0.4 / 0~5:0.0 / <0:-1.0 (A/B 만, C·결측 0) × w",
@@ -18,98 +18,120 @@
  "ic": {
   "all_grades": {
    "fwd5": {
-    "n_days": 22,
-    "mean": 0.206,
-    "median": 0.118,
-    "positive_share": 0.727
+    "n_days": 45,
+    "mean": 0.06,
+    "median": 0.054,
+    "positive_share": 0.578
    },
    "fwd20": {
-    "n_days": 7,
-    "mean": 0.271,
-    "median": 0.567,
-    "positive_share": 0.714
+    "n_days": 30,
+    "mean": 0.057,
+    "median": 0.064,
+    "positive_share": 0.567
    }
   },
   "ab_only": {
    "fwd5": {
-    "n_days": 22,
-    "mean": 0.23,
-    "median": 0.188,
-    "positive_share": 0.773
+    "n_days": 45,
+    "mean": 0.072,
+    "median": 0.055,
+    "positive_share": 0.6
    },
    "fwd20": {
-    "n_days": 7,
-    "mean": 0.289,
-    "median": 0.571,
-    "positive_share": 0.714
+    "n_days": 30,
+    "mean": 0.088,
+    "median": 0.2,
+    "positive_share": 0.667
    }
   },
   "baseline_proxy_fwd5": {
-   "n_days": 22,
-   "mean": -0.117,
+   "n_days": 45,
+   "mean": -0.233,
    "median": -0.4,
-   "positive_share": 0.364
+   "positive_share": 0.289
   }
  },
  "tercile_spread_pct": {
   "fwd5": {
-   "n_days": 22,
-   "mean": 3.279,
-   "median": 2.564,
-   "positive_share": 0.636
+   "n_days": 45,
+   "mean": 0.911,
+   "median": 0.064,
+   "positive_share": 0.511
   },
   "fwd20": {
-   "n_days": 7,
-   "mean": 5.962,
-   "median": 8.045,
-   "positive_share": 0.857
+   "n_days": 30,
+   "mean": 0.768,
+   "median": 2.966,
+   "positive_share": 0.633
   }
  },
  "pick_simulation": {
   "baseline": {
-   "n_days": 22,
-   "top1_f5_mean": -3.8,
-   "top2_f5_mean": -4.64,
-   "top1_f20_mean": -16.64
+   "n_days": 45,
+   "top1_f5_mean": -3.43,
+   "top2_f5_mean": -3.47,
+   "top1_f20_mean": -21.49
   },
   "w=0.02": {
-   "n_days": 22,
-   "top1_f5_mean": -3.8,
-   "top2_f5_mean": -4.67,
-   "top1_f20_mean": -16.64,
+   "n_days": 45,
+   "top1_f5_mean": -3.43,
+   "top2_f5_mean": -3.53,
+   "top1_f20_mean": -21.49,
    "changed_days": 0
   },
   "w=0.05": {
-   "n_days": 22,
-   "top1_f5_mean": -3.8,
-   "top2_f5_mean": -4.67,
-   "top1_f20_mean": -16.64,
-   "changed_days": 0
+   "n_days": 45,
+   "top1_f5_mean": -3.35,
+   "top2_f5_mean": -3.3,
+   "top1_f20_mean": -20.87,
+   "changed_days": 1,
+   "changed_marginal_f5": 3.39,
+   "changed_examples": [
+    {
+     "t0": "2026-07-14",
+     "tilt_pick": "005930",
+     "tilt_f5": -0.95,
+     "base_f5": -4.34
+    }
+   ]
   },
   "w=0.08": {
-   "n_days": 22,
-   "top1_f5_mean": -2.9,
-   "top2_f5_mean": -4.67,
-   "top1_f20_mean": -16.64,
-   "changed_days": 1,
-   "changed_marginal_f5": 19.87,
+   "n_days": 45,
+   "top1_f5_mean": -2.93,
+   "top2_f5_mean": -2.87,
+   "top1_f20_mean": -21.04,
+   "changed_days": 3,
+   "changed_marginal_f5": 7.43,
    "changed_examples": [
     {
      "t0": "2026-07-02",
      "tilt_pick": "000660",
      "tilt_f5": -0.05,
      "base_f5": -19.92
+    },
+    {
+     "t0": "2026-07-14",
+     "tilt_pick": "005930",
+     "tilt_f5": -0.95,
+     "base_f5": -4.34
+    },
+    {
+     "t0": "2026-07-20",
+     "tilt_pick": "055550",
+     "tilt_f5": 3.14,
+     "base_f5": 4.1
     }
    ]
   }
  },
  "tiebreak_simulation": {
   "margin=0.03": {
-   "n_days": 22,
-   "top1_f5_mean": -3.03,
-   "top1_f20_mean": -16.64,
-   "changed_days": 3,
-   "changed_marginal_f5": 5.68,
+   "n_days": 45,
+   "top1_f5_mean": -2.97,
+   "top1_f20_mean": -20.06,
+   "changed_days": 8,
+   "changed_marginal_f5": 2.55,
+   "changed_marginal_f20": 7.16,
    "changed_examples": [
     {
      "t0": "2026-06-29",
@@ -128,16 +150,46 @@
      "tb_pick": "005930",
      "tb_f5": -7.92,
      "base_f5": -10.1
+    },
+    {
+     "t0": "2026-07-14",
+     "tb_pick": "005930",
+     "tb_f5": -0.95,
+     "base_f5": -4.34
+    },
+    {
+     "t0": "2026-07-20",
+     "tb_pick": "055550",
+     "tb_f5": 3.14,
+     "base_f5": 4.1
+    },
+    {
+     "t0": "2026-07-22",
+     "tb_pick": "005930",
+     "tb_f5": -19.96,
+     "base_f5": -19.35
+    },
+    {
+     "t0": "2026-07-27",
+     "tb_pick": "055550",
+     "tb_f5": -2.19,
+     "base_f5": -5.71
+    },
+    {
+     "t0": "2026-08-10",
+     "tb_pick": "105560",
+     "tb_f5": -1.86,
+     "base_f5": 0.09
     }
    ]
   },
   "margin=0.05": {
-   "n_days": 22,
-   "top1_f5_mean": -4.75,
-   "top1_f20_mean": -18.29,
-   "changed_days": 14,
-   "changed_marginal_f5": -1.49,
-   "changed_marginal_f20": -2.31,
+   "n_days": 45,
+   "top1_f5_mean": -3.18,
+   "top1_f20_mean": -18.72,
+   "changed_days": 24,
+   "changed_marginal_f5": 0.47,
+   "changed_marginal_f20": 4.88,
    "changed_examples": [
     {
      "t0": "2026-06-11",
@@ -192,16 +244,16 @@
  },
  "split_half": {
   "ic5_ab_first_half": {
-   "n_days": 11,
-   "mean": 0.51,
-   "median": 0.667,
-   "positive_share": 0.909
+   "n_days": 22,
+   "mean": 0.23,
+   "median": 0.188,
+   "positive_share": 0.773
   },
   "ic5_ab_second_half": {
-   "n_days": 11,
-   "mean": -0.05,
-   "median": 0.055,
-   "positive_share": 0.636
+   "n_days": 23,
+   "mean": -0.079,
+   "median": -0.107,
+   "positive_share": 0.435
   }
  },
  "criteria": {
@@ -210,7 +262,7 @@
    "rule": "A/B IC(fwd5) 평균>0 & 양(+)일 ≥55%"
   },
   "C2_pick_no_harm_and_improve": {
-   "pass": false,
+   "pass": true,
    "rule": "전 w top1 fwd5 무악화 + 최소 1개 w 에서 top1·top2 동시 개선"
   },
   "C3_changed_days_marginal": {
@@ -218,23 +270,23 @@
    "rule": "픽 변경일 한계 효과(fwd5) ≥ 0 (전 w)"
   }
  },
- "verdict": "hold",
+ "verdict": "wire",
  "criteria_tiebreak": {
   "T1_top1_no_harm_and_improve": {
-   "pass": false,
+   "pass": true,
    "rule": "전 margin top1 fwd5 무악화 + 최소 1개 margin 개선"
   },
   "T2_changed_days_marginal": {
-   "pass": false,
+   "pass": true,
    "rule": "픽 변경일 한계 효과(fwd5) ≥ 0 (전 margin)"
   },
   "T3_fwd20_guard": {
-   "pass": false,
+   "pass": true,
    "rule": "top1 fwd20 열화 ≤ 0.5%p (전 margin)"
   }
  },
- "tiebreak_verdict": "hold",
- "tiebreak_recommended_margin": null,
+ "tiebreak_verdict": "wire_tiebreak",
+ "tiebreak_recommended_margin": 0.03,
  "limitations": [
   "표본 창 ~25거래일 · 겹치는 fwd 창(비독립) · 단일 국면 — 유의성 주장 불가, 방향 판단용",
   "프록시 점수는 실제 블렌드의 모멘텀+상대강도 50%만 재현(테마·신뢰도·thesis 소급 불가)",

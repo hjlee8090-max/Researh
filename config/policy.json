@@ -1,7 +1,8 @@
 {
-  "version": "2.34",
-  "last_updated": "2026-08-13",
+  "version": "2.35",
+  "last_updated": "2026-08-23",
   "changelog": [
+    "2.35: dead-config 처분(§1-3, self_audit policy-dead-config-* 2주 overdue 해소) — disclaimers 삭제(11개 prompt 에 이미 하드코딩, wiring 없던 그랜드파더 필드) · weekly_cycle 삭제(weekend_report_output 경로가 현재 산출물 명명과 불일치하는 구식 스킴, 로직은 weekly_plan.json·각 prompt 0단계로 대체됨) · rebalance_rules → _doc_rebalance_rules 개명(스왑 판정은 risk 손절·momentum_signal·lessons_rule_sunset 로 이미 구현, 사람이 읽는 요약으로 문서 보존). lessons_rule_sunset 등록: 2026-08-22 은행 3종 추가매수 금지 룰에 (expiry: 2026-08-28) 기입, 2026-08-14 카카오 상대강도 룰(expiry 2026-08-21) 만료 처분(n=1, 승격 근거 미달). 전략 파라미터 변경 없음(백테스트 불요). 유래 전문: docs/policy_rationale.md §_doc_rebalance_rules.",
     "2.34: P2 종결 — 제거·배제 설계(docs/plan_removal_exclusion.md) 전 항목 구현 완료. ①F(2026-08-13 사용자 승인): 콘텍스트 예산 연속 14일+ 초과 시 감사 WARN→FAIL 승격(streak 은 state/context_budget_state.json 영속, 발송 후 런만 적색 — 전송 계층 무영향. '하드 게이트는 trade_log 만' 원칙의 승인된 예외). 감량 불가 항목은 첫 FAIL 전 임계 재조정을 정식 패치로 결정 ②G: 프롬프트 순증 금지 관례(§3, 추가 시 기존 문구 은퇴 명시) + 7일 대비 순증 INFO 추적 ③B-2: 주간 아카이브 미발화 주를 '한눈에 보기' 인덱스로 소급 생성(build_week_archive_fallback.py, fallback-index 마커로 미발화 WARN 유지). 유래 전문: docs/policy_rationale.md 관례에 따라 본문 서술 생략.",
     "2.33: policy 본문 다이어트 1차 — 유래·사고 사례·설계 배경 산문 23필드(7,876자)를 docs/policy_rationale.md 로 이관, 본문엔 ref 스텁(실행 지시가 섞인 2필드는 지시 보존 스텁). 룰·파라미터·게이트 무변경 — 규범 포함 purpose(estimate_gate·sector_rotation_reentry·leader_widening·discovery_gate·block_if_cumulative 등)는 유지. check_lessons_applied haystack 에 rationale 포함(P1 선반영)이라 반영 판정 오탐 없음. 근거: docs/plan_removal_exclusion.md §5-D — policy 는 '자동 압축기 없는 유일한 핫패스'였고 산문 50%(42K자)가 크기 본체. 신규 룰 관례: 유래 서술은 rationale 에, 본문엔 룰·파라미터·ref 만.",
     "2.32: 콘텍스트 압축 커버리지 확장 P0 (근거: docs/plan_removal_exclusion.md §5-A·B — 2026-08-12 감사 핫패스 예산 5항목 전부 초과, 종결 주문 90%·과거 촉매 79% 잔존 실측). compact_state 신규 이관 5종(pending_orders 종결 7일+·catalysts manual 과거 7일+·watchlist 상위 노트 12건 초과분·weekend_review 날짜키 14일+·inference_log 채점완료 90일+) + build_inference_checklist 바이트 캡 집행(줄 캡만 집행하던 단위 불일치 해소) + compact 담체 주 1회→매일(weekly_compact.yml 19:00 KST, 19:30 감사 직전). 소비자 계약 검증 완료(check_intraday_alerts active만·sync_pending_orders active SELL만·estimate_target_price 과거촉매 D-7 스킵과 보존창 정렬). 매매 행동 무변경 — retention 상세는 context_budget.retention.",
@@ -316,20 +317,6 @@
         }
       ]
     }
-  },
-  "weekly_cycle": {
-    "plan_file": "config/weekly_plan.json",
-    "week_starts_on": "Monday",
-    "weekend_review_day": "Saturday or Sunday",
-    "daily_linkage_rule": "모든 00/06/09/12/15/18 routine은 weekly_plan.json의 thesis, watch_items, invalidation_triggers를 먼저 읽고 오늘 판단이 주간 인사이트를 강화/약화/무효화하는지 기록한다.",
-    "weekend_report_output": "reports/YYYY-MM-DD-weekend.md",
-    "required_weekend_sections": [
-      "지난주 성과와 실수",
-      "주말 뉴스와 다음주 핵심 인사이트",
-      "다음주 주간 목표와 리스크 예산",
-      "데일리 리포트 연결 규칙",
-      "월요일 09시 우선 액션"
-    ]
   },
   "price_data_quality": {
     "settlement_close_source": {
@@ -1032,13 +1019,14 @@
     "meta_review": "sunday_policy_review 가 scorecard 누적 hit-rate 를 점검해 임계·휴리스틱·확률배분 가이드를 조정 제안.",
     "limitation": "컨센 OP 미수집 → beat/miss 1차 기준은 EPS. price_reaction 은 휴리스틱(단정 금지). 종가청산 정책 유지(발표 당일 추격/투매 금지)."
   },
-  "rebalance_rules": {
-    "swap_when": [
+  "_doc_rebalance_rules": {
+    "_doc": "문서 전용(v2.35 policy-review dead-config 처분) — 어느 script/prompt 도 참조하지 않음. 실제 스왑 판정은 risk 손절(-10%/tier ATR)·momentum_signal·lessons_rule_sunset 로 이미 구현. ref: docs/policy_rationale.md §_doc_rebalance_rules",
+    "_doc_swap_when": [
       "종목이 손절선(-10%) 도달",
       "목표가 도달 후 모멘텀 둔화 (5일 평균 거래량 하락 + 종가 하락)",
       "lessons.md에서 동일 패턴 반복 손실 3회 이상 누적된 섹터/종목"
     ],
-    "no_swap_when": [
+    "_doc_no_swap_when": [
       "단순 1일 변동성 -3% 이내",
       "지수 하락에 동행하는 일시 조정"
     ]
@@ -1095,11 +1083,6 @@
       ]
     }
   },
-  "disclaimers": [
-    "본 시뮬레이션은 교육·학습 목적이며 실제 투자 권유가 아님",
-    "시세는 웹검색 기반으로 지연/근사값일 수 있음",
-    "초보자 학습 보조를 위해 용어를 풀어 설명할 것"
-  ],
   "context_budget": {
     "enabled": true,
     "purpose": "핫패스(매 routine 의무 적재) 파일의 무한 누적 → 콘텍스트 오버 → 규칙 누락·판단 열화 방지. 매매 룰 래칫 감시(blocked_day_rate)와 동형의 크기 래칫 안전장치. 근거: docs/plan_context_compaction.md (2026-06-12 진단 — 의무 적재 ~500KB, watchlist 1,945줄로 Read 캡 임박).",

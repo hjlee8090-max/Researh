@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-23",
+  "as_of": "2026-08-25",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,8 +8,8 @@
       "detail": "손실 스톱 t+5 일실 합계 222731.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-23",
-      "weeks_seen": 7,
+      "last_seen": "2026-08-25",
+      "weeks_seen": 8,
       "status": "open",
       "disposition": {
         "action": "observe",
@@ -46,12 +46,12 @@
     },
     {
       "id": "deployment-below-band",
-      "title": "주식비중 48.8% < 목표 하한 65% — 만성 미배치",
-      "detail": "⚠️ 주식비중 48.8% < 목표 하한 65% — 만성 미배치 계열",
+      "title": "주식비중 56.6% < 목표 하한 65% — 만성 미배치",
+      "detail": "⚠️ 주식비중 56.6% < 목표 하한 65% — 만성 미배치 계열",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-08-23",
-      "weeks_seen": 7,
+      "last_seen": "2026-08-25",
+      "weeks_seen": 8,
       "status": "open",
       "disposition": {
         "action": "observe",
@@ -113,10 +113,10 @@
       "title": "검증 표본 없는 정책 패치 — 패치 동결 규칙 발동",
       "detail": "⚠️ 직전 감사 이후 정책 버전이 올라갔는데 신규 검증 표본(왕복)이 0건 — 패치 동결 검토(검증 없는 패치 누적).",
       "severity": "warn",
-      "first_seen": "2026-08-14",
-      "last_seen": "2026-08-14",
+      "first_seen": "2026-08-25",
+      "last_seen": "2026-08-25",
       "weeks_seen": 1,
-      "status": "resolved",
+      "status": "open",
       "disposition": null,
       "disposition_history": [
         {
@@ -125,8 +125,7 @@
           "date": "2026-08-09",
           "by": "sunday_policy_review"
         }
-      ],
-      "resolved_date": "2026-08-14"
+      ]
     },
     {
       "id": "policy-dead-config-disclaimers",
@@ -136,14 +135,15 @@
       "first_seen": "2026-08-14",
       "last_seen": "2026-08-23",
       "weeks_seen": 2,
-      "status": "open",
+      "status": "resolved",
       "disposition": {
         "action": "patch",
         "note": "삭제. 값(교육·학습 목적/시세 지연 가능/용어 설명) 은 이미 11개 prompt 파일에 리터럴 텍스트로 하드코딩돼 있어 이 config 를 읽는 코드가 애초에 없었다 — wiring 없는 그랜드파더 필드. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules 에 3건 일괄 근거 기록. check_policy_hygiene.py 재실행으로 dead_configs=[] 확인 완료.",
         "date": "2026-08-23",
         "by": "sunday_policy_review"
       },
-      "disposition_history": []
+      "disposition_history": [],
+      "resolved_date": "2026-08-25"
     },
     {
       "id": "policy-dead-config-rebalance_rules",
@@ -153,14 +153,15 @@
       "first_seen": "2026-08-14",
       "last_seen": "2026-08-23",
       "weeks_seen": 2,
-      "status": "open",
+      "status": "resolved",
       "disposition": {
         "action": "patch",
         "note": "`_doc_rebalance_rules` 로 개명(문서 전용). 실제 스왑 판정은 이미 risk 손절(-10%/tier ATR)·momentum_signal·lessons_rule_sunset 로 구현돼 있어 배선 활성화는 로직 이중화 위험 — 3택 중 삭제 대신 개명을 택한 이유는 '손실/모멘텀둔화/반복패턴' 3원칙이 사람이 읽는 요약으로 유용해서다. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules. check_policy_hygiene.py 재실행으로 dead_configs=[]·unregistered_new=0 확인 완료(자식 키도 _doc_swap_when/_doc_no_swap_when 로 개명해 등록 메타 요구 회피).",
         "date": "2026-08-23",
         "by": "sunday_policy_review"
       },
-      "disposition_history": []
+      "disposition_history": [],
+      "resolved_date": "2026-08-25"
     },
     {
       "id": "policy-dead-config-weekly_cycle",
@@ -170,22 +171,23 @@
       "first_seen": "2026-08-14",
       "last_seen": "2026-08-23",
       "weeks_seen": 2,
-      "status": "open",
+      "status": "resolved",
       "disposition": {
         "action": "patch",
         "note": "삭제. weekend_report_output(reports/YYYY-MM-DD-weekend.md) 이 현재 실제 산출물 명명(saturday-review/sunday-strategy/policy-review/archive)과 불일치하는 구식 스킴이라 보존하면 오히려 오도 — 로직(주간 연동)은 이미 weekly_plan.json·각 prompt 0단계로 구현됨. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules 에 3건 일괄 근거. check_policy_hygiene.py 재실행으로 dead_configs=[] 확인 완료.",
         "date": "2026-08-23",
         "by": "sunday_policy_review"
       },
-      "disposition_history": []
+      "disposition_history": [],
+      "resolved_date": "2026-08-25"
     },
     {
       "id": "lessons-balance",
-      "title": "lessons.md 390,977B > 예산 60,000B — 이관 처리량 부족",
+      "title": "lessons.md 425,025B > 예산 60,000B — 이관 처리량 부족",
       "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. 이관 대상 1순위는 lessons_index.archive_candidates.",
       "severity": "warn",
       "first_seen": "2026-08-14",
-      "last_seen": "2026-08-23",
+      "last_seen": "2026-08-25",
       "weeks_seen": 2,
       "status": "open",
       "disposition": {
@@ -200,16 +202,8 @@
   "open": [
     "whipsaw-high",
     "deployment-below-band",
-    "policy-dead-config-disclaimers",
-    "policy-dead-config-rebalance_rules",
-    "policy-dead-config-weekly_cycle",
+    "patch-without-validation",
     "lessons-balance"
   ],
-  "overdue": [
-    "deployment-below-band",
-    "policy-dead-config-disclaimers",
-    "policy-dead-config-rebalance_rules",
-    "policy-dead-config-weekly_cycle",
-    "lessons-balance"
-  ]
+  "overdue": []
 }

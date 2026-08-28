@@ -1,786 +1,723 @@
 {
- "as_of": "2026-08-28T18:10:00+09:00",
- "base_currency": "KRW",
- "initial_capital": 5000000,
- "cash": 2394315,
- "positions": [
-  {
-   "ticker": "086790",
-   "name": "하나금융지주",
-   "entry_price": 126471,
-   "shares": 4,
-   "current_price_approx": 136000.0,
-   "market_value_approx": 544000,
-   "cost_basis_total": 505884,
-   "stop_price": 126290,
-   "target_price": 143600,
-   "rr_ratio": 0.783,
-   "tier": "green",
-   "strategy": "bank_valueup_harvest_w32",
-   "weekly_thesis_id": "recovery_stage_normalization_w32",
-   "opened": "2026-08-03",
-   "stop_price_prev": 124867,
-   "target_price_prev": 144000,
-   "target_change_note": "8/11 18:00 §2-2 dynamic_reprice `target_gap` 13.9% 당일 결론 (a)재산정. 8/10 이 '추정 앵커가 목표 아래로 내려오면 재산정으로 닫는다'고 선언한 조건이 오늘 성립(추정 150,600 → 143,600, 운용 목표 144,000 아래로 400원 진입). 잔여 괴리 13.6% 는 전액 동적 참조(126,453=밸류에이션 천장) 몫인데 종가 127,700 이 그 천장 위에서 거래돼 추가 하향 근거가 없다.",
-   "stop_change_note": "8/28 18:00 §2-2 (b)손절가 상향 — R/R 하한 미달 + estimate.review_required(기대수익 -3.1%·8회 연속 음수) 두 축 동시 발동. 오늘 종가 136,000 이 보유 이후 최고 종가를 새로 써서 샹들리에 잔여선이 124,867 → 126,290 으로 올라온 것이 재원이다(최고 종가 136,000 × (1 − 2.0×ATR 3.57%), exit_levels 정본). 손절폭 8.19% → 7.14%(2.0×ATR), R/R 0.683 → 0.783, 포지션 히트 44,532 → 38,840원(5,692원 해방). **(b)로도 bull 하한 1.1 을 회복하지 못한다는 점을 명시한다** — 목표 143,600 고정 상태에서 R/R 1.1 을 만들려면 손절이 129,091 이상이어야 하는데 이는 트레일 1차선 128,717 위라 2단 방어 구조를 침범한다. (a)목표 재산정 기각 — 동적 참조 ref 142,797·band high 144,836 이 현 목표 143,600 을 사실상 감싸고 있어 상향 여지가 없고(밴드 상단으로 올려도 R/R 0.790), 추정 앵커 131,800 은 현재가 아래라 이식 시 목표가 내려간다. (c)50% 부분익절 기각 — 오늘 종가 청산 1건(셀트리온)이 이미 현금비중을 51%로 올리는 날이고, 여기서 4주 중 2주를 더 덜면 주식비중이 43%로 bull 목표 밴드 하한(65%)에서 22%p 밑으로 벌어진다. 이 계좌의 누적 교훈은 '강세장 미배치'를 반복 실패로 지목하고 있어, 6종 중 유일하게 신고가를 쓴 종목을 같은 날 함께 줄이는 것은 그 교훈에 정면으로 어긋난다. **대신 기한부 에스컬레이션을 건다: 8/31(월) EOD 기준 R/R 이 여전히 1.1 미만이면 그날 (c)50% 부분익절을 재량 없이 집행한다.**"
-  },
-  {
-   "ticker": "105560",
-   "name": "KB금융",
-   "entry_price": 173172,
-   "shares": 2,
-   "current_price_approx": 171600.0,
-   "market_value_approx": 343200,
-   "cost_basis_total": 346344,
-   "stop_price": 159662,
-   "target_price": 192600,
-   "rr_ratio": 1.759,
-   "tier": "green",
-   "strategy": "bank_valueup_harvest_w32",
-   "weekly_thesis_id": "recovery_stage_normalization_w32",
-   "opened": "2026-08-05",
-   "stop_price_prev": 155001,
-   "target_price_prev": 195886,
-   "target_change_note": "8/10 18:00 §2-2 (a) — dynamic_reprice target_gap 17.5%(운용 195,886 vs 동적 ref 166,658) 당일 결론. 뉴스 반영 추정 앵커 192,600 에 정렬해 하향. 컨센 교차검증은 consensus stale(8/2 fetch 실패 보존)로 생략, 밸류에이션 캡은 verdict=overheat_entry(≠cap_target)라 미적용. 잔여 괴리 15.6% 는 밴드 상단(166,658) 유래분이며 추가 하향으로 닫지 않는다.",
-   "partial_exit_note": "8/20 18:00 §1 tiered_alerts 🟠 종가 확정 — 진입가 173,172 대비 -7.607% 가 유효 orange 임계 -7.32%(= -(2.0×ATR 3.66%), 가격으로 160,496원)를 0.287%p 관통. orange_action 분기는 (a) — 오늘 KOSPI 가 +5.89% 오르는 동안 은행 3종이 -3.22%/-3.85%/-3.71% 로 동반 하락해 원인이 매크로 단독이 아니라 은행 섹터 회전으로 특정된다(따라서 (b)타이트 트레일링 전환 분기는 성립하지 않는다). 3주의 50% 는 1.5주라 정수로 떨어지지 않아 내림(1주·33.3%)을 집행했다 — 반올림(2주·66.7%)과 50% 로부터의 거리는 16.7%p 로 같고, 동수일 때 작은 쪽을 고른 근거는 ①thesis 는 intact 이며 매도를 강제한 것은 원인 분류 하나뿐이고 ②잔여 2주는 손절선 159,662원이 종가 아래 0.21% 에 붙어 내일 종가 판정으로 자동 관리되며 ③이 계좌의 실현 손실 6건이 전부 급변일 격발 후 +8~16% 회복된 휩쏘였다는 실측 기저율이다. 잔여 2주의 손절·목표는 exit_levels 정본 그대로 무변경(159,662 / 192,600)."
-  },
-  {
-   "ticker": "035420",
-   "name": "NAVER",
-   "entry_price": 216715,
-   "shares": 2,
-   "current_price_approx": 220500.0,
-   "market_value_approx": 441000,
-   "cost_basis_total": 433430,
-   "stop_price": 198052,
-   "target_price": 262481,
-   "rr_ratio": 1.87,
-   "tier": "green",
-   "strategy": "non_overheat_deployment_w33",
-   "weekly_thesis_id": "deployment_close_the_band_w34",
-   "opened": "2026-08-10",
-   "size_note": "probe(계획 2주의 50%) — weekly_plan non_overheat_deployment_w33 probe 상한 + 52주 고점 대비 69.4%(<70% 신중)",
-   "stop_price_prev": 186537,
-   "stop_change_note": "8/13 18:00 §2-2 (b) — dynamic_bands `stop_too_wide`(손절폭 17.6% > 2.5×ATR 15.7%) + R/R 0.901 < bull 하한 1.1 동시 발동. 새 손절 198,052 는 exit_levels 샹들리에 잔여선 정본(오늘 경신한 최고 종가 226,500 × (1 − 2.0×ATR 6.28%))이며 트레일 1차선 205,164 아래라 2단 방어 구조를 침범하지 않는다. 손절폭 17.6% → 12.56%(2.0×ATR)로 stop_too_wide 해소, R/R 0.901 → 1.265 로 하한 복원. 포지션 히트 39,963 → 28,448원(11,515원 해방). 8/12 와 같은 처방을 같은 구조에 다시 적용한 것이며, 최고 종가가 215,500 → 226,500 으로 올라 선 자체가 따라 올라간 결과다.",
-   "target_price_prev": 262481,
-   "target_change_note": "8/13 18:00 — 밸류에이션 파일을 8/9 → 오늘 종가로 재산출한 결과 NAVER verdict 이 ok → **cap_target** 으로 바뀌었다(5년 PER 밴드 상단 20.86 × EPS 12,583 = 262,481). 운용 목표 262,508 이 새 천장을 27원 초과하므로 §2-2 (a) 캡 규칙대로 262,481 로 정렬한다(-0.01%). 시장 판단의 변경이 아니라 같은 정의(5년 PER 밴드 상단)를 오늘 수치로 다시 읽은 것이며, thesis 의 소프트 무효화 조건 '천장 돌파' 기준선도 같은 값으로 이동한다. 컨센 교차검증은 consensus stale(8/2 fetch 실패)로 생략.",
-   "scale_in_note": "8/18 09:30 — W34 주간계획 확정분 잔여 1주 추가 체결(221,976원). 평단 211,454 → 216,715, 수량 1 → 2주. 손절 198,052·목표 262,481 은 exit_levels 정본 무변경(추가매수는 기존 포지션의 임계선을 움직이지 않는다). 평단 상승으로 R/R 은 진입분 1.693, 포지션 전체 2.452."
-  },
-  {
-   "ticker": "055550",
-   "name": "신한지주",
-   "entry_price": 105226,
-   "shares": 2,
-   "current_price_approx": 109700.0,
-   "market_value_approx": 219400,
-   "cost_basis_total": 210452,
-   "stop_price": 102328,
-   "target_price": 117853,
-   "rr_ratio": 1.106,
-   "tier": "green",
-   "strategy": "deployment_close_the_band_w34",
-   "weekly_thesis_id": "deployment_close_the_band_w34",
-   "opened": "2026-08-18",
-   "stop_change_note": "8/28 18:00 §2-2 (b)손절가 상향 — R/R 하한 미달 **단독** 발동(estimate.review_required=false·기대수익 +11.9%·negative_streak 0, dynamic reprice_signals 공란). 종가 109,700 기준 R/R 0.952 가 bull 하한 1.1 을 0.148 하회했다. 새 손절 102,328 은 오늘 새로 쓴 최고 종가 109,700 × (1 − 2.0×ATR 3.36%) 의 exit_levels 샹들리에 잔여선 정본이며 트레일 1차선 104,171 아래라 2단 방어 구조를 침범하지 않는다. 손절폭 7.80% → 6.72%(2.0×ATR), **R/R 0.952 → 1.106 으로 하한 회복**, 포지션 히트 17,120 → 14,744원(2,376원 해방). (a)목표 재산정 기각 — 추정 앵커 122,800 은 현 목표 117,853 **위**, 동적 참조 114,860 은 **아래**로 앵커 부호가 갈린다(8/11 교훈의 금지 조건, 8/25·8/27 과 같은 사유의 반복). (c)50% 부분익절 기각 — 목표 진행률 35.4% 이고 (b) 단독으로 하한이 복원된다. 이 종목은 8/25·8/27 에 이어 세 번째 (b) 처방이며, 세 번 다 최고 종가 갱신이 샹들리에 선을 끌어올린 것이 재원이었다.",
-   "target_change_note": "8/18 09:32 신규 진입 — max(진입가×1.12 = 117,853, 진입가+2.5×ATR14 = 116,422, 52주 고점 113,300) = 117,853. 밸류에이션 천장 136,394 아래라 캡 미발동. 컨센 교차검증은 consensus stale 로 생략(앵커 3개 중 1개 결측).",
-   "stop_price_prev": 101140
-  },
-  {
-   "ticker": "028260",
-   "name": "삼성물산",
-   "entry_price": 370796,
-   "shares": 2,
-   "current_price_approx": 375000.0,
-   "market_value_approx": 750000,
-   "cost_basis_total": 741591,
-   "stop_price": 347091,
-   "target_price": 452300,
-   "rr_ratio": 2.77,
-   "tier": "green",
-   "strategy": "deployment_close_the_band_w34",
-   "weekly_thesis_id": "deployment_close_the_band_w34",
-   "opened": "2026-08-20",
-   "entry_note": "8/20 12:22 진입 — 8/19 18시 next_action_candidates 2번(단계 완화 후 첫 재평가 대상)의 집행분. 09시 슬롯이 다루지 않아 12시로 이월됐고 재평가 시점 값으로 게이트 재확인(추격 5일 +3.5%·상한가 391,200 대비 -5.2%·PBR 0.96 verdict=ok·estimate 기대수익 +22.2%). 수량 2주는 리스크상한(141,631원)·목표비중(996,137원)이 동시에 낸 값이며, 1주였다면 50% 부분익절이 불가능해지는 W34 결정룰도 함께 고려했다. 손절 318,200 = 진입가 × (1 − 2.0×ATR 7.09%), 목표 452,300 = 뉴스 반영 추정(등급 A) 보수 앵커.",
-   "stop_price_prev": 318200,
-   "stop_change_note": "8/21 18:00 §2-2 (b) — R/R 0.735 < bull 하한 1.1 과 dynamic_bands `stop_too_wide`(손절폭 19.54% > 2.5×ATR 15.30%) 동시 발동. 새 손절 347,091 은 exit_levels 샹들리에 잔여선 정본(오늘 경신한 최고 종가 395,500 × (1 − 2.0×ATR 6.12%))이며 트레일 1차선 359,193 아래라 2단 방어 구조를 침범하지 않는다. 손절폭 12.24%(2.0×ATR)로 stop_too_wide 해소, R/R 0.735 → 1.173 로 하한 복원. (a)목표 상향은 앵커가 갈려 기각 — 추정 506,500 은 목표 위지만 동적 참조 429,386 은 아래라 '추정 단독 상향은 낙관 편향 이식'(8/11 교훈) 조건에 해당. (c)50% 부분익절은 진입 D+1 종목을 최고 종가 당일에 자르는 것이라 근거 없음. 포지션 히트 105,192 → 47,410원(57,782원 해방)."
-  }
- ],
- "equity": 4691915,
- "realized_pnl": -367984,
- "unrealized_pnl": 59899,
- "cumulative_return_pct": -6.162,
- "trade_count": 39,
- "win_count": 5,
- "loss_count": 13,
- "history": [
-  {
-   "date": "2026-08-13",
-   "equity": 4846132,
-   "cash": 2072632,
-   "daily_return_pct": 1.851,
-   "cumulative_return_pct": -3.077,
-   "holdings": [
+  "as_of": "2026-08-28T18:10:00+09:00",
+  "base_currency": "KRW",
+  "initial_capital": 5000000,
+  "cash": 2394315,
+  "positions": [
     {
-     "ticker": "079550",
-     "name": "LIG넥스원",
-     "close": 837000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-13",
-     "tier": "green",
-     "shares": 1,
-     "stop_price": 716723
+      "ticker": "086790",
+      "name": "하나금융지주",
+      "entry_price": 126471,
+      "shares": 4,
+      "current_price_approx": 136000.0,
+      "market_value_approx": 544000,
+      "cost_basis_total": 505884,
+      "stop_price": 126290,
+      "target_price": 143600,
+      "rr_ratio": 0.783,
+      "tier": "green",
+      "strategy": "bank_valueup_harvest_w32",
+      "weekly_thesis_id": "recovery_stage_normalization_w32",
+      "opened": "2026-08-03",
+      "stop_price_prev": 124867,
+      "target_price_prev": 144000,
+      "target_change_note": "8/11 18:00 §2-2 dynamic_reprice `target_gap` 13.9% 당일 결론 (a)재산정. 8/10 이 '추정 앵커가 목표 아래로 내려오면 재산정으로 닫는다'고 선언한 조건이 오늘 성립(추정 150,600 → 143,600, 운용 목표 144,000 아래로 400원 진입). 잔여 괴리 13.6% 는 전액 동적 참조(126,453=밸류에이션 천장) 몫인데 종가 127,700 이 그 천장 위에서 거래돼 추가 하향 근거가 없다.",
+      "stop_change_note": "8/28 18:00 §2-2 (b)손절가 상향 — R/R 하한 미달 + estimate.review_required(기대수익 -3.1%·8회 연속 음수) 두 축 동시 발동. 오늘 종가 136,000 이 보유 이후 최고 종가를 새로 써서 샹들리에 잔여선이 124,867 → 126,290 으로 올라온 것이 재원이다(최고 종가 136,000 × (1 − 2.0×ATR 3.57%), exit_levels 정본). 손절폭 8.19% → 7.14%(2.0×ATR), R/R 0.683 → 0.783, 포지션 히트 44,532 → 38,840원(5,692원 해방). **(b)로도 bull 하한 1.1 을 회복하지 못한다는 점을 명시한다** — 목표 143,600 고정 상태에서 R/R 1.1 을 만들려면 손절이 129,091 이상이어야 하는데 이는 트레일 1차선 128,717 위라 2단 방어 구조를 침범한다. (a)목표 재산정 기각 — 동적 참조 ref 142,797·band high 144,836 이 현 목표 143,600 을 사실상 감싸고 있어 상향 여지가 없고(밴드 상단으로 올려도 R/R 0.790), 추정 앵커 131,800 은 현재가 아래라 이식 시 목표가 내려간다. (c)50% 부분익절 기각 — 오늘 종가 청산 1건(셀트리온)이 이미 현금비중을 51%로 올리는 날이고, 여기서 4주 중 2주를 더 덜면 주식비중이 43%로 bull 목표 밴드 하한(65%)에서 22%p 밑으로 벌어진다. 이 계좌의 누적 교훈은 '강세장 미배치'를 반복 실패로 지목하고 있어, 6종 중 유일하게 신고가를 쓴 종목을 같은 날 함께 줄이는 것은 그 교훈에 정면으로 어긋난다. **대신 기한부 에스컬레이션을 건다: 8/31(월) EOD 기준 R/R 이 여전히 1.1 미만이면 그날 (c)50% 부분익절을 재량 없이 집행한다.**"
     },
     {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 131000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-13",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 122361
+      "ticker": "105560",
+      "name": "KB금융",
+      "entry_price": 173172,
+      "shares": 2,
+      "current_price_approx": 171600.0,
+      "market_value_approx": 343200,
+      "cost_basis_total": 346344,
+      "stop_price": 159662,
+      "target_price": 192600,
+      "rr_ratio": 1.759,
+      "tier": "green",
+      "strategy": "bank_valueup_harvest_w32",
+      "weekly_thesis_id": "recovery_stage_normalization_w32",
+      "opened": "2026-08-05",
+      "stop_price_prev": 155001,
+      "target_price_prev": 195886,
+      "target_change_note": "8/10 18:00 §2-2 (a) — dynamic_reprice target_gap 17.5%(운용 195,886 vs 동적 ref 166,658) 당일 결론. 뉴스 반영 추정 앵커 192,600 에 정렬해 하향. 컨센 교차검증은 consensus stale(8/2 fetch 실패 보존)로 생략, 밸류에이션 캡은 verdict=overheat_entry(≠cap_target)라 미적용. 잔여 괴리 15.6% 는 밴드 상단(166,658) 유래분이며 추가 하향으로 닫지 않는다.",
+      "partial_exit_note": "8/20 18:00 §1 tiered_alerts 🟠 종가 확정 — 진입가 173,172 대비 -7.607% 가 유효 orange 임계 -7.32%(= -(2.0×ATR 3.66%), 가격으로 160,496원)를 0.287%p 관통. orange_action 분기는 (a) — 오늘 KOSPI 가 +5.89% 오르는 동안 은행 3종이 -3.22%/-3.85%/-3.71% 로 동반 하락해 원인이 매크로 단독이 아니라 은행 섹터 회전으로 특정된다(따라서 (b)타이트 트레일링 전환 분기는 성립하지 않는다). 3주의 50% 는 1.5주라 정수로 떨어지지 않아 내림(1주·33.3%)을 집행했다 — 반올림(2주·66.7%)과 50% 로부터의 거리는 16.7%p 로 같고, 동수일 때 작은 쪽을 고른 근거는 ①thesis 는 intact 이며 매도를 강제한 것은 원인 분류 하나뿐이고 ②잔여 2주는 손절선 159,662원이 종가 아래 0.21% 에 붙어 내일 종가 판정으로 자동 관리되며 ③이 계좌의 실현 손실 6건이 전부 급변일 격발 후 +8~16% 회복된 휩쏘였다는 실측 기저율이다. 잔여 2주의 손절·목표는 exit_levels 정본 그대로 무변경(159,662 / 192,600)."
     },
     {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 168100,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-13",
-     "tier": "green",
-     "shares": 3,
-     "stop_price": 159662
+      "ticker": "035420",
+      "name": "NAVER",
+      "entry_price": 216715,
+      "shares": 2,
+      "current_price_approx": 220500.0,
+      "market_value_approx": 441000,
+      "cost_basis_total": 433430,
+      "stop_price": 198052,
+      "target_price": 262481,
+      "rr_ratio": 1.87,
+      "tier": "green",
+      "strategy": "non_overheat_deployment_w33",
+      "weekly_thesis_id": "deployment_close_the_band_w34",
+      "opened": "2026-08-10",
+      "size_note": "probe(계획 2주의 50%) — weekly_plan non_overheat_deployment_w33 probe 상한 + 52주 고점 대비 69.4%(<70% 신중)",
+      "stop_price_prev": 186537,
+      "stop_change_note": "8/13 18:00 §2-2 (b) — dynamic_bands `stop_too_wide`(손절폭 17.6% > 2.5×ATR 15.7%) + R/R 0.901 < bull 하한 1.1 동시 발동. 새 손절 198,052 는 exit_levels 샹들리에 잔여선 정본(오늘 경신한 최고 종가 226,500 × (1 − 2.0×ATR 6.28%))이며 트레일 1차선 205,164 아래라 2단 방어 구조를 침범하지 않는다. 손절폭 17.6% → 12.56%(2.0×ATR)로 stop_too_wide 해소, R/R 0.901 → 1.265 로 하한 복원. 포지션 히트 39,963 → 28,448원(11,515원 해방). 8/12 와 같은 처방을 같은 구조에 다시 적용한 것이며, 최고 종가가 215,500 → 226,500 으로 올라 선 자체가 따라 올라간 결과다.",
+      "target_price_prev": 262481,
+      "target_change_note": "8/13 18:00 — 밸류에이션 파일을 8/9 → 오늘 종가로 재산출한 결과 NAVER verdict 이 ok → **cap_target** 으로 바뀌었다(5년 PER 밴드 상단 20.86 × EPS 12,583 = 262,481). 운용 목표 262,508 이 새 천장을 27원 초과하므로 §2-2 (a) 캡 규칙대로 262,481 로 정렬한다(-0.01%). 시장 판단의 변경이 아니라 같은 정의(5년 PER 밴드 상단)를 오늘 수치로 다시 읽은 것이며, thesis 의 소프트 무효화 조건 '천장 돌파' 기준선도 같은 값으로 이동한다. 컨센 교차검증은 consensus stale(8/2 fetch 실패)로 생략.",
+      "scale_in_note": "8/18 09:30 — W34 주간계획 확정분 잔여 1주 추가 체결(221,976원). 평단 211,454 → 216,715, 수량 1 → 2주. 손절 198,052·목표 262,481 은 exit_levels 정본 무변경(추가매수는 기존 포지션의 임계선을 움직이지 않는다). 평단 상승으로 R/R 은 진입분 1.693, 포지션 전체 2.452."
     },
     {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 226500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-13",
-     "tier": "green",
-     "shares": 1,
-     "stop_price": 198052
+      "ticker": "055550",
+      "name": "신한지주",
+      "entry_price": 105226,
+      "shares": 2,
+      "current_price_approx": 109700.0,
+      "market_value_approx": 219400,
+      "cost_basis_total": 210452,
+      "stop_price": 102328,
+      "target_price": 117853,
+      "rr_ratio": 1.106,
+      "tier": "green",
+      "strategy": "deployment_close_the_band_w34",
+      "weekly_thesis_id": "deployment_close_the_band_w34",
+      "opened": "2026-08-18",
+      "stop_change_note": "8/28 18:00 §2-2 (b)손절가 상향 — R/R 하한 미달 **단독** 발동(estimate.review_required=false·기대수익 +11.9%·negative_streak 0, dynamic reprice_signals 공란). 종가 109,700 기준 R/R 0.952 가 bull 하한 1.1 을 0.148 하회했다. 새 손절 102,328 은 오늘 새로 쓴 최고 종가 109,700 × (1 − 2.0×ATR 3.36%) 의 exit_levels 샹들리에 잔여선 정본이며 트레일 1차선 104,171 아래라 2단 방어 구조를 침범하지 않는다. 손절폭 7.80% → 6.72%(2.0×ATR), **R/R 0.952 → 1.106 으로 하한 회복**, 포지션 히트 17,120 → 14,744원(2,376원 해방). (a)목표 재산정 기각 — 추정 앵커 122,800 은 현 목표 117,853 **위**, 동적 참조 114,860 은 **아래**로 앵커 부호가 갈린다(8/11 교훈의 금지 조건, 8/25·8/27 과 같은 사유의 반복). (c)50% 부분익절 기각 — 목표 진행률 35.4% 이고 (b) 단독으로 하한이 복원된다. 이 종목은 8/25·8/27 에 이어 세 번째 (b) 처방이며, 세 번 다 최고 종가 갱신이 샹들리에 선을 끌어올린 것이 재원이었다.",
+      "target_change_note": "8/18 09:32 신규 진입 — max(진입가×1.12 = 117,853, 진입가+2.5×ATR14 = 116,422, 52주 고점 113,300) = 117,853. 밸류에이션 천장 136,394 아래라 캡 미발동. 컨센 교차검증은 consensus stale 로 생략(앵커 3개 중 1개 결측).",
+      "stop_price_prev": 101140
     },
     {
-     "ticker": "035720",
-     "name": "카카오",
-     "close": 40100,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-13",
-     "tier": "green",
-     "shares": 17,
-     "stop_price": 36956
+      "ticker": "028260",
+      "name": "삼성물산",
+      "entry_price": 370796,
+      "shares": 2,
+      "current_price_approx": 375000.0,
+      "market_value_approx": 750000,
+      "cost_basis_total": 741591,
+      "stop_price": 347091,
+      "target_price": 452300,
+      "rr_ratio": 2.77,
+      "tier": "green",
+      "strategy": "deployment_close_the_band_w34",
+      "weekly_thesis_id": "deployment_close_the_band_w34",
+      "opened": "2026-08-20",
+      "entry_note": "8/20 12:22 진입 — 8/19 18시 next_action_candidates 2번(단계 완화 후 첫 재평가 대상)의 집행분. 09시 슬롯이 다루지 않아 12시로 이월됐고 재평가 시점 값으로 게이트 재확인(추격 5일 +3.5%·상한가 391,200 대비 -5.2%·PBR 0.96 verdict=ok·estimate 기대수익 +22.2%). 수량 2주는 리스크상한(141,631원)·목표비중(996,137원)이 동시에 낸 값이며, 1주였다면 50% 부분익절이 불가능해지는 W34 결정룰도 함께 고려했다. 손절 318,200 = 진입가 × (1 − 2.0×ATR 7.09%), 목표 452,300 = 뉴스 반영 추정(등급 A) 보수 앵커.",
+      "stop_price_prev": 318200,
+      "stop_change_note": "8/21 18:00 §2-2 (b) — R/R 0.735 < bull 하한 1.1 과 dynamic_bands `stop_too_wide`(손절폭 19.54% > 2.5×ATR 15.30%) 동시 발동. 새 손절 347,091 은 exit_levels 샹들리에 잔여선 정본(오늘 경신한 최고 종가 395,500 × (1 − 2.0×ATR 6.12%))이며 트레일 1차선 359,193 아래라 2단 방어 구조를 침범하지 않는다. 손절폭 12.24%(2.0×ATR)로 stop_too_wide 해소, R/R 0.735 → 1.173 로 하한 복원. (a)목표 상향은 앵커가 갈려 기각 — 추정 506,500 은 목표 위지만 동적 참조 429,386 은 아래라 '추정 단독 상향은 낙관 편향 이식'(8/11 교훈) 조건에 해당. (c)50% 부분익절은 진입 D+1 종목을 최고 종가 당일에 자르는 것이라 근거 없음. 포지션 히트 105,192 → 47,410원(57,782원 해방)."
     }
-   ],
-   "kospi_close": 6813.34,
-   "kospi_change_pct": 3.561,
-   "action": "EOD_HOLD",
-   "note": "8/13 18:00 종가 확정(W33 D4·목). 체결 0건(EOD_HOLD) — 보유 5종 전부 손절·목표·트레일 종가 도달 0건. KOSPI 6,813.34(+3.56% vs 8/12 6,579.04·+234.30p) — 4거래일 연속 상승·15거래일 만에 6,800선 회복. 외국인 2조951억·기관 6,798억 순매수 vs 개인 3조1,183억 순매도(뉴스핌 8/13 · 파이낸셜뉴스 8/13). |등락| 3.56% < 5% 비쇼크일. 지수 축은 삼성전자 268,000(+4.88%)·SK하이닉스 1,593,000(+5.92%) 두 종목 단독 — 상장사 60%는 하락(오피니언뉴스 8/13). equity 4,846,132원(일일 +1.851%·주간 +1.556%·누적 -3.077%·미실현 +117,449·실현 -271,317·현금 2,072,632원 주식 57.2%/현금 42.8%). 주간 목표 4,819,617원 **달성**(초과 26,515원) — W33 첫 달성. 일간 알파 -1.71%p·주간 알파 -7.30%p. §2-2 4건 전건 당일 결론(보류 0): LIG넥스원 손절 704,858→716,723(b·트레일링 정식 활성화) · NAVER 손절 186,537→198,052(b)+목표 262,508→262,481(밸류 천장 재산출 정렬) · 하나금융지주·KB금융 target_gap 유지(사유 갱신 — 밸류에이션 재산출을 오늘 이행했고 재산출 후에도 verdict=overheat_entry 라 캡 적용 근거 자체가 없음이 확정). 목표가 오차 3건 산입(하나금융지주 -8.77% `섹터` · KB금융 -12.72% `섹터`+개별 가중 · NAVER -13.72% `가정오류` 진입 D+3 첫 산입). LIG넥스원은 -2.67%로 오차 밴드 복귀했으나 8/11 교훈에 따라 급등일 종가로 복귀를 확정하지 않고 '복귀 후보'로만 기록. 카카오(D+2)는 진입 유예. 은행 열위 4일차 확정 · thesis 5건 중 intact 3(LIG·NAVER·카카오)·weakening 2(하나·KB) 무변경. 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:02 수집, confidence high, 괴리 5종 모두 0.00%) + KOSPI 웹 2출처 당일 게재 교차. ※학습·시뮬레이션 목적."
-  },
-  {
-   "date": "2026-08-14",
-   "equity": 4833132,
-   "cash": 2072632,
-   "daily_return_pct": -0.268,
-   "cumulative_return_pct": -3.337,
-   "holdings": [
+  ],
+  "equity": 4691915,
+  "realized_pnl": -367984,
+  "unrealized_pnl": 59899,
+  "cumulative_return_pct": -6.162,
+  "trade_count": 39,
+  "win_count": 5,
+  "loss_count": 13,
+  "history": [
     {
-     "ticker": "079550",
-     "name": "LIG넥스원",
-     "close": 815000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
-     "tier": "green",
-     "shares": 1,
-     "stop_price": 718606
+      "date": "2026-08-14",
+      "equity": 4833132,
+      "cash": 2072632,
+      "daily_return_pct": -0.268,
+      "cumulative_return_pct": -3.337,
+      "holdings": [
+        {
+          "ticker": "079550",
+          "name": "LIG넥스원",
+          "close": 815000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
+          "tier": "green",
+          "shares": 1,
+          "stop_price": 718606
+        },
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 133000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 122604
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 168500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
+          "tier": "green",
+          "shares": 3,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 228000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
+          "tier": "green",
+          "shares": 1,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "035720",
+          "name": "카카오",
+          "close": 40000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
+          "tier": "green",
+          "shares": 17,
+          "stop_price": 36956
+        }
+      ],
+      "kospi_close": 6977.94,
+      "kospi_change_pct": 2.415,
+      "action": "EOD_HOLD",
+      "note": "8/14 18:00 종가 확정(W33 D5·금, 이번 주 마지막 영업일). **체결 0건(EOD_HOLD)** — 보유 5종 전부 손절·목표·트레일 종가 도달 0건. KOSPI **6,977.94(+2.42% vs 8/13 6,813.34·+164.60p)** — 스냅샷 yahoo:^KS11 = 웹 2출처 당일 게재 교차([뉴스핌 8/14 16:55](https://www.newspim.com/news/view/20260814001037) · [디지털데일리 8/14 16:17](https://www.ddaily.co.kr/page/view/2026081416172337579)). 장중 7,010.86 으로 3주 만에 7,000선을 터치했으나 종가 안착은 실패. 코스닥 864.65(+0.38%). 외국인 3조387억 순매수 vs 개인 1조9,819억·기관 1조300억 순매도 — 외국인 4거래일 연속 순매수. |등락| 2.42% < 5% 비쇼크일. **주간 KOSPI +11.49%(6,258.77→6,977.94) — 5거래일 연속 상승.** 오늘의 축은 어제와 다르다: 현대차 +8.24%·삼성전기 +3.66% 로 확산형이었고 삼성전자 +2.43%·SK하이닉스 +3.26% 는 지수(+2.42%)와 거의 나란해 `semi_rotation_reversal_w33` 승격 조건(상승분 절반 이상을 두 종목이 생산)은 **미성립 — 전환 카운터 리셋**. 종가: LIG넥스원 **815,000(-2.63%·지수 대비 -5.05%p)** · 하나금융지주 133,000(+1.53%·-0.89%p) · KB금융 168,500(+0.24%·-2.18%p) · NAVER 228,000(+0.66%·-1.76%p·최고 종가 경신) · 카카오 40,000(-0.25%·-2.67%p). **보유 5종 전부 지수 하회**(15시 예측 ⑤ 적중). equity **4,833,132원**(일일 **-0.268%**·주간 **+1.283%**·누적 -3.337%·미실현 +104,449·실현 -271,317·현금 2,072,632원 주식 57.1%/현금 42.9%). **주간 목표 4,819,617원 달성 유지**(초과 13,515원, 8/13 26,515원에서 축소). 일간 알파 -2.69%p·주간 알파 **-10.21%p**(주중 최대). §2-2 4건 전건 당일 결론(보류 0): LIG넥스원 손절 716,723→**718,606**(b) · 하나금융지주 손절 122,361→**122,604**(b) · 하나금융지주·KB금융 `target_gap` **유지**(신규 사유 = **캡 제외 참조선 재산출 143,167·186,334 기준 실괴리 +0.30%·+3.36% 로 12% 임계 미달** — 신호 자체가 산출 결함의 산물임을 수치로 확정). 목표가 오차 **5건 전건 산입**(LIG넥스원 -5.22% `섹터` 밴드 재이탈 · 하나금융지주 -7.38% `섹터` · KB금융 -12.51% `섹터` · NAVER -13.14% `가정오류` · **카카오 -10.79% `가정오류` D+3 첫 산입**). 은행 열위 **5일차 확정**(폭은 5거래일 연속 축소 — 하나 -0.89%p·KB -2.18%p) · **방산 열위 1일차 점등**(LIG -5.05%p·한화에어로 -4.53%p). thesis 5건 무변경(intact 3·weakening 2)이나 **카카오 상대강도 +3.81%p → +0.19%p 로 무효화선 0 에 0.19%p 근접** — 8/18 최우선 확인 항목. 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:11 수집, confidence high, 괴리 5종 모두 0.00%). ※학습·시뮬레이션 목적."
     },
     {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 133000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 122604
+      "date": "2026-08-18",
+      "equity": 4764528,
+      "cash": 2294228,
+      "daily_return_pct": -1.419,
+      "cumulative_return_pct": -4.709,
+      "holdings": [
+        {
+          "ticker": "079550",
+          "name": "LIG넥스원",
+          "close": 795000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
+          "tier": "green",
+          "shares": 1,
+          "stop_price": 718606
+        },
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 130700,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 122604
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 168500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
+          "tier": "green",
+          "shares": 3,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 217000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 106500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 96269
+        }
+      ],
+      "kospi_close": 6869.83,
+      "kospi_change_pct": -1.549,
+      "action": "EOD_HOLD",
+      "note": "8/18 18:00 종가 확정(W34 D1·화, 이번 주 첫 영업일). **청산 체결 0건(EOD_HOLD)** — 보유 5종 전부 손절·목표·트레일 종가 도달 0건. 오늘의 체결 3건은 전부 09시 슬롯분이다(카카오 17주 thesis 무효화 청산 · NAVER 1주 추가 · 신한지주 2주 신규). KOSPI **6,869.83(-1.55% vs 8/14 6,977.94·-108.11p)** — 6거래일 만의 하락. 스냅샷 yahoo:^KS11 = 웹 교차([뉴스핌 8/18 16:08 최종수정 16:12](https://www.newspim.com/news/view/20260818001094) · [파이낸셜뉴스 8/18 16:20](https://www.fnnews.com/news/202608181620577713) 헤드라인 일치). 장중 고점 7,216.62(+3.42%) → 종가 -1.55% 의 '전강후약'. 코스닥 834.20(-3.52%)으로 지수보다 두 배 넘게 빠져 성장주 쪽 조정이 더 깊었다. 수급: 기관 1조1,928억 순매도 · 개인 1조1,978억 순매수 · 외국인 468억 순매수(뉴스핌 최종본). |등락| 1.55% < 5% 비쇼크일. equity **4,764,528원**(일일 **-1.419%**·주간 -1.419%·누적 -4.709%·미실현 +62,433·실현 -297,905·현금 2,294,228원 주식 51.8%/현금 48.2%). **일간 알파 +0.130%p — 8/10 이후 처음으로 보유분이 지수를 이겼다**(은행 3종이 방어). 종가: LIG넥스원 795,000(-2.45%·지수 대비 -0.90%p) · 하나금융지주 130,700(-1.73%·-0.18%p) · KB금융 168,500(**0.00%·+1.55%p**) · NAVER 217,000(-4.82%·-3.27%p) · 신한지주 106,500(-0.84%·+0.71%p). **은행 3종 동반 열위 카운터 리셋** — 8/14 5일차 이후 오늘 은행 3종 평균 -0.86% 가 지수 -1.55% 를 +0.69%p 웃돌아 조건 미성립. 이에 따라 하나금융지주·KB금융 thesis 를 weakening → **intact** 로 복원(§2-4 대칭 판정). **방산 2종 동반 열위 3일 연속 미성립**(LIG -0.90%p 열위 · 한화에어로스페이스 -1.21% 는 +0.34%p 우위). **NAVER 인터넷 섹터 동반 확정** — 카카오 -4.37% 와 격차 0.45%p(임계 3.0%p 이내)로 15시 조건 성립, 분류 축을 `가정오류` → `섹터` 로 전환. §2-2 재조정 1건 전건 당일 결론(보류 0): LIG넥스원 목표 859,927 → **920,200**(a·앵커 2개 정렬, R/R 0.850 → 1.639). 나머지 4종은 R/R 하한 통과(하나 1.593·KB 2.727·NAVER 2.400·신한 1.110), estimate.review_required 0건, dynamic reprice_signals 0건. 목표가 오차 4건 산입(LIG넥스원 -7.55% `매크로` · 하나금융지주 -8.98% `매크로` · KB금융 -12.51% `섹터` · NAVER -17.33% `섹터`), 신한지주(-9.63%)는 진입 D+0 로 D+3 유예. `objective.kospi_week_start_close` 를 **6,977.94**(직전 주 최종 종가 8/14)로 확정 — 주간 알파 +0.130%p. 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 5종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
     },
     {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 168500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
-     "tier": "green",
-     "shares": 3,
-     "stop_price": 159662
+      "date": "2026-08-19",
+      "equity": 4725428,
+      "cash": 2294228,
+      "daily_return_pct": -0.821,
+      "cumulative_return_pct": -5.491,
+      "holdings": [
+        {
+          "ticker": "079550",
+          "name": "LIG넥스원",
+          "close": 796000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
+          "tier": "green",
+          "shares": 1,
+          "stop_price": 718606
+        },
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 127500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 122604
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 166400,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
+          "tier": "green",
+          "shares": 3,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 208000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 105000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 96269
+        }
+      ],
+      "kospi_close": 6471.17,
+      "kospi_change_pct": -5.803,
+      "action": "EOD_HOLD",
+      "note": "8/19 18:00 종가 확정(W34 D2·수). **체결 0건(EOD_HOLD)** — 보유 5종 전부 손절·목표·트레일 종가 도달 0건. KOSPI **6,471.17(-5.80% vs 8/18 6,869.83·-398.66p)** — 스냅샷 yahoo:^KS11 = 웹 2출처 당일 게재 교차([뉴스핌 8/19 마감시황](https://www.newspim.com/news/view/20260819001007) · [전자신문 8/19](https://www.etnews.com/20260819000341) 수치 일치). **|등락| 5.80% > 5% — 지수 쇼크일**(index_shock_stop_deferral 발동 조건 성립했으나 종가 이탈 종목 0 으로 적용 대상 없음). 장 초반 매도 사이드카 발동. 수급: 외국인 4조242억·기관 1조7,926억 순매도 vs 개인 5조6,403억 순매수. 원달러 1,397.7원. 코스닥 -1.17%. 지수를 만든 축은 반도체 단독 — SK하이닉스 1,500,000(-9.75%)·삼성전자 247,500(-7.82%). 원인 4갈래: 미 30년물 국채금리 19년 최고(장중 5.337%)·브렌트 90달러 재돌파·중동 지정학·엔비디아 순환금융 논란. 종가: LIG넥스원 **796,000(+0.13%·지수 대비 +5.93%p·5종 중 1위)** · 하나금융지주 127,500(-2.45%·+3.36%p) · KB금융 166,400(-1.25%·+4.55%p) · NAVER 208,000(-4.15%·+1.65%p·5종 중 최하위) · 신한지주 105,000(-1.41%·+4.39%p). equity **4,725,428원**(일일 **-0.821%**·주간 **-2.229%**·누적 -5.491%·미실현 +23,333·실현 -297,905·현금 2,294,228원 주식 51.5%/현금 48.5%). **일간 알파 +4.983%p·주간 알파 +5.034%p — 시뮬레이션 개시 이래 최대 일간 초과수익**. 반도체 무노출이라는 6주간의 미달 사유가 오늘 하루 방어로 되돌아왔다. **회복 전략 단계 defensive → caution 1단계 완화**(주간 누적 -2.229% > -3.5% floor, 임계 equity 4,663,972원 대비 +61,456원). §2-2 재조정 **0건** — R/R 5종 전부 bull 하한 1.1 통과(LIG 1.605·하나 3.288·KB 3.888·NAVER 5.477·신한 1.472), estimate.review_required 0건, dynamic reprice_signals 0건. 목표가 오차 4건 산입(LIG넥스원 -13.50% `가정오류` 신규 축 · 하나금융지주 -11.21% `매크로` · KB금융 -13.60% `매크로` · NAVER -20.76% `섹터`), 신한지주(-10.91%)는 진입 D+1 로 D+3 유예. thesis 5건 전부 **intact**(은행 열위 카운터 미점등 2일차·방산 2종 동반 열위 미점등). 선제추론 채점 6건(hit 3·partial 3·miss 0) — 15시 재예측 3건 중 2건 완전 적중으로 '급락일 09시 과소·15시 정확' 패턴 10회째. 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 5종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
     },
     {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 228000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
-     "tier": "green",
-     "shares": 1,
-     "stop_price": 198052
+      "date": "2026-08-20",
+      "equity": 4701805,
+      "cash": 1712005,
+      "daily_return_pct": -0.5,
+      "cumulative_return_pct": -5.964,
+      "holdings": [
+        {
+          "ticker": "079550",
+          "name": "LIG넥스원",
+          "close": 787000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
+          "tier": "green",
+          "shares": 1,
+          "stop_price": 718606
+        },
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 123400,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 122604
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 160000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
+          "tier": "orange",
+          "shares": 2,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 219500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 101100,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 96269
+        },
+        {
+          "ticker": "028260",
+          "name": "삼성물산",
+          "close": 374000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 318200
+        }
+      ],
+      "kospi_close": 6852.58,
+      "kospi_change_pct": 5.894,
+      "action": "EOD_PARTIAL_EXIT",
+      "note": "8/20 18:00 종가 확정(W34 D3·목). **청산 체결 1건** — KB금융 1주 SELL_ORANGE_STOP(160,000 종가 확정, 체결 159,368원, 왕복 -13,804원). 나머지 5종은 손절·목표·트레일 종가 도달 0건. KOSPI **6,852.58(+5.89% vs 8/19 6,471.17·+381.41p)** — 웹 2출처 당일 게재 교차(오피니언뉴스 8/20 · 위키트리 8/20, 지수·삼성전자 271,000(+9.49%)·SK하이닉스 1,691,000(+12.73%) 3개 값 모두 스냅샷과 일치). |등락| 5.89% > 5% — **지수 쇼크일**(index_shock_stop_deferral 조건 성립. 다만 규정 대상은 '손절/트레일 종가 이탈'이고 오늘 이탈 0건이라 적용 대상 없음. KB금융 축소는 손절 이탈이 아니라 tiered_alerts 🟠 확정에 따른 별개 분기라 유예 대상이 아니다). 수급: 외국인 1조7,092억 순매수 vs 개인 2조2,758억·기관 4,882억 순매도. 코스닥 840.89(+1.99%). 종가: LIG넥스원 787,000(-1.13%·지수 대비 -7.02%p) · 하나금융지주 123,400(-3.22%·-9.11%p) · KB금융 160,000(-3.85%·-9.74%p) · NAVER 219,500(+5.53%·-0.36%p) · 신한지주 101,100(-3.71%·-9.61%p) · 삼성물산 374,000(+7.78%·+1.89%p, 오늘 12:22 진입분). equity **4,701,805원**(일일 -0.5%·주간 -2.717%·누적 -5.964%·미실현 +13,514·실현 -311,709·현금 1,712,005원 주식 63.6%/현금 36.4%). **일간 알파 -6.39%p — 8/19 의 +4.98%p 가 하루 만에 반대로 뒤집혔다**(같은 반도체 축이 반대 방향으로 작동). 은행 3종 동반 열위 **점등 1일차**·방산 2종 동반 열위 **점등 1일차** — 12시·15시 슬롯이 '2일차'로 적은 것은 카운터 산정 오류이며 8/19 은행·방산 전 종목이 지수를 상회했으므로 오늘이 첫 확정일이다(18시가 정정). §2-2 재조정 **0건** — R/R 6종 전부 bull 하한 1.1 통과(LIG 1.948·하나 25.38·KB 96.4·NAVER 2.004·신한 3.468·삼성물산 1.403), estimate.review_required 0건, dynamic reprice_signals 0건. 목표가 오차 4건 산입(LIG넥스원 -14.48% `섹터` · 하나금융지주 -14.07% `섹터` · KB금융 -16.93% `섹터` · NAVER -16.38% `가정오류` 축 복귀), 신한지주(-14.22%)는 진입 D+2·삼성물산(-17.31%)은 D+0 로 D+3 유예. thesis 6건 전부 intact. 회복 단계 **caution 유지**(주간 누적 -2.717%, floor -3.5% 위 0.783%p). 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 6종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
     },
     {
-     "ticker": "035720",
-     "name": "카카오",
-     "close": 40000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:11 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-14",
-     "tier": "green",
-     "shares": 17,
-     "stop_price": 36956
+      "date": "2026-08-21",
+      "equity": 4691259,
+      "cash": 2404259,
+      "daily_return_pct": -0.224,
+      "cumulative_return_pct": -6.175,
+      "holdings": [
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 128800,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 124005
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 164300,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 222000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 104100,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 96269
+        },
+        {
+          "ticker": "028260",
+          "name": "삼성물산",
+          "close": 395500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 347091
+        }
+      ],
+      "kospi_close": 6912.95,
+      "kospi_change_pct": 0.881,
+      "action": "EOD_STOP_EXIT",
+      "note": "8/21 18:00 종가 확정(W34 D4·금, 이번 주 마지막 영업일). **청산 체결 1건 — LIG넥스원 1주 SELL_STOP**(종가 695,000 이 exit_levels 정본 손절 718,606 을 -3.28%, 트레일 1차선 707,684 를 -1.79% 이탈. 체결 692,254원·왕복 **-46,331원**·보유 52일 만에 종결). 나머지 5종은 손절·목표·트레일 종가 도달 0건. KOSPI **6,912.95(+0.881% vs 8/20 6,852.58·+60.37p)** — 스냅샷 yahoo:^KS11 = 웹 교차([오피니언뉴스 8/21](http://www.opinionnews.co.kr/news/articleView.html?idxno=143388), 지수·삼성전자 281,500(+3.87%)·SK하이닉스 1,730,000(+2.31%) 3개 값 모두 스냅샷과 일치). |등락| 0.881% < 5% **비쇼크일** — 따라서 index_shock_stop_deferral 유예 없이 당일 closing_auction 체결이 규약이다. 코스닥 **801.94(-4.63%)** 로 지수와 정반대 — 대형주 강세·중소형주 급락의 극단적 양극화. 수급: 기관 2,487억 순매수 vs 외국인 1,757억·개인 1조1,662억 순매도. 종가: LIG넥스원 **695,000(-11.69%·지수 대비 -12.57%p·청산)** · 하나금융지주 128,800(+4.38%·+3.50%p) · KB금융 164,300(+2.69%·+1.81%p) · NAVER 222,000(+1.14%·+0.26%p) · 신한지주 104,100(+2.97%·+2.09%p) · 삼성물산 395,500(+5.75%·+4.87%p·최고 종가 경신). **보유 6종 중 5종이 지수를 상회했는데 계좌는 마이너스다** — LIG넥스원 1종이 -92,000원을 만드는 동안 나머지 5종이 +87,700원을 벌어 상쇄되지 못했다. equity **4,691,259원**(일일 **-0.224%**·주간 **-2.935%**·누적 -6.175%·미실현 +49,299·실현 -358,040·현금 2,404,259원 주식 48.8%/현금 51.2%). 일간 알파 **-1.105%p**·주간 알파 **-2.004%p**. **회복 전략 단계 defensive → caution 1단계 완화**(주간 누적 -2.935% > floor -3.5%, 09시 defensive 판정의 사유였던 -3.934% 가 종가로 해소). §2-2 재조정 **2건 전건 당일 결론(보류 0)**: 삼성물산 손절 318,200 → **347,091**(b — R/R 0.735 < bull 하한 1.1 + `stop_too_wide` 동시 발동, R/R 1.173 복원) · 하나금융지주 손절 122,604 → **124,005**(b — estimate.review_required 8회 연속). 목표가 오차 **5건 산입**(LIG넥스원 -24.47% `개별` · 하나금융지주 -10.31% `매크로` · KB금융 -14.69% `가정오류` · NAVER -15.42% `가정오류` · 신한지주 -11.67% `가정오류` D+3 첫 산입), 삼성물산(-12.56%)은 진입 D+1 로 D+3 유예. thesis: LIG넥스원 **invalidated**(hard 조건 '손절가 종가 이탈' 충족) 후 청산 종결, 나머지 5건 전부 intact. 은행 3종 열위 카운터 **0 리셋**(3종 전부 지수 상회) · 방산 2종 동반 열위 **2일차**(LIG -12.57%p·한화에어로 -7.91%p). 선제추론 채점 5건(hit 3·partial 1·miss 1). 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:02 수집, 6종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
+    },
+    {
+      "date": "2026-08-24",
+      "equity": 4627859,
+      "cash": 2404259,
+      "daily_return_pct": -1.351,
+      "cumulative_return_pct": -7.443,
+      "holdings": [
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 128700,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 2026-08-25T18:01 수집 naver+yahoo 2출처 일치 · five_day_history[2026-08-24] 소급 재구성",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 124005
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 163100,
+          "source_confidence": "high",
+          "source_method": "동일 — 소급 재구성",
+          "tier": "yellow",
+          "shares": 2,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 223500,
+          "source_confidence": "high",
+          "source_method": "동일 — 소급 재구성",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 103300,
+          "source_confidence": "high",
+          "source_method": "동일 — 소급 재구성",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 96269
+        },
+        {
+          "ticker": "028260",
+          "name": "삼성물산",
+          "close": 364500,
+          "source_confidence": "high",
+          "source_method": "동일 — 소급 재구성",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 347091
+        }
+      ],
+      "kospi_close": 6696.96,
+      "kospi_change_pct": -3.12,
+      "action": "EOD_BACKFILL",
+      "note": "**8/24(월) 18시 슬롯 미실행으로 그날 EOD 확정이 누락됐다** — reports/2026-08-24-18.md 없음, trade_log 에 8/24 EOD_MARK 없음(마지막 EOD_MARK=8/21). 리포트 백필은 report_contract §7-2 로 금지이므로 하지 않고, 확정 종가로부터 재구성 가능한 state 만 8/3 선례대로 소급 복구한다. 종가 출처: 8/25 18:01 수집 스냅샷의 five_day_history[2026-08-24](naver·yahoo 2출처 동일). equity 4,627,859원은 weekly_plan.objective.current_equity(8/25 15:10 기록)와 일치해 교차 확인된다. trade_log 의 8/24 EOD_MARK 도 같은 근거로 시간순 위치에 소급 삽입했다(`backfilled:true` 라벨) — 그 공백 때문에 check_trade_log_gate 의 recycled_value_gate 가 8/25 확정 종가 6,742.74 를 직전 종가 사슬에 잇지 못해 7/21 종가 6,747.95 와의 우연한 0.07% 근접을 '묵은 값 재활용'으로 오탐해 CI 를 FAIL 시켰기 때문이다. 리포트(reports/2026-08-24-18.md)는 §7-2 대로 만들지 않는다."
+    },
+    {
+      "date": "2026-08-25",
+      "equity": 4637623,
+      "cash": 2014423,
+      "daily_return_pct": 0.211,
+      "cumulative_return_pct": -7.248,
+      "holdings": [
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 130800,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 124005
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 166400,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 220500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 106500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 98534
+        },
+        {
+          "ticker": "028260",
+          "name": "삼성물산",
+          "close": 367000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 347091
+        },
+        {
+          "ticker": "068270",
+          "name": "셀트리온",
+          "close": 189600,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 181139
+        }
+      ],
+      "kospi_close": 6742.74,
+      "kospi_change_pct": 0.684,
+      "action": "EOD_MARK",
+      "note": "8/25(화) W35 D2 종가 확정. **체결 0건** — 손절·목표·트레일 종가 도달 0건(최근접 하나금융지주 종가 130,800 vs 손절 124,005, 여유 +5.20%). KOSPI **6,742.74(+0.684% vs 8/24 6,696.96·+45.78p)** — 3출처 교차(스냅샷 yahoo:^KS11 · 머니투데이 8/25 16:15 · 다음/뉴시스 계열 8/25 16:15, 신한지주 106,500(+3.1%)·KB금융 +2.02%·삼성전자 257,000 보합 개별값까지 일치). **장중 -4.30%(6,408.82)까지 밀렸다가 전일 종가 위로 되올라온 V자 되돌림**. |등락| 0.684% < 5% 비쇼크일. 수급이 오늘의 핵심 확정 사실이다 — **외국인 3조3,595억~3조8,203억 순매도**(출처별 편차)를 개인 9,138억~1조523억·기관 8,537억~1조1,706억이 받았다. **되돌림의 주체는 외국인 순매수 전환이 아니다** → 7/29 codify 룰에 따라 내일 밴드 상단을 이 반등만으로 열지 않는다. equity **4,637,623원**(일일 **+0.211%**·주간 **-1.143%**·누적 -7.248%·미실현 -4,337·실현 -358,040·현금 2,014,423원 주식 56.6%/현금 43.4%). 일간 알파 -0.473%p·주간 알파 **+1.319%p**(주간은 플러스). 회복 전략 단계 **normal 유지**(주간 -1.143% > floor -2.0%). §2-2 재조정 1건 당일 결론(보류 0): 신한지주 손절 96,269 → **98,534**(b — dynamic_reprice `stop_too_wide` 단독 발동, R/R 1.110 → 1.425). 목표가 오차 5건 산입(하나금융지주 -8.91% `매크로` · KB금융 -13.60% `가정오류` · NAVER -15.99% `가정오류` · 신한지주 -9.63% `가정오류` · 삼성물산 -18.86% `가정오류` D+3 첫 산입), 셀트리온(-11.24%)은 진입 D+0 로 D+3 유예. thesis 6건 전부 intact(bio_cdmo 몰입 EOD 재산출 2/2 유지·excess_60d 6종 전부 0 위). 은행 3종 열위 카운터 **0 유지**(3종 전부 지수 상회) · 삼성물산-삼성전자 동반 지수 하회 카운터 **0 리셋**(삼성물산 +0.01%p 상회). 선제추론 채점 **12건(hit 6·partial 4·miss 2)** — 8/24 백로그 6건 포함."
+    },
+    {
+      "date": "2026-08-26",
+      "equity": 4697023,
+      "cash": 2014423,
+      "daily_return_pct": 1.281,
+      "cumulative_return_pct": -6.06,
+      "holdings": [
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 133200,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 124005
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 166600,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 220000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 107400,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 98534
+        },
+        {
+          "ticker": "028260",
+          "name": "삼성물산",
+          "close": 387500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 347091
+        },
+        {
+          "ticker": "068270",
+          "name": "셀트리온",
+          "close": 193400,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 181139
+        }
+      ],
+      "kospi_close": 6808.21,
+      "kospi_change_pct": 0.971,
+      "action": "EOD_MARK",
+      "note": "8/26(수) W35 D3 종가 확정. **체결 0건(EOD_MARK)** — 보유 6종 전부 손절·목표·트레일 종가 도달 0건(최근접 하나금융지주 종가 133,200 vs 손절 124,005, 여유 +7.42%). KOSPI **6,808.21(+0.971% vs 8/25 6,742.74·+65.47p)** — 출처는 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 6종 price_gap 전부 0.00%, confidence high). **웹 교차확인은 게재일 검증에서 전건 기각** — 검색이 올린 후보 3건(dgmbc '8,047.51' · Businesskorea '6,258.77' · imbc '6,800선')을 게재일로 대조했고 imbc 기사는 WebFetch 로 **2026-08-18(종가 6,869.83)** 임을 확인해 기각했다(v2.6 source_date_verification). 따라서 지수·종목 종가는 스냅샷 값만 인용하고 **당일 확정 수급(외국인·기관)은 미확인으로 남긴다** — pykrx 미설치로 fetch_investor_flows 도 실패. |등락| 0.971% < 5% 비쇼크일. 장중 흐름은 개장 6,727.25(-0.23%) → 12:10 6,862.09(+1.77%) → 15:01 6,840.58 → 종가 6,808.21 의 '전강후약'. 종가: 삼성물산 **387,500(+5.586%·지수 대비 +4.615%p·6종 1위)** · 셀트리온 193,400(+2.004%·+1.033%p) · 하나금융지주 133,200(+1.835%·+0.864%p) · 신한지주 107,400(+0.845%·-0.126%p) · KB금융 166,600(+0.120%·-0.851%p) · NAVER 220,000(-0.227%·-1.198%p). equity **4,697,023원**(일일 **+1.281%**·주간 **+0.123%**·누적 -6.06%·미실현 +55,063·실현 -358,040·현금 2,014,423원 주식 57.1%/현금 42.9%). 일간 알파 **+0.310%p**·주간 알파 **+1.638%p**. 회복 전략 단계 **normal 유지**(주간 누적 +0.123% > floor -2.0%). §2-2 재조정 **0건** — R/R 6종 전부 bull 하한 1.1 통과(하나 1.131·KB 3.747·NAVER 1.935·신한 1.179·삼성물산 1.604·셀트리온 1.648), estimate.review_required 0건, dynamic reprice_signals 0건. 다만 **하나금융지주 R/R 1.131 은 하한 1.1 위 0.031 로 6종 중 최근접**이다. 목표가 오차 5건 산입(하나금융지주 -7.24% `매크로` · KB금융 -13.50% `가정오류` · NAVER -16.19% `섹터`(카카오 동반 열위 격차 1.06%p) · 신한지주 -8.87% `가정오류` · 삼성물산 -14.33% `가정오류`), 셀트리온(-9.46%)은 진입 D+1 로 D+3 유예. **5건 전부 전일 대비 괴리 축소**. thesis 6건 전부 intact 이나 **셀트리온 bio_cdmo `immersion_met` 이 EOD 재산출본에서 true → false 로 내려가 하드 무효화 카운터 1일차 점등**(met 1/2 — price_reversal 만 생존, sector_breadth·rs_inflection 소멸). 2거래일 연속이면 손절·목표와 무관하게 청산 조건이다. 은행 3종 동반 열위 카운터 **0 유지**(하나금융지주 +0.864%p 상회로 3/3 미성립) · 삼성물산-삼성전자 동반 하회 카운터 0 유지(둘 다 상회). 자동차 avoid 해제 몰입이 **3/2 → 1/2 로 후퇴**(8/25 대비 역행) — 해제 판정 원점. 선제추론 채점 6건(hit 4·partial 2·miss 0). ※학습·시뮬레이션 목적."
+    },
+    {
+      "date": "2026-08-27",
+      "equity": 4669223,
+      "cash": 2014423,
+      "daily_return_pct": -0.592,
+      "cumulative_return_pct": -6.616
+    },
+    {
+      "date": "2026-08-28",
+      "equity": 4691915,
+      "cash": 2394315,
+      "daily_return_pct": 0.486,
+      "cumulative_return_pct": -6.162,
+      "holdings": [
+        {
+          "ticker": "086790",
+          "name": "하나금융지주",
+          "close": 136000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
+          "tier": "green",
+          "shares": 4,
+          "stop_price": 126290
+        },
+        {
+          "ticker": "105560",
+          "name": "KB금융",
+          "close": 171600,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 159662
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "close": 220500,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 198052
+        },
+        {
+          "ticker": "055550",
+          "name": "신한지주",
+          "close": 109700,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 102328
+        },
+        {
+          "ticker": "028260",
+          "name": "삼성물산",
+          "close": 375000,
+          "source_confidence": "high",
+          "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
+          "tier": "green",
+          "shares": 2,
+          "stop_price": 347091
+        }
+      ],
+      "kospi_close": 6788.88,
+      "kospi_change_pct": -1.787,
+      "action": "EOD_SETTLE",
+      "note": "8/28(금) W35 D5 종가 확정. **체결 1건 — 셀트리온(068270) 2주 전량 종가 청산**(thesis 하드 무효화 집행, 종가 190,700 → 체결 189,946원·회수 379,892원·왕복 -9,944원 -2.55%). 가격 트리거 청산은 0건(보유 5종 손절·목표·트레일 종가 도달 없음, 최근접 하나금융지주 손절 여유 -7.14%). KOSPI **6,788.88(-1.787% vs 8/27 6,912.37·-123.49p)** — 3출처 교차(스냅샷 naver=yahoo 2출처 당일자 일치 · TradingEconomics 2026-08-28 '-1.79% to close at 6,789' · Yahoo Finance ^KS11 15:32 KST close 6,788.88 -123.49). |등락| 1.787% < 5% 비쇼크일. 보유 6종 **전부 지수 상회**(하나 +3.58%p·NAVER +3.64%p·KB +3.87%p·신한 +2.61%p·삼성물산 +1.65%p·셀트리온 +1.47%p) — 8/27 의 '6종 전부 하회 2거래일 연속'이 하루 만에 정반대로 뒤집혔다. equity **4,691,915원**(일일 **+0.486%**·주간 **+0.014%**·누적 -6.162%·미실현 +59,899·실현 -367,984·현금 2,394,315원 주식 49.0%/현금 51.0%). 일간 알파 **+2.273%p**·주간 알파 **+1.809%p**. 회복 전략 단계 **normal 유지**(주간 +0.014% > floor -2.0%). §2-2 재조정 2건 전건 당일 결론(보류 0): 하나금융지주 손절 124,867 → 126,290(b, R/R 0.683 → 0.783 — **하한 미회복·8/31 에스컬레이션 부착**), 신한지주 101,140 → 102,328(b, R/R 0.952 → **1.106 하한 회복**). 목표가 오차 6건 산입(매크로 2·섹터 2·가정오류 2). thesis: 셀트리온 invalidated 집행 완료, 삼성물산 **weakening → intact 복귀**(excess_60d EOD 확정 **+0.11** 로 하드 조건 미성립, 잔여 여유는 ATR 6.24% 의 0.018배), NAVER intact(excess_60d **+1.48** 로 0 위 유지), 은행 3종 intact·섹터 열위 카운터 **0 리셋**(3/3 상회). **데이터 정정 17건** — exit_tracking 의 8/25·8/26·8/28 보유종목 엔트리가 09시 슬롯이 적재한 장중값이었음을 확인해 확정 종가로 정정(과거 판정 번복 없음)."
     }
-   ],
-   "kospi_close": 6977.94,
-   "kospi_change_pct": 2.415,
-   "action": "EOD_HOLD",
-   "note": "8/14 18:00 종가 확정(W33 D5·금, 이번 주 마지막 영업일). **체결 0건(EOD_HOLD)** — 보유 5종 전부 손절·목표·트레일 종가 도달 0건. KOSPI **6,977.94(+2.42% vs 8/13 6,813.34·+164.60p)** — 스냅샷 yahoo:^KS11 = 웹 2출처 당일 게재 교차([뉴스핌 8/14 16:55](https://www.newspim.com/news/view/20260814001037) · [디지털데일리 8/14 16:17](https://www.ddaily.co.kr/page/view/2026081416172337579)). 장중 7,010.86 으로 3주 만에 7,000선을 터치했으나 종가 안착은 실패. 코스닥 864.65(+0.38%). 외국인 3조387억 순매수 vs 개인 1조9,819억·기관 1조300억 순매도 — 외국인 4거래일 연속 순매수. |등락| 2.42% < 5% 비쇼크일. **주간 KOSPI +11.49%(6,258.77→6,977.94) — 5거래일 연속 상승.** 오늘의 축은 어제와 다르다: 현대차 +8.24%·삼성전기 +3.66% 로 확산형이었고 삼성전자 +2.43%·SK하이닉스 +3.26% 는 지수(+2.42%)와 거의 나란해 `semi_rotation_reversal_w33` 승격 조건(상승분 절반 이상을 두 종목이 생산)은 **미성립 — 전환 카운터 리셋**. 종가: LIG넥스원 **815,000(-2.63%·지수 대비 -5.05%p)** · 하나금융지주 133,000(+1.53%·-0.89%p) · KB금융 168,500(+0.24%·-2.18%p) · NAVER 228,000(+0.66%·-1.76%p·최고 종가 경신) · 카카오 40,000(-0.25%·-2.67%p). **보유 5종 전부 지수 하회**(15시 예측 ⑤ 적중). equity **4,833,132원**(일일 **-0.268%**·주간 **+1.283%**·누적 -3.337%·미실현 +104,449·실현 -271,317·현금 2,072,632원 주식 57.1%/현금 42.9%). **주간 목표 4,819,617원 달성 유지**(초과 13,515원, 8/13 26,515원에서 축소). 일간 알파 -2.69%p·주간 알파 **-10.21%p**(주중 최대). §2-2 4건 전건 당일 결론(보류 0): LIG넥스원 손절 716,723→**718,606**(b) · 하나금융지주 손절 122,361→**122,604**(b) · 하나금융지주·KB금융 `target_gap` **유지**(신규 사유 = **캡 제외 참조선 재산출 143,167·186,334 기준 실괴리 +0.30%·+3.36% 로 12% 임계 미달** — 신호 자체가 산출 결함의 산물임을 수치로 확정). 목표가 오차 **5건 전건 산입**(LIG넥스원 -5.22% `섹터` 밴드 재이탈 · 하나금융지주 -7.38% `섹터` · KB금융 -12.51% `섹터` · NAVER -13.14% `가정오류` · **카카오 -10.79% `가정오류` D+3 첫 산입**). 은행 열위 **5일차 확정**(폭은 5거래일 연속 축소 — 하나 -0.89%p·KB -2.18%p) · **방산 열위 1일차 점등**(LIG -5.05%p·한화에어로 -4.53%p). thesis 5건 무변경(intact 3·weakening 2)이나 **카카오 상대강도 +3.81%p → +0.19%p 로 무효화선 0 에 0.19%p 근접** — 8/18 최우선 확인 항목. 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:11 수집, confidence high, 괴리 5종 모두 0.00%). ※학습·시뮬레이션 목적."
-  },
-  {
-   "date": "2026-08-18",
-   "equity": 4764528,
-   "cash": 2294228,
-   "daily_return_pct": -1.419,
-   "cumulative_return_pct": -4.709,
-   "holdings": [
-    {
-     "ticker": "079550",
-     "name": "LIG넥스원",
-     "close": 795000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
-     "tier": "green",
-     "shares": 1,
-     "stop_price": 718606
-    },
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 130700,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 122604
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 168500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
-     "tier": "green",
-     "shares": 3,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 217000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 106500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-18",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 96269
-    }
-   ],
-   "kospi_close": 6869.83,
-   "kospi_change_pct": -1.549,
-   "action": "EOD_HOLD",
-   "note": "8/18 18:00 종가 확정(W34 D1·화, 이번 주 첫 영업일). **청산 체결 0건(EOD_HOLD)** — 보유 5종 전부 손절·목표·트레일 종가 도달 0건. 오늘의 체결 3건은 전부 09시 슬롯분이다(카카오 17주 thesis 무효화 청산 · NAVER 1주 추가 · 신한지주 2주 신규). KOSPI **6,869.83(-1.55% vs 8/14 6,977.94·-108.11p)** — 6거래일 만의 하락. 스냅샷 yahoo:^KS11 = 웹 교차([뉴스핌 8/18 16:08 최종수정 16:12](https://www.newspim.com/news/view/20260818001094) · [파이낸셜뉴스 8/18 16:20](https://www.fnnews.com/news/202608181620577713) 헤드라인 일치). 장중 고점 7,216.62(+3.42%) → 종가 -1.55% 의 '전강후약'. 코스닥 834.20(-3.52%)으로 지수보다 두 배 넘게 빠져 성장주 쪽 조정이 더 깊었다. 수급: 기관 1조1,928억 순매도 · 개인 1조1,978억 순매수 · 외국인 468억 순매수(뉴스핌 최종본). |등락| 1.55% < 5% 비쇼크일. equity **4,764,528원**(일일 **-1.419%**·주간 -1.419%·누적 -4.709%·미실현 +62,433·실현 -297,905·현금 2,294,228원 주식 51.8%/현금 48.2%). **일간 알파 +0.130%p — 8/10 이후 처음으로 보유분이 지수를 이겼다**(은행 3종이 방어). 종가: LIG넥스원 795,000(-2.45%·지수 대비 -0.90%p) · 하나금융지주 130,700(-1.73%·-0.18%p) · KB금융 168,500(**0.00%·+1.55%p**) · NAVER 217,000(-4.82%·-3.27%p) · 신한지주 106,500(-0.84%·+0.71%p). **은행 3종 동반 열위 카운터 리셋** — 8/14 5일차 이후 오늘 은행 3종 평균 -0.86% 가 지수 -1.55% 를 +0.69%p 웃돌아 조건 미성립. 이에 따라 하나금융지주·KB금융 thesis 를 weakening → **intact** 로 복원(§2-4 대칭 판정). **방산 2종 동반 열위 3일 연속 미성립**(LIG -0.90%p 열위 · 한화에어로스페이스 -1.21% 는 +0.34%p 우위). **NAVER 인터넷 섹터 동반 확정** — 카카오 -4.37% 와 격차 0.45%p(임계 3.0%p 이내)로 15시 조건 성립, 분류 축을 `가정오류` → `섹터` 로 전환. §2-2 재조정 1건 전건 당일 결론(보류 0): LIG넥스원 목표 859,927 → **920,200**(a·앵커 2개 정렬, R/R 0.850 → 1.639). 나머지 4종은 R/R 하한 통과(하나 1.593·KB 2.727·NAVER 2.400·신한 1.110), estimate.review_required 0건, dynamic reprice_signals 0건. 목표가 오차 4건 산입(LIG넥스원 -7.55% `매크로` · 하나금융지주 -8.98% `매크로` · KB금융 -12.51% `섹터` · NAVER -17.33% `섹터`), 신한지주(-9.63%)는 진입 D+0 로 D+3 유예. `objective.kospi_week_start_close` 를 **6,977.94**(직전 주 최종 종가 8/14)로 확정 — 주간 알파 +0.130%p. 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 5종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
-  },
-  {
-   "date": "2026-08-19",
-   "equity": 4725428,
-   "cash": 2294228,
-   "daily_return_pct": -0.821,
-   "cumulative_return_pct": -5.491,
-   "holdings": [
-    {
-     "ticker": "079550",
-     "name": "LIG넥스원",
-     "close": 796000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
-     "tier": "green",
-     "shares": 1,
-     "stop_price": 718606
-    },
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 127500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 122604
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 166400,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
-     "tier": "green",
-     "shares": 3,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 208000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 105000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-19",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 96269
-    }
-   ],
-   "kospi_close": 6471.17,
-   "kospi_change_pct": -5.803,
-   "action": "EOD_HOLD",
-   "note": "8/19 18:00 종가 확정(W34 D2·수). **체결 0건(EOD_HOLD)** — 보유 5종 전부 손절·목표·트레일 종가 도달 0건. KOSPI **6,471.17(-5.80% vs 8/18 6,869.83·-398.66p)** — 스냅샷 yahoo:^KS11 = 웹 2출처 당일 게재 교차([뉴스핌 8/19 마감시황](https://www.newspim.com/news/view/20260819001007) · [전자신문 8/19](https://www.etnews.com/20260819000341) 수치 일치). **|등락| 5.80% > 5% — 지수 쇼크일**(index_shock_stop_deferral 발동 조건 성립했으나 종가 이탈 종목 0 으로 적용 대상 없음). 장 초반 매도 사이드카 발동. 수급: 외국인 4조242억·기관 1조7,926억 순매도 vs 개인 5조6,403억 순매수. 원달러 1,397.7원. 코스닥 -1.17%. 지수를 만든 축은 반도체 단독 — SK하이닉스 1,500,000(-9.75%)·삼성전자 247,500(-7.82%). 원인 4갈래: 미 30년물 국채금리 19년 최고(장중 5.337%)·브렌트 90달러 재돌파·중동 지정학·엔비디아 순환금융 논란. 종가: LIG넥스원 **796,000(+0.13%·지수 대비 +5.93%p·5종 중 1위)** · 하나금융지주 127,500(-2.45%·+3.36%p) · KB금융 166,400(-1.25%·+4.55%p) · NAVER 208,000(-4.15%·+1.65%p·5종 중 최하위) · 신한지주 105,000(-1.41%·+4.39%p). equity **4,725,428원**(일일 **-0.821%**·주간 **-2.229%**·누적 -5.491%·미실현 +23,333·실현 -297,905·현금 2,294,228원 주식 51.5%/현금 48.5%). **일간 알파 +4.983%p·주간 알파 +5.034%p — 시뮬레이션 개시 이래 최대 일간 초과수익**. 반도체 무노출이라는 6주간의 미달 사유가 오늘 하루 방어로 되돌아왔다. **회복 전략 단계 defensive → caution 1단계 완화**(주간 누적 -2.229% > -3.5% floor, 임계 equity 4,663,972원 대비 +61,456원). §2-2 재조정 **0건** — R/R 5종 전부 bull 하한 1.1 통과(LIG 1.605·하나 3.288·KB 3.888·NAVER 5.477·신한 1.472), estimate.review_required 0건, dynamic reprice_signals 0건. 목표가 오차 4건 산입(LIG넥스원 -13.50% `가정오류` 신규 축 · 하나금융지주 -11.21% `매크로` · KB금융 -13.60% `매크로` · NAVER -20.76% `섹터`), 신한지주(-10.91%)는 진입 D+1 로 D+3 유예. thesis 5건 전부 **intact**(은행 열위 카운터 미점등 2일차·방산 2종 동반 열위 미점등). 선제추론 채점 6건(hit 3·partial 3·miss 0) — 15시 재예측 3건 중 2건 완전 적중으로 '급락일 09시 과소·15시 정확' 패턴 10회째. 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 5종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
-  },
-  {
-   "date": "2026-08-20",
-   "equity": 4701805,
-   "cash": 1712005,
-   "daily_return_pct": -0.5,
-   "cumulative_return_pct": -5.964,
-   "holdings": [
-    {
-     "ticker": "079550",
-     "name": "LIG넥스원",
-     "close": 787000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
-     "tier": "green",
-     "shares": 1,
-     "stop_price": 718606
-    },
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 123400,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 122604
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 160000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
-     "tier": "orange",
-     "shares": 2,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 219500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 101100,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 96269
-    },
-    {
-     "ticker": "028260",
-     "name": "삼성물산",
-     "close": 374000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-20",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 318200
-    }
-   ],
-   "kospi_close": 6852.58,
-   "kospi_change_pct": 5.894,
-   "action": "EOD_PARTIAL_EXIT",
-   "note": "8/20 18:00 종가 확정(W34 D3·목). **청산 체결 1건** — KB금융 1주 SELL_ORANGE_STOP(160,000 종가 확정, 체결 159,368원, 왕복 -13,804원). 나머지 5종은 손절·목표·트레일 종가 도달 0건. KOSPI **6,852.58(+5.89% vs 8/19 6,471.17·+381.41p)** — 웹 2출처 당일 게재 교차(오피니언뉴스 8/20 · 위키트리 8/20, 지수·삼성전자 271,000(+9.49%)·SK하이닉스 1,691,000(+12.73%) 3개 값 모두 스냅샷과 일치). |등락| 5.89% > 5% — **지수 쇼크일**(index_shock_stop_deferral 조건 성립. 다만 규정 대상은 '손절/트레일 종가 이탈'이고 오늘 이탈 0건이라 적용 대상 없음. KB금융 축소는 손절 이탈이 아니라 tiered_alerts 🟠 확정에 따른 별개 분기라 유예 대상이 아니다). 수급: 외국인 1조7,092억 순매수 vs 개인 2조2,758억·기관 4,882억 순매도. 코스닥 840.89(+1.99%). 종가: LIG넥스원 787,000(-1.13%·지수 대비 -7.02%p) · 하나금융지주 123,400(-3.22%·-9.11%p) · KB금융 160,000(-3.85%·-9.74%p) · NAVER 219,500(+5.53%·-0.36%p) · 신한지주 101,100(-3.71%·-9.61%p) · 삼성물산 374,000(+7.78%·+1.89%p, 오늘 12:22 진입분). equity **4,701,805원**(일일 -0.5%·주간 -2.717%·누적 -5.964%·미실현 +13,514·실현 -311,709·현금 1,712,005원 주식 63.6%/현금 36.4%). **일간 알파 -6.39%p — 8/19 의 +4.98%p 가 하루 만에 반대로 뒤집혔다**(같은 반도체 축이 반대 방향으로 작동). 은행 3종 동반 열위 **점등 1일차**·방산 2종 동반 열위 **점등 1일차** — 12시·15시 슬롯이 '2일차'로 적은 것은 카운터 산정 오류이며 8/19 은행·방산 전 종목이 지수를 상회했으므로 오늘이 첫 확정일이다(18시가 정정). §2-2 재조정 **0건** — R/R 6종 전부 bull 하한 1.1 통과(LIG 1.948·하나 25.38·KB 96.4·NAVER 2.004·신한 3.468·삼성물산 1.403), estimate.review_required 0건, dynamic reprice_signals 0건. 목표가 오차 4건 산입(LIG넥스원 -14.48% `섹터` · 하나금융지주 -14.07% `섹터` · KB금융 -16.93% `섹터` · NAVER -16.38% `가정오류` 축 복귀), 신한지주(-14.22%)는 진입 D+2·삼성물산(-17.31%)은 D+0 로 D+3 유예. thesis 6건 전부 intact. 회복 단계 **caution 유지**(주간 누적 -2.717%, floor -3.5% 위 0.783%p). 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 6종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
-  },
-  {
-   "date": "2026-08-21",
-   "equity": 4691259,
-   "cash": 2404259,
-   "daily_return_pct": -0.224,
-   "cumulative_return_pct": -6.175,
-   "holdings": [
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 128800,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 124005
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 164300,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 222000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 104100,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 96269
-    },
-    {
-     "ticker": "028260",
-     "name": "삼성물산",
-     "close": 395500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:02 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-21",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 347091
-    }
-   ],
-   "kospi_close": 6912.95,
-   "kospi_change_pct": 0.881,
-   "action": "EOD_STOP_EXIT",
-   "note": "8/21 18:00 종가 확정(W34 D4·금, 이번 주 마지막 영업일). **청산 체결 1건 — LIG넥스원 1주 SELL_STOP**(종가 695,000 이 exit_levels 정본 손절 718,606 을 -3.28%, 트레일 1차선 707,684 를 -1.79% 이탈. 체결 692,254원·왕복 **-46,331원**·보유 52일 만에 종결). 나머지 5종은 손절·목표·트레일 종가 도달 0건. KOSPI **6,912.95(+0.881% vs 8/20 6,852.58·+60.37p)** — 스냅샷 yahoo:^KS11 = 웹 교차([오피니언뉴스 8/21](http://www.opinionnews.co.kr/news/articleView.html?idxno=143388), 지수·삼성전자 281,500(+3.87%)·SK하이닉스 1,730,000(+2.31%) 3개 값 모두 스냅샷과 일치). |등락| 0.881% < 5% **비쇼크일** — 따라서 index_shock_stop_deferral 유예 없이 당일 closing_auction 체결이 규약이다. 코스닥 **801.94(-4.63%)** 로 지수와 정반대 — 대형주 강세·중소형주 급락의 극단적 양극화. 수급: 기관 2,487억 순매수 vs 외국인 1,757억·개인 1조1,662억 순매도. 종가: LIG넥스원 **695,000(-11.69%·지수 대비 -12.57%p·청산)** · 하나금융지주 128,800(+4.38%·+3.50%p) · KB금융 164,300(+2.69%·+1.81%p) · NAVER 222,000(+1.14%·+0.26%p) · 신한지주 104,100(+2.97%·+2.09%p) · 삼성물산 395,500(+5.75%·+4.87%p·최고 종가 경신). **보유 6종 중 5종이 지수를 상회했는데 계좌는 마이너스다** — LIG넥스원 1종이 -92,000원을 만드는 동안 나머지 5종이 +87,700원을 벌어 상쇄되지 못했다. equity **4,691,259원**(일일 **-0.224%**·주간 **-2.935%**·누적 -6.175%·미실현 +49,299·실현 -358,040·현금 2,404,259원 주식 48.8%/현금 51.2%). 일간 알파 **-1.105%p**·주간 알파 **-2.004%p**. **회복 전략 단계 defensive → caution 1단계 완화**(주간 누적 -2.935% > floor -3.5%, 09시 defensive 판정의 사유였던 -3.934% 가 종가로 해소). §2-2 재조정 **2건 전건 당일 결론(보류 0)**: 삼성물산 손절 318,200 → **347,091**(b — R/R 0.735 < bull 하한 1.1 + `stop_too_wide` 동시 발동, R/R 1.173 복원) · 하나금융지주 손절 122,604 → **124,005**(b — estimate.review_required 8회 연속). 목표가 오차 **5건 산입**(LIG넥스원 -24.47% `개별` · 하나금융지주 -10.31% `매크로` · KB금융 -14.69% `가정오류` · NAVER -15.42% `가정오류` · 신한지주 -11.67% `가정오류` D+3 첫 산입), 삼성물산(-12.56%)은 진입 D+1 로 D+3 유예. thesis: LIG넥스원 **invalidated**(hard 조건 '손절가 종가 이탈' 충족) 후 청산 종결, 나머지 5건 전부 intact. 은행 3종 열위 카운터 **0 리셋**(3종 전부 지수 상회) · 방산 2종 동반 열위 **2일차**(LIG -12.57%p·한화에어로 -7.91%p). 선제추론 채점 5건(hit 3·partial 1·miss 1). 가격 출처: 2출처 당일자 일치 스냅샷(naver=yahoo, 18:02 수집, 6종 confidence high, 괴리 전부 0.00%). ※학습·시뮬레이션 목적."
-  },
-  {
-   "date": "2026-08-24",
-   "equity": 4627859,
-   "cash": 2404259,
-   "daily_return_pct": -1.351,
-   "cumulative_return_pct": -7.443,
-   "holdings": [
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 128700,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 2026-08-25T18:01 수집 naver+yahoo 2출처 일치 · five_day_history[2026-08-24] 소급 재구성",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 124005
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 163100,
-     "source_confidence": "high",
-     "source_method": "동일 — 소급 재구성",
-     "tier": "yellow",
-     "shares": 2,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 223500,
-     "source_confidence": "high",
-     "source_method": "동일 — 소급 재구성",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 103300,
-     "source_confidence": "high",
-     "source_method": "동일 — 소급 재구성",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 96269
-    },
-    {
-     "ticker": "028260",
-     "name": "삼성물산",
-     "close": 364500,
-     "source_confidence": "high",
-     "source_method": "동일 — 소급 재구성",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 347091
-    }
-   ],
-   "kospi_close": 6696.96,
-   "kospi_change_pct": -3.12,
-   "action": "EOD_BACKFILL",
-   "note": "**8/24(월) 18시 슬롯 미실행으로 그날 EOD 확정이 누락됐다** — reports/2026-08-24-18.md 없음, trade_log 에 8/24 EOD_MARK 없음(마지막 EOD_MARK=8/21). 리포트 백필은 report_contract §7-2 로 금지이므로 하지 않고, 확정 종가로부터 재구성 가능한 state 만 8/3 선례대로 소급 복구한다. 종가 출처: 8/25 18:01 수집 스냅샷의 five_day_history[2026-08-24](naver·yahoo 2출처 동일). equity 4,627,859원은 weekly_plan.objective.current_equity(8/25 15:10 기록)와 일치해 교차 확인된다. trade_log 의 8/24 EOD_MARK 도 같은 근거로 시간순 위치에 소급 삽입했다(`backfilled:true` 라벨) — 그 공백 때문에 check_trade_log_gate 의 recycled_value_gate 가 8/25 확정 종가 6,742.74 를 직전 종가 사슬에 잇지 못해 7/21 종가 6,747.95 와의 우연한 0.07% 근접을 '묵은 값 재활용'으로 오탐해 CI 를 FAIL 시켰기 때문이다. 리포트(reports/2026-08-24-18.md)는 §7-2 대로 만들지 않는다."
-  },
-  {
-   "date": "2026-08-25",
-   "equity": 4637623,
-   "cash": 2014423,
-   "daily_return_pct": 0.211,
-   "cumulative_return_pct": -7.248,
-   "holdings": [
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 130800,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 124005
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 166400,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 220500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 106500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 98534
-    },
-    {
-     "ticker": "028260",
-     "name": "삼성물산",
-     "close": 367000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 347091
-    },
-    {
-     "ticker": "068270",
-     "name": "셀트리온",
-     "close": 189600,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-25",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 181139
-    }
-   ],
-   "kospi_close": 6742.74,
-   "kospi_change_pct": 0.684,
-   "action": "EOD_MARK",
-   "note": "8/25(화) W35 D2 종가 확정. **체결 0건** — 손절·목표·트레일 종가 도달 0건(최근접 하나금융지주 종가 130,800 vs 손절 124,005, 여유 +5.20%). KOSPI **6,742.74(+0.684% vs 8/24 6,696.96·+45.78p)** — 3출처 교차(스냅샷 yahoo:^KS11 · 머니투데이 8/25 16:15 · 다음/뉴시스 계열 8/25 16:15, 신한지주 106,500(+3.1%)·KB금융 +2.02%·삼성전자 257,000 보합 개별값까지 일치). **장중 -4.30%(6,408.82)까지 밀렸다가 전일 종가 위로 되올라온 V자 되돌림**. |등락| 0.684% < 5% 비쇼크일. 수급이 오늘의 핵심 확정 사실이다 — **외국인 3조3,595억~3조8,203억 순매도**(출처별 편차)를 개인 9,138억~1조523억·기관 8,537억~1조1,706억이 받았다. **되돌림의 주체는 외국인 순매수 전환이 아니다** → 7/29 codify 룰에 따라 내일 밴드 상단을 이 반등만으로 열지 않는다. equity **4,637,623원**(일일 **+0.211%**·주간 **-1.143%**·누적 -7.248%·미실현 -4,337·실현 -358,040·현금 2,014,423원 주식 56.6%/현금 43.4%). 일간 알파 -0.473%p·주간 알파 **+1.319%p**(주간은 플러스). 회복 전략 단계 **normal 유지**(주간 -1.143% > floor -2.0%). §2-2 재조정 1건 당일 결론(보류 0): 신한지주 손절 96,269 → **98,534**(b — dynamic_reprice `stop_too_wide` 단독 발동, R/R 1.110 → 1.425). 목표가 오차 5건 산입(하나금융지주 -8.91% `매크로` · KB금융 -13.60% `가정오류` · NAVER -15.99% `가정오류` · 신한지주 -9.63% `가정오류` · 삼성물산 -18.86% `가정오류` D+3 첫 산입), 셀트리온(-11.24%)은 진입 D+0 로 D+3 유예. thesis 6건 전부 intact(bio_cdmo 몰입 EOD 재산출 2/2 유지·excess_60d 6종 전부 0 위). 은행 3종 열위 카운터 **0 유지**(3종 전부 지수 상회) · 삼성물산-삼성전자 동반 지수 하회 카운터 **0 리셋**(삼성물산 +0.01%p 상회). 선제추론 채점 **12건(hit 6·partial 4·miss 2)** — 8/24 백로그 6건 포함."
-  },
-  {
-   "date": "2026-08-26",
-   "equity": 4697023,
-   "cash": 2014423,
-   "daily_return_pct": 1.281,
-   "cumulative_return_pct": -6.06,
-   "holdings": [
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 133200,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 124005
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 166600,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 220000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 107400,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 98534
-    },
-    {
-     "ticker": "028260",
-     "name": "삼성물산",
-     "close": 387500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 347091
-    },
-    {
-     "ticker": "068270",
-     "name": "셀트리온",
-     "close": 193400,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 18:01 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-26",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 181139
-    }
-   ],
-   "kospi_close": 6808.21,
-   "kospi_change_pct": 0.971,
-   "action": "EOD_MARK",
-   "note": "8/26(수) W35 D3 종가 확정. **체결 0건(EOD_MARK)** — 보유 6종 전부 손절·목표·트레일 종가 도달 0건(최근접 하나금융지주 종가 133,200 vs 손절 124,005, 여유 +7.42%). KOSPI **6,808.21(+0.971% vs 8/25 6,742.74·+65.47p)** — 출처는 2출처 당일자 일치 스냅샷(naver=yahoo, 18:01 수집, 보유 6종 price_gap 전부 0.00%, confidence high). **웹 교차확인은 게재일 검증에서 전건 기각** — 검색이 올린 후보 3건(dgmbc '8,047.51' · Businesskorea '6,258.77' · imbc '6,800선')을 게재일로 대조했고 imbc 기사는 WebFetch 로 **2026-08-18(종가 6,869.83)** 임을 확인해 기각했다(v2.6 source_date_verification). 따라서 지수·종목 종가는 스냅샷 값만 인용하고 **당일 확정 수급(외국인·기관)은 미확인으로 남긴다** — pykrx 미설치로 fetch_investor_flows 도 실패. |등락| 0.971% < 5% 비쇼크일. 장중 흐름은 개장 6,727.25(-0.23%) → 12:10 6,862.09(+1.77%) → 15:01 6,840.58 → 종가 6,808.21 의 '전강후약'. 종가: 삼성물산 **387,500(+5.586%·지수 대비 +4.615%p·6종 1위)** · 셀트리온 193,400(+2.004%·+1.033%p) · 하나금융지주 133,200(+1.835%·+0.864%p) · 신한지주 107,400(+0.845%·-0.126%p) · KB금융 166,600(+0.120%·-0.851%p) · NAVER 220,000(-0.227%·-1.198%p). equity **4,697,023원**(일일 **+1.281%**·주간 **+0.123%**·누적 -6.06%·미실현 +55,063·실현 -358,040·현금 2,014,423원 주식 57.1%/현금 42.9%). 일간 알파 **+0.310%p**·주간 알파 **+1.638%p**. 회복 전략 단계 **normal 유지**(주간 누적 +0.123% > floor -2.0%). §2-2 재조정 **0건** — R/R 6종 전부 bull 하한 1.1 통과(하나 1.131·KB 3.747·NAVER 1.935·신한 1.179·삼성물산 1.604·셀트리온 1.648), estimate.review_required 0건, dynamic reprice_signals 0건. 다만 **하나금융지주 R/R 1.131 은 하한 1.1 위 0.031 로 6종 중 최근접**이다. 목표가 오차 5건 산입(하나금융지주 -7.24% `매크로` · KB금융 -13.50% `가정오류` · NAVER -16.19% `섹터`(카카오 동반 열위 격차 1.06%p) · 신한지주 -8.87% `가정오류` · 삼성물산 -14.33% `가정오류`), 셀트리온(-9.46%)은 진입 D+1 로 D+3 유예. **5건 전부 전일 대비 괴리 축소**. thesis 6건 전부 intact 이나 **셀트리온 bio_cdmo `immersion_met` 이 EOD 재산출본에서 true → false 로 내려가 하드 무효화 카운터 1일차 점등**(met 1/2 — price_reversal 만 생존, sector_breadth·rs_inflection 소멸). 2거래일 연속이면 손절·목표와 무관하게 청산 조건이다. 은행 3종 동반 열위 카운터 **0 유지**(하나금융지주 +0.864%p 상회로 3/3 미성립) · 삼성물산-삼성전자 동반 하회 카운터 0 유지(둘 다 상회). 자동차 avoid 해제 몰입이 **3/2 → 1/2 로 후퇴**(8/25 대비 역행) — 해제 판정 원점. 선제추론 채점 6건(hit 4·partial 2·miss 0). ※학습·시뮬레이션 목적."
-  },
-  {
-   "date": "2026-08-27",
-   "equity": 4669223,
-   "cash": 2014423,
-   "daily_return_pct": -0.592,
-   "cumulative_return_pct": -6.616
-  },
-  {
-   "date": "2026-08-28",
-   "equity": 4691915,
-   "cash": 2394315,
-   "daily_return_pct": 0.486,
-   "cumulative_return_pct": -6.162,
-   "holdings": [
-    {
-     "ticker": "086790",
-     "name": "하나금융지주",
-     "close": 136000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
-     "tier": "green",
-     "shares": 4,
-     "stop_price": 126290
-    },
-    {
-     "ticker": "105560",
-     "name": "KB금융",
-     "close": 171600,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 159662
-    },
-    {
-     "ticker": "035420",
-     "name": "NAVER",
-     "close": 220500,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 198052
-    },
-    {
-     "ticker": "055550",
-     "name": "신한지주",
-     "close": 109700,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 102328
-    },
-    {
-     "ticker": "028260",
-     "name": "삼성물산",
-     "close": 375000,
-     "source_confidence": "high",
-     "source_method": "market_snapshot 2026-08-28T18:03:52+09:00 수집 naver+yahoo 2출처 일치(price_gap 0.00%) · last_date=2026-08-28",
-     "tier": "green",
-     "shares": 2,
-     "stop_price": 347091
-    }
-   ],
-   "kospi_close": 6788.88,
-   "kospi_change_pct": -1.787,
-   "action": "EOD_SETTLE",
-   "note": "8/28(금) W35 D5 종가 확정. **체결 1건 — 셀트리온(068270) 2주 전량 종가 청산**(thesis 하드 무효화 집행, 종가 190,700 → 체결 189,946원·회수 379,892원·왕복 -9,944원 -2.55%). 가격 트리거 청산은 0건(보유 5종 손절·목표·트레일 종가 도달 없음, 최근접 하나금융지주 손절 여유 -7.14%). KOSPI **6,788.88(-1.787% vs 8/27 6,912.37·-123.49p)** — 3출처 교차(스냅샷 naver=yahoo 2출처 당일자 일치 · TradingEconomics 2026-08-28 '-1.79% to close at 6,789' · Yahoo Finance ^KS11 15:32 KST close 6,788.88 -123.49). |등락| 1.787% < 5% 비쇼크일. 보유 6종 **전부 지수 상회**(하나 +3.58%p·NAVER +3.64%p·KB +3.87%p·신한 +2.61%p·삼성물산 +1.65%p·셀트리온 +1.47%p) — 8/27 의 '6종 전부 하회 2거래일 연속'이 하루 만에 정반대로 뒤집혔다. equity **4,691,915원**(일일 **+0.486%**·주간 **+0.014%**·누적 -6.162%·미실현 +59,899·실현 -367,984·현금 2,394,315원 주식 49.0%/현금 51.0%). 일간 알파 **+2.273%p**·주간 알파 **+1.809%p**. 회복 전략 단계 **normal 유지**(주간 +0.014% > floor -2.0%). §2-2 재조정 2건 전건 당일 결론(보류 0): 하나금융지주 손절 124,867 → 126,290(b, R/R 0.683 → 0.783 — **하한 미회복·8/31 에스컬레이션 부착**), 신한지주 101,140 → 102,328(b, R/R 0.952 → **1.106 하한 회복**). 목표가 오차 6건 산입(매크로 2·섹터 2·가정오류 2). thesis: 셀트리온 invalidated 집행 완료, 삼성물산 **weakening → intact 복귀**(excess_60d EOD 확정 **+0.11** 로 하드 조건 미성립, 잔여 여유는 ATR 6.24% 의 0.018배), NAVER intact(excess_60d **+1.48** 로 0 위 유지), 은행 3종 intact·섹터 열위 카운터 **0 리셋**(3/3 상회). **데이터 정정 17건** — exit_tracking 의 8/25·8/26·8/28 보유종목 엔트리가 09시 슬롯이 적재한 장중값이었음을 확인해 확정 종가로 정정(과거 판정 번복 없음)."
-  }
- ],
- "recovered_at": "2026-08-03T11:05:00+09:00",
- "recovery_note": "2026-08-03(월) 11:05 KST 소급 복구 — 7/31(금) 18시 슬롯이 미발화해 금요일 EOD 확정이 누락된 상태로 주말 전체가 흘렀다(마지막 EOD_MARK=7/30). 리포트 백필은 report_contract §7-2 에 따라 금지이므로 하지 않고, 확정 종가로부터 재구성 가능한 state 만 복구한다. 종가 출처: price_history(naver) = snapshot sources[yahoo].last_close(last_date=2026-07-31) 2출처 일치 — 079550 699,000 / 055550 100,700, KOSPI 6,595.45(양 출처 일치)."
+  ],
+  "recovered_at": "2026-08-03T11:05:00+09:00",
+  "recovery_note": "2026-08-03(월) 11:05 KST 소급 복구 — 7/31(금) 18시 슬롯이 미발화해 금요일 EOD 확정이 누락된 상태로 주말 전체가 흘렀다(마지막 EOD_MARK=7/30). 리포트 백필은 report_contract §7-2 에 따라 금지이므로 하지 않고, 확정 종가로부터 재구성 가능한 state 만 복구한다. 종가 출처: price_history(naver) = snapshot sources[yahoo].last_close(last_date=2026-07-31) 2출처 일치 — 079550 699,000 / 055550 100,700, KOSPI 6,595.45(양 출처 일치)."
 }

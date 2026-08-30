@@ -11,12 +11,7 @@
       "last_seen": "2026-08-30",
       "weeks_seen": 8,
       "status": "open",
-      "disposition": {
-        "action": "patch",
-        "note": "3건째 breach 확정 도달 — §1-8 규정대로 즉시 심사 실행. score_ratchet_shadow.py 재확인: 가상 breach 확정 4건(관측 38거래일·포지션 13개), t+5 반사실 전건 noise_exit=true(100%, promotion_criteria 상한 0.5 초과) — net 보호 -114,800원(보호 0원, 노이즈 익절 손실만 114,800원). 5건 전부 stage1 breach 후 t+5 가격이 breach 종가 대비 상승(LIG넥스원 +43,000·신한지주 +7,000·하나금융지주 +40,800·NAVER +24,000·삼성물산 진행중 +16,000) — 래칫이 있었다면 전건 조기 청산으로 후속 상승분을 놓쳤을 구간. KB금융(2026-05-28) give-back 선례(상승분 반납→손실 확정)가 이번 5건 중 재현된 사례는 0건 — 오히려 반대 패턴(조기 절단)이 지배적이라 승격 근거 없음. 판정: 기각·완화 후보 채택 — steps[0].when_gain_atr 를 1.0→1.5 로 상향해 stage1 진입 문턱을 높인다(policy v2.36, config/policy.json §risk.breakeven_ratchet.steps). mode=shadow 유지(실제 체결 무변화, 자동 적용 — 안전 조정), 관측 지속. 다음 재확인 09-13(상향 후 breach 재축적 필요, 최소 관측일 10거래일).",
-        "date": "2026-08-30",
-        "by": "sunday_policy_review"
-      },
+      "disposition": null,
       "disposition_history": [
         {
           "action": "observe",
@@ -47,6 +42,13 @@
           "note": "재확인(08-23, 08-09 이후 첫 리뷰 — 08-16 미발화): ratchet_shadow breach 확정 2/3건(08-09 와 불변)·관측 34거래일(25→34, 거래일만 진전). net 보호 -50,000원·noise율 100%(불변) — 3건째 breach 가 여전히 미도달이라 승격 심사 보류(체결 변화 금지 유지). H 오버레이 백테스트도 불변 재확인(트레일링 추가분이 3/4 설정·구간에서 가치 파괴, 래칫 미승격이 원인이 아니라 트레일링 룰 자체 문제라는 08-09 진단 유지). 이번 리뷰에서 별도로 발견한 실제 버그(compute_dynamic_bands 밸류에이션 캡이 verdict 무관 적용 — lessons 2026-08-14 가 8/16 리뷰 안건으로 이관했으나 미착수 확인, scripts/ 는 이 routine 커밋 범위 밖이라 코드 수정은 보류하고 §6 사용자 액션에 최우선 상정)는 이 finding 과 별개 트랙. 3건째 breach 확정 시 §1-8 규정대로 즉시 심사. 다음 재확인 09-06 전후(다음 정상 발화 리뷰).",
           "date": "2026-08-23",
           "by": "sunday_policy_review"
+        },
+        {
+          "action": "patch",
+          "note": "3건째 breach 확정 도달 — §1-8 규정대로 즉시 심사 실행. score_ratchet_shadow.py 재확인: 가상 breach 확정 4건(관측 38거래일·포지션 13개), t+5 반사실 전건 noise_exit=true(100%, promotion_criteria 상한 0.5 초과) — net 보호 -114,800원(보호 0원, 노이즈 익절 손실만 114,800원). 5건 전부 stage1 breach 후 t+5 가격이 breach 종가 대비 상승(LIG넥스원 +43,000·신한지주 +7,000·하나금융지주 +40,800·NAVER +24,000·삼성물산 진행중 +16,000) — 래칫이 있었다면 전건 조기 청산으로 후속 상승분을 놓쳤을 구간. KB금융(2026-05-28) give-back 선례(상승분 반납→손실 확정)가 이번 5건 중 재현된 사례는 0건 — 오히려 반대 패턴(조기 절단)이 지배적이라 승격 근거 없음. 판정: 기각·완화 후보 채택 — steps[0].when_gain_atr 를 1.0→1.5 로 상향해 stage1 진입 문턱을 높인다(policy v2.36, config/policy.json §risk.breakeven_ratchet.steps). mode=shadow 유지(실제 체결 무변화, 자동 적용 — 안전 조정), 관측 지속. 다음 재확인 09-13(상향 후 breach 재축적 필요, 최소 관측일 10거래일).",
+          "date": "2026-08-30",
+          "by": "sunday_policy_review",
+          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
         }
       ]
     },
@@ -131,10 +133,10 @@
       "title": "검증 표본 없는 정책 패치 — 패치 동결 규칙 발동",
       "detail": "⚠️ 직전 감사 이후 정책 버전이 올라갔는데 신규 검증 표본(왕복)이 0건 — 패치 동결 검토(검증 없는 패치 누적).",
       "severity": "warn",
-      "first_seen": "2026-08-25",
-      "last_seen": "2026-08-25",
+      "first_seen": "2026-08-30",
+      "last_seen": "2026-08-30",
       "weeks_seen": 1,
-      "status": "resolved",
+      "status": "open",
       "disposition": null,
       "disposition_history": [
         {
@@ -143,8 +145,7 @@
           "date": "2026-08-09",
           "by": "sunday_policy_review"
         }
-      ],
-      "resolved_date": "2026-08-26"
+      ]
     },
     {
       "id": "policy-dead-config-disclaimers",
@@ -202,7 +203,7 @@
     },
     {
       "id": "lessons-balance",
-      "title": "lessons.md 494,648B > 예산 60,000B — 이관 처리량 부족",
+      "title": "lessons.md 495,144B > 예산 60,000B — 이관 처리량 부족",
       "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. 이관 대상 1순위는 lessons_index.archive_candidates.",
       "severity": "warn",
       "first_seen": "2026-08-14",
@@ -228,7 +229,10 @@
   "open": [
     "whipsaw-high",
     "deployment-below-band",
+    "patch-without-validation",
     "lessons-balance"
   ],
-  "overdue": []
+  "overdue": [
+    "whipsaw-high"
+  ]
 }

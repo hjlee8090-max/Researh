@@ -1,5 +1,5 @@
 {
- "as_of": "2026-08-23T20:09:58+09:00",
+ "as_of": "2026-08-30T20:08:51+09:00",
  "params": {
   "min_shadow_trading_days": 10,
   "min_breach_events": 3,
@@ -10,18 +10,18 @@
   ]
  },
  "sample": {
-  "positions": 12,
-  "shadow_trading_days": 34,
-  "breach_events": 4,
-  "breach_completed": 2
+  "positions": 13,
+  "shadow_trading_days": 38,
+  "breach_events": 5,
+  "breach_completed": 4
  },
  "scoring": {
   "protected_krw_t5": 0,
-  "forgone_krw_t5": 50000.0,
-  "net_protection_krw": -50000.0,
+  "forgone_krw_t5": 114800.0,
+  "net_protection_krw": -114800.0,
   "noise_exit_rate": 1.0,
   "protected_vs_real_exits_krw": 50636.0,
-  "avg_freed_heat_krw": 145743.0
+  "avg_freed_heat_krw": 140164.0
  },
  "events_scored": [
   {
@@ -67,10 +67,10 @@
    "confidence": "high",
    "t1_close": 128800.0,
    "t1_delta_krw": 21600.0,
-   "t5_close": 128800.0,
-   "t5_delta_krw": 21600.0,
-   "final": false,
-   "noise_exit": null
+   "t5_close": 133600.0,
+   "t5_delta_krw": 40800.0,
+   "final": true,
+   "noise_exit": true
   },
   {
    "position": "035420:2026-08-10",
@@ -83,8 +83,24 @@
    "confidence": "high",
    "t1_close": 219500.0,
    "t1_delta_krw": 23000.0,
-   "t5_close": 222000.0,
-   "t5_delta_krw": 28000.0,
+   "t5_close": 220000.0,
+   "t5_delta_krw": 24000.0,
+   "final": true,
+   "noise_exit": true
+  },
+  {
+   "position": "028260:2026-08-20",
+   "name": "삼성물산",
+   "date": "2026-08-25",
+   "stage": 1,
+   "breach_close": 367000.0,
+   "shares": 2,
+   "shadow_exit_net": 731101.0,
+   "confidence": "high",
+   "t1_close": 387500.0,
+   "t1_delta_krw": 41000.0,
+   "t5_close": 375000.0,
+   "t5_delta_krw": 16000.0,
    "final": false,
    "noise_exit": null
   }
@@ -99,6 +115,6 @@
    "protection_krw": 50636.0
   }
  ],
- "verdict": "채점 보류 — breach 표본 부족 (확정 2/3건, 관측 34거래일)",
- "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 34거래일 · 추적 12포지션 · 가상 breach 4건(확정 2)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 50,000원 / **net -50,000원** / noise율 100%\n- 실제 청산 대비 보호액: 50,636원 (1건)\n- 해방가능 heat 일평균: 145,743원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 채점 보류 — breach 표본 부족 (확정 2/3건, 관측 34거래일)**"
+ "verdict": "기각·완화 후보 — 본전 노이즈 체결 과다 (steps.when_gain_atr 상향 또는 기각 상정)",
+ "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 38거래일 · 추적 13포지션 · 가상 breach 5건(확정 4)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 114,800원 / **net -114,800원** / noise율 100%\n- 실제 청산 대비 보호액: 50,636원 (1건)\n- 해방가능 heat 일평균: 140,164원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 기각·완화 후보 — 본전 노이즈 체결 과다 (steps.when_gain_atr 상향 또는 기각 상정)**"
 }

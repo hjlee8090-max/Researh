@@ -1,6 +1,6 @@
 {
   "version": "1.3",
-  "last_updated": "2026-08-25T09:35:00+09:00",
+  "last_updated": "2026-08-30T18:35:00+09:00",
   "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
   "candidates": [
     {
@@ -119,7 +119,13 @@
         }
       ],
       "structural_bear_flags": [],
-      "first_added": "2026-05-29"
+      "first_added": "2026-05-29",
+      "rotation_status": {
+        "flag": "demote_watch",
+        "opened": "2026-08-30",
+        "basis": "screen_universe 8/30 재산출 — KOSPI 대비 60일 초과수익 **-22.33%p** 로 후보 20종 중 유일한 두 자릿수 음수이고 momentum 절대점수 -36.15 로 후보군 최하위다. quality 0.476(fund_score 0.048)로 실적 축도 받쳐 주지 않는다. 프롬프트 정본의 강등 임계(-25%p)에는 2.67%p 남아 아직 rotate_out 확정이 아니므로 **교체 후보 표시(demote_watch)** 에 그친다.",
+        "note": "자동차 섹터는 avoid 유지(몰입 0/2 — rs_inflection·volume_surge·sector_breadth·price_reversal 전부 미점등)라 어차피 진입 대상이 아니다. 이 표시는 진입 차단이 아니라 **다음 주간 재산출에서 -25%p 를 넘으면 candidates 에서 내린다**는 예고이며, 그 판정일은 다음 일요일이다. humanoid_robotics 테마 노출(0.6)은 유효하나 그 테마의 다른 두 종목(레인보우로보틱스 -17.37%p·두산로보틱스 -34.18%p)도 함께 후행 중이라 종목 문제가 아니라 축 문제로 본다."
+      }
     },
     {
       "ticker": "012450",
@@ -148,9 +154,17 @@
       "theme_exposure": [
         {
           "theme": "power_grid_ai",
-          "exposure": 0.85,
-          "evidence": "초고압 변압기 수출 — AI 데이터센터·노후 전력망 교체 수요 직접 노출",
-          "source": null
+          "exposure": 0.9,
+          "evidence": "빅테크 A사와 2027~2028 납품 조건 1조1,000억원 규모 데이터센터 전력·배전변압기 장기공급계약 체결, 2029~2030 물량은 그보다 큰 규모로 협의 중이며 B·C·D 사와도 대규모 장기공급계약 논의 중(LS증권). 미 앨라배마 제2공장 증설이 2027년 4월 완료되면 연간 전력변압기 생산능력 약 50% 확대. 8/30 재산출에서 power_grid_ai 몰입 3/2 충족·20일 초과수익 +18.25%p 로 테마 노출 0.85 → 0.9 상향.",
+          "source": "https://www.mt.co.kr/stock/2026/07/29/2026072909143766775",
+          "source_date": "2026-07-29"
+        },
+        {
+          "theme": "power_grid_ai",
+          "exposure": 0.9,
+          "evidence": "미 앨라배마 제2공장 신축 추진 — 증설 완료 시 연간 전력변압기 생산능력 약 50% 확대. AI 데이터센터를 새 먹거리로 한 전력시장 확장 보도.",
+          "source": "https://www.asiatoday.co.kr/kn/view.php?key=20260805010001617",
+          "source_date": "2026-08-05"
         }
       ],
       "structural_bear_flags": [],
@@ -219,7 +233,7 @@
     },
     {
       "ticker": "079550",
-      "name": "LIG넥스원",
+      "name": "LIG넥스원(LIG D&A)",
       "sector": "방산",
       "thesis_id": "momentum_rotation_deploy_w27",
       "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
@@ -232,7 +246,34 @@
         }
       ],
       "structural_bear_flags": [],
-      "first_added": "2026-06-29"
+      "first_added": "2026-06-29",
+      "reentry_block": {
+        "active": true,
+        "scope": "ticker",
+        "opened": "2026-08-22",
+        "codified": "2026-08-30",
+        "reason": "개별 사법 리스크 — 수원지검 방위사업·산업기술범죄수사부가 방위사업청 5급 공무원(뇌물수수)과 LIG D&A 임원(뇌물공여)을 구속기소했다. 2021년 말~2025년 말 사업비 915억원 규모 방위사업 6건에서 제안서 평가위원이 LIG D&A 에 유리하게 평가한 혐의이며, 그중 3건은 총사업비 1조7,000억원 규모 '한국형 전자전기(Block-Ⅰ) 체계개발' 사업의 핵심·선행기술 과제다. 방위사업청은 향후 입찰 참가 제한을 검토 중이다.",
+        "sources": [
+          {
+            "url": "https://www.hankyung.com/article/2026082030801",
+            "published": "2026-08-20",
+            "title": "3억 뇌물 오고간 방산 수주전…방사청 공무원·LIG 임원 기소"
+          },
+          {
+            "url": "https://www.hankyung.com/article/2026081879491",
+            "published": "2026-08-18",
+            "title": "뇌물 혐의 드러난 LIG D&A…방사청, 향후 입찰 제한 검토"
+          },
+          {
+            "url": "https://biz.heraldcorp.com/article/10849027",
+            "published": "2026-08-21",
+            "title": "방사청·LIG D&A 동시 제재로 K-방산 흔들리나"
+          }
+        ],
+        "company_response_note": "회사 반박·소명 내용은 확인된 출처에서 확보하지 못했다. 수사기관 주장만 기록돼 있음을 명시한다(decision_rules — 사법·지배구조 리스크는 양측을 같은 줄에 적는다).",
+        "lift_when": "①입찰 참가 제한 검토가 '미부과'로 종결되거나 부과 범위·기간이 출처와 함께 확정되고 ②그 확정 내용이 수주잔고·가이던스에 미치는 영향이 회사 공시·IR 로 계량될 때. 가격 회복·게이트 통과는 해제 사유가 아니다.",
+        "engine_note": "이 종목은 4중 게이트(진입 상한가·진입 필터·사이징·테마 몰입)를 **전부 통과한다**(8/30 스냅샷 기준 진입 상한가 여유 +0.6%·5일 +5.61%·1주 사이징 가능·defense_export 몰입 2/2). 게이트가 아니라 이 필드가 막는 것이므로 매 09시 후보 계수에서 통과 종목으로 세되 '진입 불가(reentry_block)' 를 함께 적는다."
+      }
     },
     {
       "ticker": "042700",

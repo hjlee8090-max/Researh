@@ -1557,6 +1557,68 @@ def audit_merge_conflicts(messages: list[str]) -> None:
         ))
 
 
+def audit_policy_freeze(messages: list[str]) -> None:
+    """정책 동결 게이트 상태 (Stage 0 — reports/2026-09-02-pipeline-review.md D-1).
+
+    check_policy_freeze.py 와 같은 판정을 감사 리포트에 표면화한다. 동결 위반은 FAIL —
+    CI(auto_merge·pipeline_audit lessons-gate)가 main 도달을 이미 막지만, 세션 브랜치에
+    고립된 위반 커밋도 사람이 보게 한다.
+    """
+    freeze_path = ROOT / "state" / "policy_freeze.json"
+    if not freeze_path.exists():
+        messages.append(result("INFO", "policy freeze 미설정(state/policy_freeze.json 없음)"))
+        return
+    try:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import check_policy_freeze as cpf  # 모듈 재사용
+        fz = cpf.load_freeze() or {}
+        if not fz.get("active"):
+            messages.append(result("INFO", f"policy freeze 비활성(since {fz.get('since')})"))
+            return
+        cur = cpf.normalized_policy()
+        if cpf.digest(cur) == fz.get("baseline_sha256"):
+            messages.append(result(
+                "OK", f"policy freeze 유지 — baseline v{fz.get('baseline_version')} since {fz.get('since')} "
+                      f"(backlog {len(fz.get('backlog') or [])}건)"))
+        else:
+            changed = cpf.top_level_diff(fz.get("baseline_key_sha256", {}), cur)
+            messages.append(result(
+                "FAIL", f"policy freeze 위반 — config/policy.json 이 baseline v{fz.get('baseline_version')} 과 다름: "
+                        f"{', '.join(changed) or '(본문)'} — 되돌리거나 사람이 check_policy_freeze.py --init 으로 재설정"))
+    except Exception as exc:  # noqa: BLE001
+        messages.append(result("WARN", f"policy freeze 판정 실패: {exc}"))
+
+
+def audit_shadow_account(messages: list[str]) -> None:
+    """그림자 계좌 신선도 (Stage 0 — D-2). fetch_history.yml 이 평일 매일 재계산·커밋한다.
+
+    3거래일 넘게 묵으면 WARN — Stage 0 판정(라이브 vs 그림자)의 표본이 조용히 끊기는 것을 막는다.
+    """
+    path = ROOT / "state" / "shadow_account.json"
+    if not path.exists():
+        messages.append(result("WARN", "state/shadow_account.json 없음 — scripts/shadow_account.py 미실행(Stage 0 D-2)"))
+        return
+    try:
+        d = json.load(open(path, encoding="utf-8"))
+    except json.JSONDecodeError:
+        messages.append(result("WARN", "state/shadow_account.json 파싱 실패"))
+        return
+    data_as_of = str(d.get("data_as_of") or "")[:10]
+    today = datetime.now(KST).date()
+    try:
+        age = (today - datetime.strptime(data_as_of, "%Y-%m-%d").date()).days
+    except ValueError:
+        age = 99
+    sf = d.get("since_freeze") or {}
+    summ = "; ".join(
+        f"{k}: {v.get('metrics', {}).get('trading_days')}일 {v.get('metrics', {}).get('total_return_pct')}% "
+        f"(라이브−그림자 {v.get('vs_live', {}).get('live_minus_shadow_pp')}%p)" for k, v in sf.items())
+    if age > 4:
+        messages.append(result("WARN", f"그림자 계좌 stale — data_as_of {data_as_of}({age}일 전). fetch_history.yml 확인. {summ}"))
+    else:
+        messages.append(result("OK", f"그림자 계좌 갱신 {data_as_of} — {summ}"))
+
+
 def main() -> int:
     messages: list[str] = []
     messages.append(f"Pipeline audit @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -1585,6 +1647,8 @@ def main() -> int:
     audit_kakao_equity_repetition(messages)
     audit_dynamic_reprice(messages)
     audit_merge_conflicts(messages)
+    audit_policy_freeze(messages)
+    audit_shadow_account(messages)
 
     print("\n".join(messages))
     return 1 if any(m.startswith("[FAIL]") for m in messages) else 0

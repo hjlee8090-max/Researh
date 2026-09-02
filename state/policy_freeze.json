@@ -1,0 +1,61 @@
+{
+  "active": true,
+  "stage": "stage0",
+  "since": "2026-09-02",
+  "reason": "Stage 0 — reports/2026-09-02-pipeline-review.md D-1: 왕복 표본 확보 전 전략 파라미터 전면 동결(버그 수정·게이트 강화만 허용)",
+  "baseline_version": "2.36",
+  "baseline_sha256": "c7a220ba6105f5e91a827c4e9aaa2b9e7d05e3bb8f3fc4d6c110810431bfe467",
+  "baseline_key_sha256": {
+    "version": "5cf3dafa6b324214a89a235c27a6ac71007b896f7e6c57c308db39ddb78c4819",
+    "momentum_strategy": "aa853f0b2ac2025290323a70d7252bb3cd9a6c89ac6f8d9bbc80e9ad87059ad7",
+    "universe": "c53d009413240b2277f91d59e32e986c9bf0c20ef7c5bdb0e7ec1db7703c43be",
+    "horizon": "69b7f9b3c436834004854de67c860b9186e948a92d1aa5e74dc0d320e2adc130",
+    "risk": "fc928a4830674cd314ec2581f5eed5f545c8c4a3fa23c0167cd55c5622b5a579",
+    "market_regime": "09403e52e1845e857becf99f67c7b73218edecd3f3afa3798f761e269155e056",
+    "price_data_quality": "55b783d27eabc639ae03e40cc3fe7addeb63c906822076269cb36dfb801d26fa",
+    "market_hours": "a6597665630ed97948c7e20fa4dd595257c85b575d9d1440b57f2e8839fe3c6b",
+    "weekly_recovery_plan": "cd517c837210606a059a75a6722c10140b0c6bdae9582153e9843b81bcb17c24",
+    "reward_risk_management": "dbd52549a796059ca2978ac4f126249256bf9cf22193241567c64f42de5bc66e",
+    "dynamic_reprice": "b63f1604a0e4a5a14721c28648efd59567d4d9d91ac39a3761ad2b0a9d31cb92",
+    "entry_filters": "eb282188bdf9a5c82b855d3529956419143840a8ecd50e695b00f2b7a5d3c54a",
+    "sector_rotation_reentry": "c784ff6a09fe6f825741efe83c8e609af27d8fb6495db402fd91f0e42f576173",
+    "lessons_rule_sunset": "29ee43b3862a8c9fc90705aab0937d513daa4225d931cd81fb477cb3ccacf8db",
+    "position_sizing": "7b81d4c84d18c8f29154215409e17139f846562184a7300650cc49e633353efc",
+    "trading_cost": "f592c81f2e6af1dc25a770f7c3abce9ad70444546f9165b0f4c01a06a6872d86",
+    "fundamentals": "dfae74a858233e7e3033204db84d6c2d9e95387ec6087bfc87004dded5006864",
+    "catalysts": "eda2f59dcc44028b916385d3c9ad4140f30a0ac216b542c6fbe464cf273c0538",
+    "thesis": "a4d440c14a4c036f475e8a36ea453cfd991527a6862dad6b796839a1a57f09e2",
+    "consensus": "454586b0a7f0e40c767f942cd16e487f15591b92eddeb2974b70a54345a7eb34",
+    "valuation_anchor": "ce418401c27dd23c24aae335b821adc4a3e00cf3bd9270ba9029cd8d254de856",
+    "earnings_preview": "91bffe46747dbbaae9b1950dcc293b7f53dbe99015fb8169b3b457ac43571281",
+    "_doc_rebalance_rules": "ab9ccba35d2572598db30bb9162a9b7b619013bc988a0450f457ba79d581e2d9",
+    "lessons_logging": "17ed2d327bfcb5c277859574ce917f3770727418b490afbcf95f822177664ab6",
+    "codex_automation": "c638f76d6adaed68f5ec5fe25f972cb3c9834e8d7c543bec98c5c87ebea37388",
+    "context_budget": "57c1cb6caac9100f25e7cc7cade198835ee9a802f0cfc209ef5e7431c874903d",
+    "proactive_inference": "577ec7be1ba834bf4757dc55ee1f5a5c5eef4b959858e38a81120570119c55bc"
+  },
+  "excluded_keys": [
+    "changelog",
+    "last_updated"
+  ],
+  "allowed_changes": [
+    "scripts/*.py 의 버그 수정(정책 수치 불변)",
+    "CI 게이트 강화(.github/workflows)",
+    "config/policy.json 외 파일(weekly_plan·watchlist·candidates·universe)의 통상 갱신"
+  ],
+  "not_allowed": [
+    "config/policy.json 의 어떤 파라미터·룰·버전 변경 (changelog·last_updated 제외)",
+    "shadow 임계 조정·'데이터 버그' 명목의 정책 수치 변경"
+  ],
+  "how_to_patch_while_frozen": "패치 후보는 state/policy_freeze.json.backlog 에 {date, proposer, field, current, proposed, expected_effect, required_samples, note} 로 등록만 한다. 실제 반영은 동결 해제 후 shadow 관측 → 백테스트 재실행 → 승격 순서로만.",
+  "lift_criteria_ref": "reports/2026-09-02-pipeline-review.md §6-2 (Stage 0→1 기준)",
+  "backlog": [],
+  "history": [
+    {
+      "date": "2026-09-02",
+      "action": "init",
+      "reason": "Stage 0 — reports/2026-09-02-pipeline-review.md D-1: 왕복 표본 확보 전 전략 파라미터 전면 동결(버그 수정·게이트 강화만 허용)",
+      "baseline_version": "2.36"
+    }
+  ]
+}

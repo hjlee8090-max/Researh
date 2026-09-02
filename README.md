@@ -149,6 +149,17 @@ scripts/
 - 권장안(Top10·월간리밸·MA200·항시투자): 총수익 **+313%**·Sharpe **2.34** 로 벤치마크(+198%·2.24) 상회, 낙폭 동등.
 - 설계·결과·한계 전문: `docs/strategy_momentum.md`. **핵심 교정 = "현금 탈출, 추세에 태우기".**
 
+## Stage 0 — 정책 동결 + 그림자 계좌 (2026-09-02 시작)
+진단(`reports/2026-09-02-pipeline-review.md`)의 결론 — 105일간 policy 37회 패치 vs 왕복 19건이라 어떤 룰이 효과인지 알 수 없고,
+검증된 듀얼모멘텀 바스켓과 실제 보유가 달라(전략-집행 괴리) 성과가 무엇을 검증하는지도 알 수 없다. Stage 0 은 **더하지 않고 측정만** 한다.
+- **정책 동결**: `state/policy_freeze.json`(baseline v2.36 해시) + `scripts/check_policy_freeze.py`. 동결 중 `config/policy.json` 변경 커밋은
+  `auto_merge_routines.yml`·`pipeline_audit.yml` 게이트가 main 도달을 차단한다(changelog·last_updated 제외). 패치 후보는 `backlog` 에 등록만.
+  해제·재설정은 사람이 `python scripts/check_policy_freeze.py --init --reason "..."` 로만.
+- **그림자 계좌**: `scripts/shadow_account.py` → `state/shadow_account.json`·`.md`. 명세 그대로의 전략(검증 명세 Top10·42일 / 라이브 선언 명세 Top6·21일·점수≥30)을
+  **오버레이 없이** 정수주·거래비용 포함으로 페이퍼 체결해 라이브와 같은 출발점(동결일 라이브 equity)에서 나란히 기록. `fetch_history.yml` 이 평일 매일 재계산·커밋(멱등).
+  판정 질문은 하나 — "LLM+게이트 레이어가 검증 전략에 더하는가, 빼는가". 단계 이동 기준은 진단 리포트 §6-2.
+- 어떤 프롬프트도 이 파일들을 의무 적재하지 않는다(핫패스 아님). 일일 감사가 동결 상태·그림자 신선도를 표면화한다.
+
 ## 자기보완 루프
 1. 18시 프롬프트가 watchlist의 **각 종목 실제 종가 vs 목표가** 비교
 2. ±5% 이내면 OK, 초과면 사유 분류

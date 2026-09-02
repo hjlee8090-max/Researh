@@ -1619,6 +1619,51 @@ def audit_shadow_account(messages: list[str]) -> None:
         messages.append(result("OK", f"그림자 계좌 갱신 {data_as_of} — {summ}"))
 
 
+def audit_order_intents(messages: list[str]) -> None:
+    """Stage 1 주문 의도 — 신선도 + 프로토콜 준수(무기입 의도·사유 없는 의도 밖 매매) (docs/plan_stage1.md §2)."""
+    stage = None
+    try:
+        stage = json.load(open(ROOT / "state" / "stage.json", encoding="utf-8"))
+    except Exception:
+        return  # Stage 1 미착수
+    path = ROOT / "state" / "order_intents.json"
+    if not path.exists():
+        messages.append(result("WARN", "state/order_intents.json 없음 — build_order_intents.py 미실행(Stage 1)"))
+        return
+    try:
+        oi = json.load(open(path, encoding="utf-8"))
+    except json.JSONDecodeError:
+        messages.append(result("WARN", "state/order_intents.json 파싱 실패"))
+        return
+    today = datetime.now(KST).date()
+    dd = str(oi.get("data_date") or "")
+    try:
+        age = (today - datetime.strptime(dd, "%Y-%m-%d").date()).days
+    except ValueError:
+        age = 99
+    n = len(oi.get("intents") or [])
+    unfilled = [i["id"] for i in oi.get("intents") or [] if not i.get("disposition")]
+    owner = oi.get("execution_owner") or stage.get("execution_owner")
+    if age > 3:
+        messages.append(result("WARN", f"주문 의도 stale — data_date {dd}({age}일 전). fetch_prices/eod_backstop 워크플로 확인"))
+    else:
+        messages.append(result("OK", f"주문 의도 {dd} — {n}건(owner={owner}, 리밸런스일={oi.get('rebalance', {}).get('is_rebalance_day')}, 그림자 신호 {len(oi.get('shadow_signals') or [])}건)"))
+    # 어제 이전 의도의 무기입은 채점 스코어카드가 집계 — 여기서는 최근 결과만 표면화
+    sc_path = ROOT / "state" / "intent_scorecard.json"
+    if sc_path.exists():
+        try:
+            sc = json.load(open(sc_path, encoding="utf-8"))
+            c = sc.get("counts") or {}
+            if c.get("ignored"):
+                messages.append(result("WARN", f"주문 의도 무기입(ignored) {c['ignored']}건 / {c.get('intents')}건 — 루틴이 disposition 을 채우지 않았다(§0-I 프로토콜 위반)"))
+            if c.get("off_intent_without_reason"):
+                messages.append(result("WARN", f"의도 밖 매매 사유 미기재 {c['off_intent_without_reason']}건 — trade_log off_intent_reason 필수"))
+            if c.get("intents"):
+                messages.append(result("INFO", f"의도 채점 누적 {c['intents']}건 — 집행 {c.get('executed')} · 거부 {c.get('vetoed')} · 만료 {c.get('expired')} · 무기입 {c.get('ignored')} (adherence {sc.get('adherence_pct')}%)"))
+        except Exception:
+            pass
+
+
 def main() -> int:
     messages: list[str] = []
     messages.append(f"Pipeline audit @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -1649,6 +1694,7 @@ def main() -> int:
     audit_merge_conflicts(messages)
     audit_policy_freeze(messages)
     audit_shadow_account(messages)
+    audit_order_intents(messages)
 
     print("\n".join(messages))
     return 1 if any(m.startswith("[FAIL]") for m in messages) else 0

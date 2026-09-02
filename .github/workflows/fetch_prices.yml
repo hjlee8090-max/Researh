@@ -70,11 +70,15 @@ jobs:
       # 리포트의 절대가격을 이월하는 대신 이 밴드를 인용한다 (policy.dynamic_reprice).
       - name: Compute dynamic bands
         run: python scripts/compute_dynamic_bands.py
+      # Stage 1 주문 의도 — 검증 엔진(momentum_signal)·보유·손절선으로 '명세가 시키는 주문'을 결정론 산출.
+      # 09:05 수집분이 09:20 슬롯의 입력이 된다 (docs/plan_stage1.md). 실패해도 스냅샷 커밋은 막지 않는다.
+      - name: Build order intents (Stage 1)
+        run: python scripts/build_order_intents.py || echo "order intents skipped"
       - name: Commit snapshot if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state/market_snapshot.json state/candidate_scores.json state/target_estimate.json state/target_estimate_log.jsonl config/portfolio.json state/dynamic_bands.json
+          git add state/market_snapshot.json state/candidate_scores.json state/target_estimate.json state/target_estimate_log.jsonl config/portfolio.json state/dynamic_bands.json state/order_intents.json state/order_intents_log.jsonl
           if git diff --cached --quiet; then
             echo "no snapshot changes — skip commit"
           else

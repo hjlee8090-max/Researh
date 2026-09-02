@@ -160,6 +160,14 @@ scripts/
   판정 질문은 하나 — "LLM+게이트 레이어가 검증 전략에 더하는가, 빼는가". 단계 이동 기준은 진단 리포트 §6-2.
 - 어떤 프롬프트도 이 파일들을 의무 적재하지 않는다(핫패스 아님). 일일 감사가 동결 상태·그림자 신선도를 표면화한다.
 
+## Stage 1 — 실행의 코드화, dry-run (2026-09-02 착수, `docs/plan_stage1.md`)
+- **주문 의도**: `scripts/build_order_intents.py` → `state/order_intents.json`. 검증 엔진 바스켓(`momentum_signal.json`)·보유·손절선으로 "명세가 시키는 주문"을 결정론 산출
+  (진입=리밸런스일·빈 슬롯, 청산=hard_stop·trend_break·rebalance_rotation 만). 트레일링·목표익절·R/R 등은 `shadow_signals` 로 관측만. `fetch_prices.yml`(09:05 등)·`eod_backstop.yml` 이 재산출.
+- **루틴 역할**: 09시 §0-I — 집행이 기본, 거부는 근거 필수(`disposition`), 무기입=무시로 채점. 의도 밖 매매는 `off_intent_reason`. 18시 §4 — 당일 의도 마감 + 내일 의도 산출.
+- **채점**: `scripts/score_order_intents.py` → `state/intent_scorecard.json` (adherence·거부 t+5 효과·의도 밖 매매). cutover(`state/stage.json.execution_owner=code`) 기준은 plan §3.
+- **EOD 백스톱**: `scripts/eod_backstop.py`(평일 19:15 KST) — 18시 루틴 미발화 시 EOD_MARK 기록 + 내일 의도 산출.
+
+
 ## 자기보완 루프
 1. 18시 프롬프트가 watchlist의 **각 종목 실제 종가 vs 목표가** 비교
 2. ±5% 이내면 OK, 초과면 사유 분류

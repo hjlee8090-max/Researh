@@ -65,12 +65,11 @@
 11. `state/inference_checklist.md` — **선제 추론 직전 입력**(과거 빗나간 요인). 아래 §1-0 채점·예측 기록에 쓴다.
 12. `state/momentum_signal.json` — **수익형 전략 1순위 진입 엔진**(`policy.momentum_strategy`). `executable_allocation.orders` = 오늘 목표 바스켓. `state/pending_orders.json` 의 `strategy:"dual_momentum_w27"` 주문이 이 바스켓의 사전 체결 지시다.
 
-### §0-M. 모멘텀 바스켓 집행 (수익형 전략 — 현금 마비 탈출)
-- **원칙**: 강세장에서 현금 보유가 최대 적이다(진단: 직전 +198% 강세장에 계좌 -1.3%). `policy.momentum_strategy` 의 검증 바스켓을 1순위 진입 후보로 삼는다.
-- `pending_orders.json` 의 `strategy:"dual_momentum_w27"` 주문을 §2-PRE 게이트(가격신뢰도·heat·R/R) 통과 후 체결한다 — 현재가 ≤ `trigger.value`(진입상한 +5%) 면 `size_shares` 매수, 개장 fresh 가격으로 **종목당 30% 상한 내 수량 재산정**.
-- **cash_trap_fix**(`policy.momentum_strategy.cash_trap_fix`): web_verify(403) 차단 시에도 사전 계산 바스켓 체결은 '묵은 가격 추격'이 아니므로, 커밋된 `momentum_signal.json`+최신 committed snapshot 을 **medium 신뢰 출처로 인정**해 배치를 진행한다. **`low`(전 출처 결측)만 매매 차단.**
-- 체결분은 `portfolio.json`·`trade_log.jsonl`(`BUY_MOMENTUM_BASKET_*`)에 반영하고 watchlist `status`를 `held`로 전환, 해당 `pending_orders` 항목 `status:"triggered"`로 갱신한다. **주문에 `inference_id` 가 있으면 trade_log 라인에 그대로 복사한다**(v2.21 — score_inferences 결합손익(PF) 집계 연결고리, 발명 금지).
-- 보유 종목이 추세필터(가격>MA200) 이탈하거나 -2×ATR 손절 도달 시 청산. 월간 리밸런스(약 21거래일) 도래 시 `rebalance_changes` 의 enter/exit 만 회전.
+### §0-I. 주문 의도(order_intents) 처리 — Stage 1 dry-run (`state/stage.json`, docs/plan_stage1.md)
+- **원칙**: 명세가 시키는 주문은 코드가 먼저 쓴다. §0-B 직후 `python scripts/build_order_intents.py` 로 `state/order_intents.json` 을 재산출하고 `intents[]` 를 오늘 매매의 1차 입력으로 삼는다(진입=검증 엔진 바스켓·리밸런스일·빈 슬롯, 청산=hard_stop·trend_break·rebalance_rotation). `shadow_signals` 는 관측용이지 주문 의도가 아니다 — 이를 근거로 매매하지 않는다.
+- **집행이 기본**: BUY 의도는 §2-PRE 게이트 통과 시 `shares` 이하로 체결, SELL 의도는 18시 종가 청산으로 넘긴다(장중 신규매매 금지 불변). 체결 라인에 `intent_id` 기록 + 의도 `disposition` 을 `{"action":"executed","trade_ts":…,"by":"09:00"}` 로 기입.
+- **거부는 예외**: `disposition` 에 `{"action":"vetoed","reason":"<검증 가능한 수치·출처 URL>","by":"09:00"}` 필수. 게이트 block 은 `"expired"`+게이트명. **무기입은 '무시'로 채점**된다(`score_order_intents.py`). 의도 밖 매매는 trade_log 라인에 `off_intent_reason` 필수.
+- 가격 차단(403) 시: 커밋된 `momentum_signal.json`+최신 스냅샷을 medium 출처로 인정(`policy.momentum_strategy.cash_trap_fix`), `low` 만 매매 차단.
 
 > **파이프라인 연결 규칙** (핵심):
 > - 09시는 "어제 18시 (한국 마감) → 오늘 00시 (글로벌 야간) → 야간~새벽 추가 흐름 → 09시 (한국 개장)" 의 **종합 마디**다.

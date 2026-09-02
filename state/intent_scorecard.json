@@ -1,0 +1,28 @@
+{
+ "as_of": "2026-09-02T13:44:25+09:00",
+ "scope": "state/order_intents_log.jsonl 중 valid_until < 오늘 인 의도",
+ "counts": {
+  "intents": 0,
+  "executed": 0,
+  "vetoed": 0,
+  "expired": 0,
+  "ignored": 0,
+  "off_intent_trades": 0,
+  "off_intent_without_reason": 0
+ },
+ "adherence_pct": null,
+ "ignored_pct": null,
+ "veto_effect": {
+  "n_scored_t5": 0,
+  "sum_krw_t5": null,
+  "positive_rate_pct": null,
+  "note": "양수 = 거부가 계좌를 지켰다(BUY 거부 후 하락 / SELL 거부 후 상승). 표본 ≥ 10 전에는 해석 금지."
+ },
+ "cutover_signal": {
+  "rule": "docs/plan_stage1.md §3 — adherence ≥ 80% AND ignored 0 AND (veto 표본 ≥ 10 이면 veto 효과 합 > 0) 20거래일 유지 시 execution_owner=code 심사",
+  "adherence_ok": null,
+  "ignored_zero": null
+ },
+ "rows": [],
+ "off_intent": []
+}

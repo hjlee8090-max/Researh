@@ -1,0 +1,13 @@
+{
+  "stage": 1,
+  "since": "2026-09-02",
+  "execution_owner": "llm",
+  "execution_owner_options": {
+    "llm": "Stage 1 dry-run — 코드가 주문 의도(order_intents)를 매일 산출하고 LLM 루틴이 집행/거부를 기록한다. 원장 기록 주체는 아직 LLM.",
+    "code": "Stage 1 cutover — 주문 의도가 곧 주문. LLM 은 거부권(사유 기록)만. 전환 기준: reports/2026-09-02-pipeline-review.md §6-2 Stage 0→1 행 + docs/plan_stage1.md §3"
+  },
+  "rebalance_anchor": "2026-09-02",
+  "hard_exit_rules": ["hard_stop(position.stop_price 종가 이탈)", "trend_break(종가 < MA200)", "rebalance_rotation(리밸런스일 자격 이탈·Top-N 초과분)"],
+  "shadow_rules": ["trailing_first/residual", "target_take_profit", "orange/red 단계", "give_back", "R/R 하한 손절 상향", "estimate review_required", "thesis 무효화", "index_shock deferral"],
+  "note": "shadow_rules 는 order_intents.shadow_signals 로 관측만 한다(발동했더라도 주문 의도가 아니다). 정책 파라미터는 state/policy_freeze.json 동결 상태 그대로 — 이 파일은 실행 소유권과 룰의 '역할'만 정한다."
+}

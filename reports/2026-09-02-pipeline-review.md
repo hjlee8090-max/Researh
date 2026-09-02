@@ -242,6 +242,7 @@
 ### Change Log
 - 2026-09-02 본 진단 리포트 작성.
 - 2026-09-02 **Stage 0 착수(사용자 결정 D-1·D-2 확정)**: `scripts/check_policy_freeze.py` + `state/policy_freeze.json`(baseline v2.36) 으로 정책 동결을 CI 게이트화(auto_merge·pipeline_audit). `scripts/shadow_account.py` 가 명세 그대로의 전략을 그림자 계좌로 매일 기록(`fetch_history.yml`). sunday_policy_review §0-0 에 동결 규칙 반영(구 패치 동결 원칙 문구 대체). 일일 감사에 동결 상태·그림자 신선도 항목 추가.
+- 2026-09-02 **Stage 1 dry-run 착수(D-3 부분·D-4)**: `scripts/build_order_intents.py`(주문 의도)·`score_order_intents.py`(거부권 채점)·`eod_backstop.py`+워크플로(18시 백스톱). 0900 §0-M 을 §0-I 로 대체, 1800 §4 보강. 청산 오버레이는 의도에서 제외·그림자 관측. cutover 는 `docs/plan_stage1.md` §3 기준 충족 후 사람이 결정 — Stage 0 측정(그림자 대조 20거래일) 미충족 상태의 조기 cutover 는 하지 않는다.
 
 ---
 

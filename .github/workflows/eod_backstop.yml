@@ -1,0 +1,46 @@
+name: EOD Backstop (deterministic close)
+
+# Stage 1 (docs/plan_stage1.md §2-D): 18시 LLM 슬롯이 미발화해도 원장의 하루가 닫히게 한다.
+# 19:15 KST(10:15 UTC) 평일 — 18시 루틴(보통 18:15 push)과 19:30 감사 사이. 오늘 trade_log 라인이
+# 이미 있으면 아무것도 쓰지 않는다(멱등). 이어서 주문 의도(order_intents)·의도 채점을 재산출한다.
+on:
+  schedule:
+    - cron: "15 10 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eod-backstop
+  cancel-in-progress: false
+
+jobs:
+  backstop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Mark portfolio to market (snapshot)
+        run: python scripts/mark_to_market.py || true
+      - name: EOD backstop + order intents
+        run: python scripts/eod_backstop.py
+      - name: Score order intents (adherence / veto)
+        run: python scripts/score_order_intents.py || true
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/trade_log.jsonl config/portfolio.json state/order_intents.json state/order_intents_log.jsonl state/intent_scorecard.json
+          if git diff --cached --quiet; then
+            echo "no changes — skip commit"
+          else
+            git commit -m "data(eod): backstop close + order intents $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3 4; do
+              git pull --rebase origin "${GITHUB_REF_NAME}" || true
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break
+              echo "push failed, retry $i"; sleep $((2 ** i))
+            done
+          fi

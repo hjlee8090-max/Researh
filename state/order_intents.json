@@ -1,0 +1,82 @@
+{
+ "as_of": "2026-09-02T13:42:45+09:00",
+ "data_date": "2026-09-02",
+ "signal_as_of": "2026-09-02T10:09:47+09:00",
+ "stage": 1,
+ "execution_owner": "llm",
+ "spec": {
+  "engine": "state/momentum_signal.json",
+  "top_n": 6,
+  "rebalance_days": 21,
+  "hard_exit_rules": [
+   "hard_stop",
+   "trend_break",
+   "rebalance_rotation"
+  ],
+  "sizing": {
+   "max_position_weight_pct": 35.0,
+   "min_cash_weight_pct": 5.0
+  }
+ },
+ "rebalance": {
+  "anchor": "2026-09-02",
+  "trading_days_since_anchor": 0,
+  "is_rebalance_day": true,
+  "trading_days_to_next": 0
+ },
+ "account": {
+  "equity": 4706437.0,
+  "cash": 2665837.0,
+  "held": 5,
+  "vacant_slots_after_exits": 2
+ },
+ "intents": [
+  {
+   "id": "oi-20260902-1",
+   "action": "SELL",
+   "ticker": "035420",
+   "name": "NAVER",
+   "shares": 2,
+   "ref_price": 211500.0,
+   "ref_price_source": "snapshot 2026-09-02 (high)",
+   "rule": "trend_break",
+   "reason": "종가 211,500 < MA200 228,138",
+   "execution": "closing_auction 종가 청산(마감 후 신규매매 금지 원칙 동일)",
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "status": "proposed",
+   "disposition": null
+  },
+  {
+   "id": "oi-20260902-2",
+   "action": "BUY",
+   "ticker": "006400",
+   "name": "삼성SDI",
+   "shares": 2,
+   "ref_price": 555000.0,
+   "ref_price_source": "snapshot 2026-09-02 (medium)",
+   "rule": "momentum_basket_entry",
+   "reason": "검증 엔진 바스켓 score 24.84 · 빈 슬롯 2 · 슬롯 예산 1,215,258원",
+   "execution": "정규장 fresh 가격, 진입 상한 ref×1.05(추격 방지) — 기존 §2-PRE 게이트 통과 후",
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "status": "proposed",
+   "disposition": null
+  }
+ ],
+ "entry_note": null,
+ "shadow_signals": [
+  {
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "rule": "rr_floor_breach",
+   "detail": "R/R 0.643 < 1.1 (라이브 룰은 손절 상향 처방 — 의도 아님)"
+  },
+  {
+   "ticker": "055550",
+   "name": "신한지주",
+   "rule": "rr_floor_breach",
+   "detail": "R/R 0.947 < 1.1 (라이브 룰은 손절 상향 처방 — 의도 아님)"
+  }
+ ],
+ "notes": [],
+ "veto_protocol": "execution_owner=llm: 루틴은 각 의도의 disposition 에 {action: executed|vetoed|expired, reason, by, trade_ts} 를 기입한다. 기본은 집행(§2-PRE 게이트 통과 시). 거부(vetoed)는 검증 가능한 근거(수치·출처 URL) 필수. 의도에 없는 매매는 trade_log 라인에 off_intent_reason 필수. 무기입(null)은 '무시'로 채점된다."
+}

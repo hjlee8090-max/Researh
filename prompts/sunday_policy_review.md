@@ -16,7 +16,7 @@
   - `defer` = 사유와 재검토 시점을 note 에. `observe` = 관측 지속 사유. 둘 다 **14일 넘게 finding 이 살아 있으면 자동 만료**되어 재처분해야 한다.
   - **무처분 2주 이상 = 다음 주 `weekly_self_audit` 워크플로 FAIL** (`self_audit.py --followup-only`, AUDIT_ENFORCE=1). 처분을 쓰지 않으면 파이프라인이 빨간불이 된다 — 무응답 이월은 구조적으로 불가능.
 - 처분 후 `python scripts/self_audit.py --followup-only` 를 실행해 overdue=0 을 확인하고, findings 파일 변경을 리뷰 커밋에 포함한다.
-- **패치 동결 규칙(감사 처방⑤)**: `patch_vs_validation` 이 "직전 감사 이후 버전 증가 + 신규 왕복 0건" 경고를 내면, 이번 리뷰의 정책 패치는 **버그 수정·게이트 강화만 허용**하고 전략 파라미터 변경(사이징·임계·목표 등)은 검증 표본이 쌓일 때까지 동결한다 — 패치 속도가 검증 속도를 앞지르면 어떤 패치가 효과였는지 영원히 알 수 없다(2026-07-06 감사: 47일간 31버전 vs 왕복 9건).
+- **정책 동결 게이트(Stage 0, 2026-09-02 — `state/policy_freeze.json`)**: `python scripts/check_policy_freeze.py --status` 를 먼저 실행한다. `active=true` 이면 이번 리뷰는 **`config/policy.json` 을 한 글자도 수정하지 않는다**(버전 bump·shadow 임계·"데이터 버그" 명목 포함 — CI 가 main 도달을 차단한다). 패치가 필요하다고 판단되면 `state/policy_freeze.json.backlog` 에 `{date, proposer:"sunday_policy_review", field, current, proposed, expected_effect, required_samples, note}` 로 **등록만** 하고, finding 처분은 `defer`(note 에 backlog 항목 참조) 로 쓴다. 동결 해제는 사람이 `--init` 으로만 한다(해제 기준: `reports/2026-09-02-pipeline-review.md` §6-2). 동결 전 규칙(감사 처방⑤ 패치 동결 원칙)은 이 게이트에 흡수됐다.
 - 휩쏘·오버레이 판정(감사 D·H)이 악화 방향이면 청산 룰(트레일링·스톱)의 shadow 강등을 안건으로 상정한다.
 
 ## 0-A. lessons 인덱스 자동 생성

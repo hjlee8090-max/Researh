@@ -240,7 +240,8 @@
 - W-3 기준 수치(§6-2)는 유력안이다. 확정 전에 backtest 표본으로 한 번 검산할 것.
 
 ### Change Log
-- 2026-09-02 본 진단 리포트 작성. 정책·프롬프트·스크립트 변경 없음.
+- 2026-09-02 본 진단 리포트 작성.
+- 2026-09-02 **Stage 0 착수(사용자 결정 D-1·D-2 확정)**: `scripts/check_policy_freeze.py` + `state/policy_freeze.json`(baseline v2.36) 으로 정책 동결을 CI 게이트화(auto_merge·pipeline_audit). `scripts/shadow_account.py` 가 명세 그대로의 전략을 그림자 계좌로 매일 기록(`fetch_history.yml`). sunday_policy_review §0-0 에 동결 규칙 반영(구 패치 동결 원칙 문구 대체). 일일 감사에 동결 상태·그림자 신선도 항목 추가.
 
 ---
 

@@ -34,6 +34,9 @@ jobs:
         env:
           LESSONS_ENFORCE: "1"
         run: python scripts/check_lessons_applied.py
+      # Stage 0 정책 동결 게이트 — main 위의 policy.json 이 baseline 과 다르면 FAIL (D-1)
+      - name: Enforce policy freeze
+        run: python scripts/check_policy_freeze.py
 
   audit:
     runs-on: ubuntu-latest

@@ -53,6 +53,11 @@ jobs:
       - name: Trade provenance gate (block stale/unverified bookings from reaching main)
         run: python3 scripts/check_trade_log_gate.py
 
+      # Stage 0 정책 동결 게이트 (reports/2026-09-02-pipeline-review.md D-1) — 동결 중 policy.json
+      # 파라미터 변경 커밋은 main 에 닿지 못한다. 패치 후보는 state/policy_freeze.json.backlog 에만.
+      - name: Policy freeze gate (block strategy-parameter changes while frozen)
+        run: python3 scripts/check_policy_freeze.py
+
       - name: Verify committer is the routine bot
         id: guard
         env:

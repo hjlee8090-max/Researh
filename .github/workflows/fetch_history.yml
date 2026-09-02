@@ -43,11 +43,15 @@ jobs:
         run: |
           python scripts/backtest_strategy.py || echo "backtest skipped (data insufficient)"
           python scripts/momentum_signal.py || echo "signal skipped (data insufficient)"
+      # Stage 0 그림자 계좌 — 명세 그대로의 전략을 오버레이 없이 페이퍼 체결해 라이브와 나란히 기록
+      # (reports/2026-09-02-pipeline-review.md D-2). 매 실행 전체 재계산(멱등).
+      - name: Shadow account (strategy-as-specified paper ledger)
+        run: python scripts/shadow_account.py || echo "shadow skipped (data insufficient)"
       - name: Commit history if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state/price_history.json state/backtest_strategy.json state/momentum_signal.json
+          git add state/price_history.json state/backtest_strategy.json state/momentum_signal.json state/shadow_account.json state/shadow_account.md
           if git diff --cached --quiet; then
             echo "no history changes — skip commit"
           else

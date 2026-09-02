@@ -142,6 +142,9 @@ def main() -> int:
 
     intents, shadow, notes = [], [], []
     seq = [0]
+    # ── 자본 리셋(사용자 결정 2026-09-02): 보유 전량 현금화가 pending 이면 하드 룰보다 먼저, 전 종목 SELL ──
+    cap_reset = ((stage.get("capital") or {}).get("reset") or {})
+    reset_pending = cap_reset.get("status") == "pending"
 
     def new_id():
         seq[0] += 1
@@ -160,7 +163,10 @@ def main() -> int:
         if px is None:
             notes.append(f"{p.get('name', tk)}: 가격 결측 — 청산 판정 보류")
             continue
-        if stop and px <= float(stop):
+        if reset_pending:
+            rule, why = "capital_reset", (f"사용자 결정({cap_reset.get('requested')}): 실투입 자본 = 평가금액 → 보유 전량 종가 현금화. "
+                                          f"손절·목표·thesis 와 무관하게 집행(거부 불가 — 사용자 지시)")
+        elif stop and px <= float(stop):
             rule, why = "hard_stop", f"종가 {px:,.0f} ≤ 손절 {float(stop):,.0f}"
         elif ma and px < float(ma):
             rule, why = "trend_break", f"종가 {px:,.0f} < MA200 {float(ma):,.0f}"
@@ -201,7 +207,9 @@ def main() -> int:
     # ── 진입(리밸런스일에만, 빈 슬롯만) ──────────────────────────────────────
     vacant = top_n - (len(held) - len(exiting))
     entry_note = None
-    if not is_rebal:
+    if reset_pending:
+        entry_note = "자본 리셋 pending — 현금화 완료(보유 0) 후 다음 리밸런스일부터 진입"
+    elif not is_rebal:
         entry_note = f"리밸런스일 아님(다음 리밸런스까지 {to_next}거래일) — 신규 진입 의도 없음"
     elif vacant <= 0:
         entry_note = "빈 슬롯 없음"
@@ -233,6 +241,14 @@ def main() -> int:
                             "valid_until": valid_until, "status": "proposed", "disposition": None})
             deployable -= shares * px * (1 + buy_cost)
 
+    if reset_pending and not held and not args.dry_run:
+        cap_reset["status"] = "done"
+        cap_reset["done_date"] = data_date
+        cap_reset["cash_after_reset_krw"] = cash
+        stage["rebalance_anchor"] = data_date  # 현금 출발점부터 리밸런스 그리드 재시작
+        (ROOT / "state" / "stage.json").write_text(json.dumps(stage, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        notes.append(f"자본 리셋 완료 — 현금 {cash:,.0f}원, rebalance_anchor={data_date}")
+
     out = {
         "as_of": datetime.now(KST).isoformat(timespec="seconds"),
         "data_date": data_date,
@@ -245,6 +261,7 @@ def main() -> int:
         "rebalance": {"anchor": anchor, "trading_days_since_anchor": days_since, "is_rebalance_day": is_rebal,
                       "trading_days_to_next": 0 if is_rebal else to_next},
         "account": {"equity": equity, "cash": cash, "held": len(held), "vacant_slots_after_exits": max(0, vacant)},
+        "capital_reset": {"status": cap_reset.get("status"), "requested": cap_reset.get("requested"), "done_date": cap_reset.get("done_date")},
         "intents": intents,
         "entry_note": entry_note,
         "shadow_signals": shadow,

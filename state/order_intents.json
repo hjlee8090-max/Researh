@@ -1,6 +1,6 @@
 {
- "as_of": "2026-09-02T18:12:27+09:00",
- "data_date": "2026-09-03",
+ "as_of": "2026-09-02T21:41:59+09:00",
+ "data_date": "2026-09-02",
  "signal_as_of": "2026-09-02T10:09:47+09:00",
  "stage": 1,
  "execution_owner": "llm",
@@ -37,7 +37,7 @@
  },
  "intents": [
   {
-   "id": "oi-20260903-1",
+   "id": "oi-20260902-1",
    "action": "BUY",
    "ticker": "006400",
    "name": "삼성SDI",
@@ -47,18 +47,13 @@
    "rule": "momentum_basket_entry",
    "reason": "검증 엔진 바스켓 score 24.84 · 빈 슬롯 6 · 슬롯 예산 736,402원",
    "execution": "정규장 fresh 가격, 진입 상한 ref×1.05(추격 방지) — 기존 §2-PRE 게이트 통과 후",
-   "valid_until": "2026-09-03T15:30:00+09:00",
+   "valid_until": "2026-09-02T15:30:00+09:00",
    "status": "proposed",
-   "disposition": null,
-   "session": "2026-09-03",
-   "note": "18시 산출 = 다음 영업일(9/3) 세션 의도. 마감 후 신규매매 금지 원칙에 따라 오늘은 booking 하지 않는다. 9/3 09시가 §2-PRE 게이트(진입필터·R/R·heat·estimate)를 통과시킨 뒤에만 집행한다."
+   "disposition": null
   }
  ],
- "entry_note": "자본 리셋 완료(보유 0·현금 4,650,961원) — 리밸런스 앵커 2026-09-02 기준 다음 세션부터 재진입 가능. 이 현금이 사이징 상한.",
+ "entry_note": null,
  "shadow_signals": [],
- "notes": [
-  "2026-09-02 18:00 — capital_reset 의도 5건 전건 executed(거부 0). 집행 기록은 state/order_intents_archive.jsonl + trade_log 의 intent_id 로 보존(빌더가 파일을 재작성하며 당일 disposition 을 덮어쓰는 것을 확인 — 일요일 리뷰 안건).",
-  "9/3 세션 의도 1건(삼성SDI 1주 momentum_basket_entry) — 빌더가 valid_until 을 산출일 15:30 으로 찍어 이미 만료 상태로 나오는 문제를 18시가 9/3 15:30 으로 정정했다(빌더 수정은 일요일 리뷰 안건)."
- ],
+ "notes": [],
  "veto_protocol": "execution_owner=llm: 루틴은 각 의도의 disposition 에 {action: executed|vetoed|expired, reason, by, trade_ts} 를 기입한다. 기본은 집행(§2-PRE 게이트 통과 시). 거부(vetoed)는 검증 가능한 근거(수치·출처 URL) 필수. 의도에 없는 매매는 trade_log 라인에 off_intent_reason 필수. 무기입(null)은 '무시'로 채점된다."
 }

@@ -1,7 +1,7 @@
 {
- "as_of": "2026-09-02T23:31:52+09:00",
- "data_date": "2026-09-02",
- "signal_as_of": "2026-09-02T10:09:47+09:00",
+ "as_of": "2026-09-03T08:55:44+09:00",
+ "data_date": "2026-09-03",
+ "signal_as_of": "2026-09-03T08:16:37+09:00",
  "stage": 1,
  "execution_owner": "llm",
  "spec": {
@@ -20,9 +20,9 @@
  },
  "rebalance": {
   "anchor": "2026-09-02",
-  "trading_days_since_anchor": 0,
-  "is_rebalance_day": true,
-  "trading_days_to_next": 0
+  "trading_days_since_anchor": 1,
+  "is_rebalance_day": false,
+  "trading_days_to_next": 20
  },
  "account": {
   "equity": 4650961.0,
@@ -35,24 +35,8 @@
   "requested": "2026-09-02",
   "done_date": "2026-09-02"
  },
- "intents": [
-  {
-   "id": "oi-20260902-1",
-   "action": "BUY",
-   "ticker": "006400",
-   "name": "삼성SDI",
-   "shares": 1,
-   "ref_price": 538000.0,
-   "ref_price_source": "snapshot 2026-09-02 (high)",
-   "rule": "momentum_basket_entry",
-   "reason": "검증 엔진 바스켓 score 24.84 · 빈 슬롯 6 · 슬롯 예산 736,402원",
-   "execution": "정규장 fresh 가격, 진입 상한 ref×1.05(추격 방지) — 기존 §2-PRE 게이트 통과 후",
-   "valid_until": "2026-09-02T15:30:00+09:00",
-   "status": "proposed",
-   "disposition": null
-  }
- ],
- "entry_note": null,
+ "intents": [],
+ "entry_note": "리밸런스일 아님(다음 리밸런스까지 20거래일) — 신규 진입 의도 없음",
  "shadow_signals": [],
  "notes": [],
  "veto_protocol": "execution_owner=llm: 루틴은 각 의도의 disposition 에 {action: executed|vetoed|expired, reason, by, trade_ts} 를 기입한다. 기본은 집행(§2-PRE 게이트 통과 시). 거부(vetoed)는 검증 가능한 근거(수치·출처 URL) 필수. 의도에 없는 매매는 trade_log 라인에 off_intent_reason 필수. 무기입(null)은 '무시'로 채점된다."

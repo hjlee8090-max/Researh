@@ -1,45 +1,45 @@
 {
-  "stage": 1,
-  "since": "2026-09-02",
-  "execution_owner": "llm",
-  "execution_owner_options": {
-    "llm": "Stage 1 dry-run — 코드가 주문 의도(order_intents)를 매일 산출하고 LLM 루틴이 집행/거부를 기록한다. 원장 기록 주체는 아직 LLM.",
-    "code": "Stage 1 cutover — 주문 의도가 곧 주문. LLM 은 거부권(사유 기록)만. 전환 기준: reports/2026-09-02-pipeline-review.md §6-2 Stage 0→1 행 + docs/plan_stage1.md §3"
+ "stage": 1,
+ "since": "2026-09-02",
+ "execution_owner": "llm",
+ "execution_owner_options": {
+  "llm": "Stage 1 dry-run — 코드가 주문 의도(order_intents)를 매일 산출하고 LLM 루틴이 집행/거부를 기록한다. 원장 기록 주체는 아직 LLM.",
+  "code": "Stage 1 cutover — 주문 의도가 곧 주문. LLM 은 거부권(사유 기록)만. 전환 기준: reports/2026-09-02-pipeline-review.md §6-2 Stage 0→1 행 + docs/plan_stage1.md §3"
+ },
+ "rebalance_anchor": "2026-09-02",
+ "hard_exit_rules": [
+  "hard_stop(position.stop_price 종가 이탈)",
+  "trend_break(종가 < MA200)",
+  "rebalance_rotation(리밸런스일 자격 이탈·Top-N 초과분)"
+ ],
+ "shadow_rules": [
+  "trailing_first/residual",
+  "target_take_profit",
+  "orange/red 단계",
+  "give_back",
+  "R/R 하한 손절 상향",
+  "estimate review_required",
+  "thesis 무효화",
+  "index_shock deferral"
+ ],
+ "note": "shadow_rules 는 order_intents.shadow_signals 로 관측만 한다(발동했더라도 주문 의도가 아니다). 정책 파라미터는 state/policy_freeze.json 동결 상태 그대로 — 이 파일은 실행 소유권과 룰의 '역할'만 정한다.",
+ "capital": {
+  "decision_date": "2026-09-02",
+  "basis": "사용자 결정 — 실투입 자본 = 현재 파이프라인 평가금액. 보유 전량을 종가 청산해 현금으로 전환하고 그 현금이 Stage 2(한국투자증권 모의투자)·Stage 3 사이징의 상한이 된다.",
+  "reset": {
+   "status": "done",
+   "requested": "2026-09-02",
+   "execution": "18시 closing_auction 전량 SELL 의도(rule=capital_reset) — build_order_intents 가 보유가 0 이 될 때까지 매일 발행, 0 이 되면 done 으로 전환",
+   "done_date": "2026-09-02",
+   "cash_after_reset_krw": 4650961
   },
-  "rebalance_anchor": "2026-09-02",
-  "hard_exit_rules": [
-    "hard_stop(position.stop_price 종가 이탈)",
-    "trend_break(종가 < MA200)",
-    "rebalance_rotation(리밸런스일 자격 이탈·Top-N 초과분)"
-  ],
-  "shadow_rules": [
-    "trailing_first/residual",
-    "target_take_profit",
-    "orange/red 단계",
-    "give_back",
-    "R/R 하한 손절 상향",
-    "estimate review_required",
-    "thesis 무효화",
-    "index_shock deferral"
-  ],
-  "note": "shadow_rules 는 order_intents.shadow_signals 로 관측만 한다(발동했더라도 주문 의도가 아니다). 정책 파라미터는 state/policy_freeze.json 동결 상태 그대로 — 이 파일은 실행 소유권과 룰의 '역할'만 정한다.",
-  "capital": {
-    "decision_date": "2026-09-02",
-    "basis": "사용자 결정 — 실투입 자본 = 현재 파이프라인 평가금액. 보유 전량을 종가 청산해 현금으로 전환하고 그 현금이 Stage 2(한국투자증권 모의투자)·Stage 3 사이징의 상한이 된다.",
-    "reset": {
-      "status": "pending",
-      "requested": "2026-09-02",
-      "execution": "18시 closing_auction 전량 SELL 의도(rule=capital_reset) — build_order_intents 가 보유가 0 이 될 때까지 매일 발행, 0 이 되면 done 으로 전환",
-      "done_date": null,
-      "cash_after_reset_krw": null
-    },
-    "sizing_cap_note": "모의투자 계좌 잔고(브로커 기본 가상금)가 아니라 이 현금 금액이 사이징 상한이다. 브로커 잔고 ≠ 정책 자본."
-  },
-  "broker": {
-    "decision_date": "2026-09-02",
-    "name": "한국투자증권 Open API 모의투자(VTS)",
-    "stage": 2,
-    "status": "decided_not_wired",
-    "prereq_doc": "docs/plan_stage2_prereq.md"
-  }
+  "sizing_cap_note": "모의투자 계좌 잔고(브로커 기본 가상금)가 아니라 이 현금 금액이 사이징 상한이다. 브로커 잔고 ≠ 정책 자본."
+ },
+ "broker": {
+  "decision_date": "2026-09-02",
+  "name": "한국투자증권 Open API 모의투자(VTS)",
+  "stage": 2,
+  "status": "decided_not_wired",
+  "prereq_doc": "docs/plan_stage2_prereq.md"
+ }
 }

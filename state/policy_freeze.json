@@ -49,7 +49,18 @@
   ],
   "how_to_patch_while_frozen": "패치 후보는 state/policy_freeze.json.backlog 에 {date, proposer, field, current, proposed, expected_effect, required_samples, note} 로 등록만 한다. 실제 반영은 동결 해제 후 shadow 관측 → 백테스트 재실행 → 승격 순서로만.",
   "lift_criteria_ref": "reports/2026-09-02-pipeline-review.md §6-2 (Stage 0→1 기준)",
-  "backlog": [],
+  "backlog": [
+    {
+      "date": "2026-09-02",
+      "proposer": "user_decision+review",
+      "field": "momentum_strategy.config.{top_n,min_score} / 유니버스(fetch_history 종목군)",
+      "current": "top_n 6 · min_score 30 · 대형주 30종목(1주 50만~165만원 다수)",
+      "proposed": "자본 ≈ 4.7M 확정에 맞춘 정합 — (a) top_n 3~4·min_score 완화 또는 (b) 저가 대형주·ETF 로 유니버스 보강. 그림자 계좌 2변형(spec_backtest vs spec_live)의 20거래일 대조 결과로 방향 결정",
+      "expected_effect": "정수주 제약으로 바스켓이 비는 문제(P5) 해소 — 현재 spec_live 는 보유 0",
+      "required_samples": "그림자 대조 20거래일 + 정수주 제약 포함 백테스트 재실행",
+      "note": "동결 중 등록만. 해제·재baseline 은 사람이 check_policy_freeze.py --init 으로."
+    }
+  ],
   "history": [
     {
       "date": "2026-09-02",

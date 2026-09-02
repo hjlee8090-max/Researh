@@ -166,6 +166,7 @@ scripts/
 - **루틴 역할**: 09시 §0-I — 집행이 기본, 거부는 근거 필수(`disposition`), 무기입=무시로 채점. 의도 밖 매매는 `off_intent_reason`. 18시 §4 — 당일 의도 마감 + 내일 의도 산출.
 - **채점**: `scripts/score_order_intents.py` → `state/intent_scorecard.json` (adherence·거부 t+5 효과·의도 밖 매매). cutover(`state/stage.json.execution_owner=code`) 기준은 plan §3.
 - **EOD 백스톱**: `scripts/eod_backstop.py`(평일 19:15 KST) — 18시 루틴 미발화 시 EOD_MARK 기록 + 내일 의도 산출.
+- **자본·브로커 결정(2026-09-02, `state/stage.json.capital/broker`)**: 실투입 자본 = 현재 평가금액 → 보유 전량 종가 현금화(rule=capital_reset 의도, 완료 시 리밸런스 그리드 재시작). 브로커 = 한국투자증권 모의투자 — 전제는 `docs/plan_stage2_prereq.md`, 코드는 cutover 후.
 
 
 ## 자기보완 루프

@@ -1,45 +1,43 @@
 {
-  "as_of": "2026-09-03T11:55:37+09:00",
-  "data_date": "2026-09-03",
-  "signal_as_of": "2026-09-03T10:15:42+09:00",
-  "stage": 1,
-  "execution_owner": "llm",
-  "spec": {
-    "engine": "state/momentum_signal.json",
-    "top_n": 6,
-    "rebalance_days": 21,
-    "hard_exit_rules": [
-      "hard_stop",
-      "trend_break",
-      "rebalance_rotation"
-    ],
-    "sizing": {
-      "max_position_weight_pct": 35.0,
-      "min_cash_weight_pct": 5.0
-    }
-  },
-  "rebalance": {
-    "anchor": "2026-09-02",
-    "trading_days_since_anchor": 1,
-    "is_rebalance_day": false,
-    "trading_days_to_next": 20
-  },
-  "account": {
-    "equity": 4650961.0,
-    "cash": 4650961.0,
-    "held": 0,
-    "vacant_slots_after_exits": 6
-  },
-  "capital_reset": {
-    "status": "done",
-    "requested": "2026-09-02",
-    "done_date": "2026-09-02"
-  },
-  "intents": [],
-  "entry_note": "리밸런스일 아님(다음 리밸런스까지 20거래일) — 신규 진입 의도 없음",
-  "shadow_signals": [],
-  "notes": [
-    "[12:00] 의도 0건 상태에서 LLM 재량 진입 2건 집행(KB금융 1주·신한지주 2주) — 각 trade_log 라인에 off_intent_reason 기재. 엔진 바스켓과의 충돌 정리는 다음 리밸런스일(앵커 2026-09-02 + 21거래일) 몫이다."
+ "as_of": "2026-09-03T13:14:16+09:00",
+ "data_date": "2026-09-03",
+ "signal_as_of": "2026-09-03T10:15:42+09:00",
+ "stage": 1,
+ "execution_owner": "llm",
+ "spec": {
+  "engine": "state/momentum_signal.json",
+  "top_n": 6,
+  "rebalance_days": 21,
+  "hard_exit_rules": [
+   "hard_stop",
+   "trend_break",
+   "rebalance_rotation"
   ],
-  "veto_protocol": "execution_owner=llm: 루틴은 각 의도의 disposition 에 {action: executed|vetoed|expired, reason, by, trade_ts} 를 기입한다. 기본은 집행(§2-PRE 게이트 통과 시). 거부(vetoed)는 검증 가능한 근거(수치·출처 URL) 필수. 의도에 없는 매매는 trade_log 라인에 off_intent_reason 필수. 무기입(null)은 '무시'로 채점된다."
+  "sizing": {
+   "max_position_weight_pct": 35.0,
+   "min_cash_weight_pct": 5.0
+  }
+ },
+ "rebalance": {
+  "anchor": "2026-09-02",
+  "trading_days_since_anchor": 1,
+  "is_rebalance_day": false,
+  "trading_days_to_next": 20
+ },
+ "account": {
+  "equity": 4650282.0,
+  "cash": 4241082.0,
+  "held": 2,
+  "vacant_slots_after_exits": 4
+ },
+ "capital_reset": {
+  "status": "done",
+  "requested": "2026-09-02",
+  "done_date": "2026-09-02"
+ },
+ "intents": [],
+ "entry_note": "리밸런스일 아님(다음 리밸런스까지 20거래일) — 신규 진입 의도 없음",
+ "shadow_signals": [],
+ "notes": [],
+ "veto_protocol": "execution_owner=llm: 루틴은 각 의도의 disposition 에 {action: executed|vetoed|expired, reason, by, trade_ts} 를 기입한다. 기본은 집행(§2-PRE 게이트 통과 시). 거부(vetoed)는 검증 가능한 근거(수치·출처 URL) 필수. 의도에 없는 매매는 trade_log 라인에 off_intent_reason 필수. 무기입(null)은 '무시'로 채점된다."
 }

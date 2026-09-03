@@ -1,17 +1,17 @@
 {
- "as_of": "2026-09-02T23:31:52+09:00",
+ "as_of": "2026-09-03T23:36:18+09:00",
  "scope": "state/order_intents_log.jsonl 중 valid_until < 오늘 인 의도",
  "counts": {
-  "intents": 0,
-  "executed": 0,
+  "intents": 5,
+  "executed": 4,
   "vetoed": 0,
   "expired": 0,
-  "ignored": 0,
-  "off_intent_trades": 0,
-  "off_intent_without_reason": 0
+  "ignored": 1,
+  "off_intent_trades": 1,
+  "off_intent_without_reason": 1
  },
- "adherence_pct": null,
- "ignored_pct": null,
+ "adherence_pct": 80.0,
+ "ignored_pct": 20.0,
  "veto_effect": {
   "n_scored_t5": 0,
   "sum_krw_t5": null,
@@ -20,9 +20,98 @@
  },
  "cutover_signal": {
   "rule": "docs/plan_stage1.md §3 — adherence ≥ 80% AND ignored 0 AND (veto 표본 ≥ 10 이면 veto 효과 합 > 0) 20거래일 유지 시 execution_owner=code 심사",
-  "adherence_ok": null,
-  "ignored_zero": null
+  "adherence_ok": true,
+  "ignored_zero": false
  },
- "rows": [],
- "off_intent": []
+ "rows": [
+  {
+   "id": "oi-20260902-1",
+   "date": "2026-09-02",
+   "action": "BUY",
+   "ticker": "006400",
+   "name": "삼성SDI",
+   "shares": 1,
+   "rule": "momentum_basket_entry",
+   "ref_price": 538000.0,
+   "verdict": "ignored",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20260902-2",
+   "date": "2026-09-02",
+   "action": "SELL",
+   "ticker": "105560",
+   "name": "KB금융",
+   "shares": 2,
+   "rule": "capital_reset",
+   "ref_price": 169100.0,
+   "verdict": "executed",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20260902-3",
+   "date": "2026-09-02",
+   "action": "SELL",
+   "ticker": "035420",
+   "name": "NAVER",
+   "shares": 2,
+   "rule": "capital_reset",
+   "ref_price": 209000.0,
+   "verdict": "executed",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20260902-4",
+   "date": "2026-09-02",
+   "action": "SELL",
+   "ticker": "055550",
+   "name": "신한지주",
+   "shares": 2,
+   "rule": "capital_reset",
+   "ref_price": 110500.0,
+   "verdict": "executed",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20260902-5",
+   "date": "2026-09-02",
+   "action": "SELL",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "shares": 2,
+   "rule": "capital_reset",
+   "ref_price": 373000.0,
+   "verdict": "executed",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  }
+ ],
+ "off_intent": [
+  {
+   "date": "2026-09-02",
+   "action": "SELL_CAPITAL_RESET",
+   "ticker": "086790",
+   "off_intent_reason": null,
+   "has_reason": false
+  }
+ ]
 }

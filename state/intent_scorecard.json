@@ -1,17 +1,17 @@
 {
- "as_of": "2026-09-03T23:36:18+09:00",
+ "as_of": "2026-09-04T23:23:37+09:00",
  "scope": "state/order_intents_log.jsonl 중 valid_until < 오늘 인 의도",
  "counts": {
-  "intents": 5,
+  "intents": 6,
   "executed": 4,
   "vetoed": 0,
-  "expired": 0,
+  "expired": 1,
   "ignored": 1,
-  "off_intent_trades": 1,
+  "off_intent_trades": 3,
   "off_intent_without_reason": 1
  },
- "adherence_pct": 80.0,
- "ignored_pct": 20.0,
+ "adherence_pct": 66.7,
+ "ignored_pct": 16.7,
  "veto_effect": {
   "n_scored_t5": 0,
   "sum_krw_t5": null,
@@ -20,7 +20,7 @@
  },
  "cutover_signal": {
   "rule": "docs/plan_stage1.md §3 — adherence ≥ 80% AND ignored 0 AND (veto 표본 ≥ 10 이면 veto 효과 합 > 0) 20거래일 유지 시 execution_owner=code 심사",
-  "adherence_ok": true,
+  "adherence_ok": false,
   "ignored_zero": false
  },
  "rows": [
@@ -103,6 +103,22 @@
    "t5_date": null,
    "veto_effect_krw_t5": null,
    "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20260903-1",
+   "date": "2026-09-03",
+   "action": "BUY",
+   "ticker": "006400",
+   "name": "삼성SDI",
+   "shares": 1,
+   "rule": "momentum_basket_entry",
+   "ref_price": 538000.0,
+   "verdict": "expired",
+   "veto_reason": "valid_until 2026-09-03T15:30:00+09:00 경과·미집행. 09시 §2-PRE 게이트에서 estimate_gate 미통과 — 뉴스 반영 신규진입 상한가 476,900원 대비 종가 539,000원이 13.0% 상회(🔴), 추정 기대수익 +0.6% 로 후보 20종 중 15위. 09/12/15 어느 슬롯도 disposition 을 기입하지 않아 18시가 소급 기입한다(무기입 상태로 만료된 첫 사례 — lessons 기록).",
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
   }
  ],
  "off_intent": [
@@ -112,6 +128,20 @@
    "ticker": "086790",
    "off_intent_reason": null,
    "has_reason": false
+  },
+  {
+   "date": "2026-09-03",
+   "action": "BUY",
+   "ticker": "105560",
+   "off_intent_reason": "의도 외 매수(off-intent) — state/order_intents.json 11:55 산출본이 `intents: []`·`entry_note: 리밸런스일 아님(다음 리밸런스까지 20거래일)`이므로 듀얼모멘텀 엔진(Stage 1, 21거래일 리밸런스)의 의도에는 이 매수가 없다. 그럼에도 집행하는 근거는 세 가지다. ①이 진입은 엔진 신호가 아니라 **오늘 09시 슬롯이 watchlist.next_action_candidates 1순위에 '재량 없음'으로 사전 명문화한 조건부 트리거**이고, 세 조건(value_up 3/4 상회·KB금융 confidence≥medium·현재가<신규진입 상한가)이 12:13 실측에서 전부 참이 됐다. ②`allocation.recommendation.action=deploy`(주식 0.0% ≪ bull 밴드 하한 65%, 권고 3,371,947원·빈 슬롯 6)로 비중 배치 레이어가 진입을 요구하고 있으며, 리밸런스 캘린더는 로테이션(교체) 주기이지 미배치 자본의 신규 배치를 20거래일 묶어 두는 규약이 아니다. ③사이징이 절반 비중 1주(179,385원 = equity 의 3.9%, 손절위험 11,257원 = 단일거래 상한의 12.1%)로 엔진 바스켓의 비중 규약(종목당 35% 상한·현금 하한 5%)을 침범하지 않는다. 다음 리밸런스일(20거래일 후)에 엔진 바스켓과 충돌하면 그때 정리 대상으로 올린다.",
+   "has_reason": true
+  },
+  {
+   "date": "2026-09-03",
+   "action": "BUY",
+   "ticker": "055550",
+   "off_intent_reason": "의도 외 매수(off-intent) — 근거는 KB금융 라인과 동일(`intents: []`·리밸런스일 아님). 추가로 이 종목은 09시 텍스트가 명시한 KB금융 1종을 넘어서는 배치이며, 그 근거는 같은 09시 next_action_candidates **3순위**가 '신뢰도 복귀 시 1순위 트리거의 대상 종목을 다시 고른다 — KB금융 고정이 아니다'로 재선정을 사전 허용했고, 12:13 재수집에서 신한지주 confidence 가 high 로 복귀하며 candidate_scores tradable 1위(0.784)가 됐기 때문이다. 사이징 230,494원(equity 의 5.0%·손절위험 14,458원 = 단일거래 상한의 15.5%).",
+   "has_reason": true
   }
  ]
 }

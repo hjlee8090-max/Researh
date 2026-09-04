@@ -1,1267 +1,1307 @@
 {
-  "_meta": "조건부 사전주문(선제 커밋). W27 전략전환: 듀얼모멘텀 바스켓 일괄 배치(docs/strategy_momentum.md). 체결은 6/30 09시 routine 이 pre_trade_gate(가격신뢰도·heat·R/R) 통과 후 — 개장 fresh 가격으로 종목당 30% 상한 내 수량 재산정. 가격 차단(403) 시 policy.momentum_strategy.cash_trap_fix 에 따라 커밋된 신호·스냅샷을 medium 출처로 인정.",
-  "schema": {
-    "id": "po-YYYYMMDD-N",
-    "created_slot": "sunday_strategy",
-    "ticker": "XXXXXX",
-    "name": "종목명",
-    "action": "BUY|SELL",
-    "trigger": {
-      "type": "price_below|market_open",
-      "value": 0
-    },
-    "size_shares": 0,
-    "size_hint": "basket_deploy",
-    "tier": 1,
-    "price_source_required": "snapshot_or_web",
-    "valid_until": "YYYY-MM-DDTHH:MM:00+09:00",
-    "strategy": "dual_momentum_w27",
-    "status": "active"
+ "_meta": "조건부 사전주문(선제 커밋). W27 전략전환: 듀얼모멘텀 바스켓 일괄 배치(docs/strategy_momentum.md). 체결은 6/30 09시 routine 이 pre_trade_gate(가격신뢰도·heat·R/R) 통과 후 — 개장 fresh 가격으로 종목당 30% 상한 내 수량 재산정. 가격 차단(403) 시 policy.momentum_strategy.cash_trap_fix 에 따라 커밋된 신호·스냅샷을 medium 출처로 인정.",
+ "schema": {
+  "id": "po-YYYYMMDD-N",
+  "created_slot": "sunday_strategy",
+  "ticker": "XXXXXX",
+  "name": "종목명",
+  "action": "BUY|SELL",
+  "trigger": {
+   "type": "price_below|market_open",
+   "value": 0
   },
-  "orders": [
-    {
-      "id": "po-20260826-1",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 124005
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-2",
-      "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-2",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-2",
-      "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-3",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-2",
-      "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-4",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-2",
-      "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-5",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 198052
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-3",
-      "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-6",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262481
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-3",
-      "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-7",
-      "created_slot": "18:00",
-      "ticker": "055550",
-      "name": "신한지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 98534
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-2",
-      "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-8",
-      "created_slot": "18:00",
-      "ticker": "055550",
-      "name": "신한지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 117853
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-2",
-      "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-9",
-      "created_slot": "18:00",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 347091
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-3",
-      "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-10",
-      "created_slot": "18:00",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 452300
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-3",
-      "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-11",
-      "created_slot": "18:00",
-      "ticker": "068270",
-      "name": "셀트리온",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 181139
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-1",
-      "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260826-12",
-      "created_slot": "18:00",
-      "ticker": "068270",
-      "name": "셀트리온",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 213600
-      },
-      "valid_until": "2026-08-27T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-26T18:20:00+09:00",
-      "inference_id": "inf-20260826-1800-1",
-      "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260827-1",
-      "ticker": "086790",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 124867
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-2",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-2",
-      "ticker": "086790",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-2",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-3",
-      "ticker": "105560",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-2",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-4",
-      "ticker": "105560",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-2",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-5",
-      "ticker": "035420",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 198052
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-3",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-6",
-      "ticker": "035420",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262481
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-3",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-7",
-      "ticker": "055550",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 101140
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-2",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-8",
-      "ticker": "055550",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 117853
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-2",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-9",
-      "ticker": "028260",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 347091
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-3",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-10",
-      "ticker": "028260",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 452300
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "inference_id": "inf-20260827-1800-3",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
-    },
-    {
-      "id": "po-20260827-11",
-      "ticker": "068270",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 181139
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "inference_id": "inf-20260827-1800-3",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "포지션 종료 — 8/28 종가 thesis 무효화 전량 청산으로 대상 보유분 소멸"
-    },
-    {
-      "id": "po-20260827-12",
-      "ticker": "068270",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 213600
-      },
-      "valid_until": "2026-08-28T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "inference_id": "inf-20260827-1800-3",
-      "created_ts": "2026-08-27T18:20:00+09:00",
-      "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
-      "last_trigger_review": "2026-08-28T06:40:00+09:00",
-      "closed_at": "2026-08-28T18:25:00+09:00",
-      "close_reason": "포지션 종료 — 8/28 종가 thesis 무효화 전량 청산으로 대상 보유분 소멸"
-    },
-    {
-      "id": "po-20260828-1",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "status": "expired",
-      "trigger": {
-        "type": "price_below",
-        "value": 126290
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-2",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-2",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "status": "expired",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-2",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-3",
-      "ticker": "105560",
-      "name": "KB금융",
-      "status": "expired",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-2",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-4",
-      "ticker": "105560",
-      "name": "KB금융",
-      "status": "expired",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-2",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-5",
-      "ticker": "055550",
-      "name": "신한지주",
-      "status": "expired",
-      "trigger": {
-        "type": "price_below",
-        "value": 102328
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-2",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-6",
-      "ticker": "055550",
-      "name": "신한지주",
-      "status": "expired",
-      "trigger": {
-        "type": "price_above",
-        "value": 117853
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-2",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-7",
-      "ticker": "035420",
-      "name": "NAVER",
-      "status": "expired",
-      "trigger": {
-        "type": "price_below",
-        "value": 198052
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-3",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-8",
-      "ticker": "035420",
-      "name": "NAVER",
-      "status": "expired",
-      "trigger": {
-        "type": "price_above",
-        "value": 262481
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-3",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-9",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "status": "expired",
-      "trigger": {
-        "type": "price_below",
-        "value": 347091
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-3",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260828-10",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "status": "expired",
-      "trigger": {
-        "type": "price_above",
-        "value": 452300
-      },
-      "valid_until": "2026-08-31T15:30:00+09:00",
-      "tier": 1,
-      "inference_id": "inf-20260828-1800-3",
-      "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
-      "action": "SELL",
-      "created_ts": "2026-08-28T18:25:00+09:00",
-      "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
-    },
-    {
-      "id": "po-20260831-1",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 126290
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 126,290 → 126,290, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-2",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 143,600 → 143,600, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-3",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 159,662 → 159,662, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-4",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 192,600 → 192,600, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-5",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 198052
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 198,052 → 198,052, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-6",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262481
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 262,481 → 262,481, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-7",
-      "created_slot": "18:00",
-      "ticker": "055550",
-      "name": "신한지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 102328
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 102,328 → 102,328, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-8",
-      "created_slot": "18:00",
-      "ticker": "055550",
-      "name": "신한지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 117853
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 117,853 → 117,853, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-9",
-      "created_slot": "18:00",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 347091
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 347,091 → 347,091, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-10",
-      "created_slot": "18:00",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 452300
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "expired",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-2",
-      "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 452,300 → 452,300, Δ +0원)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
-    },
-    {
-      "id": "po-20260831-11",
-      "created_slot": "18:00",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "action": "SELL",
-      "trigger": {
-        "type": "scheduled_close",
-        "value": 0
-      },
-      "valid_until": "2026-09-01T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-08-31T18:25:00+09:00",
-      "inference_id": "inf-20260831-1800-3",
-      "reason": "**thesis 하드 무효화 청산(가격 무관)** — 8/31 EOD 가 `excess_60d` -8.57 로 hard 조건 ②를 확정해 status=invalidated. policy.thesis.hard_action 정본이 집행을 '다음 거래일 종가'로 정하므로 9/1 closing_auction 에 2주 전량 청산. 가격 트리거가 아니므로 손절·목표 도달 여부와 무관하게 집행한다.",
-      "execution_note": "9/1 18시 슬롯이 집행 주체. 09시는 승계 기록·추가매수 잠금만 하고 체결하지 않는다. 9/1 09시 재산출값이 0 위로 복귀해도 부호 판정은 18시 EOD 확정본만 한다(장중 다수결 금지).",
-      "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문은 가격 트리거가 아닌 thesis 하드 청산 예약이라 재계산 대상 자체가 없다 — 승계만 확인)",
-      "trigger_review_0600_20260901": {
-        "reviewed_at": "2026-09-01T06:45:00+09:00",
-        "trigger_delta": 0,
-        "result": "unchanged",
-        "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
-        "inference_id": "inf-20260901-0630-1"
-      },
-      "note_0900_20260901": "09:00 승계 — status active 유지. **단 조건부다**: `universe_screen.ranked[028260].excess_60d` 09:28 재산출이 +3.38 로 0 위에 복귀했으므로(8/31 EOD -8.57, 원인은 가격이 아니라 60일 창 롤오프 — 오늘 등락률 0.00%), 18시는 EOD 확정본으로 두 분기 중 하나를 재량 없이 고른다: (a) EOD excess_60d < 0 → 2주 종가 청산 집행 (b) EOD excess_60d ≥ 0 → 청산 보류·사후 해소 기록·thesis 를 invalidated → weakening 으로 환원. 09시는 어느 쪽도 집행·취소하지 않는다.",
-      "closed_at": "2026-09-01T18:05:00+09:00",
-      "close_note": "**미집행 취소** — 8/31 18시 if-then 과 9/1 09시 inf-20260901-0900-1 ④가 사전에 문서화한 해소 분기('EOD excess_60d 가 0 이상으로 확정되면 청산 보류·thesis weakening 환원')가 오늘 성립했다. EOD 확정 `excess_60d` **+5.68**(8/31 -8.57 대비 +14.25). 사후 합리화가 아니라 **사전 등록된 조건의 기계적 판정**임을 명시한다. 반사실: 집행했다면 체결 388,957원·회수 777,914원·왕복 +36,323원(+4.90%) 이익 실현이었다."
-    },
-    {
-      "id": "po-20260901-1",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 127755
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 하나금융지주·신한지주 손절은 오늘 §2-2 (b) 상향분. 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 127,755원 → 127,755원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-2",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 143600
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 143,600원 → 143,600원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-3",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 159662
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 159,662원 → 159,662원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-4",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 192600
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 192,600원 → 192,600원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-5",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 198052
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 198,052원 → 198,052원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-6",
-      "created_slot": "18:00",
-      "ticker": "035420",
-      "name": "NAVER",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 262481
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 262,481원 → 262,481원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-7",
-      "created_slot": "18:00",
-      "ticker": "055550",
-      "name": "신한지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 103967
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 하나금융지주·신한지주 손절은 오늘 §2-2 (b) 상향분. 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 103,967원 → 103,967원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-8",
-      "created_slot": "18:00",
-      "ticker": "055550",
-      "name": "신한지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 117853
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 117,853원 → 117,853원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-9",
-      "created_slot": "18:00",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 347091
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 347,091원 → 347,091원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-10",
-      "created_slot": "18:00",
-      "ticker": "028260",
-      "name": "삼성물산",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_above",
-        "value": 452300
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 452,300원 → 452,300원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260901-11",
-      "created_slot": "18:00",
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "action": "SELL_PARTIAL_50",
-      "trigger": {
-        "type": "price_below",
-        "value": 130166
-      },
-      "valid_until": "2026-09-02T15:30:00+09:00",
-      "tier": 1,
-      "status": "cancelled",
-      "price_source_required": "snapshot_or_web",
-      "created_at": "2026-09-01T18:05:00+09:00",
-      "inference_id": "inf-20260902-0630-1",
-      "reason": "**조건부 종결 계약(오늘 §2-2 부착)** — 트레일 1차선 130,166(exit_levels 정본) 종가 이탈 시 잔여 2주의 50%(1주) 부분익절을 재량 없이 집행. R/R 0.643 으로 회복 경로가 없는 포지션이라 해소를 목표 도달(143,600 §1 종가 익절) 또는 추세 이탈 둘 중 하나로만 닫는다.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다.",
-      "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 130,166원 → 130,166원, Δ +0원)",
-      "closed_ts": "2026-09-02T15:30:00+09:00",
-      "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
-    },
-    {
-      "id": "po-20260903-1",
-      "created_slot": "18:00",
-      "ticker": "105560",
-      "name": "KB금융",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 168128
-      },
-      "size_shares": 1,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-09-04T15:30:00+09:00",
-      "status": "active",
-      "created_at": "2026-09-03T18:13:00+09:00",
-      "inference_id": "inf-20260903-1800-1",
-      "reason": "손절 — state/exit_levels.json 정본(진입 시 설정값, 9/3 EOD 무변경). 9/3 종가 177,900 기준 거리 -5.49%.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/3 18:00 EOD 적재] 트레일링 미활성(목표 진행률 34.4% < 임계 70%)이라 trailing_first 177,207 은 판정 대상이 아니다 — 그 값은 직전 보유 구간에서 승계된 최고 종가(186,200·7/13)로 계산된 것이고, 이번 보유 구간의 최고 종가는 9/3 부터 다시 쌓인다. 1주 보유라 부분익절은 물리적으로 불가능하며 이 주문은 전량 청산이다. 9/4 는 미 8월 고용보고서(21:30 KST·한국 세션 밖) 당일이라 신규·추가 매수 전면 보류이고, 이 주문은 SELL(청산 방어) 계열이다. | [9/4 06:00 미국장 마감 확정 검토] **트리거 이동 0원.** 이 선은 state/exit_levels.json(9/3 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 산식의 입력이 아니다 — 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이고, 후자는 갭 밴드로만 표현한다(KOSPI -0.8~+1.8% · 보유 2종 -1.5~+1.8%). 확정 입력: S&P 500 +1.06%(7,747.71)·나스닥 +1.40%·다우 +1.18% 마감, 미 10년물 4.77%로 은행 축 무효화선(4.60% 아래 마감) 불성립(여유 17bp), 9월 인상 확률 50.4%(자정 54.6%)로 확인 신호(50% 위) 여유 0.4%p, 중동 [진행형]은 신규 확대 보도 미확인으로 미해결 유지. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    },
-    {
-      "id": "po-20260903-2",
-      "created_slot": "18:00",
-      "ticker": "055550",
-      "name": "신한지주",
-      "action": "SELL",
-      "trigger": {
-        "type": "price_below",
-        "value": 108018
-      },
-      "size_shares": 2,
-      "tier": 1,
-      "price_source_required": "snapshot_or_web",
-      "valid_until": "2026-09-04T15:30:00+09:00",
-      "status": "active",
-      "created_at": "2026-09-03T18:13:00+09:00",
-      "inference_id": "inf-20260903-1800-1",
-      "reason": "손절 — state/exit_levels.json 정본(진입 시 설정값, 9/3 EOD 무변경). 9/3 종가 114,500 기준 거리 -5.66%.",
-      "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
-      "note": "[9/3 18:00 EOD 적재] 트레일링 미활성(목표 진행률 -6.7%). 이 종목은 52주 최고가 115,900 을 9/3 장중 고가로 정확히 건드렸으나 종가 114,500(-1.21%)으로 넘지 못했다 — 돌파 재시도 1회차이며, 돌파는 매수 트리거가 아니라 목표가·추적선 재산출 트리거다(9/4 18시 판정). | [9/4 06:00 미국장 마감 확정 검토] **트리거 이동 0원.** 이 선은 state/exit_levels.json(9/3 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 산식의 입력이 아니다 — 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이고, 후자는 갭 밴드로만 표현한다(KOSPI -0.8~+1.8% · 보유 2종 -1.5~+1.8%). 확정 입력: S&P 500 +1.06%(7,747.71)·나스닥 +1.40%·다우 +1.18% 마감, 미 10년물 4.77%로 은행 축 무효화선(4.60% 아래 마감) 불성립(여유 17bp), 9월 인상 확률 50.4%(자정 54.6%)로 확인 신호(50% 위) 여유 0.4%p, 중동 [진행형]은 신규 확대 보도 미확인으로 미해결 유지. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
-    }
-  ],
-  "as_of": "2026-09-02T18:10:00+09:00",
-  "_meta_last_touch": "2026-08-29T06:45:00+09:00 06:00 미국장 마감 확정 — **한국 휴장(토) 모드**: 트리거 재계산·값 갱신을 생략했다(§0-B, config/market_calendar.json.behavior_on_holiday). active 10건은 8/28 18시 종가 확정본 값이며 valid_until 2026-08-31T15:30 으로 월요일까지 유효하다. 체결·trade_log·status 변경 없음. 밤사이 미국장 마감(S&P -0.25%·나스닥 -0.52%·^SOX -3.47%·미 10년물 4.72%)은 은행 3종 무효화선(4.60% 아래 마감)을 미성립으로 확정했고 여유가 12bp 로 벌어져 비중 축소 트리거를 열지 않았다.",
-  "_last_slot_touch": "2026-09-03T06:30:00+09:00",
-  "_last_trigger_review": {
-    "slot": "06:00",
-    "ts": "2026-09-03T06:30:00+09:00",
-    "active_count": 0,
-    "moved_count": 0,
-    "note": "06:00 미국장 마감 확정 슬롯 — 활성 주문 0건이라 재계산할 트리거가 없다(9/2 자본 리셋으로 보유 전량 청산, 기존 68건은 expired/cancelled 로 정리 완료). 미국장 마감(S&P +0.46%·^SOX +0.45%·WTI 90.59)으로 움직일 값이 존재하지 않음을 확인만 하고 status·trigger 는 한 건도 변경하지 않았다. 한국 폐장(execution_mode=none) — 체결은 09시 pre_trade_gate 통과 후."
+  "size_shares": 0,
+  "size_hint": "basket_deploy",
+  "tier": 1,
+  "price_source_required": "snapshot_or_web",
+  "valid_until": "YYYY-MM-DDTHH:MM:00+09:00",
+  "strategy": "dual_momentum_w27",
+  "status": "active"
+ },
+ "orders": [
+  {
+   "id": "po-20260826-1",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 124005
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-2",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
   },
-  "_last_slot_update": "2026-08-28T18:25:00+09:00",
-  "as_of_0600": "2026-09-03T06:30:00+09:00",
-  "_last_trigger_refresh": "2026-09-03T06:30:00+09:00",
-  "kill_switch": false
+  {
+   "id": "po-20260826-2",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-2",
+   "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-3",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-2",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-4",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-2",
+   "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-5",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-3",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-6",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262481
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-3",
+   "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-7",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 98534
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-2",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-8",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 117853
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-2",
+   "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-9",
+   "created_slot": "18:00",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 347091
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-3",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-10",
+   "created_slot": "18:00",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 452300
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-3",
+   "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-11",
+   "created_slot": "18:00",
+   "ticker": "068270",
+   "name": "셀트리온",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 181139
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-1",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260826-12",
+   "created_slot": "18:00",
+   "ticker": "068270",
+   "name": "셀트리온",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 213600
+   },
+   "valid_until": "2026-08-27T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-26T18:20:00+09:00",
+   "inference_id": "inf-20260826-1800-1",
+   "reason": "목표 — watchlist 운용 목표가. 종가 도달 시 closing_auction 익절",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[8/26 18:00 EOD 확정 재적재] 8/26 종가 확정 exit_levels 정본값(compute_exit_levels 18:01 산출·sync_pending_orders 동기화 완료, 손계산 없음). 8/27(목)은 **금통위·미 7월 PCE·엔비디아 실적·잭슨홀 개막이 겹치는 D-0** 라 신규 진입·추가매수가 전면 보류이며, 이 주문들은 전부 SELL(청산 방어) 계열이다. 체결은 8/27 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지). 셀트리온은 가격 트리거와 별개로 `bio_cdmo` 하드 무효화 카운터 2일차 판정이 8/27 18시에 걸려 있다 — 그 판정이 성립하면 가격과 무관하게 청산이다. | [8/27 06:00 미국장 마감 확정 검토] 트리거 이동 0 — 이 선은 exit_levels(8/26 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 입력이 아니다. 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이며 후자는 갭 밴드로만 표현한다(-2.5~+1.8%). 확정 입력: 엔비디아 FY27 2Q 매출·가이던스 모두 컨센 상회(962억/1,080억 달러), 미 10년물 4.66% 마감으로 은행 3종 무효화선(4.60%) 불성립, S&P -0.02% 마감. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다."
+  },
+  {
+   "id": "po-20260827-1",
+   "ticker": "086790",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 124867
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-2",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-2",
+   "ticker": "086790",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-2",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-3",
+   "ticker": "105560",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-2",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-4",
+   "ticker": "105560",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-2",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-5",
+   "ticker": "035420",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-3",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-6",
+   "ticker": "035420",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262481
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-3",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-7",
+   "ticker": "055550",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 101140
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-2",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-8",
+   "ticker": "055550",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 117853
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-2",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-9",
+   "ticker": "028260",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 347091
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-3",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-10",
+   "ticker": "028260",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 452300
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "inference_id": "inf-20260827-1800-3",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "valid_until 2026-08-28T15:30 경과 — 트리거 미충족 만료"
+  },
+  {
+   "id": "po-20260827-11",
+   "ticker": "068270",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 181139
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "inference_id": "inf-20260827-1800-3",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "포지션 종료 — 8/28 종가 thesis 무효화 전량 청산으로 대상 보유분 소멸"
+  },
+  {
+   "id": "po-20260827-12",
+   "ticker": "068270",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 213600
+   },
+   "valid_until": "2026-08-28T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "inference_id": "inf-20260827-1800-3",
+   "created_ts": "2026-08-27T18:20:00+09:00",
+   "note": "06:00 미국장 마감 확정 반영 재계산 — 8/27 EOD exit_levels 정본(as_of 2026-08-27T18:08:37+09:00)과 전건 재대조 결과 **트리거 값 이동 0원**이다. 마감 확정 재료(나스닥 +1.57%·^SOX +2.33%·미 10년물 4.67%)는 전부 원화 손절·목표 산식의 입력이 아니라 갭 예측의 입력이므로 값이 움직이지 않는 것이 정상이다. 은행 3종은 무효화 조건(10년물 4.60% 아래 마감)이 미성립(4.67%, 이격 7bp)이라 비중 축소 트리거를 열지 않았다. 셀트리온 2건은 오늘 종가 thesis 청산 1순위이나 가격 트리거는 별개로 유지한다 — 청산 사유가 가격이 아니라 축 소멸이다. 한국 폐장(execution_mode=none)이라 체결·trade_log 없음, status 변경 없음. 집행은 09시 pre_trade_gate 통과 후.",
+   "last_trigger_review": "2026-08-28T06:40:00+09:00",
+   "closed_at": "2026-08-28T18:25:00+09:00",
+   "close_reason": "포지션 종료 — 8/28 종가 thesis 무효화 전량 청산으로 대상 보유분 소멸"
+  },
+  {
+   "id": "po-20260828-1",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "status": "expired",
+   "trigger": {
+    "type": "price_below",
+    "value": 126290
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-2",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-2",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "status": "expired",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-2",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-3",
+   "ticker": "105560",
+   "name": "KB금융",
+   "status": "expired",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-2",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-4",
+   "ticker": "105560",
+   "name": "KB금융",
+   "status": "expired",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-2",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-5",
+   "ticker": "055550",
+   "name": "신한지주",
+   "status": "expired",
+   "trigger": {
+    "type": "price_below",
+    "value": 102328
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-2",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-6",
+   "ticker": "055550",
+   "name": "신한지주",
+   "status": "expired",
+   "trigger": {
+    "type": "price_above",
+    "value": 117853
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-2",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-7",
+   "ticker": "035420",
+   "name": "NAVER",
+   "status": "expired",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-3",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-8",
+   "ticker": "035420",
+   "name": "NAVER",
+   "status": "expired",
+   "trigger": {
+    "type": "price_above",
+    "value": 262481
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-3",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-9",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "status": "expired",
+   "trigger": {
+    "type": "price_below",
+    "value": 347091
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-3",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260828-10",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "status": "expired",
+   "trigger": {
+    "type": "price_above",
+    "value": 452300
+   },
+   "valid_until": "2026-08-31T15:30:00+09:00",
+   "tier": 1,
+   "inference_id": "inf-20260828-1800-3",
+   "note": "exit_levels 정본 손절/목표 동기화. 장중 모니터는 카톡 신호만 보내고 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 한다.",
+   "action": "SELL",
+   "created_ts": "2026-08-28T18:25:00+09:00",
+   "expired_note": "8/31 15:30 만기 — 기간 중 트리거 미도달(전건 미체결). 8/31 18시가 9/1 분으로 재적재."
+  },
+  {
+   "id": "po-20260831-1",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 126290
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 126,290 → 126,290, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-2",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 143,600 → 143,600, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-3",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 159,662 → 159,662, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-4",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 192,600 → 192,600, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-5",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 198,052 → 198,052, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-6",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262481
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 262,481 → 262,481, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-7",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 102328
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 102,328 → 102,328, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-8",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 117853
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 117,853 → 117,853, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-9",
+   "created_slot": "18:00",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 347091
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "손절 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 347,091 → 347,091, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-10",
+   "created_slot": "18:00",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 452300
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "expired",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-2",
+   "reason": "목표 — exit_levels 정본(8/31 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문 트리거 452,300 → 452,300, Δ +0원)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "9/1 종가 판정 완료 — 트리거 미도달로 만료. 9/2 분은 아래 po-20260901-* 로 재적재(exit_levels 9/1 EOD 정본)."
+  },
+  {
+   "id": "po-20260831-11",
+   "created_slot": "18:00",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "action": "SELL",
+   "trigger": {
+    "type": "scheduled_close",
+    "value": 0
+   },
+   "valid_until": "2026-09-01T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-08-31T18:25:00+09:00",
+   "inference_id": "inf-20260831-1800-3",
+   "reason": "**thesis 하드 무효화 청산(가격 무관)** — 8/31 EOD 가 `excess_60d` -8.57 로 hard 조건 ②를 확정해 status=invalidated. policy.thesis.hard_action 정본이 집행을 '다음 거래일 종가'로 정하므로 9/1 closing_auction 에 2주 전량 청산. 가격 트리거가 아니므로 손절·목표 도달 여부와 무관하게 집행한다.",
+   "execution_note": "9/1 18시 슬롯이 집행 주체. 09시는 승계 기록·추가매수 잠금만 하고 체결하지 않는다. 9/1 09시 재산출값이 0 위로 복귀해도 부호 판정은 18시 EOD 확정본만 한다(장중 다수결 금지).",
+   "note_0600_20260901": "[9/1 06:00 미국장 마감 확정 — 트리거 재계산] 8/31(월) 미국 정규장 마감 확정치로 재검토했다. **트리거 이동 0원** — 이 값들은 exit_levels 정본(8/31 한국 확정 종가·ATR 파생)이라 한국장 폐장 중 미국장 마감만으로는 재산출 입력이 바뀌지 않는다. 값을 움직였을 조건 둘이 마감으로 모두 미성립 확정: ①은행 축 무효화선(미 10년물 4.60% 아래 마감) — 실제 **4.758%** 마감(+3.8bp), 여유 15.8bp 로 확대 ②§1-1 반도체 채널 -2% 초과 하락 의무 입력 — ^SOX +0.57%·SOXX +0.48%·MU +2.77%·NVDA +1.49% 로 미발동(TSM 만 -0.53%). 자정 if-then 의 유가 두 갈래도 둘 다 미성립(WTI 86.31달러 마감 — 88달러 이상도, 83달러 아래도 아님)이라 이란 건은 [진행형 지속]이다. 다만 반대편 경계는 좁아졌다 — friday_night_again_w36 의 무효화선 '10년물 4.80% 위 마감' 까지 남은 거리 **4.2bp**. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 판정한다. (이 주문은 가격 트리거가 아닌 thesis 하드 청산 예약이라 재계산 대상 자체가 없다 — 승계만 확인)",
+   "trigger_review_0600_20260901": {
+    "reviewed_at": "2026-09-01T06:45:00+09:00",
+    "trigger_delta": 0,
+    "result": "unchanged",
+    "basis": "exit_levels 8/31 EOD 정본 유지 — 미국장 마감(10년물 4.758%·^SOX +0.57%)이 재산출 입력을 바꾸지 않음",
+    "inference_id": "inf-20260901-0630-1"
+   },
+   "note_0900_20260901": "09:00 승계 — status active 유지. **단 조건부다**: `universe_screen.ranked[028260].excess_60d` 09:28 재산출이 +3.38 로 0 위에 복귀했으므로(8/31 EOD -8.57, 원인은 가격이 아니라 60일 창 롤오프 — 오늘 등락률 0.00%), 18시는 EOD 확정본으로 두 분기 중 하나를 재량 없이 고른다: (a) EOD excess_60d < 0 → 2주 종가 청산 집행 (b) EOD excess_60d ≥ 0 → 청산 보류·사후 해소 기록·thesis 를 invalidated → weakening 으로 환원. 09시는 어느 쪽도 집행·취소하지 않는다.",
+   "closed_at": "2026-09-01T18:05:00+09:00",
+   "close_note": "**미집행 취소** — 8/31 18시 if-then 과 9/1 09시 inf-20260901-0900-1 ④가 사전에 문서화한 해소 분기('EOD excess_60d 가 0 이상으로 확정되면 청산 보류·thesis weakening 환원')가 오늘 성립했다. EOD 확정 `excess_60d` **+5.68**(8/31 -8.57 대비 +14.25). 사후 합리화가 아니라 **사전 등록된 조건의 기계적 판정**임을 명시한다. 반사실: 집행했다면 체결 388,957원·회수 777,914원·왕복 +36,323원(+4.90%) 이익 실현이었다."
+  },
+  {
+   "id": "po-20260901-1",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 127755
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 하나금융지주·신한지주 손절은 오늘 §2-2 (b) 상향분. 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 127,755원 → 127,755원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-2",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 143600
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 143,600원 → 143,600원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-3",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 159662
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 159,662원 → 159,662원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-4",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 192600
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 192,600원 → 192,600원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-5",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 198052
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 198,052원 → 198,052원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-6",
+   "created_slot": "18:00",
+   "ticker": "035420",
+   "name": "NAVER",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 262481
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 262,481원 → 262,481원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-7",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 103967
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 하나금융지주·신한지주 손절은 오늘 §2-2 (b) 상향분. 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 103,967원 → 103,967원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-8",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 117853
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 117,853원 → 117,853원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-9",
+   "created_slot": "18:00",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 347091
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "손절 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 347,091원 → 347,091원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-10",
+   "created_slot": "18:00",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_above",
+    "value": 452300
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "목표 — exit_levels 정본(9/1 EOD 재산출). 종가 이탈/도달 시 closing_auction 청산.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 452,300원 → 452,300원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260901-11",
+   "created_slot": "18:00",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "action": "SELL_PARTIAL_50",
+   "trigger": {
+    "type": "price_below",
+    "value": 130166
+   },
+   "valid_until": "2026-09-02T15:30:00+09:00",
+   "tier": 1,
+   "status": "cancelled",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-01T18:05:00+09:00",
+   "inference_id": "inf-20260902-0630-1",
+   "reason": "**조건부 종결 계약(오늘 §2-2 부착)** — 트레일 1차선 130,166(exit_levels 정본) 종가 이탈 시 잔여 2주의 50%(1주) 부분익절을 재량 없이 집행. R/R 0.643 으로 회복 경로가 없는 포지션이라 해소를 목표 도달(143,600 §1 종가 익절) 또는 추세 이탈 둘 중 하나로만 닫는다.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다.",
+   "note": "[9/2 06:30 미국장 마감 확정 — 트리거 재계산] 미국 9/1(화) 정규장 마감 확정치로 재계산했고 **이동 0원**이다 — 이 트리거는 한국 종가 기반 `state/exit_levels.json` 정본(9/1 EOD 재산출)에서 나오므로 미국장 마감만으로는 재계산 입력이 바뀌지 않는다. 트리거를 움직였을 두 조건은 둘 다 미성립: SOXX -5% 이상 마감(실제 **-2.10%**) · 미 10년물 4.60% 아래 마감(실제 **4.79~4.80%**). 다만 오늘 반도체 채널은 -2% 기준선을 넘겨 마감했고(SOXX -2.10% · ^SOX -2.14% · MU -2.64%), 이는 프롬프트 §1-1 상 **개장 갭 예측의 의무 입력**이지 청산 트리거의 입력이 아니다 — 그래서 갭 밴드만 하단 -0.5%p 확장(KOSPI -1.8%~+0.4% → **-2.3%~+0.2%**)했고 이 주문 값은 손대지 않았다. 한국 폐장(check_market_session execution_mode=none)이므로 **체결·status 변경 없음** — 집행은 09시 routine 이 pre_trade_gate 통과 후 종가 판정으로 한다. valid_until 2026-09-02T15:30 은 오늘 안이라 연장 불필요. (이 주문 트리거 130,166원 → 130,166원, Δ +0원)",
+   "closed_ts": "2026-09-02T15:30:00+09:00",
+   "close_reason": "자본 리셋 전량 청산으로 대상 포지션 소멸 — 트리거 미충족 상태에서 주문 종료(체결 아님)"
+  },
+  {
+   "id": "po-20260903-1",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 168128
+   },
+   "size_shares": 1,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-09-04T15:30:00+09:00",
+   "status": "expired",
+   "created_at": "2026-09-03T18:13:00+09:00",
+   "inference_id": "inf-20260903-1800-1",
+   "reason": "손절 — state/exit_levels.json 정본(진입 시 설정값, 9/3 EOD 무변경). 9/3 종가 177,900 기준 거리 -5.49%.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/3 18:00 EOD 적재] 트레일링 미활성(목표 진행률 34.4% < 임계 70%)이라 trailing_first 177,207 은 판정 대상이 아니다 — 그 값은 직전 보유 구간에서 승계된 최고 종가(186,200·7/13)로 계산된 것이고, 이번 보유 구간의 최고 종가는 9/3 부터 다시 쌓인다. 1주 보유라 부분익절은 물리적으로 불가능하며 이 주문은 전량 청산이다. 9/4 는 미 8월 고용보고서(21:30 KST·한국 세션 밖) 당일이라 신규·추가 매수 전면 보류이고, 이 주문은 SELL(청산 방어) 계열이다. | [9/4 06:00 미국장 마감 확정 검토] **트리거 이동 0원.** 이 선은 state/exit_levels.json(9/3 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 산식의 입력이 아니다 — 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이고, 후자는 갭 밴드로만 표현한다(KOSPI -0.8~+1.8% · 보유 2종 -1.5~+1.8%). 확정 입력: S&P 500 +1.06%(7,747.71)·나스닥 +1.40%·다우 +1.18% 마감, 미 10년물 4.77%로 은행 축 무효화선(4.60% 아래 마감) 불성립(여유 17bp), 9월 인상 확률 50.4%(자정 54.6%)로 확인 신호(50% 위) 여유 0.4%p, 중동 [진행형]은 신규 확대 보도 미확인으로 미해결 유지. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다. | [9/4 18:00 EOD] 미트리거 만료 — 종가 172,000·110,300 이 트리거 168,128·108,018 위 +2.30%·+2.11% 에서 마감(장중 저가 170,800·109,800 도 미도달). 9/7 자 손절 주문으로 재적재."
+  },
+  {
+   "id": "po-20260903-2",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 108018
+   },
+   "size_shares": 2,
+   "tier": 1,
+   "price_source_required": "snapshot_or_web",
+   "valid_until": "2026-09-04T15:30:00+09:00",
+   "status": "expired",
+   "created_at": "2026-09-03T18:13:00+09:00",
+   "inference_id": "inf-20260903-1800-1",
+   "reason": "손절 — state/exit_levels.json 정본(진입 시 설정값, 9/3 EOD 무변경). 9/3 종가 114,500 기준 거리 -5.66%.",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/3 18:00 EOD 적재] 트레일링 미활성(목표 진행률 -6.7%). 이 종목은 52주 최고가 115,900 을 9/3 장중 고가로 정확히 건드렸으나 종가 114,500(-1.21%)으로 넘지 못했다 — 돌파 재시도 1회차이며, 돌파는 매수 트리거가 아니라 목표가·추적선 재산출 트리거다(9/4 18시 판정). | [9/4 06:00 미국장 마감 확정 검토] **트리거 이동 0원.** 이 선은 state/exit_levels.json(9/3 18:01 정본)의 한국 종가·ATR 산식 값이라 미국장 마감·시간외·NDF 가 산식의 입력이 아니다 — 마감 확정이 바꾼 것은 방어선의 위치가 아니라 도달 확률이고, 후자는 갭 밴드로만 표현한다(KOSPI -0.8~+1.8% · 보유 2종 -1.5~+1.8%). 확정 입력: S&P 500 +1.06%(7,747.71)·나스닥 +1.40%·다우 +1.18% 마감, 미 10년물 4.77%로 은행 축 무효화선(4.60% 아래 마감) 불성립(여유 17bp), 9월 인상 확률 50.4%(자정 54.6%)로 확인 신호(50% 위) 여유 0.4%p, 중동 [진행형]은 신규 확대 보도 미확인으로 미해결 유지. 한국 폐장이라 체결 없음 — 09시 routine 이 pre_trade_gate 통과 후 집행한다. | [9/4 18:00 EOD] 미트리거 만료 — 종가 172,000·110,300 이 트리거 168,128·108,018 위 +2.30%·+2.11% 에서 마감(장중 저가 170,800·109,800 도 미도달). 9/7 자 손절 주문으로 재적재."
+  },
+  {
+   "id": "po-20260904-1",
+   "created_slot": "18:00",
+   "ticker": "105560",
+   "name": "KB금융",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 168128
+   },
+   "valid_until": "2026-09-07T15:30:00+09:00",
+   "tier": 1,
+   "status": "active",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-04T18:25:00+09:00",
+   "inference_id": "inf-20260904-1800-1",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/4 18:00 EOD 확정 재적재] 9/4 종가 확정 exit_levels 정본값(compute_exit_levels 18:02 산출·sync_pending_orders 동기화 완료, 손계산 없음). **9/4 종가 172,000원 기준 트리거까지 -2.25% 로, 9/3 의 -5.49% 에서 여유가 절반 이하로 줄었다.** 9/7(월)은 미 8월 고용보고서(9/4 21:30 KST) 결과가 주말을 경유해 도착하는 첫 슬롯이라 갭 변동성이 크며, 유효 yellow 임계 169,972원(-1.18%)이 손절선보다 먼저 걸린다."
+  },
+  {
+   "id": "po-20260904-2",
+   "created_slot": "18:00",
+   "ticker": "055550",
+   "name": "신한지주",
+   "action": "SELL",
+   "trigger": {
+    "type": "price_below",
+    "value": 108018
+   },
+   "valid_until": "2026-09-07T15:30:00+09:00",
+   "tier": 1,
+   "status": "active",
+   "price_source_required": "snapshot_or_web",
+   "created_at": "2026-09-04T18:25:00+09:00",
+   "inference_id": "inf-20260904-1800-1",
+   "reason": "손절 — exit_levels 정본. 종가 이탈 확정 시 closing_auction 청산",
+   "execution_note": "장중 모니터는 카톡 신호만 보내고, 체결은 다음 영업일 routine 이 §2-PRE 게이트 통과 후 종가 판정으로 한다(마감 후 신규매매 금지).",
+   "note": "[9/4 18:00 EOD 확정 재적재] 9/4 종가 확정 exit_levels 정본값. **9/4 종가 110,300원 기준 트리거까지 -2.07%**(9/3 -5.66%). 유효 yellow 임계 109,353원(-0.86%)이 먼저 걸린다. 트레일링은 목표 진행률 -6.7% 로 미활성이라 부분익절 레벨은 적재 대상이 아니다."
+  }
+ ],
+ "as_of": "2026-09-04T18:25:00+09:00",
+ "_meta_last_touch": "2026-08-29T06:45:00+09:00 06:00 미국장 마감 확정 — **한국 휴장(토) 모드**: 트리거 재계산·값 갱신을 생략했다(§0-B, config/market_calendar.json.behavior_on_holiday). active 10건은 8/28 18시 종가 확정본 값이며 valid_until 2026-08-31T15:30 으로 월요일까지 유효하다. 체결·trade_log·status 변경 없음. 밤사이 미국장 마감(S&P -0.25%·나스닥 -0.52%·^SOX -3.47%·미 10년물 4.72%)은 은행 3종 무효화선(4.60% 아래 마감)을 미성립으로 확정했고 여유가 12bp 로 벌어져 비중 축소 트리거를 열지 않았다.",
+ "_last_slot_touch": "2026-09-03T06:30:00+09:00",
+ "_last_trigger_review": {
+  "slot": "06:00",
+  "ts": "2026-09-03T06:30:00+09:00",
+  "active_count": 0,
+  "moved_count": 0,
+  "note": "06:00 미국장 마감 확정 슬롯 — 활성 주문 0건이라 재계산할 트리거가 없다(9/2 자본 리셋으로 보유 전량 청산, 기존 68건은 expired/cancelled 로 정리 완료). 미국장 마감(S&P +0.46%·^SOX +0.45%·WTI 90.59)으로 움직일 값이 존재하지 않음을 확인만 하고 status·trigger 는 한 건도 변경하지 않았다. 한국 폐장(execution_mode=none) — 체결은 09시 pre_trade_gate 통과 후."
+ },
+ "_last_slot_update": "2026-08-28T18:25:00+09:00",
+ "as_of_0600": "2026-09-03T06:30:00+09:00",
+ "_last_trigger_refresh": "2026-09-03T06:30:00+09:00",
+ "kill_switch": false
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.3",
-  "last_updated": "2026-08-30T18:35:00+09:00",
+  "last_updated": "2026-09-06T18:30:00+09:00",
   "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
   "candidates": [
     {
@@ -13,8 +13,9 @@
         {
           "theme": "ai_memory_hbm",
           "exposure": 0.9,
-          "evidence": "HBM4 양산·AI 데이터센터 확장. TSMC 3nm 가격 인상 15%로 반도체 사이클 확인. 외국인 재매수 기대.",
-          "source": "https://www.tradingkey.com/analysis/stocks/us-stocks/261930703-tsmc-tsm-3nm-pricing-power-ai-demand-capacity-shortage-gross-margin-nvidia-analyst-upgrades-risk-tradingkey"
+          "evidence": "[2026-09-06 갱신] 메모리 공급 타이트 + AI 캐파 완판. 서스퀘하나 DRAM 분기 +50%·NAND +60% 전망, UBS HBM 가격 상승률 연 67%→79% 상향, 마이크론 선단 메모리 2026년 말까지 완판. 9/4 미국장에서 고용 서프라이즈로 3대 지수가 밀린 날 마이크론 +4.09%·SK하이닉스 ADR +3.86%로 업종만 역행. 한국 8월 반도체 수출 466.5억달러(+209.0%) 역대 최대.",
+          "source": "https://blockonomi.com/memory-chip-giants-micron-mu-sandisk-and-sk-hynix-rally-on-supply-tightness-and-ai-demand",
+          "source_date": "2026-09-04"
         }
       ],
       "structural_bear_flags": [],
@@ -89,8 +90,9 @@
         {
           "theme": "ai_memory_hbm",
           "exposure": 0.95,
-          "evidence": "HBM 매출 비중 글로벌 1위급 — AI 가속기 메모리 직접 노출. (출처 URL 은 routine 이 채움)",
-          "source": null
+          "evidence": "[2026-09-06 갱신] 메모리 공급 타이트 + AI 캐파 완판. 서스퀘하나 DRAM 분기 +50%·NAND +60% 전망, UBS HBM 가격 상승률 연 67%→79% 상향, 마이크론 선단 메모리 2026년 말까지 완판. 9/4 미국장에서 고용 서프라이즈로 3대 지수가 밀린 날 마이크론 +4.09%·SK하이닉스 ADR +3.86%로 업종만 역행. 한국 8월 반도체 수출 466.5억달러(+209.0%) 역대 최대.",
+          "source": "https://blockonomi.com/memory-chip-giants-micron-mu-sandisk-and-sk-hynix-rally-on-supply-tightness-and-ai-demand",
+          "source_date": "2026-09-04"
         }
       ],
       "structural_bear_flags": [],
@@ -155,16 +157,9 @@
         {
           "theme": "power_grid_ai",
           "exposure": 0.9,
-          "evidence": "빅테크 A사와 2027~2028 납품 조건 1조1,000억원 규모 데이터센터 전력·배전변압기 장기공급계약 체결, 2029~2030 물량은 그보다 큰 규모로 협의 중이며 B·C·D 사와도 대규모 장기공급계약 논의 중(LS증권). 미 앨라배마 제2공장 증설이 2027년 4월 완료되면 연간 전력변압기 생산능력 약 50% 확대. 8/30 재산출에서 power_grid_ai 몰입 3/2 충족·20일 초과수익 +18.25%p 로 테마 노출 0.85 → 0.9 상향.",
+          "evidence": "빅테크 A사와 2027~2028 납품 조건 1조1,000억원 규모 데이터센터 전력·배전변압기 장기공급계약 체결, 2029~2030 물량은 그보다 큰 규모로 협의 중이며 B·C·D 사와도 대규모 장기공급계약 논의 중(LS증권). 미 앨라배마 제2공장 증설이 2027년 4월 완료되면 연간 전력변압기 생산능력 약 50% 확대. 8/30 재산출에서 power_grid_ai 몰입 3/2 충족·20일 초과수익 +18.25%p 로 테마 노출 0.85 → 0.9 상향. [2026-09-06 중복 등재 1건 제거] power_grid_ai 가 두 번 적혀 thematic 기여가 0.675×2=1.35 → 상한 1.0 으로 계산되고 있었다. 이 종목은 8/30 에 '실질 후보 1종'으로 지목됐다가 한 주 만에 -12.29% 로 5거래일 급락 필터에 걸린 종목이며, 지목 당시 점수의 일부가 이 중복에서 나왔다.",
           "source": "https://www.mt.co.kr/stock/2026/07/29/2026072909143766775",
           "source_date": "2026-07-29"
-        },
-        {
-          "theme": "power_grid_ai",
-          "exposure": 0.9,
-          "evidence": "미 앨라배마 제2공장 신축 추진 — 증설 완료 시 연간 전력변압기 생산능력 약 50% 확대. AI 데이터센터를 새 먹거리로 한 전력시장 확장 보도.",
-          "source": "https://www.asiatoday.co.kr/kn/view.php?key=20260805010001617",
-          "source_date": "2026-08-05"
         }
       ],
       "structural_bear_flags": [],
@@ -285,8 +280,9 @@
         {
           "theme": "ai_memory_hbm",
           "exposure": 0.85,
-          "evidence": "HBM TC본더(열압착 본딩 장비) 국내 선두 공급사 — 2Q26 매출 2,511억원(+39.5% YoY)·영업이익률 51.9% 사상최대로 HBM 후공정 장비 수요 직결 확인. 단 미국 반도체 업종 약세장·AI 캡펙스 ROI 논쟁 여진으로 주가는 개별 실적과 괴리된 소외 국면.",
-          "source": "https://comp.wisereport.co.kr/company/c1010001.aspx?cmp_cd=042700"
+          "evidence": "[2026-09-06 갱신] 메모리 공급 타이트 + AI 캐파 완판. 서스퀘하나 DRAM 분기 +50%·NAND +60% 전망, UBS HBM 가격 상승률 연 67%→79% 상향, 마이크론 선단 메모리 2026년 말까지 완판. 9/4 미국장에서 고용 서프라이즈로 3대 지수가 밀린 날 마이크론 +4.09%·SK하이닉스 ADR +3.86%로 업종만 역행. 한국 8월 반도체 수출 466.5억달러(+209.0%) 역대 최대.",
+          "source": "https://blockonomi.com/memory-chip-giants-micron-mu-sandisk-and-sk-hynix-rally-on-supply-tightness-and-ai-demand",
+          "source_date": "2026-09-04"
         }
       ],
       "structural_bear_flags": [],
@@ -328,9 +324,9 @@
         {
           "theme": "ev_battery",
           "exposure": 0.8,
-          "evidence": "국내 2위 배터리 셀 — EV 전환 직접 노출. 다만 ev_battery 테마 strength 0.55 로 9개 테마 중 최하위라 이 축 단독으로는 컨빅션이 서지 않는다.",
-          "source": null,
-          "source_date": null
+          "evidence": "[2026-09-06 갱신] ESS 부문 역대 최대 분기 매출. 전력거래소 제3차 ESS 중앙계약시장 입찰(약 1조원) 9월 중 공고 예정이며 1차 입찰에서 삼성SDI 가 물량의 약 76%를 확보했다. NH투자증권은 3년 업황 부진 완화를 근거로 최선호주 제시. screen_universe 20일 초과수익 +22.13%p·모멘텀 24.59 로 모집단 2위.",
+          "source": "https://www.newstomato.com/ReadNews.aspx?no=1310520",
+          "source_date": "2026-09"
         },
         {
           "theme": "power_grid_ai",
@@ -353,10 +349,11 @@
       "first_added": "2026-07-28",
       "theme_exposure": [
         {
-          "theme": "value_up_shareholder_return",
+          "theme": "value_up",
           "exposure": 0.7,
-          "evidence": "은행권 밸류업 프로그램(자사주 소각·배당 확대) 직접 수혜 — 7/28 screen_universe 상대강도 상위",
-          "source": "https://kr.investing.com/indices/kospi"
+          "evidence": "[2026-09-06 theme id 교정 value_up_shareholder_return→value_up] 한국은행 7·8월 연속 인상으로 기준금리 3.00% — NIM 개선이 실적으로 확인됐고 5대 금융지주 상반기 합산 순이익 13.11조원(우리금융 제외 4곳 사상 최대). 정부 밸류업 정책과 맞물려 금융지주가 주주환원에 가장 적극적인 업종으로 평가된다. KRX 은행지수는 최근 1주 +5.69%로 코스피 수익률의 약 4배 (머니투데이 2026-09-04).",
+          "source": "https://www.mt.co.kr/stock/2026/09/04/2026090319385188915",
+          "source_date": "2026-09-04"
         }
       ],
       "note": "2026-07-28 09시 신규 등록 — 당일 체결 없음. 12시 슬롯부터 score_candidates 정식 스코어링 대상. 은행 2종 동시 보유는 섹터 집중이므로 신한지주 부분익절(목표 110,829) 이후에 검토."
@@ -371,10 +368,11 @@
       "first_added": "2026-07-28",
       "theme_exposure": [
         {
-          "theme": "value_up_shareholder_return",
+          "theme": "value_up",
           "exposure": 0.7,
-          "evidence": "밸류업 로테이션 은행 대장 — 7/28 지수 급락일 무변동 방어",
-          "source": "https://kr.investing.com/indices/kospi"
+          "evidence": "[2026-09-06 theme id 교정 value_up_shareholder_return→value_up] 한국은행 7·8월 연속 인상으로 기준금리 3.00% — NIM 개선이 실적으로 확인됐고 5대 금융지주 상반기 합산 순이익 13.11조원(우리금융 제외 4곳 사상 최대). 정부 밸류업 정책과 맞물려 금융지주가 주주환원에 가장 적극적인 업종으로 평가된다. KRX 은행지수는 최근 1주 +5.69%로 코스피 수익률의 약 4배 (머니투데이 2026-09-04).",
+          "source": "https://www.mt.co.kr/stock/2026/09/04/2026090319385188915",
+          "source_date": "2026-09-04"
         }
       ],
       "note": "2026-07-28 09시 신규 등록 — 당일 체결 없음. lessons: 금융주 목표가 설정 시 추가 할인 필요(3회 연속 미달). 12시부터 정식 스코어링."
@@ -389,8 +387,9 @@
         {
           "theme": "value_up",
           "exposure": 0.7,
-          "evidence": "2분기 지배주주순이익 1.82조원 역대 최대·자사주 7,000억원 매입소각 결의. 8/5 청산 후에도 8/6 +3.67%·8/7 +2.42% 로 리레이팅이 이어져 5년 PER 밴드 상단 위에서 거래 중.",
-          "source": "https://www.hanaw.com/main/research/research/download.cmd?bbsSeq=1287894&attachFileSeq=1&bbsId=&dbType=&bbsCd=2220"
+          "evidence": "[2026-09-06 갱신] 한국은행 7·8월 연속 인상으로 기준금리 3.00% — NIM 개선이 실적으로 확인됐고 5대 금융지주 상반기 합산 순이익 13.11조원(우리금융 제외 4곳 사상 최대). 정부 밸류업 정책과 맞물려 금융지주가 주주환원에 가장 적극적인 업종으로 평가된다. KRX 은행지수는 최근 1주 +5.69%로 코스피 수익률의 약 4배 (머니투데이 2026-09-04). 다만 이 종목 고유 조건인 52주 최고가(115,900원) 종가 돌파는 2회 연속 미성립(9/3 -1.21% → 9/4 -4.83%)이다.",
+          "source": "https://www.mt.co.kr/stock/2026/09/04/2026090319385188915",
+          "source_date": "2026-09-04"
         }
       ],
       "structural_bear_flags": [],
@@ -473,6 +472,12 @@
       "by": "sunday_strategy",
       "change": "바이오 축 2종 신규 등재(207940 삼성바이오로직스 · 068270 셀트리온). bio_cdmo 는 2026-08-09 에 테마만 등재되고 후보 종목이 만들어지지 않은 채 두 주가 지난 축이며, 8/23 screen_universe 기준 몰입 충족 10개 그룹 중 **20일·60일 초과수익이 둘 다 플러스인 유일한 그룹**(중앙 +14.66%p / +20.25%p)이다. 계좌 노출은 0.",
       "gate_note": "두 종목 모두 momentum 절대점수가 score_authority.promote_score_min(30.0) 미달이라 promote_suggestions 에는 뜨지 않았다. 등재는 스코어링 대상 편입이며 진입 게이트 통과 선언이 아니다 — 임계 미달 상태에서 진입 집행 금지, 상대강도 권위와 momentum 절대점수 권위가 갈리는 구조는 policy_review 안건으로 올린다.",
+      "source_note": "모든 신규 evidence 에 출처 URL + 게재일 동반(web_verify_guard.source_date_verification)"
+    },
+    {
+      "date": "2026-09-06",
+      "by": "sunday_strategy",
+      "change": "theme_exposure 데이터 결함 2건 교정 + AI메모리·2차전지·은행 근거 갱신. ①KB금융(105560)·하나금융지주(086790) 의 theme id 가 themes.json 에 없는 `value_up_shareholder_return` 이라 strength 0 으로 무시되어 thematic 점수가 **0.0** 이었다(노출 결측 기본값 0.3 보다도 낮다). `value_up` 으로 교정 — 동일 노출 0.7 기준 thematic 0.0 → 0.455, final_score 기여 +0.068. 8/16 에 교정한 결측 2건과 같은 유형의 잔여분이다. ②HD현대일렉트릭(267260) 이 power_grid_ai 를 두 번 등재해 thematic 기여가 0.675×2=1.35 → 상한 1.0 으로 과대계상돼 있었다. 중복 제거 후 0.675, final_score 기여 -0.049. 8/30 에 이 종목을 '실질 후보 1종'으로 지목한 점수의 일부가 이 중복에서 나왔고 해당 종목은 그 주에 -12.29% 로 급락했다.",
       "source_note": "모든 신규 evidence 에 출처 URL + 게재일 동반(web_verify_guard.source_date_verification)"
     }
   ]

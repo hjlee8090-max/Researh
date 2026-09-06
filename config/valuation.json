@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-30T08:56:29+09:00",
+  "as_of": "2026-09-06T18:20:00+09:00",
   "update_cadence": "sunday_strategy 주간 갱신(분기 실적 후 필수). 모든 값은 출처 URL+게재일 동반(web_verify_guard.source_date_verification 동일 적용). 값이 null 이거나 source_date 가 90일 초과면 check_valuation_guard 가 verdict=skip 으로 아무것도 막지 않는다(결측이 새 차단 룰이 되는 래칫 방지).",
   "schema_note": "bps=주당순자산(최근 분기), eps_fwd=12개월 선행 EPS(1차 소스: state/consensus.json 의 eps_consensus), pbr_band_5y/per_band_5y=[하단, 상단] 5년 밴드. preferred_metric: 사이클 업종(반도체·조선·자동차·전지·중공업)은 PER 함정(피크 실적=최저 PER) 때문에 PBR, 비사이클은 PER.",
   "band_width_cap": 3.0,
@@ -329,5 +329,6 @@
       "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
       "band_quality": "dart_quarterly"
     }
-  }
+  },
+  "weekly_refresh_note": "2026-09-06 일요일 주간 갱신 시도 결과 — DART_API_KEY 미설정으로 fetch_valuation 이 가격분위 근사(approx_price_percentile) 로 폴백해 18종 전부의 band_quality 를 강등시켰다. 근사 밴드는 anchor(기준가) 사용이 금지되므로 채택하지 않고 8/30 DART 분기 실측 밴드(band_quality=dart_quarterly, source_date 2026-08-30 — 유효기간 90일 이내)를 그대로 보존한다. BPS 재계산분과의 차이는 네이버 PBR 반올림에서 오는 ±0.1~3.9% 수준으로 정보 증분이 없었다(예: KB금융 166,602 → 172,000 은 PBR 1.00 반올림의 산물). eps_fwd 1차 소스인 state/consensus.json 은 FnGuide fetch 실패로 fetched_ok=0(전 종목 stale) — 새 컨센서스 입력 없음. 다음 갱신 트리거: DART_API_KEY 설정 또는 3분기 실적 발표."
 }

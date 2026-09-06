@@ -1709,10 +1709,9 @@ _(최종 갱신: **2026-09-04 18:00 — W36 D5(금) 종가 확정 · 주간 마�
 
 ### 2026-08-13 / 가정오류(운영) — 결함 의심을 결함 확정으로 닫았다 (하나금융지주·KB금융 target_gap 종결)
 - 분류: **가정오류(운영)** — 카운터 미산입(8/12 산입분과 동일 사안의 **종결 기록**이며 신규 결함이 아니다)
-- 무엇을 했나: 8/12 가 "`compute_dynamic_bands` 가 valuation_ceiling 을 verdict 무관하게 target_band 에 씌운다"고 진단하면서 남긴 조건은 8/11 하나금융지주 항목의 교훈, 즉 **"밸류에이션 파일 재산출을 선행 조건으로 걸라"** 였다. 오늘 그 선행 조건을 이행했다 — `fetch_valuation.py` + `check_valuation_guard.py` 를 종가 기준으로 재실행해 밸류에이션 파일을 8/9 → 8/13 으로 갱신했다. 결과: 두 종목의 천장은 하나 126,453 → **126,742**, KB 166,658 → **167,728** 로 소폭 올랐을 뿐이고, **verdict 은 재산출 후에도 여전히 `overheat_entry`**(현재 PER 이 5년 밴드 상단 위)다. `policy.valuation_anchor` 정본은 verdict=`cap_target` 일 때만 캡을 요구하므로, 이 두 종목에는 **캡을 적용할 정책적 근거 자체가 없다**. 캡을 뺀 참조는 하나 143,375원(운용 목표 143,600 과 괴리 **+0.16%**)·KB 186,580원(**+3.23%**)으로 둘 다 경고선 12% 근처에도 가지 않는다.
-- 왜 이 기록이 필요한가: `dynamic_reprice` 의 "유지 사유는 1회만 유효" 규칙은 매일 새 변명을 짓게 만드는 압력이 있고, 8/12 가 그 위험을 이미 지적했다. 오늘의 사유는 새 변명이 아니라 **선행 조건의 이행 결과**이며, 이로써 이 신호는 '재산출 미이행 상태의 보류'에서 '정책상 캡 미적용 종목에 캡이 적용된 산출 결함'으로 **성질이 확정**됐다. 스크립트 수정(캡을 verdict=cap_target 에만 적용)은 일요일 policy_review 안건 그대로 유지한다.
-- 다음 routine 에 반영할 룰: **자동 경고를 '유지'로 닫을 때, 유지 사유가 신호의 **타당성**에 관한 것이면 그것은 매일 새로 지어낼 사유가 아니라 한 번 확정하고 종결할 사유다.** 수정 전까지 하나금융지주·KB금융의 `target_gap` 은 **재산정 근거로 쓰지 않으며, 이후 슬롯은 새 사유를 짓지 말고 이 항목을 인용한다**(2026-08-13 종결). 신호의 타당성이 아니라 시장 판단에 관한 유지 사유만 1회 소진 규칙의 대상이다.
-- 분류 신뢰도: 높음 (재산출 전후 valuation_check verdict·ceiling 값 직접 대조 · 캡 제외 참조 역산 확인)
+- 요약: `compute_dynamic_bands` 가 valuation_ceiling 캡을 verdict(overheat_entry)와 무관하게 적용해 하나금융지주·KB금융의 target_gap 을 매일 오생성한 산출 결함. 정책상 캡은 verdict=`cap_target` 일 때만 요구되며, 캡을 빼면 두 종목 다 경고선 근처에도 가지 않는다.
+- ✅ codify 반영 위치: `scripts/compute_dynamic_bands.py`(build_ticker/compute — `valuation_verdict` 인자 추가, 캡 조건을 `valuation_ceiling and valuation_verdict == "cap_target"` 으로 교정, 2026-09-06 sunday_policy_review, selftest 통과).
+- 전문 이관: `state/lessons_archive.md` §2026-08-13(가정오류(운영) — target_gap 종결) 참조.
 
 ### 2026-08-13 / 선제추론오차 — if-then 조건의 정본 지표명을 잘못 인용했다 (15시 KB금융 재산정 조건, 1-partial · 재발 2회차)
 - 분류: **선제추론오차** — 1건 산입(inf-20260813-1500-3). 같은 슬롯 inf-20260813-1500-2(LIG넥스원) 도 partial, 09시 1-partial 포함 오늘 6건 채점 hit 3·partial 3·miss 0
@@ -1782,6 +1781,7 @@ _(최종 갱신: **2026-09-04 18:00 — W36 D5(금) 종가 확정 · 주간 마�
 - 왜 문제인가: "결함이니 무시한다"는 판단은 옳았지만, 그 판단이 사흘 연속 **사람의 손으로** 반복됐다. 정책이 사유 재사용을 금지한 취지는 같은 서술의 무한 이월을 막자는 것인데, 오늘처럼 매번 새 사유를 발명해 넘기는 것은 그 취지를 우회하는 것이다. 진짜 해결은 산출을 고치는 것이다.
 - 다음 routine 에 반영할 룰: **`compute_dynamic_bands` 의 target_band 캡을 `valuation_check.verdict == "cap_target"` 일 때만 적용한다** — 현재는 verdict 과 무관하게 `valuation_ceiling_price` 로 캡해 overheat_entry 종목의 참조선을 현재가 아래로 끌어내리고, 그 결과 존재하지 않는 target_gap 을 매일 생성한다. **8/16 일요일 policy_review 의 실행 안건으로 확정 이관**하며, 수정 전까지는 오늘 재산출한 캡 제외 참조선(143,167·186,334)을 판정 기준으로 인용한다. 그리고 일반 규칙으로 — **같은 신호를 3회 연속 '결함'으로 기각했다면 그 시점에 기각 사유를 갱신하는 것이 아니라 산출 수정을 의무 안건으로 올린다.**
 - 분류 신뢰도: 높음 (valuation_check verdict 및 캡 제외 참조선 산식 직접 재산출로 검증)
+- ✅ codify 반영: `scripts/compute_dynamic_bands.py` build_ticker/compute — `valuation_verdict` 인자 추가, 캡 적용 조건을 `valuation_ceiling and valuation_verdict == "cap_target"` 으로 교정(2026-09-06 sunday_policy_review, selftest 통과 확인). policy.json 수치 변경 없음(정책 동결 무관 — 스크립트 버그 수정).
 
 ### 2026-08-15 00:00 / 가정오류(운영) — 캘린더에 없는 행사가 나흘 동안 갭 재료로 인용됐다 (엔비디아 GTC 8/16~19 오등재)
 - 분류: 가정오류(운영)

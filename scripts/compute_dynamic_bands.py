@@ -110,6 +110,7 @@ def build_ticker(
     exit_info: dict | None = None,
     entry_cap: float | None = None,
     valuation_ceiling: float | None = None,
+    valuation_verdict: str | None = None,
 ) -> dict:
     """1개 종목의 밴드·신호 산출. 가격/ATR 결측이면 결측 사유만 담은 dict 반환."""
     price = None
@@ -153,7 +154,7 @@ def build_ticker(
     t_low = base * (1 + sp_lo * k_mult * atr_frac)
     t_high = base * (1 + sp_hi * k_mult * atr_frac)
     cap_applied = False
-    if valuation_ceiling:
+    if valuation_ceiling and valuation_verdict == "cap_target":
         if ref > valuation_ceiling:
             ref = valuation_ceiling
             cap_applied = True
@@ -253,6 +254,7 @@ def compute(portfolio: dict, snapshot: dict, exit_levels: dict, estimates: dict,
             exit_info=exit_tickers.get(ticker) if isinstance(exit_tickers, dict) else None,
             entry_cap=_num(est.get("entry_cap")),
             valuation_ceiling=_num(val.get("valuation_ceiling_price")),
+            valuation_verdict=val.get("verdict"),
         )
         signal_count += len(entry.get("reprice_signals") or [])
         out_tickers[str(ticker)] = entry
@@ -272,7 +274,7 @@ def compute(portfolio: dict, snapshot: dict, exit_levels: dict, estimates: dict,
         },
         "formula": {
             "entry_band": "현재가 × (1 − 하단×ATR%) ~ 현재가 × (1 + 상단×ATR%) — 하단 눌림 매수, 상단 추격 상한(entry_cap 캡)",
-            "target_band": "max(진입 후 최고종가, 현재가) × (1 + [0.7,1.3]×k(tier)×ATR%) — 밸류에이션 천장 캡",
+            "target_band": "max(진입 후 최고종가, 현재가) × (1 + [0.7,1.3]×k(tier)×ATR%) — valuation_check.verdict==cap_target 일 때만 밸류에이션 천장 캡",
             "reprice_signals": "target_exhausted(진행률≥100%) / target_gap(참조 대비 괴리≥경고) / stop_too_wide(손절폭>2.5×ATR)",
         },
         "signal_count": signal_count,

@@ -12,7 +12,7 @@
 | C. vs KOSPI (2026-05-20~) | 계좌 -7.326% vs KOSPI -7.24% → **격차 -0.09%p** |
 | D. 스톱 휩쏘 | 손실 스톱 9건 중 t+5 채점 9건 · 휩쏘 7건 (77.8%) · 일실 합계 +273,209원 |
 | E. 게이트 위반 | 총 0건 (provenance 0 · timing 0 · chase 0 · shock 0 · card 0) |
-| F. 패치 vs 검증 | policy v2.36 (직전 감사 v2.36) · 신규 왕복 5건 |
+| F. 패치 vs 검증 | policy v2.36 (직전 감사 v2.36) · 신규 왕복 0건 |
 | G. 배치 | 주식 8.5% (tier bull, 목표 [65, 80]) · heat 잔여 339090원 |
 | H. 오버레이 백테스트 | 판정 있음(아래) |
 
@@ -22,9 +22,9 @@
 
 | id | 항목 | 경과 | 처분 상태 |
 |---|---|---|---|
-| `whipsaw-high` | 스톱 휩쏘율 77.8% — 노이즈 저점 매도 반복 | 9주째 🔴overdue | **무처분** (패치 처분 후에도 재발 — 보완 효과 없음, 재상정) |
-| `deployment-below-band` | 주식비중 8.5% < 목표 하한 65% — 만성 미배치 | 9주째 | observe — 18시 sunday_strategy(08-30, 동일 조직 이전 routine)의 재진단을 정책 리뷰 관점에 |
-| `lessons-balance` | lessons.md 582,624B > 예산 60,000B — 이관 처리량 부족 | 4주째 | defer — 재확인(08-30) — build_lessons_index.py 재실행 결과 archive_candidate |
+| `whipsaw-high` | 스톱 휩쏘율 77.8% — 노이즈 저점 매도 반복 | 9주째 | defer — 정책 동결(Stage 0, state/policy_freeze.json) 중 — §1-8 재심 결과 brea |
+| `deployment-below-band` | 주식비중 8.5% < 목표 하한 65% — 만성 미배치 | 9주째 | observe — 재확인(09-06) — 08-30 진단(게이트 3종 정당 작동, 국면 의존) 이후 배치가 8.5%로 오히려  |
+| `lessons-balance` | lessons.md 581,374B > 예산 60,000B — 이관 처리량 부족 | 4주째 🔴overdue | **무처분** (패치 처분 후에도 재발 — 보완 효과 없음, 재상정) |
 
 ## H. 청산 오버레이 백테스트 판정 (요약 인용)
 

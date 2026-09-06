@@ -221,19 +221,14 @@
     },
     {
       "id": "lessons-balance",
-      "title": "lessons.md 582,624B > 예산 60,000B — 이관 처리량 부족",
+      "title": "lessons.md 581,374B > 예산 60,000B — 이관 처리량 부족",
       "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. 이관 대상 1순위는 lessons_index.archive_candidates.",
       "severity": "warn",
       "first_seen": "2026-08-14",
       "last_seen": "2026-09-06",
       "weeks_seen": 4,
       "status": "open",
-      "disposition": {
-        "action": "patch",
-        "note": "08-30 처분이 요구한 '최소 임시 조치 시범'을 이번 리뷰에서 실행 — codify 확정된 lessons 항목 1건(2026-08-13 가정오류(운영) — compute_dynamic_bands target_gap 결함 종결)을 §1-6 절차대로 state/lessons_archive.md 로 전문 이관하고 lessons.md 본문을 4줄(분류·요약·✅codify 반영 위치·전문 이관 표기)로 교체했다. 근거: 이 항목이 제기한 결함(캡이 verdict=cap_target 무관하게 적용됨)을 오늘 scripts/compute_dynamic_bands.py 에서 실제로 수정(verdict 게이팅 추가, selftest 통과)해 '반영 위치 확인' 조건을 충족한 첫 사례. 결과: lessons.md 582,624B → 581,374B(-1,250B), entries 267건 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 불변 보존 확인). 규모는 미미(주간 유입 37건 대비 1건 이관 — §1-6 수지 균형 의무 여전히 미충족)하나, 08-14 항목에도 별도로 ✅codify 마커를 추가 기입(같은 결함의 원 제안 항목, 완전 이관은 다음 주로 미룸). 구조적 해법(어느 평일 routine 이 codify 마커를 남길지)은 여전히 미정 — 다음 리뷰(09-13)에 사용자 승인 필요 안건으로 재상정하고, 이번 시범 결과(이관 절차 자체는 무리없이 작동함)를 근거로 첨부한다.",
-        "date": "2026-09-06",
-        "by": "sunday_policy_review"
-      },
+      "disposition": null,
       "disposition_history": [
         {
           "action": "defer",
@@ -246,6 +241,13 @@
           "note": "08-30 처분이 요구한 '최소 임시 조치 시범'을 이번 리뷰에서 실행 — codify 확정된 lessons 항목 1건(2026-08-13 가정오류(운영) — compute_dynamic_bands target_gap 결함 종결)을 §1-6 절차대로 state/lessons_archive.md 로 전문 이관하고 lessons.md 본문을 4줄(분류·요약·✅codify 반영 위치·전문 이관 표기)로 교체했다. 근거: 이 항목이 제기한 결함(캡이 verdict=cap_target 무관하게 적용됨)을 오늘 scripts/compute_dynamic_bands.py 에서 실제로 수정(verdict 게이팅 추가, selftest 통과)해 '반영 위치 확인' 조건을 충족한 첫 사례. 결과: lessons.md 582,624B → 581,374B(-1,250B), entries 267건 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 불변 보존 확인). 규모는 미미(주간 유입 37건 대비 1건 이관 — §1-6 수지 균형 의무 여전히 미충족)하나, 08-14 항목에도 별도로 ✅codify 마커를 추가 기입(같은 결함의 원 제안 항목, 완전 이관은 다음 주로 미룸). 구조적 해법(어느 평일 routine 이 codify 마커를 남길지)은 여전히 미정 — 다음 리뷰(09-13)에 사용자 승인 필요 안건으로 재상정하고, 이번 시범 결과(이관 절차 자체는 무리없이 작동함)를 근거로 첨부한다.",
           "date": "2026-09-06",
           "by": "sunday_policy_review"
+        },
+        {
+          "action": "patch",
+          "note": "08-30 처분이 요구한 '최소 임시 조치 시범'을 이번 리뷰에서 실행 — codify 확정된 lessons 항목 1건(2026-08-13 가정오류(운영) — compute_dynamic_bands target_gap 결함 종결)을 §1-6 절차대로 state/lessons_archive.md 로 전문 이관하고 lessons.md 본문을 4줄(분류·요약·✅codify 반영 위치·전문 이관 표기)로 교체했다. 근거: 이 항목이 제기한 결함(캡이 verdict=cap_target 무관하게 적용됨)을 오늘 scripts/compute_dynamic_bands.py 에서 실제로 수정(verdict 게이팅 추가, selftest 통과)해 '반영 위치 확인' 조건을 충족한 첫 사례. 결과: lessons.md 582,624B → 581,374B(-1,250B), entries 267건 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 불변 보존 확인). 규모는 미미(주간 유입 37건 대비 1건 이관 — §1-6 수지 균형 의무 여전히 미충족)하나, 08-14 항목에도 별도로 ✅codify 마커를 추가 기입(같은 결함의 원 제안 항목, 완전 이관은 다음 주로 미룸). 구조적 해법(어느 평일 routine 이 codify 마커를 남길지)은 여전히 미정 — 다음 리뷰(09-13)에 사용자 승인 필요 안건으로 재상정하고, 이번 시범 결과(이관 절차 자체는 무리없이 작동함)를 근거로 첨부한다.",
+          "date": "2026-09-06",
+          "by": "sunday_policy_review",
+          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
         }
       ]
     }
@@ -256,6 +258,6 @@
     "lessons-balance"
   ],
   "overdue": [
-    "whipsaw-high"
+    "lessons-balance"
   ]
 }

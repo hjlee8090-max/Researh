@@ -1,6 +1,6 @@
 # 선제 추론 체크리스트 (inference_checklist.md)
 
-> 자동 생성: build_inference_checklist.py · 2026-09-10T09:33:20+09:00
+> 자동 생성: build_inference_checklist.py · 2026-09-10T18:08:52+09:00
 > **추론(INFER) 직전 먼저 읽는다** — 과거 빗나간 요인을 이번 예측의 factors_considered/assumptions 에 반영하고 checklist_refs 로 증빙한다(자기보완 루프의 'lessons 먼저 읽기'와 대칭).
 > 항목은 lessons_rule_sunset(기본 5거래일) 대상 — 검증 안 된 선제 룰의 영구 적체 금지.
 
@@ -12,4 +12,4 @@
 - [09/08] **잔여 세션의 되돌림 확률을 계산할 때 기준점이 당일 고가·저가의 ±1% 안이면, 그 값을 그대로 쓰지 말고 당일 진폭의 중앙값으로 옮겨 다시 계산한다.** 이는 시세 채택 규칙에 이미 있는 '장중 고가 오인' 가드(웹 종가를 today_high 근처면 버린다)의 **확률 배분 버전**이다 — 가격을 채택할 때는 고가 오인을 막으면서 확률을 배분할 때는 안 막고 있었다.
 - [09/08] 밤사이 입력이 0건인 날의 개장 방향은 **직전 세션 마감 형태**(계단식 확대·되돌림 없음 → 관성 유지 / 고점 대비 되밀림 → 반락)로 배분하고, 밤사이 단일 재료는 밴드 폭에만 넣는다.
 - [09/08] 종목 밴드를 지수 밴드와 다르게 잡을 때 **"이 조정으로 상단은 어느 쪽으로 움직이는가"를 한 줄로 먼저 쓴다.** 답이 "양쪽 다 좁힌다"면 그것은 근거가 아니라 습관이다.
-- … (상한 40줄/4,000B 도달 — 빈도·최신성 하위 90건 생략. 전량은 state/inference_scorecard.json miss_factors_detail·state/lessons.md 참조)
+- … (상한 40줄/4,000B 도달 — 빈도·최신성 하위 92건 생략. 전량은 state/inference_scorecard.json miss_factors_detail·state/lessons.md 참조)

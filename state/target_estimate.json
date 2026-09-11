@@ -1,48 +1,48 @@
 {
-  "as_of": "2026-09-11T09:21:04+09:00",
-  "snapshot_as_of": "2026-09-11T09:20:56+09:00",
+  "as_of": "2026-09-11T09:56:01+09:00",
+  "snapshot_as_of": "2026-09-11T09:55:58+09:00",
   "horizon_months": 12,
   "formula": "추정목표가 = 기준가(밸류밴드·컨센 평균, 결측 시 현재가) × (1 + 추세게이트×(테마P(호라이즌할인) + 양뉴스P(시간감쇠·확률·기반영차감)) + 음뉴스P + 섹터활발성P + 모멘텀틸트(초과수익+52주고점)) → min(컨센×1.15, 밸류천장) 캡 [v1.1 백테스트 보정]",
-  "kospi_ret_60d_pct": -21.95,
+  "kospi_ret_60d_pct": -21.38,
   "estimates": [
     {
       "ticker": "035720",
       "name": "카카오",
       "sector": "인터넷/AI",
-      "current_price": 34850.0,
-      "anchor_price": 52600.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 70,367 + 현재가 34,850 평균",
+      "current_price": 34475.0,
+      "anchor_price": 52400.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 70,367 + 현재가 34,475 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.3,
-        "news": 3.78,
+        "news": 3.77,
         "sector": 0.56,
         "momentum": -2.5,
-        "total": 3.14
+        "total": 3.13
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 7.89,
-        "pct_of_52w_high": 50.0,
+        "excess60_vs_kospi_pct": 6.4,
+        "pct_of_52w_high": 49.46,
         "ungated": {
           "theme": 2.16,
-          "news": 6.89
+          "news": 6.88
         }
       },
-      "raw_estimate": 54300.0,
+      "raw_estimate": 54100.0,
       "cap_applied": null,
-      "estimate": 54300.0,
-      "expected_return_pct": 55.8,
-      "entry_cap_price": 50600.0,
+      "estimate": 54100.0,
+      "expected_return_pct": 56.9,
+      "entry_cap_price": 50400.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 6.7,
-        "stop_basis": "ATR 3.3%×2≈손절 6.7%",
+        "stop_frac_pct": 6.8,
+        "stop_basis": "ATR 3.4%×2≈손절 6.8%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 45.2,
+      "entry_cap_gap_pct": 46.2,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+64) 전후 재평가 · 섹터값 0.14(집중도 평소 0.96배·heat 0.2)",
@@ -70,22 +70,22 @@
       "grade_capped_by_band": true,
       "band_freshness": {
         "metric": "PER",
-        "current_multiple": 26.48,
+        "current_multiple": 26.2,
         "band": [
           40.02,
           66.92
         ],
-        "position": -0.503,
+        "position": -0.514,
         "detached": true,
         "direction": "below",
         "days_outside": 120,
         "reseed_required": true,
-        "note": "현재 PER 26.5가 밴드(40.0~66.9) 아래로 이탈(120거래일째) — 밴드 창(약 2.5년)이 이 종목의 현재 레짐을 설명하지 못한다. 주간 루틴 재시드 대상"
+        "note": "현재 PER 26.2가 밴드(40.0~66.9) 아래로 이탈(120거래일째) — 밴드 창(약 2.5년)이 이 종목의 현재 레짐을 설명하지 못한다. 주간 루틴 재시드 대상"
       },
       "data_layers": {
         "valuation_band": true,
         "consensus_target": false,
-        "price_snapshot": false,
+        "price_snapshot": true,
         "theme_exposure": true,
         "sector_group": true,
         "earnings_signal": true
@@ -120,16 +120,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -157,7 +157,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -14.06,
+        "ret_60d_pct": -14.98,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -175,10 +175,10 @@
         "prev_estimate": 54300.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.2
+        "estimate_delta_krw": -200.0,
+        "entry_cap_delta_krw": -100.0,
+        "news_pct_delta": -0.01,
+        "expected_return_delta_pct": 1.3
       },
       "new_news_since_prev": [
         {
@@ -192,10 +192,10 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -214,242 +214,38 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **54,300원**(+55.8%, 등급 B · ⚠밴드이탈) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+4/섹터+1/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **50,600원**(R/R≥1.1·ATR 3.3%×2≈손절 6.7% 기준) · 현재가 34,850원 🟢진입 가능(현재가가 상한가보다 45.2% 낮음) · 직전 리포트 대비 ▲100원"
-    },
-    {
-      "ticker": "035420",
-      "name": "NAVER",
-      "sector": "인터넷/AI",
-      "current_price": 205000.0,
-      "anchor_price": 273200.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 341,408 + 현재가 205,000 평균",
-      "consensus_rejected": null,
-      "premium_pct": {
-        "theme": 2.08,
-        "news": -1.28,
-        "sector": 0.56,
-        "momentum": -2.5,
-        "total": -1.14
-      },
-      "trend_gate": {
-        "factor": 0.6,
-        "excess60_vs_kospi_pct": 6.14,
-        "pct_of_52w_high": 67.43,
-        "ungated": {
-          "theme": 3.46,
-          "news": 0.14
-        }
-      },
-      "raw_estimate": 270100.0,
-      "cap_applied": null,
-      "estimate": 270100.0,
-      "expected_return_pct": 31.8,
-      "entry_cap_price": 248300.0,
-      "entry_cap_basis": {
-        "min_rr": 1.1,
-        "min_rr_tier": "bull",
-        "stop_frac_pct": 8.0,
-        "stop_basis": "ATR 4.0%×2≈손절 8.0%",
-        "formula": "목표가 / (1 + min_rr × 손절%)"
-      },
-      "in_buy_zone": true,
-      "entry_cap_gap_pct": 21.1,
-      "entry_cap_note": null,
-      "entry_cap_caution": "falling knife(60일 -16%) — 추격 금지(추세 약세)",
-      "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+64) 전후 재평가 · 섹터값 0.14(집중도 평소 0.96배·heat 0.2)",
-      "sector_signals": {
-        "group": "internet_ai_platform",
-        "median_excess_60d": 5.515,
-        "signals_met": 0,
-        "min_signals": 2,
-        "immersion_met": false,
-        "sector_value": {
-          "sector_value": 0.14,
-          "heat": 0.2,
-          "rs": 0.0,
-          "conc_ratio": 0.96,
-          "median_excess_20d": -10.39,
-          "members": [
-            "035420",
-            "035720"
-          ],
-          "as_of": "2026-09-10",
-          "group": "internet_ai_platform"
-        }
-      },
-      "grade": "A",
-      "grade_capped_by_band": false,
-      "band_freshness": {
-        "metric": "PER",
-        "current_multiple": 16.73,
-        "band": [
-          16.03,
-          39.71
-        ],
-        "position": 0.03,
-        "detached": false,
-        "direction": null,
-        "days_outside": 0,
-        "reseed_required": false,
-        "note": null
-      },
-      "data_layers": {
-        "valuation_band": true,
-        "consensus_target": false,
-        "price_snapshot": true,
-        "theme_exposure": true,
-        "sector_group": true,
-        "earnings_signal": true
-      },
-      "detail": {
-        "theme_parts": [
-          {
-            "theme": "internet_ai_platform",
-            "exposure": 0.8,
-            "strength": 0.65,
-            "horizon": "2-4y",
-            "horizon_discount": 0.333,
-            "contrib_pct": 3.46
-          }
-        ],
-        "news_parts": [
-          {
-            "kind": "news_auto",
-            "type": "earnings_surprise_beat",
-            "date": "2026-09-10",
-            "impact_pct": 6.0,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 3.56,
-            "note": "[성일하이텍] 성일하이텍, 12분기 만에 흑자전환…주가 반등 시작됐나? - 네이버 프리미엄콘텐츠",
-            "source_url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPUXpZZHNxdE1PWjhPSG04NkJLclMzWDhXWVRrdVV3V2JVRzNjYnpLeTBLZWtoYXAzQzJ6V3F2SW1YTmFBTmc1cHhzVmlMVnpHT1dhN2hMRlprVjh1VFJTSERQRWxWb1JxenRMNU1scHVlREREN3dRVDNGWHZ1UFMxdlBzMFVOc0s1?oc=5",
-            "matched_keywords": [
-              "흑자전환"
-            ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_shock",
-            "date": "2026-09-10",
-            "impact_pct": -6.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-11-14",
-            "d_day": 64,
-            "impact_pct": 6.0,
-            "direction": -0.6,
-            "time_weight": 0.91,
-            "probability": 0.6,
-            "contrib_pct": -1.96,
-            "id": "035420-20263Q-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2027-03-31",
-            "d_day": 201,
-            "impact_pct": 3.0,
-            "direction": -0.6,
-            "time_weight": 0.53,
-            "probability": 0.6,
-            "contrib_pct": -0.57,
-            "id": "035420-2026FY-earnings"
-          }
-        ],
-        "earnings_signal": "decline",
-        "ret_60d_pct": -15.81,
-        "next_catalyst": {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "d_day": 64,
-          "impact_pct": 6.0,
-          "direction": -0.6,
-          "time_weight": 0.91,
-          "probability": 0.6,
-          "contrib_pct": -1.96,
-          "id": "035420-20263Q-earnings"
-        }
-      },
-      "delta_vs_prev": {
-        "prev_estimate": 265800.0,
-        "prev_as_of": "2026-09-10T21:50:54+09:00",
-        "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 4300.0,
-        "entry_cap_delta_krw": 5200.0,
-        "news_pct_delta": 2.14,
-        "expected_return_delta_pct": 4.0
-      },
-      "new_news_since_prev": [
-        {
-          "kind": "news_auto",
-          "type": "earnings_surprise_beat",
-          "date": "2026-09-10",
-          "contrib_pct": 3.56,
-          "note": "[성일하이텍] 성일하이텍, 12분기 만에 흑자전환…주가 반등 시작됐나? - 네이버 프리미엄콘텐츠",
-          "source_url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPUXpZZHNxdE1PWjhPSG04NkJLclMzWDhXWVRrdVV3V2JVRzNjYnpLeTBLZWtoYXAzQzJ6V3F2SW1YTmFBTmc1cHhzVmlMVnpHT1dhN2hMRlprVjh1VFJTSERQRWxWb1JxenRMNU1scHVlREREN3dRVDNGWHZ1UFMxdlBzMFVOc0s1?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
-        },
-        {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "contrib_pct": -1.96,
-          "note": null,
-          "source_url": null
-        }
-      ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **270,100원**(+31.8%, 등급 A) · 직전 리포트 대비 ▲4,300원 · 프리미엄 테마+2/뉴스-1/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) -2.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **248,300원**(R/R≥1.1·ATR 4.0%×2≈손절 8.0% 기준) · 현재가 205,000원 🟡진입 가능 구간이나 falling knife(60일 -16%) — 추격 금지(추세 약세)(상한가보다 21.1% 낮음) · 직전 리포트 대비 ▲5,200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **54,100원**(+56.9%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스+4/섹터+1/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **50,400원**(R/R≥1.1·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 34,475원 🟢진입 가능(현재가가 상한가보다 46.2% 낮음) · 직전 리포트 대비 ▼100원"
     },
     {
       "ticker": "267260",
       "name": "HD현대일렉트릭",
       "sector": "전력기기",
-      "current_price": 733000.0,
-      "anchor_price": 931600.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 1,130,144(밴드 폭 3.3배 → 상단 3.0배로 캡) + 현재가 733,000 평균",
+      "current_price": 734000.0,
+      "anchor_price": 932100.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 1,130,144(밴드 폭 3.3배 → 상단 3.0배로 캡) + 현재가 734,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.9,
-        "news": 0.38,
+        "news": 0.37,
         "sector": 3.44,
         "momentum": -1.5,
-        "total": 3.22
+        "total": 3.21
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -12.6,
-        "pct_of_52w_high": 51.26,
+        "excess60_vs_kospi_pct": -13.08,
+        "pct_of_52w_high": 51.33,
         "ungated": {
           "theme": 3.0,
-          "news": 3.33
+          "news": 3.32
         }
       },
-      "raw_estimate": 961600.0,
+      "raw_estimate": 962000.0,
       "cap_applied": null,
-      "estimate": 961600.0,
-      "expected_return_pct": 31.2,
-      "entry_cap_price": 848800.0,
+      "estimate": 962000.0,
+      "expected_return_pct": 31.1,
+      "entry_cap_price": 849300.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -458,9 +254,9 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 15.8,
+      "entry_cap_gap_pct": 15.7,
       "entry_cap_note": null,
-      "entry_cap_caution": "falling knife(60일 -35%) — 추격 금지(추세 약세)",
+      "entry_cap_caution": "falling knife(60일 -34%) — 추격 금지(추세 약세)",
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.06(집중도 평소 0.87배·heat 0.084)",
       "sector_signals": {
         "group": "power_grid_ai",
@@ -484,16 +280,16 @@
           "group": "power_grid_ai"
         }
       },
-      "grade": "B",
+      "grade": "A",
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PER",
-        "current_multiple": 27.92,
+        "current_multiple": 27.95,
         "band": [
           21.52,
           71.89
         ],
-        "position": 0.127,
+        "position": 0.128,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -503,7 +299,7 @@
       "data_layers": {
         "valuation_band": true,
         "consensus_target": false,
-        "price_snapshot": false,
+        "price_snapshot": true,
         "theme_exposure": true,
         "sector_group": true,
         "earnings_signal": true
@@ -523,16 +319,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -560,7 +356,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -34.55,
+        "ret_60d_pct": -34.46,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -578,19 +374,19 @@
         "prev_estimate": 968400.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -6800.0,
-        "entry_cap_delta_krw": -9500.0,
-        "news_pct_delta": 0.02,
-        "expected_return_delta_pct": 1.4
+        "estimate_delta_krw": -6400.0,
+        "entry_cap_delta_krw": -9000.0,
+        "news_pct_delta": 0.01,
+        "expected_return_delta_pct": 1.3
       },
       "new_news_since_prev": [
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -609,49 +405,230 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **961,600원**(+31.2%, 등급 B) · 직전 리포트 대비 ▼6,800원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **848,800원**(R/R≥1.1·ATR 6.0%×2≈손절 12.1% 기준) · 현재가 733,000원 🟡진입 가능 구간이나 falling knife(60일 -35%) — 추격 금지(추세 약세)(상한가보다 15.8% 낮음) · 직전 리포트 대비 ▼9,500원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **962,000원**(+31.1%, 등급 A) · 직전 리포트 대비 ▼6,400원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **849,300원**(R/R≥1.1·ATR 6.0%×2≈손절 12.1% 기준) · 현재가 734,000원 🟡진입 가능 구간이나 falling knife(60일 -34%) — 추격 금지(추세 약세)(상한가보다 15.7% 낮음) · 직전 리포트 대비 ▼9,000원"
+    },
+    {
+      "ticker": "035420",
+      "name": "NAVER",
+      "sector": "인터넷/AI",
+      "current_price": 204000.0,
+      "anchor_price": 272700.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 341,408 + 현재가 204,000 평균",
+      "consensus_rejected": null,
+      "premium_pct": {
+        "theme": 2.08,
+        "news": -3.43,
+        "sector": 0.56,
+        "momentum": -2.5,
+        "total": -3.29
+      },
+      "trend_gate": {
+        "factor": 0.6,
+        "excess60_vs_kospi_pct": 5.16,
+        "pct_of_52w_high": 67.11,
+        "ungated": {
+          "theme": 3.46,
+          "news": -3.43
+        }
+      },
+      "raw_estimate": 263700.0,
+      "cap_applied": null,
+      "estimate": 263700.0,
+      "expected_return_pct": 29.3,
+      "entry_cap_price": 242300.0,
+      "entry_cap_basis": {
+        "min_rr": 1.1,
+        "min_rr_tier": "bull",
+        "stop_frac_pct": 8.0,
+        "stop_basis": "ATR 4.0%×2≈손절 8.0%",
+        "formula": "목표가 / (1 + min_rr × 손절%)"
+      },
+      "in_buy_zone": true,
+      "entry_cap_gap_pct": 18.8,
+      "entry_cap_note": null,
+      "entry_cap_caution": "falling knife(60일 -16%) — 추격 금지(추세 약세)",
+      "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+64) 전후 재평가 · 섹터값 0.14(집중도 평소 0.96배·heat 0.2)",
+      "sector_signals": {
+        "group": "internet_ai_platform",
+        "median_excess_60d": 5.515,
+        "signals_met": 0,
+        "min_signals": 2,
+        "immersion_met": false,
+        "sector_value": {
+          "sector_value": 0.14,
+          "heat": 0.2,
+          "rs": 0.0,
+          "conc_ratio": 0.96,
+          "median_excess_20d": -10.39,
+          "members": [
+            "035420",
+            "035720"
+          ],
+          "as_of": "2026-09-10",
+          "group": "internet_ai_platform"
+        }
+      },
+      "grade": "A",
+      "grade_capped_by_band": false,
+      "band_freshness": {
+        "metric": "PER",
+        "current_multiple": 16.65,
+        "band": [
+          16.03,
+          39.71
+        ],
+        "position": 0.026,
+        "detached": false,
+        "direction": null,
+        "days_outside": 0,
+        "reseed_required": false,
+        "note": null
+      },
+      "data_layers": {
+        "valuation_band": true,
+        "consensus_target": false,
+        "price_snapshot": true,
+        "theme_exposure": true,
+        "sector_group": true,
+        "earnings_signal": true
+      },
+      "detail": {
+        "theme_parts": [
+          {
+            "theme": "internet_ai_platform",
+            "exposure": 0.8,
+            "strength": 0.65,
+            "horizon": "2-4y",
+            "horizon_discount": 0.333,
+            "contrib_pct": 3.46
+          }
+        ],
+        "news_parts": [
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-11",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-11-14",
+            "d_day": 64,
+            "impact_pct": 6.0,
+            "direction": -0.6,
+            "time_weight": 0.91,
+            "probability": 0.6,
+            "contrib_pct": -1.96,
+            "id": "035420-20263Q-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2027-03-31",
+            "d_day": 201,
+            "impact_pct": 3.0,
+            "direction": -0.6,
+            "time_weight": 0.53,
+            "probability": 0.6,
+            "contrib_pct": -0.57,
+            "id": "035420-2026FY-earnings"
+          }
+        ],
+        "earnings_signal": "decline",
+        "ret_60d_pct": -16.22,
+        "next_catalyst": {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "d_day": 64,
+          "impact_pct": 6.0,
+          "direction": -0.6,
+          "time_weight": 0.91,
+          "probability": 0.6,
+          "contrib_pct": -1.96,
+          "id": "035420-20263Q-earnings"
+        }
+      },
+      "delta_vs_prev": {
+        "prev_estimate": 265800.0,
+        "prev_as_of": "2026-09-10T21:50:54+09:00",
+        "prev_slot": "2026-09-10-18",
+        "estimate_delta_krw": -2100.0,
+        "entry_cap_delta_krw": -800.0,
+        "news_pct_delta": -0.01,
+        "expected_return_delta_pct": 1.5
+      },
+      "new_news_since_prev": [
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
+        },
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "contrib_pct": -1.96,
+          "note": null,
+          "source_url": null
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **263,700원**(+29.3%, 등급 A) · 직전 리포트 대비 ▼2,100원 · 프리미엄 테마+2/뉴스-3/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -2.0%; global_rate_shock(해외) -0.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **242,300원**(R/R≥1.1·ATR 4.0%×2≈손절 8.0% 기준) · 현재가 204,000원 🟡진입 가능 구간이나 falling knife(60일 -16%) — 추격 금지(추세 약세)(상한가보다 18.8% 낮음) · 직전 리포트 대비 ▼800원"
     },
     {
       "ticker": "028260",
       "name": "삼성물산",
       "sector": "지주/건설",
-      "current_price": 362000.0,
-      "anchor_price": 431500.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 501,078 + 현재가 362,000 평균",
+      "current_price": 368500.0,
+      "anchor_price": 434800.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 501,078 + 현재가 368,500 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.5,
-        "news": 1.02,
+        "news": 0.37,
         "sector": 5.35,
         "momentum": -3.5,
-        "total": 3.37
+        "total": 2.72
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -4.17,
-        "pct_of_52w_high": 64.07,
+        "excess60_vs_kospi_pct": -3.42,
+        "pct_of_52w_high": 65.22,
         "ungated": {
           "theme": 1.67,
-          "news": 5.49
+          "news": 3.32
         }
       },
-      "raw_estimate": 446100.0,
+      "raw_estimate": 446600.0,
       "cap_applied": null,
-      "estimate": 446100.0,
-      "expected_return_pct": 23.2,
-      "entry_cap_price": 399200.0,
+      "estimate": 446600.0,
+      "expected_return_pct": 21.2,
+      "entry_cap_price": 400400.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 10.7,
-        "stop_basis": "ATR 5.3%×2≈손절 10.7%",
+        "stop_frac_pct": 10.5,
+        "stop_basis": "ATR 5.2%×2≈손절 10.5%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 10.3,
+      "entry_cap_gap_pct": 8.7,
       "entry_cap_note": null,
-      "entry_cap_caution": "falling knife(60일 -26%) — 추격 금지(추세 약세)",
+      "entry_cap_caution": "falling knife(60일 -25%) — 추격 금지(추세 약세)",
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +20%p) · 섹터값 0.34(집중도 평소 1.1배·heat 0.371)",
       "sector_signals": {
         "group": "value_up",
@@ -680,12 +657,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 0.56,
+        "current_multiple": 0.57,
         "band": [
           0.53,
           1.02
         ],
-        "position": 0.061,
+        "position": 0.082,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -713,34 +690,18 @@
         ],
         "news_parts": [
           {
-            "kind": "news_auto",
-            "type": "buyback_cancellation",
-            "date": "2026-09-02",
-            "impact_pct": 4.0,
-            "decay": 0.9,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -5.44,
-            "contrib_pct": 2.16,
-            "note": "삼성물산, 삼성전자의 배당 확대로 본격화된 주주환원 By 알파경제 alphabiz - Investing.com 한국어",
-            "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9RWl9RcWZCWl9hNFFialhTR2dxTWtVT2cyc1ZSekJBXzFieXFkWUhReWdmSWlEanY3M182MzhyZ0dCOWgyOGpTdFlwNmRxbVg4bFdsSGhMQUZzUTQxMmdaZFQzNzNXcEZqSjlHZmFBQ2Q?oc=5",
-            "matched_keywords": [
-              "배당확대",
-              "주주환원"
-            ]
-          },
-          {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -768,7 +729,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -26.12,
+        "ret_60d_pct": -24.8,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -786,27 +747,19 @@
         "prev_estimate": 452100.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -6000.0,
-        "entry_cap_delta_krw": -4800.0,
-        "news_pct_delta": 0.66,
-        "expected_return_delta_pct": 4.1
+        "estimate_delta_krw": -5500.0,
+        "entry_cap_delta_krw": -3600.0,
+        "news_pct_delta": 0.01,
+        "expected_return_delta_pct": 2.1
       },
       "new_news_since_prev": [
         {
-          "kind": "news_auto",
-          "type": "buyback_cancellation",
-          "date": "2026-09-02",
-          "contrib_pct": 2.16,
-          "note": "삼성물산, 삼성전자의 배당 확대로 본격화된 주주환원 By 알파경제 alphabiz - Investing.com 한국어",
-          "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9RWl9RcWZCWl9hNFFialhTR2dxTWtVT2cyc1ZSekJBXzFieXFkWUhReWdmSWlEanY3M182MzhyZ0dCOWgyOGpTdFlwNmRxbVg4bFdsSGhMQUZzUTQxMmdaZFQzNzNXcEZqSjlHZmFBQ2Q?oc=5"
-        },
-        {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -825,262 +778,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **446,100원**(+23.2%, 등급 A) · 직전 리포트 대비 ▼6,000원 · 프리미엄 테마+0/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **399,200원**(R/R≥1.1·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 362,000원 🟡진입 가능 구간이나 falling knife(60일 -26%) — 추격 금지(추세 약세)(상한가보다 10.3% 낮음) · 직전 리포트 대비 ▼4,800원"
-    },
-    {
-      "ticker": "105560",
-      "name": "KB금융",
-      "sector": "금융/은행",
-      "current_price": 174700.0,
-      "anchor_price": 176300.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 177,990 + 현재가 174,700 평균",
-      "consensus_rejected": null,
-      "premium_pct": {
-        "theme": 4.55,
-        "news": 4.61,
-        "sector": 5.35,
-        "momentum": 3.0,
-        "total": 17.51
-      },
-      "trend_gate": {
-        "factor": 1.0,
-        "excess60_vs_kospi_pct": 28.47,
-        "pct_of_52w_high": 89.82,
-        "ungated": {
-          "theme": 4.55,
-          "news": 4.61
-        }
-      },
-      "raw_estimate": 207200.0,
-      "cap_applied": null,
-      "estimate": 207200.0,
-      "expected_return_pct": 18.6,
-      "entry_cap_price": 193500.0,
-      "entry_cap_basis": {
-        "min_rr": 1.1,
-        "min_rr_tier": "bull",
-        "stop_frac_pct": 6.4,
-        "stop_basis": "ATR 3.2%×2≈손절 6.4%",
-        "formula": "목표가 / (1 + min_rr × 손절%)"
-      },
-      "in_buy_zone": true,
-      "entry_cap_gap_pct": 10.8,
-      "entry_cap_note": null,
-      "entry_cap_caution": null,
-      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +20%p) · 섹터값 0.34(집중도 평소 1.1배·heat 0.371)",
-      "sector_signals": {
-        "group": "value_up",
-        "median_excess_60d": 20.21,
-        "signals_met": 1,
-        "min_signals": 2,
-        "immersion_met": false,
-        "sector_value": {
-          "sector_value": 0.337,
-          "heat": 0.371,
-          "rs": 0.258,
-          "conc_ratio": 1.1,
-          "median_excess_20d": -1.13,
-          "members": [
-            "105560",
-            "055550",
-            "086790",
-            "005490",
-            "028260"
-          ],
-          "as_of": "2026-09-10",
-          "group": "value_up"
-        }
-      },
-      "grade": "A",
-      "grade_capped_by_band": false,
-      "band_freshness": {
-        "metric": "PER",
-        "current_multiple": 9.16,
-        "band": [
-          5.79,
-          12.88
-        ],
-        "position": 0.476,
-        "detached": false,
-        "direction": null,
-        "days_outside": 0,
-        "reseed_required": false,
-        "note": null
-      },
-      "data_layers": {
-        "valuation_band": true,
-        "consensus_target": false,
-        "price_snapshot": true,
-        "theme_exposure": true,
-        "sector_group": true,
-        "earnings_signal": true
-      },
-      "detail": {
-        "theme_parts": [
-          {
-            "theme": "value_up",
-            "exposure": 0.7,
-            "strength": 0.65,
-            "horizon": "1-3y",
-            "horizon_discount": 0.5,
-            "contrib_pct": 4.55
-          }
-        ],
-        "news_parts": [
-          {
-            "kind": "news_auto",
-            "type": "buyback_cancellation",
-            "date": "2026-09-09",
-            "impact_pct": 4.0,
-            "decay": 0.98,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 1.07,
-            "contrib_pct": 1.28,
-            "note": "키움증권 \"KB금융, 업종 내 주주환원율 1등…목표주가 상향\" - 매일경제 마켓",
-            "source_url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE5lTnpuVnB6OG5uN0RfakJ0cEJFQWxQczVGX0U0ZHlXRTV3NFpCcVhZc0gzaVM4QXB5bWVPZVNCUW9pckxYSy0yNm1DNnk2OGhiQ2c?oc=5",
-            "matched_keywords": [
-              "주주환원"
-            ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_shock",
-            "date": "2026-09-10",
-            "impact_pct": -6.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-11-14",
-            "d_day": 64,
-            "impact_pct": 6.0,
-            "direction": 1.0,
-            "time_weight": 0.91,
-            "probability": 0.6,
-            "contrib_pct": 3.26,
-            "id": "105560-20263Q-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2027-03-31",
-            "d_day": 201,
-            "impact_pct": 3.0,
-            "direction": 1.0,
-            "time_weight": 0.53,
-            "probability": 0.6,
-            "contrib_pct": 0.96,
-            "id": "105560-2026FY-earnings"
-          }
-        ],
-        "earnings_signal": "strong_growth",
-        "ret_60d_pct": 6.52,
-        "next_catalyst": {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "d_day": 64,
-          "impact_pct": 6.0,
-          "direction": 1.0,
-          "time_weight": 0.91,
-          "probability": 0.6,
-          "contrib_pct": 3.26,
-          "id": "105560-20263Q-earnings"
-        }
-      },
-      "delta_vs_prev": {
-        "prev_estimate": 204500.0,
-        "prev_as_of": "2026-09-10T21:50:54+09:00",
-        "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 2700.0,
-        "entry_cap_delta_krw": 2600.0,
-        "news_pct_delta": 1.06,
-        "expected_return_delta_pct": 0.7
-      },
-      "new_news_since_prev": [
-        {
-          "kind": "news_auto",
-          "type": "buyback_cancellation",
-          "date": "2026-09-09",
-          "contrib_pct": 1.28,
-          "note": "키움증권 \"KB금융, 업종 내 주주환원율 1등…목표주가 상향\" - 매일경제 마켓",
-          "source_url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE5lTnpuVnB6OG5uN0RfakJ0cEJFQWxQczVGX0U0ZHlXRTV3NFpCcVhZc0gzaVM4QXB5bWVPZVNCUW9pckxYSy0yNm1DNnk2OGhiQ2c?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
-        },
-        {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "contrib_pct": 3.26,
-          "note": null,
-          "source_url": null
-        },
-        {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2027-03-31",
-          "contrib_pct": 0.96,
-          "note": null,
-          "source_url": null
-        }
-      ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **207,200원**(+18.6%, 등급 A) · 직전 리포트 대비 ▲2,700원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +1.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **193,500원**(R/R≥1.1·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 174,700원 🟢진입 가능(현재가가 상한가보다 10.8% 낮음) · 직전 리포트 대비 ▲2,600원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **446,600원**(+21.2%, 등급 A) · 직전 리포트 대비 ▼5,500원 · 프리미엄 테마+0/뉴스+0/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **400,400원**(R/R≥1.1·ATR 5.2%×2≈손절 10.5% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -25%) — 추격 금지(추세 약세)(상한가보다 8.7% 낮음) · 직전 리포트 대비 ▼3,600원"
     },
     {
       "ticker": "207940",
       "name": "삼성바이오로직스",
       "sector": "바이오",
-      "current_price": 1422000.0,
-      "anchor_price": 1422000.0,
+      "current_price": 1411000.0,
+      "anchor_price": 1411000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 2.0,
-        "news": 9.72,
+        "news": 9.71,
         "sector": 4.75,
         "momentum": 2.0,
-        "total": 18.47
+        "total": 18.46
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 25.75,
-        "pct_of_52w_high": 71.57,
+        "excess60_vs_kospi_pct": 24.37,
+        "pct_of_52w_high": 71.01,
         "ungated": {
           "theme": 2.0,
-          "news": 9.72
+          "news": 9.71
         }
       },
-      "raw_estimate": 1684600.0,
+      "raw_estimate": 1671500.0,
       "cap_applied": null,
-      "estimate": 1684600.0,
+      "estimate": 1671500.0,
       "expected_return_pct": 18.5,
-      "entry_cap_price": 1578700.0,
+      "entry_cap_price": 1565400.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 6.1,
-        "stop_basis": "ATR 3.0%×2≈손절 6.1%",
+        "stop_frac_pct": 6.2,
+        "stop_basis": "ATR 3.1%×2≈손절 6.2%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 11.0,
+      "entry_cap_gap_pct": 10.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +25%p) · 섹터값 0.19(집중도 평소 1.01배·heat 0.267)",
@@ -1137,7 +875,7 @@
             "realized_since_event_pct": -10.56,
             "contrib_pct": 1.64,
             "note": "'3조 유증' 삼성바이오로직스, 주주 달래기…\"15조 투자 위한 전략적 선택\" - v.daum.net",
-            "source_url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE1SenV0M1l2cnVlQWxaak92RUlYcGQ2THFtOVgxbktja3dtZnRiYmI3MVd2eHRMekpkb3NCOXA1Z2xHU3ZIaUhvZFhuNA?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTFBQTjUzREwzelF3Tk1ETkZZWUpteU5fMGNvcWphNXNfZFV5UVRBV2I2RHhMQnZyeXR5cC16YTNHcWYtSkx3eWc?oc=5",
             "matched_keywords": [
               "조투자"
             ]
@@ -1160,16 +898,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1197,7 +935,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": 3.8,
+        "ret_60d_pct": 2.99,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -1215,9 +953,9 @@
         "prev_estimate": 1685500.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -900.0,
-        "entry_cap_delta_krw": 200.0,
-        "news_pct_delta": -0.04,
+        "estimate_delta_krw": -14000.0,
+        "entry_cap_delta_krw": -13100.0,
+        "news_pct_delta": -0.05,
         "expected_return_delta_pct": 0.1
       },
       "new_news_since_prev": [
@@ -1227,7 +965,7 @@
           "date": "2026-09-03",
           "contrib_pct": 1.64,
           "note": "'3조 유증' 삼성바이오로직스, 주주 달래기…\"15조 투자 위한 전략적 선택\" - v.daum.net",
-          "source_url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE1SenV0M1l2cnVlQWxaak92RUlYcGQ2THFtOVgxbktja3dtZnRiYmI3MVd2eHRMekpkb3NCOXA1Z2xHU3ZIaUhvZFhuNA?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTFBQTjUzREwzelF3Tk1ETkZZWUpteU5fMGNvcWphNXNfZFV5UVRBV2I2RHhMQnZyeXR5cC16YTNHcWYtSkx3eWc?oc=5"
         },
         {
           "kind": "news_auto",
@@ -1240,10 +978,10 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1262,38 +1000,253 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,684,600원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼900원 · 프리미엄 테마+2/뉴스+10/섹터+5/모멘텀+2% · 📰 원인 뉴스: supply_contract_major(자동) +4.8%; earnings_report(촉매) +3.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,578,700원**(R/R≥1.1·ATR 3.0%×2≈손절 6.1% 기준) · 현재가 1,422,000원 🟢진입 가능(현재가가 상한가보다 11.0% 낮음) · 직전 리포트 대비 ▲200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,671,500원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼14,000원 · 프리미엄 테마+2/뉴스+10/섹터+5/모멘텀+2% · 📰 원인 뉴스: supply_contract_major(자동) +4.8%; earnings_report(촉매) +3.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,565,400원**(R/R≥1.1·ATR 3.1%×2≈손절 6.2% 기준) · 현재가 1,411,000원 🟢진입 가능(현재가가 상한가보다 10.9% 낮음) · 직전 리포트 대비 ▼13,100원"
+    },
+    {
+      "ticker": "105560",
+      "name": "KB금융",
+      "sector": "금융/은행",
+      "current_price": 175400.0,
+      "anchor_price": 176700.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 177,990 + 현재가 175,400 평균",
+      "consensus_rejected": null,
+      "premium_pct": {
+        "theme": 4.55,
+        "news": 4.6,
+        "sector": 5.35,
+        "momentum": 3.0,
+        "total": 17.5
+      },
+      "trend_gate": {
+        "factor": 1.0,
+        "excess60_vs_kospi_pct": 28.33,
+        "pct_of_52w_high": 90.18,
+        "ungated": {
+          "theme": 4.55,
+          "news": 4.6
+        }
+      },
+      "raw_estimate": 207600.0,
+      "cap_applied": null,
+      "estimate": 207600.0,
+      "expected_return_pct": 18.4,
+      "entry_cap_price": 193900.0,
+      "entry_cap_basis": {
+        "min_rr": 1.1,
+        "min_rr_tier": "bull",
+        "stop_frac_pct": 6.4,
+        "stop_basis": "ATR 3.2%×2≈손절 6.4%",
+        "formula": "목표가 / (1 + min_rr × 손절%)"
+      },
+      "in_buy_zone": true,
+      "entry_cap_gap_pct": 10.5,
+      "entry_cap_note": null,
+      "entry_cap_caution": null,
+      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +20%p) · 섹터값 0.34(집중도 평소 1.1배·heat 0.371)",
+      "sector_signals": {
+        "group": "value_up",
+        "median_excess_60d": 20.21,
+        "signals_met": 1,
+        "min_signals": 2,
+        "immersion_met": false,
+        "sector_value": {
+          "sector_value": 0.337,
+          "heat": 0.371,
+          "rs": 0.258,
+          "conc_ratio": 1.1,
+          "median_excess_20d": -1.13,
+          "members": [
+            "105560",
+            "055550",
+            "086790",
+            "005490",
+            "028260"
+          ],
+          "as_of": "2026-09-10",
+          "group": "value_up"
+        }
+      },
+      "grade": "A",
+      "grade_capped_by_band": false,
+      "band_freshness": {
+        "metric": "PER",
+        "current_multiple": 9.2,
+        "band": [
+          5.79,
+          12.88
+        ],
+        "position": 0.481,
+        "detached": false,
+        "direction": null,
+        "days_outside": 0,
+        "reseed_required": false,
+        "note": null
+      },
+      "data_layers": {
+        "valuation_band": true,
+        "consensus_target": false,
+        "price_snapshot": true,
+        "theme_exposure": true,
+        "sector_group": true,
+        "earnings_signal": true
+      },
+      "detail": {
+        "theme_parts": [
+          {
+            "theme": "value_up",
+            "exposure": 0.7,
+            "strength": 0.65,
+            "horizon": "1-3y",
+            "horizon_discount": 0.5,
+            "contrib_pct": 4.55
+          }
+        ],
+        "news_parts": [
+          {
+            "kind": "news_auto",
+            "type": "buyback_cancellation",
+            "date": "2026-09-09",
+            "impact_pct": 4.0,
+            "decay": 0.98,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 1.07,
+            "contrib_pct": 1.28,
+            "note": "키움증권 \"KB금융, 업종 내 주주환원율 1등…목표주가 상향\" - 연합뉴스",
+            "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9UYzBaamRqZGZDTzBIQ2h1MmxraTlzSHdydERyMkkxVFpYS3NZVm1qRnpaaFpnZ3lDR2U0WnhIdGtHUTBoelpMZzJ5b1VyZkhIZ251OGZYZzVEaE3SAWBBVV95cUxPQjZ6MXNxVVNZYXN3emJTdGhmS0pfSm9VbFREck1uM3NZWGg0VnZBWmR0cV9BZnpPVS1wM25oRDM2TFhfSWFRd3JOdjFHdDh2bElyTVlLN0lTMWFqY3BrbHU?oc=5",
+            "matched_keywords": [
+              "주주환원"
+            ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-11",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-11-14",
+            "d_day": 64,
+            "impact_pct": 6.0,
+            "direction": 1.0,
+            "time_weight": 0.91,
+            "probability": 0.6,
+            "contrib_pct": 3.26,
+            "id": "105560-20263Q-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2027-03-31",
+            "d_day": 201,
+            "impact_pct": 3.0,
+            "direction": 1.0,
+            "time_weight": 0.53,
+            "probability": 0.6,
+            "contrib_pct": 0.96,
+            "id": "105560-2026FY-earnings"
+          }
+        ],
+        "earnings_signal": "strong_growth",
+        "ret_60d_pct": 6.95,
+        "next_catalyst": {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "d_day": 64,
+          "impact_pct": 6.0,
+          "direction": 1.0,
+          "time_weight": 0.91,
+          "probability": 0.6,
+          "contrib_pct": 3.26,
+          "id": "105560-20263Q-earnings"
+        }
+      },
+      "delta_vs_prev": {
+        "prev_estimate": 204500.0,
+        "prev_as_of": "2026-09-10T21:50:54+09:00",
+        "prev_slot": "2026-09-10-18",
+        "estimate_delta_krw": 3100.0,
+        "entry_cap_delta_krw": 3000.0,
+        "news_pct_delta": 1.05,
+        "expected_return_delta_pct": 0.5
+      },
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "buyback_cancellation",
+          "date": "2026-09-09",
+          "contrib_pct": 1.28,
+          "note": "키움증권 \"KB금융, 업종 내 주주환원율 1등…목표주가 상향\" - 연합뉴스",
+          "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9UYzBaamRqZGZDTzBIQ2h1MmxraTlzSHdydERyMkkxVFpYS3NZVm1qRnpaaFpnZ3lDR2U0WnhIdGtHUTBoelpMZzJ5b1VyZkhIZ251OGZYZzVEaE3SAWBBVV95cUxPQjZ6MXNxVVNZYXN3emJTdGhmS0pfSm9VbFREck1uM3NZWGg0VnZBWmR0cV9BZnpPVS1wM25oRDM2TFhfSWFRd3JOdjFHdDh2bElyTVlLN0lTMWFqY3BrbHU?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
+        },
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "contrib_pct": 3.26,
+          "note": null,
+          "source_url": null
+        },
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2027-03-31",
+          "contrib_pct": 0.96,
+          "note": null,
+          "source_url": null
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **207,600원**(+18.4%, 등급 A) · 직전 리포트 대비 ▲3,100원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +1.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **193,900원**(R/R≥1.1·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 175,400원 🟢진입 가능(현재가가 상한가보다 10.5% 낮음) · 직전 리포트 대비 ▲3,000원"
     },
     {
       "ticker": "012450",
       "name": "한화에어로스페이스",
       "sector": "방산",
-      "current_price": 1064000.0,
-      "anchor_price": 1161200.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 1,258,460(밴드 폭 4.1배 → 상단 3.0배로 캡) + 현재가 1,064,000 평균",
+      "current_price": 1056000.0,
+      "anchor_price": 1157200.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 1,258,460(밴드 폭 4.1배 → 상단 3.0배로 캡) + 현재가 1,056,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 2.03,
-        "news": 2.71,
+        "news": 2.7,
         "sector": 3.2,
         "momentum": -2.5,
-        "total": 5.44
+        "total": 5.43
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 8.88,
-        "pct_of_52w_high": 64.29,
+        "excess60_vs_kospi_pct": 7.65,
+        "pct_of_52w_high": 63.81,
         "ungated": {
           "theme": 3.38,
-          "news": 5.11
+          "news": 5.1
         }
       },
-      "raw_estimate": 1224400.0,
+      "raw_estimate": 1220100.0,
       "cap_applied": null,
-      "estimate": 1224400.0,
-      "expected_return_pct": 15.1,
-      "entry_cap_price": 1107700.0,
+      "estimate": 1220100.0,
+      "expected_return_pct": 15.5,
+      "entry_cap_price": 1103100.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -1302,7 +1255,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 4.1,
+      "entry_cap_gap_pct": 4.5,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.56배·heat 0.0)",
@@ -1331,12 +1284,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PER",
-        "current_multiple": 23.91,
+        "current_multiple": 23.73,
         "band": [
           14.14,
           57.4
         ],
-        "position": 0.226,
+        "position": 0.222,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -1373,7 +1326,7 @@
             "realized_since_event_pct": 0.0,
             "contrib_pct": 1.78,
             "note": "[한화에어로, 방산 대장주의 전환] ③11조 투자의 이면…유증·지배구조 논란 - CEO스코어데일리",
-            "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBRWmY5TDRyMlF4THgwZTdxN2lKTVNITUVNSTR3dFFiM2dzUnhrTENkTlhqZUlGaVZDckd1T0QxWHBBTGNSZ1ZSQjlNUTFKZ3A3NjNYWnZmUm95SXNYQk5RWl9UVlRhbVFJ?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1BVXI3WlRjSHBtRXU5VXVFeWI3T3pqLWFrUk5WWlpPSFVPdE5fUVNxRTBxdEJ1U1RqcUtkTUlYWmtiOS02NTh2ekhmVnNKOTBsX205N0xVSFJsaWtRMi1GTERoYTQ2al9JU0hj?oc=5",
             "matched_keywords": [
               "조투자"
             ]
@@ -1381,16 +1334,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1418,7 +1371,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -13.07,
+        "ret_60d_pct": -13.73,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -1436,10 +1389,10 @@
         "prev_estimate": 1225900.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -1500.0,
-        "entry_cap_delta_krw": 700.0,
-        "news_pct_delta": 0.01,
-        "expected_return_delta_pct": 0.2
+        "estimate_delta_krw": -5800.0,
+        "entry_cap_delta_krw": -3900.0,
+        "news_pct_delta": 0.0,
+        "expected_return_delta_pct": 0.6
       },
       "new_news_since_prev": [
         {
@@ -1448,15 +1401,15 @@
           "date": "2026-09-10",
           "contrib_pct": 1.78,
           "note": "[한화에어로, 방산 대장주의 전환] ③11조 투자의 이면…유증·지배구조 논란 - CEO스코어데일리",
-          "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBRWmY5TDRyMlF4THgwZTdxN2lKTVNITUVNSTR3dFFiM2dzUnhrTENkTlhqZUlGaVZDckd1T0QxWHBBTGNSZ1ZSQjlNUTFKZ3A3NjNYWnZmUm95SXNYQk5RWl9UVlRhbVFJ?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1BVXI3WlRjSHBtRXU5VXVFeWI3T3pqLWFrUk5WWlpPSFVPdE5fUVNxRTBxdEJ1U1RqcUtkTUlYWmtiOS02NTh2ekhmVnNKOTBsX205N0xVSFJsaWtRMi1GTERoYTQ2al9JU0hj?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1475,38 +1428,38 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,224,400원**(+15.1%, 등급 A) · 직전 리포트 대비 ▼1,500원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; capex_expansion(자동) +1.8%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,107,700원**(R/R≥1.1·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,064,000원 🟢진입 가능(현재가가 상한가보다 4.1% 낮음) · 직전 리포트 대비 ▲700원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,220,100원**(+15.5%, 등급 A) · 직전 리포트 대비 ▼5,800원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; capex_expansion(자동) +1.8%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,103,100원**(R/R≥1.1·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,056,000원 🟢진입 가능(현재가가 상한가보다 4.5% 낮음) · 직전 리포트 대비 ▼3,900원"
     },
     {
       "ticker": "055550",
       "name": "신한지주",
       "sector": "금융/은행",
-      "current_price": 110600.0,
-      "anchor_price": 105700.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 100,864 + 현재가 110,600 평균",
+      "current_price": 111100.0,
+      "anchor_price": 106000.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 100,864 + 현재가 111,100 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.55,
-        "news": 6.87,
+        "news": 6.86,
         "sector": 5.35,
         "momentum": 3.0,
-        "total": 19.77
+        "total": 19.76
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 29.22,
-        "pct_of_52w_high": 94.94,
+        "excess60_vs_kospi_pct": 29.14,
+        "pct_of_52w_high": 95.36,
         "ungated": {
           "theme": 4.55,
-          "news": 6.87
+          "news": 6.86
         }
       },
-      "raw_estimate": 126600.0,
+      "raw_estimate": 126900.0,
       "cap_applied": null,
-      "estimate": 126600.0,
-      "expected_return_pct": 14.5,
-      "entry_cap_price": 118000.0,
+      "estimate": 126900.0,
+      "expected_return_pct": 14.2,
+      "entry_cap_price": 118300.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -1515,7 +1468,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 6.7,
+      "entry_cap_gap_pct": 6.5,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +20%p) · 섹터값 0.34(집중도 평소 1.1배·heat 0.371)",
@@ -1546,12 +1499,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PER",
-        "current_multiple": 9.07,
+        "current_multiple": 9.11,
         "band": [
           5.1,
           11.45
         ],
-        "position": 0.626,
+        "position": 0.632,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -1611,16 +1564,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1648,7 +1601,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": 7.27,
+        "ret_60d_pct": 7.76,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -1666,10 +1619,10 @@
         "prev_estimate": 125100.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 1500.0,
-        "entry_cap_delta_krw": 1500.0,
-        "news_pct_delta": 1.24,
-        "expected_return_delta_pct": 1.1
+        "estimate_delta_krw": 1800.0,
+        "entry_cap_delta_krw": 1800.0,
+        "news_pct_delta": 1.23,
+        "expected_return_delta_pct": 0.8
       },
       "new_news_since_prev": [
         {
@@ -1691,10 +1644,10 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1713,38 +1666,38 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **126,600원**(+14.5%, 등급 A) · 직전 리포트 대비 ▲1,500원 · 프리미엄 테마+5/뉴스+7/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; analyst_target_upgrade(자동) +1.8%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **118,000원**(R/R≥1.1·ATR 3.3%×2≈손절 6.6% 기준) · 현재가 110,600원 🟢진입 가능(현재가가 상한가보다 6.7% 낮음) · 직전 리포트 대비 ▲1,500원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **126,900원**(+14.2%, 등급 A) · 직전 리포트 대비 ▲1,800원 · 프리미엄 테마+5/뉴스+7/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; analyst_target_upgrade(자동) +1.8%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **118,300원**(R/R≥1.1·ATR 3.3%×2≈손절 6.6% 기준) · 현재가 111,100원 🟢진입 가능(현재가가 상한가보다 6.5% 낮음) · 직전 리포트 대비 ▲1,800원"
     },
     {
       "ticker": "068270",
       "name": "셀트리온",
       "sector": "바이오",
-      "current_price": 179600.0,
-      "anchor_price": 179600.0,
+      "current_price": 178000.0,
+      "anchor_price": 178000.0,
       "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.55,
-        "news": 5.44,
+        "news": 5.43,
         "sector": 4.75,
         "momentum": 2.0,
-        "total": 13.74
+        "total": 13.73
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 24.81,
-        "pct_of_52w_high": 75.07,
+        "excess60_vs_kospi_pct": 23.33,
+        "pct_of_52w_high": 74.4,
         "ungated": {
           "theme": 1.55,
-          "news": 5.44
+          "news": 5.43
         }
       },
-      "raw_estimate": 204300.0,
+      "raw_estimate": 202400.0,
       "cap_applied": null,
-      "estimate": 204300.0,
-      "expected_return_pct": 13.8,
-      "entry_cap_price": 193200.0,
+      "estimate": 202400.0,
+      "expected_return_pct": 13.7,
+      "entry_cap_price": 191400.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -1753,7 +1706,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 7.6,
+      "entry_cap_gap_pct": 7.5,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +25%p) · 섹터값 0.19(집중도 평소 1.01배·heat 0.267)",
@@ -1809,8 +1762,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -7.42,
             "contrib_pct": 2.11,
-            "note": "셀트리온, 1000억 자사주 매입·소각…매년 순이익 33% 주주환원 - MTN 머니투데이방송",
-            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBwcnJNY05mLWotQXlZQi0tZFRBQ2FvMi0xWkhYLVVkWm0tTXFYd0JHY1dqQkJ6WGMtSzZpcXNoR0ExQkFQVzNaNUtwR1NnNF9SQ1hwUGFxWm9pTE5FVlV1dk81dDM?oc=5",
+            "note": "셀트리온 \"매년 순이익 3분의 1 주주환원\" 1000억원 자사주 매입... 주가는 - 조선일보",
+            "source_url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQU1djZXY0MHdqZHFXTFVhNmxGMVFEOEl5ZlNhbUdBSUVqVVN1bWJzUkFZcGg5ZWl0RzZlZ2hmUXExWlFHZWNueWxYTG02YUV5TUtZaHVvbWRodGMyRnktQjZGdVBoUmtfbHVfMS11UHdEekJ1SmdTZFNGZ2tydTI2SHVwMA?oc=5",
             "matched_keywords": [
               "자사주매입",
               "주주환원"
@@ -1819,16 +1772,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1856,7 +1809,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": 2.86,
+        "ret_60d_pct": 1.95,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -1874,10 +1827,10 @@
         "prev_estimate": 205500.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -1200.0,
-        "entry_cap_delta_krw": -1200.0,
-        "news_pct_delta": 0.01,
-        "expected_return_delta_pct": 0.1
+        "estimate_delta_krw": -3100.0,
+        "entry_cap_delta_krw": -3000.0,
+        "news_pct_delta": 0.0,
+        "expected_return_delta_pct": 0.0
       },
       "new_news_since_prev": [
         {
@@ -1885,16 +1838,16 @@
           "type": "buyback_cancellation",
           "date": "2026-08-31",
           "contrib_pct": 2.11,
-          "note": "셀트리온, 1000억 자사주 매입·소각…매년 순이익 33% 주주환원 - MTN 머니투데이방송",
-          "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBwcnJNY05mLWotQXlZQi0tZFRBQ2FvMi0xWkhYLVVkWm0tTXFYd0JHY1dqQkJ6WGMtSzZpcXNoR0ExQkFQVzNaNUtwR1NnNF9SQ1hwUGFxWm9pTE5FVlV1dk81dDM?oc=5"
+          "note": "셀트리온 \"매년 순이익 3분의 1 주주환원\" 1000억원 자사주 매입... 주가는 - 조선일보",
+          "source_url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQU1djZXY0MHdqZHFXTFVhNmxGMVFEOEl5ZlNhbUdBSUVqVVN1bWJzUkFZcGg5ZWl0RzZlZ2hmUXExWlFHZWNueWxYTG02YUV5TUtZaHVvbWRodGMyRnktQjZGdVBoUmtfbHVfMS11UHdEekJ1SmdTZFNGZ2tydTI2SHVwMA?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1913,38 +1866,38 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **204,300원**(+13.8%, 등급 B) · 직전 리포트 대비 ▼1,200원 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +2.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **193,200원**(R/R≥1.1·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 179,600원 🟢진입 가능(현재가가 상한가보다 7.6% 낮음) · 직전 리포트 대비 ▼1,200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **202,400원**(+13.7%, 등급 B) · 직전 리포트 대비 ▼3,100원 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +2.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **191,400원**(R/R≥1.1·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 178,000원 🟢진입 가능(현재가가 상한가보다 7.5% 낮음) · 직전 리포트 대비 ▼3,000원"
     },
     {
       "ticker": "086790",
       "name": "하나금융지주",
       "sector": "금융/은행",
-      "current_price": 135200.0,
-      "anchor_price": 126000.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 116,705 + 현재가 135,200 평균",
+      "current_price": 136000.0,
+      "anchor_price": 126400.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 116,705 + 현재가 136,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.55,
-        "news": 7.58,
+        "news": 6.54,
         "sector": 5.35,
         "momentum": 3.0,
-        "total": 20.48
+        "total": 19.44
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 28.57,
-        "pct_of_52w_high": 94.88,
+        "excess60_vs_kospi_pct": 28.64,
+        "pct_of_52w_high": 95.44,
         "ungated": {
           "theme": 4.55,
-          "news": 7.58
+          "news": 6.54
         }
       },
-      "raw_estimate": 151700.0,
+      "raw_estimate": 150900.0,
       "cap_applied": null,
-      "estimate": 151700.0,
-      "expected_return_pct": 12.2,
-      "entry_cap_price": 141100.0,
+      "estimate": 150900.0,
+      "expected_return_pct": 11.0,
+      "entry_cap_price": 140400.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -1953,7 +1906,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 4.4,
+      "entry_cap_gap_pct": 3.2,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +20%p) · 섹터값 0.34(집중도 평소 1.1배·heat 0.371)",
@@ -1984,12 +1937,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PER",
-        "current_multiple": 7.95,
+        "current_multiple": 8.0,
         "band": [
           4.44,
           9.29
         ],
-        "position": 0.724,
+        "position": 0.734,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -2034,16 +1987,15 @@
           {
             "kind": "news_auto",
             "type": "buyback_cancellation",
-            "date": "2026-09-02",
+            "date": "2026-09-09",
             "impact_pct": 4.0,
-            "decay": 0.9,
+            "decay": 0.98,
             "auto_factor": 0.6,
-            "realized_since_event_pct": -6.88,
-            "contrib_pct": 2.16,
-            "note": "[버핏 리포트] 하나금융지주, 목표가 16만원 상향...환율 하락·주주환원 확대 - 신한 - 버핏연구소",
-            "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBDNFNBbmt2TDc2cHNOZUQ2S3N5dTZWUXRDMXpDMDB5bVVlVUlhUENtazFTYWFYVnZpTTBHTlBla2E1MEVzbXhmd2FmX08tWnA2WWxCclVaNFRZaXdo?oc=5",
+            "realized_since_event_pct": 1.22,
+            "contrib_pct": 1.13,
+            "note": "[리포트 브리핑]하나금융지주, '최대실적 전망, 주주환원 리뉴얼' 목표가 190,000원 - 키움증권 - 뉴스핌",
+            "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5wSWVmOU9Pamo3NUNfYVI2LUcyQXVUZlJqdVpFUFVzSVBzNWNMTktYM1h2ZHRnUHNfb2FaWTN1c1J4d1g5NWhwZ3hsZnRScEFhbXhBWFpoRGV1cEJL?oc=5",
             "matched_keywords": [
-              "주주환원확대",
               "주주환원"
             ]
           },
@@ -2080,16 +2032,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2117,7 +2069,7 @@
           }
         ],
         "earnings_signal": "growth",
-        "ret_60d_pct": 6.62,
+        "ret_60d_pct": 7.26,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2135,10 +2087,10 @@
         "prev_estimate": 149000.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 2700.0,
-        "entry_cap_delta_krw": 2600.0,
-        "news_pct_delta": 2.22,
-        "expected_return_delta_pct": 2.1
+        "estimate_delta_krw": 1900.0,
+        "entry_cap_delta_krw": 1900.0,
+        "news_pct_delta": 1.18,
+        "expected_return_delta_pct": 0.9
       },
       "new_news_since_prev": [
         {
@@ -2152,10 +2104,10 @@
         {
           "kind": "news_auto",
           "type": "buyback_cancellation",
-          "date": "2026-09-02",
-          "contrib_pct": 2.16,
-          "note": "[버핏 리포트] 하나금융지주, 목표가 16만원 상향...환율 하락·주주환원 확대 - 신한 - 버핏연구소",
-          "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBDNFNBbmt2TDc2cHNOZUQ2S3N5dTZWUXRDMXpDMDB5bVVlVUlhUENtazFTYWFYVnZpTTBHTlBla2E1MEVzbXhmd2FmX08tWnA2WWxCclVaNFRZaXdo?oc=5"
+          "date": "2026-09-09",
+          "contrib_pct": 1.13,
+          "note": "[리포트 브리핑]하나금융지주, '최대실적 전망, 주주환원 리뉴얼' 목표가 190,000원 - 키움증권 - 뉴스핌",
+          "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5wSWVmOU9Pamo3NUNfYVI2LUcyQXVUZlJqdVpFUFVzSVBzNWNMTktYM1h2ZHRnUHNfb2FaWTN1c1J4d1g5NWhwZ3hsZnRScEFhbXhBWFpoRGV1cEJL?oc=5"
         },
         {
           "kind": "news_auto",
@@ -2168,10 +2120,10 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2182,49 +2134,49 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **151,700원**(+12.2%, 등급 A) · 직전 리포트 대비 ▲2,700원 · 프리미엄 테마+5/뉴스+8/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.2%; buyback_cancellation(자동) +2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **141,100원**(R/R≥1.1·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 135,200원 🟢진입 가능(현재가가 상한가보다 4.4% 낮음) · 직전 리포트 대비 ▲2,600원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **150,900원**(+11.0%, 등급 A) · 직전 리포트 대비 ▲1,900원 · 프리미엄 테마+5/뉴스+7/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.2%; earnings_report(촉매) +2.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **140,400원**(R/R≥1.1·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 136,000원 🟢진입 가능(현재가가 상한가보다 3.2% 낮음) · 직전 리포트 대비 ▲1,900원"
     },
     {
       "ticker": "079550",
       "name": "LIG넥스원(LIG D&A)",
       "sector": "방산",
-      "current_price": 681000.0,
-      "anchor_price": 740800.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 800,544(밴드 폭 3.2배 → 상단 3.0배로 캡) + 현재가 681,000 평균",
+      "current_price": 670000.0,
+      "anchor_price": 735300.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 800,544(밴드 폭 3.2배 → 상단 3.0배로 캡) + 현재가 670,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.01,
-        "news": 0.38,
+        "news": 0.37,
         "sector": 3.2,
         "momentum": -3.5,
-        "total": 1.09
+        "total": 1.08
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -6.37,
-        "pct_of_52w_high": 60.91,
+        "excess60_vs_kospi_pct": -8.09,
+        "pct_of_52w_high": 59.93,
         "ungated": {
           "theme": 3.38,
-          "news": 3.33
+          "news": 3.32
         }
       },
-      "raw_estimate": 748800.0,
+      "raw_estimate": 743200.0,
       "cap_applied": null,
-      "estimate": 748800.0,
-      "expected_return_pct": 10.0,
-      "entry_cap_price": 678100.0,
+      "estimate": 743200.0,
+      "expected_return_pct": 10.9,
+      "entry_cap_price": 671100.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 9.5,
-        "stop_basis": "ATR 4.7%×2≈손절 9.5%",
+        "stop_frac_pct": 9.8,
+        "stop_basis": "ATR 4.9%×2≈손절 9.8%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
-      "in_buy_zone": false,
-      "entry_cap_gap_pct": -0.4,
+      "in_buy_zone": true,
+      "entry_cap_gap_pct": 0.2,
       "entry_cap_note": null,
-      "entry_cap_caution": null,
+      "entry_cap_caution": "falling knife(60일 -29%) — 추격 금지(추세 약세)",
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.56배·heat 0.0)",
       "sector_signals": {
         "group": "defense_export",
@@ -2251,12 +2203,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PER",
-        "current_multiple": 41.75,
+        "current_multiple": 41.08,
         "band": [
           24.54,
           77.4
         ],
-        "position": 0.326,
+        "position": 0.313,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -2286,16 +2238,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2323,7 +2275,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -28.32,
+        "ret_60d_pct": -29.47,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2341,19 +2293,19 @@
         "prev_estimate": 763000.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -14200.0,
-        "entry_cap_delta_krw": -8600.0,
-        "news_pct_delta": 0.02,
-        "expected_return_delta_pct": -2.2
+        "estimate_delta_krw": -19800.0,
+        "entry_cap_delta_krw": -15600.0,
+        "news_pct_delta": 0.01,
+        "expected_return_delta_pct": -1.3
       },
       "new_news_since_prev": [
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2372,47 +2324,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **748,800원**(+10.0%, 등급 A) · 직전 리포트 대비 ▼14,200원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **678,100원**(R/R≥1.1·ATR 4.7%×2≈손절 9.5% 기준) · 현재가 681,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.4% 상회) · 직전 리포트 대비 ▼8,600원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **743,200원**(+10.9%, 등급 A) · 직전 리포트 대비 ▼19,800원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **671,100원**(R/R≥1.1·ATR 4.9%×2≈손절 9.8% 기준) · 현재가 670,000원 🟡진입 가능 구간이나 falling knife(60일 -29%) — 추격 금지(추세 약세)(상한가보다 0.2% 낮음) · 직전 리포트 대비 ▼15,600원"
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
       "sector": "2차전지",
-      "current_price": 361500.0,
-      "anchor_price": 381200.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 400,993 + 현재가 361,500 평균",
+      "current_price": 357000.0,
+      "anchor_price": 379000.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 400,993 + 현재가 357,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.82,
-        "news": -2.76,
+        "news": -2.77,
         "sector": 5.6,
         "momentum": -2.5,
-        "total": 2.16
+        "total": 2.15
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 8.85,
-        "pct_of_52w_high": 68.6,
+        "excess60_vs_kospi_pct": 7.2,
+        "pct_of_52w_high": 67.74,
         "ungated": {
           "theme": 3.04,
-          "news": 0.36
+          "news": 0.35
         }
       },
-      "raw_estimate": 389500.0,
+      "raw_estimate": 387100.0,
       "cap_applied": null,
-      "estimate": 389500.0,
-      "expected_return_pct": 7.7,
-      "entry_cap_price": 352500.0,
+      "estimate": 387100.0,
+      "expected_return_pct": 8.4,
+      "entry_cap_price": 349900.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 9.5,
-        "stop_basis": "ATR 4.8%×2≈손절 9.5%",
+        "stop_frac_pct": 9.7,
+        "stop_basis": "ATR 4.8%×2≈손절 9.7%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -2.5,
+      "entry_cap_gap_pct": -2.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +10%p) · 섹터값 0.40(집중도 평소 0.94배·heat 0.18)",
@@ -2442,12 +2394,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 3.79,
+        "current_multiple": 3.74,
         "band": [
           3.18,
           5.23
         ],
-        "position": 0.298,
+        "position": 0.275,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -2532,16 +2484,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2569,7 +2521,7 @@
           }
         ],
         "earnings_signal": "sharp_decline",
-        "ret_60d_pct": -13.1,
+        "ret_60d_pct": -14.18,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2587,10 +2539,10 @@
         "prev_estimate": 391800.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -2300.0,
-        "entry_cap_delta_krw": -1200.0,
-        "news_pct_delta": -0.04,
-        "expected_return_delta_pct": 0.4
+        "estimate_delta_krw": -4700.0,
+        "entry_cap_delta_krw": -3800.0,
+        "news_pct_delta": -0.05,
+        "expected_return_delta_pct": 1.1
       },
       "new_news_since_prev": [
         {
@@ -2620,10 +2572,10 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2642,47 +2594,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **389,500원**(+7.7%, 등급 A) · 직전 리포트 대비 ▼2,300원 · 프리미엄 테마+2/뉴스-3/섹터+6/모멘텀-2% · 📰 원인 뉴스: supply_contract_major(자동) +4.3%; tech_breakthrough(자동) +3.5%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **352,500원**(R/R≥1.1·ATR 4.8%×2≈손절 9.5% 기준) · 현재가 361,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.5% 상회) · 직전 리포트 대비 ▼1,200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **387,100원**(+8.4%, 등급 A) · 직전 리포트 대비 ▼4,700원 · 프리미엄 테마+2/뉴스-3/섹터+6/모멘텀-2% · 📰 원인 뉴스: supply_contract_major(자동) +4.3%; tech_breakthrough(자동) +3.5%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **349,900원**(R/R≥1.1·ATR 4.8%×2≈손절 9.7% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.0% 상회) · 직전 리포트 대비 ▼3,800원"
     },
     {
       "ticker": "006400",
       "name": "삼성SDI",
       "sector": "2차전지",
-      "current_price": 557500.0,
-      "anchor_price": 487900.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 418,219 + 현재가 557,500 평균",
+      "current_price": 551000.0,
+      "anchor_price": 484600.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 418,219 + 현재가 551,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.92,
-        "news": 8.35,
+        "news": 8.22,
         "sector": 5.6,
         "momentum": 2.0,
-        "total": 19.87
+        "total": 19.74
       },
       "trend_gate": {
         "factor": 1.0,
-        "excess60_vs_kospi_pct": 23.31,
-        "pct_of_52w_high": 77.11,
+        "excess60_vs_kospi_pct": 21.56,
+        "pct_of_52w_high": 76.21,
         "ungated": {
           "theme": 3.92,
-          "news": 8.35
+          "news": 8.22
         }
       },
-      "raw_estimate": 584800.0,
+      "raw_estimate": 580300.0,
       "cap_applied": null,
-      "estimate": 584800.0,
-      "expected_return_pct": 4.9,
-      "entry_cap_price": 522600.0,
+      "estimate": 580300.0,
+      "expected_return_pct": 5.3,
+      "entry_cap_price": 518000.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 10.8,
-        "stop_basis": "ATR 5.4%×2≈손절 10.8%",
+        "stop_frac_pct": 10.9,
+        "stop_basis": "ATR 5.5%×2≈손절 10.9%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -6.3,
+      "entry_cap_gap_pct": -6.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +10%p) · 섹터값 0.40(집중도 평소 0.94배·heat 0.18)",
@@ -2708,16 +2660,16 @@
           "group": "ev_battery"
         }
       },
-      "grade": "B",
+      "grade": "A",
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 1.81,
+        "current_multiple": 1.79,
         "band": [
           0.69,
           2.02
         ],
-        "position": 0.839,
+        "position": 0.823,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -2727,7 +2679,7 @@
       "data_layers": {
         "valuation_band": true,
         "consensus_target": false,
-        "price_snapshot": false,
+        "price_snapshot": true,
         "theme_exposure": true,
         "sector_group": true,
         "earnings_signal": true
@@ -2770,14 +2722,14 @@
           {
             "kind": "news_auto",
             "type": "tech_breakthrough",
-            "date": "2026-09-02",
+            "date": "2026-08-30",
             "impact_pct": 6.0,
-            "decay": 0.9,
+            "decay": 0.87,
             "auto_factor": 0.6,
-            "realized_since_event_pct": -2.9,
-            "contrib_pct": 3.24,
-            "note": "2027년 전고체 양산 앞둔 삼성SDI … 中서도 관심 - 뉴데일리",
-            "source_url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE5QSktfbjRoT2FKN1ZCbU9HQmFMZ0lIN1p6M2hHeThiaW5PVnhkb01GclkyczZZakl2aTV2S3VqUDdBTFlQUGQ5MjU2ZUxuczMxNU1BbUJhcGpzM2l4RUgzNU1mY2hpT3dMX29zOWFQQVAyXzNJS2czR2pLc9IBgAFBVV95cUxPekhtNjY1S2lRbEYxQjc0cFJ6WnBKWmhDVmpCRU1zNFlxRkRfVDNnS3J2b2RRTDZ6cjJLMENsU3B6YUdGVEFqTzhtRkh0ZGptQmYxa3BQVmh3WG1qV1BwQnpFOXVlTC1aRHNYZkZ4bFVuN19aYU9kM3F5M1A5RWFqNA?oc=5",
+            "realized_since_event_pct": -5.36,
+            "contrib_pct": 3.12,
+            "note": "'꿈의 배터리' 전고체 양산 기대 … 기관 앞다퉈 삼성SDI 폭풍매수 - 매일경제",
+            "source_url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBzLXJhOFFhRmFUMEZ1YWNtZXQyZHd0LW4xbnVQaGhWb1UtVWN6VzFqSTczY181TVhrMHgtcmloLWZrdnNnMWxJbUpBZThVdw?oc=5",
             "matched_keywords": [
               "전고체"
             ]
@@ -2785,16 +2737,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2822,7 +2774,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": 1.36,
+        "ret_60d_pct": 0.18,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2840,10 +2792,10 @@
         "prev_estimate": 587500.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -2700.0,
-        "entry_cap_delta_krw": 400.0,
-        "news_pct_delta": -0.03,
-        "expected_return_delta_pct": 0.2
+        "estimate_delta_krw": -7200.0,
+        "entry_cap_delta_krw": -4200.0,
+        "news_pct_delta": -0.16,
+        "expected_return_delta_pct": 0.6
       },
       "new_news_since_prev": [
         {
@@ -2857,18 +2809,18 @@
         {
           "kind": "news_auto",
           "type": "tech_breakthrough",
-          "date": "2026-09-02",
-          "contrib_pct": 3.24,
-          "note": "2027년 전고체 양산 앞둔 삼성SDI … 中서도 관심 - 뉴데일리",
-          "source_url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE5QSktfbjRoT2FKN1ZCbU9HQmFMZ0lIN1p6M2hHeThiaW5PVnhkb01GclkyczZZakl2aTV2S3VqUDdBTFlQUGQ5MjU2ZUxuczMxNU1BbUJhcGpzM2l4RUgzNU1mY2hpT3dMX29zOWFQQVAyXzNJS2czR2pLc9IBgAFBVV95cUxPekhtNjY1S2lRbEYxQjc0cFJ6WnBKWmhDVmpCRU1zNFlxRkRfVDNnS3J2b2RRTDZ6cjJLMENsU3B6YUdGVEFqTzhtRkh0ZGptQmYxa3BQVmh3WG1qV1BwQnpFOXVlTC1aRHNYZkZ4bFVuN19aYU9kM3F5M1A5RWFqNA?oc=5"
+          "date": "2026-08-30",
+          "contrib_pct": 3.12,
+          "note": "'꿈의 배터리' 전고체 양산 기대 … 기관 앞다퉈 삼성SDI 폭풍매수 - 매일경제",
+          "source_url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBzLXJhOFFhRmFUMEZ1YWNtZXQyZHd0LW4xbnVQaGhWb1UtVWN6VzFqSTczY181TVhrMHgtcmloLWZrdnNnMWxJbUpBZThVdw?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2887,47 +2839,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **584,800원**(+4.9%, 등급 B) · 직전 리포트 대비 ▼2,700원 · 프리미엄 테마+4/뉴스+8/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; tech_breakthrough(자동) +3.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **522,600원**(R/R≥1.1·ATR 5.4%×2≈손절 10.8% 기준) · 현재가 557,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.3% 상회) · 직전 리포트 대비 ▲400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **580,300원**(+5.3%, 등급 A) · 직전 리포트 대비 ▼7,200원 · 프리미엄 테마+4/뉴스+8/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; tech_breakthrough(자동) +3.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **518,000원**(R/R≥1.1·ATR 5.5%×2≈손절 10.9% 기준) · 현재가 551,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.0% 상회) · 직전 리포트 대비 ▼4,200원"
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
       "sector": "조선",
-      "current_price": 357000.0,
-      "anchor_price": 351000.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 345,060 + 현재가 357,000 평균",
+      "current_price": 353000.0,
+      "anchor_price": 349000.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 345,060 + 현재가 353,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.73,
-        "news": 2.26,
+        "news": 2.25,
         "sector": 3.2,
         "momentum": -1.5,
-        "total": 5.69
+        "total": 5.68
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 4.21,
-        "pct_of_52w_high": 72.19,
+        "excess60_vs_kospi_pct": 2.72,
+        "pct_of_52w_high": 71.39,
         "ungated": {
           "theme": 2.88,
-          "news": 4.38
+          "news": 4.37
         }
       },
-      "raw_estimate": 371000.0,
+      "raw_estimate": 368900.0,
       "cap_applied": null,
-      "estimate": 371000.0,
-      "expected_return_pct": 3.9,
-      "entry_cap_price": 339100.0,
+      "estimate": 368900.0,
+      "expected_return_pct": 4.5,
+      "entry_cap_price": 336900.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 8.5,
-        "stop_basis": "ATR 4.3%×2≈손절 8.5%",
+        "stop_frac_pct": 8.6,
+        "stop_basis": "ATR 4.3%×2≈손절 8.6%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -5.0,
+      "entry_cap_gap_pct": -4.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.65배·heat 0.0)",
@@ -2953,16 +2905,16 @@
           "group": "shipbuilding_supercycle"
         }
       },
-      "grade": "B",
+      "grade": "A",
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 1.7,
+        "current_multiple": 1.68,
         "band": [
           0.84,
           2.45
         ],
-        "position": 0.535,
+        "position": 0.524,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -2972,7 +2924,7 @@
       "data_layers": {
         "valuation_band": true,
         "consensus_target": false,
-        "price_snapshot": false,
+        "price_snapshot": true,
         "theme_exposure": true,
         "sector_group": true,
         "earnings_signal": true
@@ -3006,16 +2958,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3028,7 +2980,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -0.5,
             "contrib_pct": -0.04,
-            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
             "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
           },
           {
@@ -3057,7 +3009,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -17.74,
+        "ret_60d_pct": -18.66,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -3075,10 +3027,10 @@
         "prev_estimate": 354200.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 16800.0,
-        "entry_cap_delta_krw": 15600.0,
-        "news_pct_delta": 2.12,
-        "expected_return_delta_pct": 3.1
+        "estimate_delta_krw": 14700.0,
+        "entry_cap_delta_krw": 13400.0,
+        "news_pct_delta": 2.11,
+        "expected_return_delta_pct": 3.7
       },
       "new_news_since_prev": [
         {
@@ -3092,17 +3044,17 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-02",
           "contrib_pct": -0.04,
-          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
           "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
         },
         {
@@ -3122,47 +3074,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **371,000원**(+3.9%, 등급 B) · 직전 리포트 대비 ▲16,800원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **339,100원**(R/R≥1.1·ATR 4.3%×2≈손절 8.5% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.0% 상회) · 직전 리포트 대비 ▲15,600원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **368,900원**(+4.5%, 등급 A) · 직전 리포트 대비 ▲14,700원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **336,900원**(R/R≥1.1·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 353,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.6% 상회) · 직전 리포트 대비 ▲13,400원"
     },
     {
       "ticker": "005380",
       "name": "현대차",
       "sector": "자동차",
-      "current_price": 379000.0,
-      "anchor_price": 395100.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 411,113 + 현재가 379,000 평균",
+      "current_price": 380000.0,
+      "anchor_price": 395600.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 411,113 + 현재가 380,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.55,
-        "news": -3.85,
+        "news": -3.86,
         "sector": 3.2,
         "momentum": -1.5,
-        "total": -0.6
+        "total": -0.61
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -16.72,
-        "pct_of_52w_high": 48.4,
+        "excess60_vs_kospi_pct": -17.13,
+        "pct_of_52w_high": 48.53,
         "ungated": {
           "theme": 5.15,
-          "news": 1.27
+          "news": 1.26
         }
       },
-      "raw_estimate": 392700.0,
+      "raw_estimate": 393100.0,
       "cap_applied": null,
-      "estimate": 392700.0,
-      "expected_return_pct": 3.6,
-      "entry_cap_price": 362000.0,
+      "estimate": 393100.0,
+      "expected_return_pct": 3.4,
+      "entry_cap_price": 362500.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
         "stop_frac_pct": 7.7,
-        "stop_basis": "ATR 3.9%×2≈손절 7.7%",
+        "stop_basis": "ATR 3.8%×2≈손절 7.7%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -4.5,
+      "entry_cap_gap_pct": -4.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.53배·heat 0.0)",
@@ -3197,7 +3149,7 @@
           0.46,
           1.31
         ],
-        "position": 0.419,
+        "position": 0.421,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -3280,16 +3232,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3331,7 +3283,7 @@
           }
         ],
         "earnings_signal": "sharp_decline",
-        "ret_60d_pct": -38.67,
+        "ret_60d_pct": -38.51,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -3349,10 +3301,10 @@
         "prev_estimate": 387100.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 5600.0,
-        "entry_cap_delta_krw": 4500.0,
-        "news_pct_delta": 2.65,
-        "expected_return_delta_pct": 4.1
+        "estimate_delta_krw": 6000.0,
+        "entry_cap_delta_krw": 5000.0,
+        "news_pct_delta": 2.64,
+        "expected_return_delta_pct": 3.9
       },
       "new_news_since_prev": [
         {
@@ -3382,10 +3334,10 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -3412,47 +3364,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **392,700원**(+3.6%, 등급 A) · 직전 리포트 대비 ▲5,600원 · 프리미엄 테마+2/뉴스-4/섹터+3/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.4%; earnings_report(촉매) -3.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **362,000원**(R/R≥1.1·ATR 3.9%×2≈손절 7.7% 기준) · 현재가 379,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.5% 상회) · 직전 리포트 대비 ▲4,500원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **393,100원**(+3.4%, 등급 A) · 직전 리포트 대비 ▲6,000원 · 프리미엄 테마+2/뉴스-4/섹터+3/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.4%; earnings_report(촉매) -3.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **362,500원**(R/R≥1.1·ATR 3.8%×2≈손절 7.7% 기준) · 현재가 380,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.6% 상회) · 직전 리포트 대비 ▲5,000원"
     },
     {
       "ticker": "010140",
       "name": "삼성중공업",
       "sector": "조선",
-      "current_price": 21250.0,
-      "anchor_price": 21000.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 20,754(밴드 폭 3.2배 → 상단 3.0배로 캡) + 현재가 21,250 평균",
+      "current_price": 21000.0,
+      "anchor_price": 20900.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 20,754(밴드 폭 3.2배 → 상단 3.0배로 캡) + 현재가 21,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.77,
-        "news": 0.27,
+        "news": 0.26,
         "sector": 3.2,
         "momentum": -3.5,
-        "total": 0.74
+        "total": 0.73
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -4.65,
-        "pct_of_52w_high": 60.11,
+        "excess60_vs_kospi_pct": -6.08,
+        "pct_of_52w_high": 59.41,
         "ungated": {
           "theme": 2.56,
-          "news": 3.99
+          "news": 3.98
         }
       },
-      "raw_estimate": 21200.0,
+      "raw_estimate": 21000.0,
       "cap_applied": null,
-      "estimate": 21200.0,
-      "expected_return_pct": -0.2,
-      "entry_cap_price": 19600.0,
+      "estimate": 21000.0,
+      "expected_return_pct": 0.0,
+      "entry_cap_price": 19400.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 7.5,
-        "stop_basis": "ATR 3.8%×2≈손절 7.5%",
+        "stop_frac_pct": 7.6,
+        "stop_basis": "ATR 3.8%×2≈손절 7.6%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -7.8,
+      "entry_cap_gap_pct": -7.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.65배·heat 0.0)",
@@ -3482,12 +3434,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 3.81,
+        "current_multiple": 3.76,
         "band": [
           1.86,
           6.04
         ],
-        "position": 0.466,
+        "position": 0.456,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -3531,16 +3483,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3553,7 +3505,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -0.11,
             "contrib_pct": -0.43,
-            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
             "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
           },
           {
@@ -3582,7 +3534,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -26.6,
+        "ret_60d_pct": -27.46,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -3600,10 +3552,10 @@
         "prev_estimate": 21200.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": 0.13,
-        "expected_return_delta_pct": 0.5
+        "estimate_delta_krw": -200.0,
+        "entry_cap_delta_krw": -200.0,
+        "news_pct_delta": 0.12,
+        "expected_return_delta_pct": 0.7
       },
       "new_news_since_prev": [
         {
@@ -3617,17 +3569,17 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-02",
           "contrib_pct": -0.43,
-          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
           "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
         },
         {
@@ -3647,47 +3599,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **21,200원**(-0.2%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **19,600원**(R/R≥1.1·ATR 3.8%×2≈손절 7.5% 기준) · 현재가 21,250원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.8% 상회)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **21,000원**(+0.0%, 등급 A) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **19,400원**(R/R≥1.1·ATR 3.8%×2≈손절 7.6% 기준) · 현재가 21,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.6% 상회) · 직전 리포트 대비 ▼200원"
     },
     {
       "ticker": "010120",
       "name": "LS ELECTRIC",
       "sector": "전력기기",
-      "current_price": 203500.0,
-      "anchor_price": 185900.0,
-      "anchor_basis": "PER 밴드 중앙값 적정가 168,240(밴드 폭 4.9배 → 상단 3.0배로 캡) + 현재가 203,500 평균",
+      "current_price": 204500.0,
+      "anchor_price": 186400.0,
+      "anchor_basis": "PER 밴드 중앙값 적정가 168,240(밴드 폭 4.9배 → 상단 3.0배로 캡) + 현재가 204,500 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.6,
-        "news": 4.37,
+        "news": 4.36,
         "sector": 3.44,
         "momentum": -2.5,
-        "total": 6.91
+        "total": 6.9
       },
       "trend_gate": {
         "factor": 0.6,
-        "excess60_vs_kospi_pct": 1.75,
-        "pct_of_52w_high": 60.75,
+        "excess60_vs_kospi_pct": 1.58,
+        "pct_of_52w_high": 61.04,
         "ungated": {
           "theme": 2.66,
-          "news": 7.88
+          "news": 7.87
         }
       },
-      "raw_estimate": 198700.0,
+      "raw_estimate": 199200.0,
       "cap_applied": null,
-      "estimate": 198700.0,
-      "expected_return_pct": -2.4,
-      "entry_cap_price": 177300.0,
+      "estimate": 199200.0,
+      "expected_return_pct": -2.6,
+      "entry_cap_price": 177800.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 11.0,
-        "stop_basis": "ATR 5.5%×2≈손절 11.0%",
+        "stop_frac_pct": 10.9,
+        "stop_basis": "ATR 5.5%×2≈손절 10.9%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -12.9,
+      "entry_cap_gap_pct": -13.1,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.06(집중도 평소 0.87배·heat 0.084)",
@@ -3713,16 +3665,16 @@
           "group": "power_grid_ai"
         }
       },
-      "grade": "B",
+      "grade": "A",
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PER",
-        "current_multiple": 56.92,
+        "current_multiple": 57.2,
         "band": [
           23.53,
           115.93
         ],
-        "position": 0.361,
+        "position": 0.364,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -3732,7 +3684,7 @@
       "data_layers": {
         "valuation_band": true,
         "consensus_target": false,
-        "price_snapshot": false,
+        "price_snapshot": true,
         "theme_exposure": true,
         "sector_group": true,
         "earnings_signal": true
@@ -3782,16 +3734,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "catalyst",
@@ -3819,7 +3771,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -20.2,
+        "ret_60d_pct": -19.8,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -3837,10 +3789,10 @@
         "prev_estimate": 192100.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": 6600.0,
-        "entry_cap_delta_krw": 6200.0,
-        "news_pct_delta": 2.5,
-        "expected_return_delta_pct": 4.3
+        "estimate_delta_krw": 7100.0,
+        "entry_cap_delta_krw": 6700.0,
+        "news_pct_delta": 2.49,
+        "expected_return_delta_pct": 4.1
       },
       "new_news_since_prev": [
         {
@@ -3862,10 +3814,10 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "catalyst",
@@ -3884,38 +3836,38 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **198,700원**(-2.4%, 등급 B) · 직전 리포트 대비 ▲6,600원 · 프리미엄 테마+2/뉴스+4/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; order_backlog_surprise(자동) +2.7%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **177,300원**(R/R≥1.1·ATR 5.5%×2≈손절 11.0% 기준) · 현재가 203,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.9% 상회) · 직전 리포트 대비 ▲6,200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **199,200원**(-2.6%, 등급 A) · 직전 리포트 대비 ▲7,100원 · 프리미엄 테마+2/뉴스+4/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; order_backlog_surprise(자동) +2.7%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **177,800원**(R/R≥1.1·ATR 5.5%×2≈손절 10.9% 기준) · 현재가 204,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 13.1% 상회) · 직전 리포트 대비 ▲6,700원"
     },
     {
       "ticker": "042700",
       "name": "한미반도체",
       "sector": "IT/반도체장비",
-      "current_price": 233000.0,
-      "anchor_price": 210300.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 187,535(밴드 폭 3.7배 → 상단 3.0배로 캡) + 현재가 233,000 평균",
+      "current_price": 233500.0,
+      "anchor_price": 210500.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 187,535(밴드 폭 3.7배 → 상단 3.0배로 캡) + 현재가 233,500 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.61,
-        "news": -1.42,
+        "news": -1.43,
         "sector": 5.31,
         "momentum": -3.5,
-        "total": 2.0
+        "total": 1.99
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -5.12,
-        "pct_of_52w_high": 54.69,
+        "excess60_vs_kospi_pct": -5.54,
+        "pct_of_52w_high": 54.81,
         "ungated": {
           "theme": 5.38,
-          "news": 3.89
+          "news": 3.88
         }
       },
-      "raw_estimate": 214500.0,
+      "raw_estimate": 214700.0,
       "cap_applied": null,
-      "estimate": 214500.0,
-      "expected_return_pct": -7.9,
-      "entry_cap_price": 187200.0,
+      "estimate": 214700.0,
+      "expected_return_pct": -8.1,
+      "entry_cap_price": 187500.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -3953,12 +3905,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 29.59,
+        "current_multiple": 29.66,
         "band": [
           11.91,
           43.79
         ],
-        "position": 0.555,
+        "position": 0.557,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -4033,16 +3985,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -4055,7 +4007,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 11.32,
             "contrib_pct": -0.54,
-            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
             "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
           },
           {
@@ -4084,7 +4036,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -27.07,
+        "ret_60d_pct": -26.92,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -4102,10 +4054,10 @@
         "prev_estimate": 225900.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -11400.0,
-        "entry_cap_delta_krw": -13400.0,
-        "news_pct_delta": -0.72,
-        "expected_return_delta_pct": 2.8
+        "estimate_delta_krw": -11200.0,
+        "entry_cap_delta_krw": -13100.0,
+        "news_pct_delta": -0.73,
+        "expected_return_delta_pct": 2.6
       },
       "new_news_since_prev": [
         {
@@ -4135,17 +4087,17 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-02",
           "contrib_pct": -0.54,
-          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
           "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
         },
         {
@@ -4165,47 +4117,47 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **214,500원**(-7.9%, 등급 A) · 직전 리포트 대비 ▼11,400원 · 프리미엄 테마+2/뉴스-1/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_surprise_beat(자동) +2.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **187,200원**(R/R≥1.1·ATR 6.6%×2≈손절 13.2% 기준) · 현재가 233,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 19.7% 상회) · 직전 리포트 대비 ▼13,400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **214,700원**(-8.1%, 등급 A) · 직전 리포트 대비 ▼11,200원 · 프리미엄 테마+2/뉴스-1/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_surprise_beat(자동) +2.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **187,500원**(R/R≥1.1·ATR 6.6%×2≈손절 13.2% 기준) · 현재가 233,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 19.7% 상회) · 직전 리포트 대비 ▼13,100원"
     },
     {
       "ticker": "000660",
       "name": "SK하이닉스",
       "sector": "IT/반도체",
-      "current_price": 1770000.0,
-      "anchor_price": 1529900.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 1,289,785(밴드 폭 4.3배 → 상단 3.0배로 캡) + 현재가 1,770,000 평균",
+      "current_price": 1783000.0,
+      "anchor_price": 1536400.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 1,289,785(밴드 폭 4.3배 → 상단 3.0배로 캡) + 현재가 1,783,000 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.8,
-        "news": -2.02,
+        "news": -2.03,
         "sector": 5.31,
         "momentum": -3.5,
-        "total": 1.59
+        "total": 1.58
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -7.84,
-        "pct_of_52w_high": 59.26,
+        "excess60_vs_kospi_pct": -7.89,
+        "pct_of_52w_high": 59.69,
         "ungated": {
           "theme": 6.01,
-          "news": 1.77
+          "news": 1.76
         }
       },
-      "raw_estimate": 1554200.0,
+      "raw_estimate": 1560700.0,
       "cap_applied": null,
-      "estimate": 1554200.0,
-      "expected_return_pct": -12.2,
-      "entry_cap_price": 1393600.0,
+      "estimate": 1560700.0,
+      "expected_return_pct": -12.5,
+      "entry_cap_price": 1400500.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
-        "stop_frac_pct": 10.5,
-        "stop_basis": "ATR 5.2%×2≈손절 10.5%",
+        "stop_frac_pct": 10.4,
+        "stop_basis": "ATR 5.2%×2≈손절 10.4%",
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -21.3,
+      "entry_cap_gap_pct": -21.5,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.53(집중도 평소 1.07배·heat 0.341)",
@@ -4234,12 +4186,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 4.78,
+        "current_multiple": 4.81,
         "band": [
           1.74,
           7.52
         ],
-        "position": 0.525,
+        "position": 0.531,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -4275,8 +4227,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": 1.19,
-            "note": "SK하이닉스 노사, 수정 잠정합의안 마련…성과급 현금 비중 50%로 확대 - v.daum.net",
-            "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5EQUdZWkEydFZNNzBsTWtqUHBaZFU4cVNSNXdHQ21JR0xrRFRrT0o2c1N0N192OVJlR1lUVkx0dFZhaGZIRkxmQUFvS0tiM0U?oc=5",
+            "note": "SK하이닉스 노사, 잠정합의안 수정…주식지급 비율 조정 - 연합인포맥스",
+            "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE05RGMxY2dwWFVYREVIY2htRENtYU00THY4dnBsTWNSUnIzTDMxektadHQ2S3dka3Q2R1JfdmN1N2c2NzRBX1NfelMxdkdIOFdTNEhWODlmdHhVWV9ycU5La29CaXBwWms4eHA4WkVXcmg?oc=5",
             "matched_keywords": [
               "잠정합의"
             ]
@@ -4299,16 +4251,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -4321,7 +4273,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 7.7,
             "contrib_pct": -0.54,
-            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
             "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
           },
           {
@@ -4350,7 +4302,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -29.79,
+        "ret_60d_pct": -29.27,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -4368,10 +4320,10 @@
         "prev_estimate": 1584000.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -29800.0,
-        "entry_cap_delta_krw": -29200.0,
-        "news_pct_delta": 0.63,
-        "expected_return_delta_pct": 2.3
+        "estimate_delta_krw": -23300.0,
+        "entry_cap_delta_krw": -22300.0,
+        "news_pct_delta": 0.62,
+        "expected_return_delta_pct": 2.0
       },
       "new_news_since_prev": [
         {
@@ -4379,8 +4331,8 @@
           "type": "labor_or_litigation_resolved",
           "date": "2026-09-10",
           "contrib_pct": 1.19,
-          "note": "SK하이닉스 노사, 수정 잠정합의안 마련…성과급 현금 비중 50%로 확대 - v.daum.net",
-          "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5EQUdZWkEydFZNNzBsTWtqUHBaZFU4cVNSNXdHQ21JR0xrRFRrT0o2c1N0N192OVJlR1lUVkx0dFZhaGZIRkxmQUFvS0tiM0U?oc=5"
+          "note": "SK하이닉스 노사, 잠정합의안 수정…주식지급 비율 조정 - 연합인포맥스",
+          "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE05RGMxY2dwWFVYREVIY2htRENtYU00THY4dnBsTWNSUnIzTDMxektadHQ2S3dka3Q2R1JfdmN1N2c2NzRBX1NfelMxdkdIOFdTNEhWODlmdHhVWV9ycU5La29CaXBwWms4eHA4WkVXcmg?oc=5"
         },
         {
           "kind": "news_auto",
@@ -4393,17 +4345,17 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-02",
           "contrib_pct": -0.54,
-          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
           "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
         },
         {
@@ -4423,38 +4375,38 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,554,200원**(-12.2%, 등급 A) · 직전 리포트 대비 ▼29,800원 · 프리미엄 테마+2/뉴스-2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; regulation_or_tariff(자동) -2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,393,600원**(R/R≥1.1·ATR 5.2%×2≈손절 10.5% 기준) · 현재가 1,770,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.3% 상회) · 직전 리포트 대비 ▼29,200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,560,700원**(-12.5%, 등급 A) · 직전 리포트 대비 ▼23,300원 · 프리미엄 테마+2/뉴스-2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; regulation_or_tariff(자동) -2.2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,400,500원**(R/R≥1.1·ATR 5.2%×2≈손절 10.4% 기준) · 현재가 1,783,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.5% 상회) · 직전 리포트 대비 ▼22,300원"
     },
     {
       "ticker": "005930",
       "name": "삼성전자",
       "sector": "IT/반도체",
-      "current_price": 258500.0,
-      "anchor_price": 207500.0,
-      "anchor_basis": "PBR 밴드 중앙값 적정가 156,434(밴드 폭 4.2배 → 상단 3.0배로 캡) + 현재가 258,500 평균",
+      "current_price": 259500.0,
+      "anchor_price": 208000.0,
+      "anchor_basis": "PBR 밴드 중앙값 적정가 156,434(밴드 폭 4.2배 → 상단 3.0배로 캡) + 현재가 259,500 평균",
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.71,
-        "news": -2.98,
+        "news": -3.28,
         "sector": 5.31,
         "momentum": -3.5,
-        "total": 0.54
+        "total": 0.24
       },
       "trend_gate": {
         "factor": 0.3,
-        "excess60_vs_kospi_pct": -3.45,
-        "pct_of_52w_high": 69.03,
+        "excess60_vs_kospi_pct": -3.73,
+        "pct_of_52w_high": 69.29,
         "ungated": {
           "theme": 5.69,
-          "news": 1.92
+          "news": 0.94
         }
       },
-      "raw_estimate": 208600.0,
+      "raw_estimate": 208500.0,
       "cap_applied": null,
-      "estimate": 208600.0,
-      "expected_return_pct": -19.3,
-      "entry_cap_price": 191300.0,
+      "estimate": 208500.0,
+      "expected_return_pct": -19.7,
+      "entry_cap_price": 191200.0,
       "entry_cap_basis": {
         "min_rr": 1.1,
         "min_rr_tier": "bull",
@@ -4463,7 +4415,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -26.0,
+      "entry_cap_gap_pct": -26.3,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.53(집중도 평소 1.07배·heat 0.341)",
@@ -4492,12 +4444,12 @@
       "grade_capped_by_band": false,
       "band_freshness": {
         "metric": "PBR",
-        "current_multiple": 3.01,
+        "current_multiple": 3.02,
         "band": [
           0.91,
           3.82
         ],
-        "position": 0.721,
+        "position": 0.725,
         "detached": false,
         "direction": null,
         "days_outside": 0,
@@ -4556,21 +4508,6 @@
           },
           {
             "kind": "news_auto",
-            "type": "buyback_cancellation",
-            "date": "2026-08-28",
-            "impact_pct": 4.0,
-            "decay": 0.84,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 1.06,
-            "contrib_pct": 0.97,
-            "note": "삼전닉스發 주주환원…축배의 시간? - 매일경제",
-            "source_url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBsT2sxUEJaeV9YalZ6cXRRS3l4ZHdKb3ZBTF91RmJBTEs2MUZwbmFoM3FidVZhUUplVWRONXNTYWl4em5ZYVRiOTUzZURFWFhZdHYyQw?oc=5",
-            "matched_keywords": [
-              "주주환원"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "regulation_or_tariff",
             "date": "2026-09-07",
             "impact_pct": -4.0,
@@ -4615,16 +4552,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-10",
+            "date": "2026-09-11",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-            "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+            "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -4637,7 +4574,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.21,
             "contrib_pct": -0.54,
-            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+            "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
             "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
           },
           {
@@ -4666,7 +4603,7 @@
           }
         ],
         "earnings_signal": "strong_growth",
-        "ret_60d_pct": -25.4,
+        "ret_60d_pct": -25.11,
         "next_catalyst": {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -4684,10 +4621,10 @@
         "prev_estimate": 216000.0,
         "prev_as_of": "2026-09-10T21:50:54+09:00",
         "prev_slot": "2026-09-10-18",
-        "estimate_delta_krw": -7400.0,
-        "entry_cap_delta_krw": -5800.0,
-        "news_pct_delta": -0.15,
-        "expected_return_delta_pct": 0.4
+        "estimate_delta_krw": -7500.0,
+        "entry_cap_delta_krw": -5900.0,
+        "news_pct_delta": -0.45,
+        "expected_return_delta_pct": 0.0
       },
       "new_news_since_prev": [
         {
@@ -4697,14 +4634,6 @@
           "contrib_pct": -2.28,
           "note": "오포 등 中 스마트폰 제조사들이 삼성전자가 제시한 3분기 D램 가격 인상안을 보이콧 — 메모리 판가 인상 저항·가격 결정력 약화 신호 (뉴스1 7/24, sunday_policy_review §1-5 news_loop.unclassified_samples 검토로 발견)",
           "source_url": null
-        },
-        {
-          "kind": "news_auto",
-          "type": "buyback_cancellation",
-          "date": "2026-08-28",
-          "contrib_pct": 0.97,
-          "note": "삼전닉스發 주주환원…축배의 시간? - 매일경제",
-          "source_url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBsT2sxUEJaeV9YalZ6cXRRS3l4ZHdKb3ZBTF91RmJBTEs2MUZwbmFoM3FidVZhUUplVWRONXNTYWl4em5ZYVRiOTUzZURFWFhZdHYyQw?oc=5"
         },
         {
           "kind": "news_auto",
@@ -4733,17 +4662,17 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-10",
-          "contrib_pct": -0.89,
-          "note": "US Treasury yields surge as $6 billion bond buyback disappoints markets - Euronews.com",
-          "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOdTRoaXRONHpEZkQ4SzVhb0RuYzIxcVBPSGVxckhnY29jNW1Gb1ZqMmpiSW9SS2dRemVrQlR4YjJ6SnJZclZ0c1FSN3ZZUFB0ZHNObXRZUjhjWGt1aGJGZnZOYzlRUlRTVWpHY2xDY2dWQ2lIRXYzMExSdTJqZXhJVzN3YV9xb2Z1OFVfMHNCd3psZ3lISmh5dU53OVBSNG1zbjM4Z0NIX2NmeG94N0xWcV93bFdpZw?oc=5"
+          "date": "2026-09-11",
+          "contrib_pct": -0.9,
+          "note": "Treasury yields surge after Bessent’s beefed-up buyback operation fails to calm market - MarketWatch",
+          "source_url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQl9FeEc2X2wzd2pVQ0w0d2Z6THg5Vm1vSHJEcndZX3hpYXR6bkpFQ3RkTzZPT2czbHJ1S0JaZ3hFY2d0QXNld1VxQlAwclAzS3pVcmY5SXdoQ2VEdkJ6aHFCU3FELUZHcThKNWdieWljak1oRDlIYXJZRV9NVmpiZmlZcVd2VTBSTlZ5Um04ajBrMEliQVlFcFBRWGc1TU1ydWtvVzN1NmhtY05QMzRra2dMbC1naFYxeVRNUEt0NWRrRFFZU1JyOQ?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-02",
           "contrib_pct": -0.54,
-          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - KED Global",
+          "note": "Korean stocks sink 4% as oil, bond yields deepen risk-off rout - kedglobal.com",
           "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE02RXdkeUZaem03ZE1rM1R4QUtNYmlNZUZfd0pycVVMR1llemtXVXFjaTNubEFfaGxLQzlxaDdSS240VjVDZ0pWekNsWFlVb1YyVUtHWXBxWmhhZzF0bG1rYkJXNHhfV2s1Zi1qbGJFc3JCZzBjbEgtUXdB?oc=5"
         },
         {
@@ -4763,10 +4692,10 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **208,600원**(-19.3%, 등급 A) · 직전 리포트 대비 ▼7,400원 · 프리미엄 테마+2/뉴스-3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; supply_glut_or_price_drop -2.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **191,300원**(R/R≥1.1·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 258,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 26.0% 상회) · 직전 리포트 대비 ▼5,800원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **208,500원**(-19.7%, 등급 A) · 직전 리포트 대비 ▼7,500원 · 프리미엄 테마+2/뉴스-3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; supply_glut_or_price_drop -2.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **191,200원**(R/R≥1.1·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 259,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 26.3% 상회) · 직전 리포트 대비 ▼5,900원"
     }
   ],
-  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-09-11T09:21:04+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 34,850 | 50,600 | 54,300 | +55.8% | 0 | 🟢진입가능 | B |\n| NAVER(035420) | 205,000 | 248,300 | 270,100 | +31.8% | ▲4,300 | 🟡진입주의 | A |\n| HD현대일렉트릭(267260) | 733,000 | 848,800 | 961,600 | +31.2% | ▼6,800 | 🟡진입주의 | B |\n| 삼성물산(028260) | 362,000 | 399,200 | 446,100 | +23.2% | ▼6,000 | 🟡진입주의 | A |\n| KB금융(105560) | 174,700 | 193,500 | 207,200 | +18.6% | ▲2,700 | 🟢진입가능 | A |\n| 삼성바이오로직스(207940) | 1,422,000 | 1,578,700 | 1,684,600 | +18.5% | ▼900 | 🟢진입가능 | B |\n| 한화에어로스페이스(012450) | 1,064,000 | 1,107,700 | 1,224,400 | +15.1% | ▼1,500 | 🟢진입가능 | A |\n| 신한지주(055550) | 110,600 | 118,000 | 126,600 | +14.5% | ▲1,500 | 🟢진입가능 | A |\n| 셀트리온(068270) | 179,600 | 193,200 | 204,300 | +13.8% | ▼1,200 | 🟢진입가능 | B |\n| 하나금융지주(086790) | 135,200 | 141,100 | 151,700 | +12.2% | ▲2,700 | 🟢진입가능 | A |\n| LIG넥스원(LIG D&A)(079550) | 681,000 | 678,100 | 748,800 | +10.0% | ▼14,200 | 🔴+0% 상회 | A |\n| LG에너지솔루션(373220) | 361,500 | 352,500 | 389,500 | +7.7% | ▼2,300 | 🔴+3% 상회 | A |\n| 삼성SDI(006400) | 557,500 | 522,600 | 584,800 | +4.9% | ▼2,700 | 🔴+7% 상회 | B |\n| HD한국조선해양(009540) | 357,000 | 339,100 | 371,000 | +3.9% | ▲16,800 | 🔴+5% 상회 | B |\n| 현대차(005380) | 379,000 | 362,000 | 392,700 | +3.6% | ▲5,600 | 🔴+5% 상회 | A |\n| 삼성중공업(010140) | 21,250 | 19,600 | 21,200 | -0.2% | 0 | 🔴+8% 상회 | A |\n| LS ELECTRIC(010120) | 203,500 | 177,300 | 198,700 | -2.4% | ▲6,600 | 🔴+15% 상회 | B |\n| 한미반도체(042700) | 233,000 | 187,200 | 214,500 | -7.9% | ▼11,400 | 🔴+24% 상회 | A |\n| SK하이닉스(000660) | 1,770,000 | 1,393,600 | 1,554,200 | -12.2% | ▼29,800 | 🔴+27% 상회 | A |\n| 삼성전자(005930) | 258,500 | 191,300 | 208,600 | -19.3% | ▼7,400 | 🔴+35% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **54,300원**(+55.8%, 등급 B · ⚠밴드이탈) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+4/섹터+1/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.3%\n- 뉴스 반영 추정 목표 매도가 **270,100원**(+31.8%, 등급 A) · 직전 리포트 대비 ▲4,300원 · 프리미엄 테마+2/뉴스-1/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) -2.0%\n- 뉴스 반영 추정 목표 매도가 **961,600원**(+31.2%, 등급 B) · 직전 리포트 대비 ▼6,800원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **446,100원**(+23.2%, 등급 A) · 직전 리포트 대비 ▼6,000원 · 프리미엄 테마+0/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **207,200원**(+18.6%, 등급 A) · 직전 리포트 대비 ▲2,700원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +1.3%\n- 뉴스 반영 추정 목표 매도가 **1,684,600원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼900원 · 프리미엄 테마+2/뉴스+10/섹터+5/모멘텀+2% · 📰 원인 뉴스: supply_contract_major(자동) +4.8%; earnings_report(촉매) +3.3%\n- 뉴스 반영 추정 목표 매도가 **1,224,400원**(+15.1%, 등급 A) · 직전 리포트 대비 ▼1,500원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; capex_expansion(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **126,600원**(+14.5%, 등급 A) · 직전 리포트 대비 ▲1,500원 · 프리미엄 테마+5/뉴스+7/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; analyst_target_upgrade(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **204,300원**(+13.8%, 등급 B) · 직전 리포트 대비 ▼1,200원 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +2.1%\n- 뉴스 반영 추정 목표 매도가 **151,700원**(+12.2%, 등급 A) · 직전 리포트 대비 ▲2,700원 · 프리미엄 테마+5/뉴스+8/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.2%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **748,800원**(+10.0%, 등급 A) · 직전 리포트 대비 ▼14,200원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **389,500원**(+7.7%, 등급 A) · 직전 리포트 대비 ▼2,300원 · 프리미엄 테마+2/뉴스-3/섹터+6/모멘텀-2% · 📰 원인 뉴스: supply_contract_major(자동) +4.3%; tech_breakthrough(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **584,800원**(+4.9%, 등급 B) · 직전 리포트 대비 ▼2,700원 · 프리미엄 테마+4/뉴스+8/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; tech_breakthrough(자동) +3.2%\n- 뉴스 반영 추정 목표 매도가 **371,000원**(+3.9%, 등급 B) · 직전 리포트 대비 ▲16,800원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **392,700원**(+3.6%, 등급 A) · 직전 리포트 대비 ▲5,600원 · 프리미엄 테마+2/뉴스-4/섹터+3/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.4%; earnings_report(촉매) -3.3%\n- 뉴스 반영 추정 목표 매도가 **21,200원**(-0.2%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **198,700원**(-2.4%, 등급 B) · 직전 리포트 대비 ▲6,600원 · 프리미엄 테마+2/뉴스+4/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; order_backlog_surprise(자동) +2.7%\n- 뉴스 반영 추정 목표 매도가 **214,500원**(-7.9%, 등급 A) · 직전 리포트 대비 ▼11,400원 · 프리미엄 테마+2/뉴스-1/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_surprise_beat(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **1,554,200원**(-12.2%, 등급 A) · 직전 리포트 대비 ▼29,800원 · 프리미엄 테마+2/뉴스-2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; regulation_or_tariff(자동) -2.2%\n- 뉴스 반영 추정 목표 매도가 **208,600원**(-19.3%, 등급 A) · 직전 리포트 대비 ▼7,400원 · 프리미엄 테마+2/뉴스-3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; supply_glut_or_price_drop -2.3%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **50,600원**(R/R≥1.1·ATR 3.3%×2≈손절 6.7% 기준) · 현재가 34,850원 🟢진입 가능(현재가가 상한가보다 45.2% 낮음) · 직전 리포트 대비 ▲100원\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **248,300원**(R/R≥1.1·ATR 4.0%×2≈손절 8.0% 기준) · 현재가 205,000원 🟡진입 가능 구간이나 falling knife(60일 -16%) — 추격 금지(추세 약세)(상한가보다 21.1% 낮음) · 직전 리포트 대비 ▲5,200원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **848,800원**(R/R≥1.1·ATR 6.0%×2≈손절 12.1% 기준) · 현재가 733,000원 🟡진입 가능 구간이나 falling knife(60일 -35%) — 추격 금지(추세 약세)(상한가보다 15.8% 낮음) · 직전 리포트 대비 ▼9,500원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **399,200원**(R/R≥1.1·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 362,000원 🟡진입 가능 구간이나 falling knife(60일 -26%) — 추격 금지(추세 약세)(상한가보다 10.3% 낮음) · 직전 리포트 대비 ▼4,800원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **193,500원**(R/R≥1.1·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 174,700원 🟢진입 가능(현재가가 상한가보다 10.8% 낮음) · 직전 리포트 대비 ▲2,600원\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,578,700원**(R/R≥1.1·ATR 3.0%×2≈손절 6.1% 기준) · 현재가 1,422,000원 🟢진입 가능(현재가가 상한가보다 11.0% 낮음) · 직전 리포트 대비 ▲200원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,107,700원**(R/R≥1.1·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,064,000원 🟢진입 가능(현재가가 상한가보다 4.1% 낮음) · 직전 리포트 대비 ▲700원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **118,000원**(R/R≥1.1·ATR 3.3%×2≈손절 6.6% 기준) · 현재가 110,600원 🟢진입 가능(현재가가 상한가보다 6.7% 낮음) · 직전 리포트 대비 ▲1,500원\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **193,200원**(R/R≥1.1·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 179,600원 🟢진입 가능(현재가가 상한가보다 7.6% 낮음) · 직전 리포트 대비 ▼1,200원\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **141,100원**(R/R≥1.1·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 135,200원 🟢진입 가능(현재가가 상한가보다 4.4% 낮음) · 직전 리포트 대비 ▲2,600원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **678,100원**(R/R≥1.1·ATR 4.7%×2≈손절 9.5% 기준) · 현재가 681,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.4% 상회) · 직전 리포트 대비 ▼8,600원\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **352,500원**(R/R≥1.1·ATR 4.8%×2≈손절 9.5% 기준) · 현재가 361,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.5% 상회) · 직전 리포트 대비 ▼1,200원\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **522,600원**(R/R≥1.1·ATR 5.4%×2≈손절 10.8% 기준) · 현재가 557,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.3% 상회) · 직전 리포트 대비 ▲400원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **339,100원**(R/R≥1.1·ATR 4.3%×2≈손절 8.5% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.0% 상회) · 직전 리포트 대비 ▲15,600원\n- 현대차(005380) — 뉴스 반영 신규진입 상한가 **362,000원**(R/R≥1.1·ATR 3.9%×2≈손절 7.7% 기준) · 현재가 379,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.5% 상회) · 직전 리포트 대비 ▲4,500원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **177,300원**(R/R≥1.1·ATR 5.5%×2≈손절 11.0% 기준) · 현재가 203,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 12.9% 상회) · 직전 리포트 대비 ▲6,200원\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **187,200원**(R/R≥1.1·ATR 6.6%×2≈손절 13.2% 기준) · 현재가 233,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 19.7% 상회) · 직전 리포트 대비 ▼13,400원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,393,600원**(R/R≥1.1·ATR 5.2%×2≈손절 10.5% 기준) · 현재가 1,770,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.3% 상회) · 직전 리포트 대비 ▼29,200원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **191,300원**(R/R≥1.1·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 258,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 26.0% 상회) · 직전 리포트 대비 ▼5,800원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-09-11T09:56:01+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 34,475 | 50,400 | 54,100 | +56.9% | ▼200 | 🟢진입가능 | B |\n| HD현대일렉트릭(267260) | 734,000 | 849,300 | 962,000 | +31.1% | ▼6,400 | 🟡진입주의 | A |\n| NAVER(035420) | 204,000 | 242,300 | 263,700 | +29.3% | ▼2,100 | 🟡진입주의 | A |\n| 삼성물산(028260) | 368,500 | 400,400 | 446,600 | +21.2% | ▼5,500 | 🟡진입주의 | A |\n| 삼성바이오로직스(207940) | 1,411,000 | 1,565,400 | 1,671,500 | +18.5% | ▼14,000 | 🟢진입가능 | B |\n| KB금융(105560) | 175,400 | 193,900 | 207,600 | +18.4% | ▲3,100 | 🟢진입가능 | A |\n| 한화에어로스페이스(012450) | 1,056,000 | 1,103,100 | 1,220,100 | +15.5% | ▼5,800 | 🟢진입가능 | A |\n| 신한지주(055550) | 111,100 | 118,300 | 126,900 | +14.2% | ▲1,800 | 🟢진입가능 | A |\n| 셀트리온(068270) | 178,000 | 191,400 | 202,400 | +13.7% | ▼3,100 | 🟢진입가능 | B |\n| 하나금융지주(086790) | 136,000 | 140,400 | 150,900 | +11.0% | ▲1,900 | 🟢진입가능 | A |\n| LIG넥스원(LIG D&A)(079550) | 670,000 | 671,100 | 743,200 | +10.9% | ▼19,800 | 🟡진입주의 | A |\n| LG에너지솔루션(373220) | 357,000 | 349,900 | 387,100 | +8.4% | ▼4,700 | 🔴+2% 상회 | A |\n| 삼성SDI(006400) | 551,000 | 518,000 | 580,300 | +5.3% | ▼7,200 | 🔴+6% 상회 | A |\n| HD한국조선해양(009540) | 353,000 | 336,900 | 368,900 | +4.5% | ▲14,700 | 🔴+5% 상회 | A |\n| 현대차(005380) | 380,000 | 362,500 | 393,100 | +3.4% | ▲6,000 | 🔴+5% 상회 | A |\n| 삼성중공업(010140) | 21,000 | 19,400 | 21,000 | +0.0% | ▼200 | 🔴+8% 상회 | A |\n| LS ELECTRIC(010120) | 204,500 | 177,800 | 199,200 | -2.6% | ▲7,100 | 🔴+15% 상회 | A |\n| 한미반도체(042700) | 233,500 | 187,500 | 214,700 | -8.1% | ▼11,200 | 🔴+25% 상회 | A |\n| SK하이닉스(000660) | 1,783,000 | 1,400,500 | 1,560,700 | -12.5% | ▼23,300 | 🔴+27% 상회 | A |\n| 삼성전자(005930) | 259,500 | 191,200 | 208,500 | -19.7% | ▼7,500 | 🔴+36% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **54,100원**(+56.9%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스+4/섹터+1/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.3%\n- 뉴스 반영 추정 목표 매도가 **962,000원**(+31.1%, 등급 A) · 직전 리포트 대비 ▼6,400원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **263,700원**(+29.3%, 등급 A) · 직전 리포트 대비 ▼2,100원 · 프리미엄 테마+2/뉴스-3/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -2.0%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **446,600원**(+21.2%, 등급 A) · 직전 리포트 대비 ▼5,500원 · 프리미엄 테마+0/뉴스+0/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **1,671,500원**(+18.5%, 등급 B) · 직전 리포트 대비 ▼14,000원 · 프리미엄 테마+2/뉴스+10/섹터+5/모멘텀+2% · 📰 원인 뉴스: supply_contract_major(자동) +4.8%; earnings_report(촉매) +3.3%\n- 뉴스 반영 추정 목표 매도가 **207,600원**(+18.4%, 등급 A) · 직전 리포트 대비 ▲3,100원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +1.3%\n- 뉴스 반영 추정 목표 매도가 **1,220,100원**(+15.5%, 등급 A) · 직전 리포트 대비 ▼5,800원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; capex_expansion(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **126,900원**(+14.2%, 등급 A) · 직전 리포트 대비 ▲1,800원 · 프리미엄 테마+5/뉴스+7/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; analyst_target_upgrade(자동) +1.8%\n- 뉴스 반영 추정 목표 매도가 **202,400원**(+13.7%, 등급 B) · 직전 리포트 대비 ▼3,100원 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; buyback_cancellation(자동) +2.1%\n- 뉴스 반영 추정 목표 매도가 **150,900원**(+11.0%, 등급 A) · 직전 리포트 대비 ▲1,900원 · 프리미엄 테마+5/뉴스+7/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.2%; earnings_report(촉매) +2.0%\n- 뉴스 반영 추정 목표 매도가 **743,200원**(+10.9%, 등급 A) · 직전 리포트 대비 ▼19,800원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **387,100원**(+8.4%, 등급 A) · 직전 리포트 대비 ▼4,700원 · 프리미엄 테마+2/뉴스-3/섹터+6/모멘텀-2% · 📰 원인 뉴스: supply_contract_major(자동) +4.3%; tech_breakthrough(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **580,300원**(+5.3%, 등급 A) · 직전 리포트 대비 ▼7,200원 · 프리미엄 테마+4/뉴스+8/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; tech_breakthrough(자동) +3.1%\n- 뉴스 반영 추정 목표 매도가 **368,900원**(+4.5%, 등급 A) · 직전 리포트 대비 ▲14,700원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **393,100원**(+3.4%, 등급 A) · 직전 리포트 대비 ▲6,000원 · 프리미엄 테마+2/뉴스-4/섹터+3/모멘텀-2% · 📰 원인 뉴스: tech_breakthrough(자동) +3.4%; earnings_report(촉매) -3.3%\n- 뉴스 반영 추정 목표 매도가 **21,000원**(+0.0%, 등급 A) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **199,200원**(-2.6%, 등급 A) · 직전 리포트 대비 ▲7,100원 · 프리미엄 테마+2/뉴스+4/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; order_backlog_surprise(자동) +2.7%\n- 뉴스 반영 추정 목표 매도가 **214,700원**(-8.1%, 등급 A) · 직전 리포트 대비 ▼11,200원 · 프리미엄 테마+2/뉴스-1/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; earnings_surprise_beat(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **1,560,700원**(-12.5%, 등급 A) · 직전 리포트 대비 ▼23,300원 · 프리미엄 테마+2/뉴스-2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; regulation_or_tariff(자동) -2.2%\n- 뉴스 반영 추정 목표 매도가 **208,500원**(-19.7%, 등급 A) · 직전 리포트 대비 ▼7,500원 · 프리미엄 테마+2/뉴스-3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.3%; supply_glut_or_price_drop -2.3%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **50,400원**(R/R≥1.1·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 34,475원 🟢진입 가능(현재가가 상한가보다 46.2% 낮음) · 직전 리포트 대비 ▼100원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **849,300원**(R/R≥1.1·ATR 6.0%×2≈손절 12.1% 기준) · 현재가 734,000원 🟡진입 가능 구간이나 falling knife(60일 -34%) — 추격 금지(추세 약세)(상한가보다 15.7% 낮음) · 직전 리포트 대비 ▼9,000원\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **242,300원**(R/R≥1.1·ATR 4.0%×2≈손절 8.0% 기준) · 현재가 204,000원 🟡진입 가능 구간이나 falling knife(60일 -16%) — 추격 금지(추세 약세)(상한가보다 18.8% 낮음) · 직전 리포트 대비 ▼800원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **400,400원**(R/R≥1.1·ATR 5.2%×2≈손절 10.5% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -25%) — 추격 금지(추세 약세)(상한가보다 8.7% 낮음) · 직전 리포트 대비 ▼3,600원\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,565,400원**(R/R≥1.1·ATR 3.1%×2≈손절 6.2% 기준) · 현재가 1,411,000원 🟢진입 가능(현재가가 상한가보다 10.9% 낮음) · 직전 리포트 대비 ▼13,100원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **193,900원**(R/R≥1.1·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 175,400원 🟢진입 가능(현재가가 상한가보다 10.5% 낮음) · 직전 리포트 대비 ▲3,000원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,103,100원**(R/R≥1.1·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,056,000원 🟢진입 가능(현재가가 상한가보다 4.5% 낮음) · 직전 리포트 대비 ▼3,900원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **118,300원**(R/R≥1.1·ATR 3.3%×2≈손절 6.6% 기준) · 현재가 111,100원 🟢진입 가능(현재가가 상한가보다 6.5% 낮음) · 직전 리포트 대비 ▲1,800원\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **191,400원**(R/R≥1.1·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 178,000원 🟢진입 가능(현재가가 상한가보다 7.5% 낮음) · 직전 리포트 대비 ▼3,000원\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **140,400원**(R/R≥1.1·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 136,000원 🟢진입 가능(현재가가 상한가보다 3.2% 낮음) · 직전 리포트 대비 ▲1,900원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **671,100원**(R/R≥1.1·ATR 4.9%×2≈손절 9.8% 기준) · 현재가 670,000원 🟡진입 가능 구간이나 falling knife(60일 -29%) — 추격 금지(추세 약세)(상한가보다 0.2% 낮음) · 직전 리포트 대비 ▼15,600원\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **349,900원**(R/R≥1.1·ATR 4.8%×2≈손절 9.7% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.0% 상회) · 직전 리포트 대비 ▼3,800원\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **518,000원**(R/R≥1.1·ATR 5.5%×2≈손절 10.9% 기준) · 현재가 551,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.0% 상회) · 직전 리포트 대비 ▼4,200원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **336,900원**(R/R≥1.1·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 353,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.6% 상회) · 직전 리포트 대비 ▲13,400원\n- 현대차(005380) — 뉴스 반영 신규진입 상한가 **362,500원**(R/R≥1.1·ATR 3.8%×2≈손절 7.7% 기준) · 현재가 380,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.6% 상회) · 직전 리포트 대비 ▲5,000원\n- 삼성중공업(010140) — 뉴스 반영 신규진입 상한가 **19,400원**(R/R≥1.1·ATR 3.8%×2≈손절 7.6% 기준) · 현재가 21,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.6% 상회) · 직전 리포트 대비 ▼200원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **177,800원**(R/R≥1.1·ATR 5.5%×2≈손절 10.9% 기준) · 현재가 204,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 13.1% 상회) · 직전 리포트 대비 ▲6,700원\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **187,500원**(R/R≥1.1·ATR 6.6%×2≈손절 13.2% 기준) · 현재가 233,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 19.7% 상회) · 직전 리포트 대비 ▼13,100원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,400,500원**(R/R≥1.1·ATR 5.2%×2≈손절 10.4% 기준) · 현재가 1,783,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.5% 상회) · 직전 리포트 대비 ▼22,300원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **191,200원**(R/R≥1.1·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 259,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 26.3% 상회) · 직전 리포트 대비 ▼5,900원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
   "disclaimer": "학습·시뮬레이션 목적의 거친 추정 — 투자 권유 아님. watchlist.target_price 를 자동 갱신하지 않으며, routine 이 dynamic_exit_model 목표가 산정 시 참고 레이어로만 쓴다."
 }

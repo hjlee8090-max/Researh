@@ -79,6 +79,16 @@
       "expected_effect": "reports/2026-07-21-estimate-tilt-research.md 1차 백테스트 대비 사전 등록 기준(C1~C3/T1~T3) 전부 pass 로 재확인된 wire 안 — 랭킹 IC 개선(+0.23)",
       "required_samples": "이미 45거래일 표본 충족(08-23 재실행) — 배선 자체는 정책 동결 해제 후 재검증 없이도 실행 가능하나 policy.json §momentum_strategy/score_blend_weights 변경을 동반해 동결 대상",
       "note": "08-23 policy-review 후보 1로 상정된 뒤 08-30 리뷰에서 재확인 없이 누락됨(추적 실패 — 이번 리뷰에서 재발견·재상정). 사용자 승인 필요 항목이었는데 승인/기각 결정 자체가 없었다. 동결 해제 후 최우선 검토 대상."
+    },
+    {
+      "date": "2026-09-13",
+      "proposer": "sunday_policy_review",
+      "field": "risk.reward_risk_management (§2-2 (b)손절 상향 처방 조건 — R/R 하한 미달 시 신규 처방 순서)",
+      "current": "미배선 — R/R 하한(bull 1.1) 미달 시 (b)손절 상향을 우선 처방(정본에 순서 명문화 없음, 슬롯별 임기응변)",
+      "proposed": "lessons 2026-09-01 룰 승격: `(목표−종가) < 2.0×ATR×종가` 이면 (b)를 처방 전에 '이 종목은 (b)로 하한을 살 수 없다'를 먼저 판정하고, 해소 수단을 ①목표 도달 종가 익절 ②트레일 1차선 이탈 시 부분익절 두 조건으로 명문화",
+      "expected_effect": "같은 종목에 반복 (b) 처방(무의미한 손절 재상향)을 막고 R/R 하한 미달 구조를 조기에 익절/부분익절로 정리",
+      "required_samples": "동결 해제 후 재발 사례 1~2건 추가 관측(현재는 하나금융지주 단일 사례) — 승격 전 재현성 확인",
+      "note": "expiry 2026-09-08 도래분 §1-2-b 만료 판정에서 승격 후보로 상정(state/lessons.md 2026-09-01 항목 참조). 동결 중이라 등록만."
     }
   ],
   "history": [

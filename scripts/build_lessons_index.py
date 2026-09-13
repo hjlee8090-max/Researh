@@ -11,6 +11,15 @@
   policy.lessons_rule_sunset(v2.11)은 제도만 있고 등록이 0건이라 일몰 대상이 없었다.
 - archive_candidates·throughput (P1 E): codify 30일+ 경과인데 본문이 아직 안 응축된
   섹션 목록 + 주간 유입 통계 — §1-6 '이관 ≥ 유입' 수지 균형 의무의 1차 입력.
+- codify_candidates (v2.37, 2026-09-13 — lessons-balance 5주 overdue 구조적 원인 대응):
+  archive_candidates 가 늘 0건인 원인은 "이관 후보 없음"이 아니라 "✅codify 마커를 붙이는
+  상류 단계가 아예 없어서"였다(check_lessons_applied.py 는 작성자가 스스로 '미반영'이라 적은
+  줄만 보므로, 조용히 반영된 항목은 영구 사각). 이 함수는 ✅codify 마커가 없는 30일+ 경과
+  섹션 전체를 대상으로 '다음 적용 룰' 텍스트의 강신호(따옴표·백틱)가 policy.json/docs/prompts
+  haystack 에 이미 등장하는지 대조해 "실제로는 반영됐는데 마커만 없는" 항목을 표면화한다.
+  사람(또는 sunday_policy_review)이 매치를 확인하고 ✅codify 를 달면 다음 주 archive_candidates
+  로 자동 승격된다 — 이관 파이프라인의 입구를 만드는 것이 목적이며 자동으로 마커를 달지는
+  않는다(오탐 방지, grep 매치일 뿐 의미 검증 아님).
 
 prompts/sunday_policy_review.md 가 이 인덱스를 1차 입력으로 사용한다.
 표준 라이브러리만 사용.
@@ -201,6 +210,73 @@ def build_archive_candidates(parsed: list[dict], sections: list[dict], today_dt:
     }
 
 
+# 신호 추출: check_lessons_applied.py 와 동일 계약(따옴표/꺾쇠 안 문구 + 백틱 토큰만 strong).
+QUOTED_RE = re.compile(r"[\"'“”‘’「『]([^\"'“”‘’」』]{3,40})[\"'“”‘’」』]")
+BACKTICK_RE = re.compile(r"`([^`]+)`")
+STOP_SIGNALS = {
+    "lessons.md", "policy.json", "prompt", "prompts", "routine", "https", "http",
+    "naver", "yahoo", "kospi", "kst",
+}
+
+
+def _extract_strong_signals(line: str) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for rx in (QUOTED_RE, BACKTICK_RE):
+        for s in rx.findall(line):
+            s = s.strip()
+            key = s.lower()
+            if len(s) < 3 or key in STOP_SIGNALS or key in seen:
+                continue
+            seen.add(key)
+            out.append(s)
+    return out
+
+
+def build_codify_candidates(parsed: list[dict], sections: list[dict], today_dt: datetime) -> dict:
+    """v2.37 — ✅codify 마커가 없는 30일+ 경과 섹션 중 '다음 적용 룰'의 강신호가
+    이미 haystack(policy+docs+prompts)에 등장하는 항목 = 반영됐는데 마커만 없는 후보."""
+    cutoff = (today_dt.date() - timedelta(days=ARCHIVE_AFTER_DAYS)).isoformat()
+    parts: list[str] = []
+    for rel in ("config/policy.json", "docs/policy_changelog.md", "docs/policy_rationale.md"):
+        path = ROOT / rel
+        if path.exists():
+            parts.append(path.read_text(encoding="utf-8"))
+    prompts_dir = ROOT / "prompts"
+    if prompts_dir.exists():
+        for p in sorted(prompts_dir.glob("*.md")):
+            parts.append(p.read_text(encoding="utf-8"))
+    haystack = "\n".join(parts).lower()
+
+    candidates: list[dict] = []
+    for p, s in zip(parsed, sections):
+        dm = SECTION_DATE_RE.search(s["title"])
+        sec_date = dm.group(1) if dm else ""
+        if not sec_date or sec_date >= cutoff:
+            continue
+        body = "\n".join(s["lines"])
+        if "✅" in body and "codify" in body.lower():
+            continue  # 이미 마커 있음 — archive_candidates 쪽 대상
+        matched_rules: list[dict] = []
+        for rule in p["next_rules"]:
+            signals = _extract_strong_signals(rule)
+            matched = [sig for sig in signals if sig.lower() in haystack]
+            if matched:
+                matched_rules.append({"rule": rule[:200], "matched_signals": matched})
+        if matched_rules:
+            candidates.append({
+                "title": p["title"], "date": sec_date,
+                "category": p["category"], "matched_rules": matched_rules,
+            })
+    candidates.sort(key=lambda c: c["date"])
+    return {
+        "codify_candidates": candidates[:30],
+        "codify_candidates_total": len(candidates),
+        "note": "grep 매치일 뿐 의미 검증 아님 — sunday_policy_review 가 각 후보를 실제로 대조 "
+                "확인한 뒤에만 ✅codify 를 달고 §1-6 절차로 응축한다.",
+    }
+
+
 def main() -> int:
     if not LESSONS_PATH.exists():
         print(f"{LESSONS_PATH} 없음")
@@ -223,6 +299,7 @@ def main() -> int:
     today = now_dt.date().isoformat()
     sunset = build_rule_sunset(parsed, sections, today)
     archive = build_archive_candidates(parsed, sections, now_dt)
+    codify = build_codify_candidates(parsed, sections, now_dt)
 
     out = {
         "as_of": now_dt.isoformat(timespec="seconds"),
@@ -233,6 +310,7 @@ def main() -> int:
         "repeated_threshold_3_plus": {k: v for k, v in counter.items() if v >= 3},
         "rule_sunset": sunset,
         **archive,
+        **codify,
     }
     OUT_PATH.parent.mkdir(exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -240,7 +318,8 @@ def main() -> int:
         f"wrote {OUT_PATH.relative_to(ROOT)} entries={len(parsed)} rules={len(all_rules)} "
         f"categories={list(by_category)} repeated_3plus={list(out['repeated_threshold_3_plus'])} "
         f"sunset(expired={len(sunset['expired'])} unregistered={len(sunset['unregistered'])}) "
-        f"archive_candidates={archive['archive_candidates_total']} new_7d={archive['throughput']['new_entries_7d']}"
+        f"archive_candidates={archive['archive_candidates_total']} new_7d={archive['throughput']['new_entries_7d']} "
+        f"codify_candidates={codify['codify_candidates_total']}"
     )
     return 0
 

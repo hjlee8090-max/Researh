@@ -1,17 +1,17 @@
 {
- "as_of": "2026-09-11T23:28:00+09:00",
+ "as_of": "2026-09-14T18:24:00+09:00",
  "scope": "state/order_intents_log.jsonl 중 valid_until < 오늘 인 의도",
  "counts": {
   "intents": 6,
   "executed": 4,
   "vetoed": 0,
-  "expired": 1,
-  "ignored": 1,
+  "expired": 2,
+  "ignored": 0,
   "off_intent_trades": 3,
   "off_intent_without_reason": 1
  },
  "adherence_pct": 66.7,
- "ignored_pct": 16.7,
+ "ignored_pct": 0.0,
  "veto_effect": {
   "n_scored_t5": 0,
   "sum_krw_t5": null,
@@ -21,7 +21,7 @@
  "cutover_signal": {
   "rule": "docs/plan_stage1.md §3 — adherence ≥ 80% AND ignored 0 AND (veto 표본 ≥ 10 이면 veto 효과 합 > 0) 20거래일 유지 시 execution_owner=code 심사",
   "adherence_ok": false,
-  "ignored_zero": false
+  "ignored_zero": true
  },
  "rows": [
   {
@@ -33,8 +33,8 @@
    "shares": 1,
    "rule": "momentum_basket_entry",
    "ref_price": 538000.0,
-   "verdict": "ignored",
-   "veto_reason": null,
+   "verdict": "expired",
+   "veto_reason": "valid_until 2026-09-02T15:30:00+09:00 경과·미집행. 9/2 는 사용자 지시 자본 리셋(전량 현금화) 집행일이라 같은 날 신규 진입 의도가 성립하지 않았고, 9/3 에 동일 rule 로 재산출된 의도(oi-20260903-*)가 §2-PRE estimate_gate 미통과로 별도 만료 처리됐다. **무기입(ignored) 상태로 12일 방치된 것을 9/14 18시가 소급 기입한다** — 무기입은 채점에서 '무시'로 세어지므로 adherence 를 왜곡한다(§0-I 프로토콜).",
    "t5_close": 574000.0,
    "t5_date": "2026-09-09",
    "veto_effect_krw_t5": -36000,

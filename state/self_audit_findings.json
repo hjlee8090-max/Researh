@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-18",
+  "as_of": "2026-09-20",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,7 +8,7 @@
       "detail": "손실 스톱 t+5 일실 합계 273209.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-09-18",
+      "last_seen": "2026-09-20",
       "weeks_seen": 11,
       "status": "open",
       "disposition": {
@@ -81,7 +81,7 @@
       "detail": "⚠️ 주식비중 48.2% < 목표 하한 65% — 만성 미배치 계열",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-09-18",
+      "last_seen": "2026-09-20",
       "weeks_seen": 11,
       "status": "open",
       "disposition": {
@@ -245,19 +245,14 @@
     },
     {
       "id": "lessons-balance",
-      "title": "lessons.md 715,775B > 예산 60,000B — 이관 처리량 부족",
+      "title": "lessons.md 720,412B > 예산 60,000B — 이관 처리량 부족",
       "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. 이관 대상 1순위는 lessons_index.archive_candidates.",
       "severity": "warn",
       "first_seen": "2026-08-14",
-      "last_seen": "2026-09-18",
+      "last_seen": "2026-09-20",
       "weeks_seen": 6,
       "status": "open",
-      "disposition": {
-        "action": "patch",
-        "note": "이번 리뷰에서 09-13 신설 codify_candidates 파이프라인으로 4건을 신규 검증·확정 이관했다: ①2026-06-08 삼성전자 RED(Broadcom guidance 15%캡 — policy.lessons_rule_sunset 이 이 사례를 도입 근거로 흡수) ②2026-07-11 compact_state 미실행(scripts/compact_state.py v2.32 daily 실행으로 해소 확인) ③2026-07-27 트레일링 임계 전일고정값 인용(exit_levels.json 재계산본 인용 규칙이 全슬롯 이미 적용 중임을 확인) ④2026-08-01 실현변동성 밴드 미연동(policy.proactive_inference.band_width_rule 수치 일치 확인, v2.29 기존 codify). 같은 회차에 check_lessons_applied 의 hard 미반영 발견분(2026-09-11 '갭 구간 전이 배수' 룰)도 prompts/0630_us_close.md §2-1·0000_global.md §2-1 에 신규 codify 했고, 반복 7회 루틴 오차(09시/18시 선제추론 채점 백로그)에도 '잔여 미채점 건수' 의무 표기를 prompts/0900_pre_market.md·1800_report.md 에 신설해 구조적으로 대응했다. 결과: lessons.md 715,775B → 720,412B(순증 — 이번 주 신규 유입 28건이 이관 4건보다 많아 총량은 늘었으나, 이관 자체는 재발·무효화 없이 실행됨 — 08-30/09-06/09-13 처분이 반복 '재발·효과 없음'으로 무효화된 패턴과 다르다). entries=321 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 보존 확인). **수지 균형 의무는 여전히 미충족**(이관 4건 ≪ 신규 유입 28건, 잔여 720,412B ≫ 예산 60,000B) — codify_candidates 잔여 43건을 다음 리뷰들이 우선순위로 계속 소진한다. 재발(다음 주 재검증 결과 이관분이 실제로 반영 해제되거나 처분이 무효화되는지) 여부로 이번 처분의 실효성이 검증된다.",
-        "date": "2026-09-20",
-        "by": "sunday_policy_review"
-      },
+      "disposition": null,
       "disposition_history": [
         {
           "action": "defer",
@@ -284,6 +279,13 @@
           "date": "2026-09-13",
           "by": "sunday_policy_review",
           "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+        },
+        {
+          "action": "patch",
+          "note": "이번 리뷰에서 09-13 신설 codify_candidates 파이프라인으로 4건을 신규 검증·확정 이관했다: ①2026-06-08 삼성전자 RED(Broadcom guidance 15%캡 — policy.lessons_rule_sunset 이 이 사례를 도입 근거로 흡수) ②2026-07-11 compact_state 미실행(scripts/compact_state.py v2.32 daily 실행으로 해소 확인) ③2026-07-27 트레일링 임계 전일고정값 인용(exit_levels.json 재계산본 인용 규칙이 全슬롯 이미 적용 중임을 확인) ④2026-08-01 실현변동성 밴드 미연동(policy.proactive_inference.band_width_rule 수치 일치 확인, v2.29 기존 codify). 같은 회차에 check_lessons_applied 의 hard 미반영 발견분(2026-09-11 '갭 구간 전이 배수' 룰)도 prompts/0630_us_close.md §2-1·0000_global.md §2-1 에 신규 codify 했고, 반복 7회 루틴 오차(09시/18시 선제추론 채점 백로그)에도 '잔여 미채점 건수' 의무 표기를 prompts/0900_pre_market.md·1800_report.md 에 신설해 구조적으로 대응했다. 결과: lessons.md 715,775B → 720,412B(순증 — 이번 주 신규 유입 28건이 이관 4건보다 많아 총량은 늘었으나, 이관 자체는 재발·무효화 없이 실행됨 — 08-30/09-06/09-13 처분이 반복 '재발·효과 없음'으로 무효화된 패턴과 다르다). entries=321 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 보존 확인). **수지 균형 의무는 여전히 미충족**(이관 4건 ≪ 신규 유입 28건, 잔여 720,412B ≫ 예산 60,000B) — codify_candidates 잔여 43건을 다음 리뷰들이 우선순위로 계속 소진한다. 재발(다음 주 재검증 결과 이관분이 실제로 반영 해제되거나 처분이 무효화되는지) 여부로 이번 처분의 실효성이 검증된다.",
+          "date": "2026-09-20",
+          "by": "sunday_policy_review",
+          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
         }
       ]
     },
@@ -306,5 +308,7 @@
     "deployment-below-band",
     "lessons-balance"
   ],
-  "overdue": []
+  "overdue": [
+    "lessons-balance"
+  ]
 }

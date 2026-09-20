@@ -136,6 +136,7 @@
 - **선제 추론 채점 (proactive inference loop — `policy.proactive_inference`)**: `state/inference_log.jsonl` 에 적재된 `horizon="09:00"` 예측 각각에 대해 **결과 줄을 append** 한다(원장은 라인 편집 대신 결과 줄 추가로 병합). **자정(`slot":"00:00"`)본과 06시 마감 갱신본(`slot":"06:00"`)을 모두 채점한다** — 06시는 개장 전이라 채점하지 않으므로, 개장가가 나온 지금 09시가 두 슬롯의 개장 갭 예측을 함께 판정한다:
   `{"id":"<예측 id>","outcome":"hit|partial|miss","miss_attribution":"(miss 면 무엇을 안 봤나 1줄)"}`
   miss 는 18시 §3-1 에서 lessons `선제추론오차` 로 승격된다(여기선 결과 줄만).
+  - **잔여 미채점 건수 의무 표기 (codify 2026-09-20, 근거 lessons 2026-07-30·2026-09-09, 재발 7회)**: 채점 완료 후 `horizon="09:00"` 인데 결과 줄이 없는 예측 건수를 세어 "한눈에 보기" 아래 1줄로 남긴다(`잔여 미채점: N건`). N>0 이면 booking 전에 즉시 채점해 0으로 만든다(§0-0 진입 booking 전 선행 조건).
 - **당일 예측 적재(INFER)**: `state/inference_checklist.md` 를 먼저 읽고, 오늘 장중~종가 방향 예측을 1~2건 `inference_log.jsonl` 에 append(검증 가능 수치+horizon, 보통 `"horizon":"18:00"`, `checklist_refs` 증빙). 선제 액션은 §2 게이트를 통과한 Tier 0~1(준비·리스크감소)만 — Tier 2(probe 신규매수)는 Phase 1 에서 **paper(그림자)로만** 기록(`"preemptive_action":{"tier":2,"paper":true}`).
 
 ### 1-PO. 선제 커밋(pending_orders) 점검·집행 (proactive inference loop — `policy.proactive_inference`)

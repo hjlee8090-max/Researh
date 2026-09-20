@@ -166,6 +166,7 @@
    `{"id":"<예측 id>","outcome":"hit|partial|miss","miss_attribution":"(miss 면 무엇을 안 봤나)"}`
    - 09시가 이미 채점한 `horizon="09:00"` 예측은 건너뛴다(중복 금지).
    - 미배치(보류·blocked) 그림자 예측은 `{"id":"<id>","realized":{"forgone_krw":<샀더라면 손익>,"regime":"risk_on|risk_off"}}` — forgone 은 실제 관측 종가로만, `risk_off` 면 채점기가 감점 면제.
+   - **잔여 미채점 건수 의무 표기 (codify 2026-09-20, 근거 lessons 2026-07-30·2026-09-09, 재발 7회)**: 채점 완료 후 `horizon` 이 오늘 18:00 이전으로 도래했는데 결과 줄이 없는 예측 건수를 세어 "한눈에 보기" 아래 1줄로 남긴다(`잔여 미채점: N건`). N>0 이면 이 자리에서 즉시 채점해 0으로 만든다 — "전수 완료"는 서술이 아니라 이 숫자로 증명한다.
 2. **학습 기록**: miss 1건당 `state/lessons.md` 에 `선제추론오차` 항목 추가(분류·예측/실제·미흡했던 부분·**다음 추론 시 고려**·선제 액션 결과·분류 신뢰도). 미배치로 놓친 수익이 컸으면 `기회비용오차`. 누적 카운터(`선제추론오차`/`기회비용오차`)도 갱신.
 3. **당일 환류**: `python scripts/score_inferences.py` → `python scripts/build_inference_checklist.py` 실행 — 오늘 miss 가 `inference_checklist.md` 에 즉시 반영돼 **내일 00시/06시/09시 추론이 어제 교훈을 이미 읽는다**(학습 지연 제거). 채점 산출(`inference_scorecard.json`)의 적중률·결합손익은 리포트에 나열하지 않고 일요일 리뷰·state 에만 둔다.
 

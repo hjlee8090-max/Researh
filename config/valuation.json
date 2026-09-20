@@ -1,334 +1,342 @@
 {
-  "as_of": "2026-09-20T08:57:04+09:00",
-  "update_cadence": "sunday_strategy 주간 갱신(분기 실적 후 필수). 모든 값은 출처 URL+게재일 동반(web_verify_guard.source_date_verification 동일 적용). 값이 null 이거나 source_date 가 90일 초과면 check_valuation_guard 가 verdict=skip 으로 아무것도 막지 않는다(결측이 새 차단 룰이 되는 래칫 방지).",
-  "schema_note": "bps=주당순자산(최근 분기), eps_fwd=12개월 선행 EPS(1차 소스: state/consensus.json 의 eps_consensus), pbr_band_5y/per_band_5y=[하단, 상단] 5년 밴드. preferred_metric: 사이클 업종(반도체·조선·자동차·전지·중공업)은 PER 함정(피크 실적=최저 PER) 때문에 PBR, 비사이클은 PER.",
-  "band_width_cap": 3.0,
-  "band_width_cap_note": "기준가(anchor)용 밴드 상단 캡 — 유효 상단 = min(밴드상단, 밴드하단 × 이 값). 5년 멀티플 밴드가 넓으면 중앙값이 적정가가 아니라 임의값이 된다(2026-08-19: LS ELECTRIC PER 24.2~72.2 = 5.0배 폭, 카카오 상승여력 +52% 중 49%p 가 이 성분). backtest_valuation_anchor.py 로 3.0 채택 — 기울기 β(D+120) 0.098→0.141·(D+250) 0.211→0.295 로 45% 개선하면서 수준비율(오늘 기준 가격÷적정가)을 0.95→1.04 로 목표대 0.90~0.95 근처에 둔다. 더 조이면(2.0) 기울기는 낫지만 수준이 1.22 로 과보수가 되고 18종 중 15종에 걸려 가드가 아니라 재설계가 된다. 3.0 은 폭 3.0 초과 8종에만 걸린다. 캡은 기준가에만 적용하고 천장 캡(policy.valuation_anchor)은 건드리지 않는다. null 이면 캡 없음.",
-  "tickers": {
-    "005930": {
-      "name": "삼성전자",
-      "preferred_metric": "PBR",
-      "bps": 85953.0,
-      "eps_fwd": 51400.0,
-      "pbr_band_5y": [
-        0.91,
-        3.82
-      ],
-      "per_band_5y": [
-        10.45,
-        28.6
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=005930",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "000660": {
-      "name": "SK하이닉스",
-      "preferred_metric": "PBR",
-      "bps": 370628.0,
-      "eps_fwd": 330600.0,
-      "pbr_band_5y": [
-        1.74,
-        7.52
-      ],
-      "per_band_5y": [
-        5.2,
-        37.78
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=000660",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "005380": {
-      "name": "현대차",
-      "preferred_metric": "PBR",
-      "bps": 464535.0,
-      "eps_fwd": 36318.0,
-      "pbr_band_5y": [
-        0.46,
-        1.31
-      ],
-      "per_band_5y": [
-        4.16,
-        18.68
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=005380",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "009540": {
-      "name": "HD한국조선해양",
-      "preferred_metric": "PBR",
-      "bps": 209763.0,
-      "eps_fwd": 59083.0,
-      "pbr_band_5y": [
-        0.84,
-        2.45
-      ],
-      "per_band_5y": [
-        8.02,
-        83.67
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=009540",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "010140": {
-      "name": "삼성중공업",
-      "preferred_metric": "PBR",
-      "bps": 5579.0,
-      "eps_fwd": 1060.0,
-      "pbr_band_5y": [
-        1.86,
-        6.04
-      ],
-      "per_band_5y": [
-        33.77,
-        291.56
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=010140",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "012450": {
-      "name": "한화에어로스페이스",
-      "preferred_metric": "PER",
-      "bps": 233266.0,
-      "eps_fwd": 44500.0,
-      "pbr_band_5y": [
-        2.75,
-        7.69
-      ],
-      "per_band_5y": [
-        14.14,
-        57.4
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=012450",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "267260": {
-      "name": "HD현대일렉트릭",
-      "preferred_metric": "PER",
-      "bps": 62664.0,
-      "eps_fwd": 26258.0,
-      "pbr_band_5y": [
-        4.2,
-        18.8
-      ],
-      "per_band_5y": [
-        21.52,
-        71.89
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=267260",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "373220": {
-      "name": "LG에너지솔루션",
-      "preferred_metric": "PBR",
-      "bps": 95361.0,
-      "eps_fwd": null,
-      "pbr_band_5y": [
-        3.18,
-        5.23
-      ],
-      "per_band_5y": [
-        127.1,
-        1556.5
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=373220",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "079550": {
-      "name": "LIG넥스원(LIG디펜스앤에어로스페이스)",
-      "preferred_metric": "PER",
-      "bps": 73035.0,
-      "eps_fwd": 16311.0,
-      "pbr_band_5y": [
-        2.79,
-        12.42
-      ],
-      "per_band_5y": [
-        24.54,
-        77.4
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=079550",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "042700": {
-      "name": "한미반도체",
-      "preferred_metric": "PBR",
-      "bps": 7873.0,
-      "eps_fwd": 2330.0,
-      "pbr_band_5y": [
-        11.91,
-        43.79
-      ],
-      "per_band_5y": [
-        36.35,
-        161.76
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=042700",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "055550": {
-      "name": "신한지주",
-      "preferred_metric": "PER",
-      "bps": 124659.0,
-      "eps_fwd": 12189.0,
-      "pbr_band_5y": [
-        0.38,
-        0.84
-      ],
-      "per_band_5y": [
-        5.1,
-        11.45
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=055550",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "086790": {
-      "name": "하나금융지주",
-      "preferred_metric": "PER",
-      "bps": 167901.0,
-      "eps_fwd": 17000.0,
-      "pbr_band_5y": [
-        0.38,
-        0.79
-      ],
-      "per_band_5y": [
-        4.44,
-        9.29
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=086790",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "105560": {
-      "name": "KB금융",
-      "preferred_metric": "PER",
-      "bps": 166602.0,
-      "eps_fwd": 19067.0,
-      "pbr_band_5y": [
-        0.41,
-        1.02
-      ],
-      "per_band_5y": [
-        5.79,
-        12.88
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=105560",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "035420": {
-      "name": "NAVER",
-      "preferred_metric": "PER",
-      "bps": 196875.0,
-      "eps_fwd": 12250.0,
-      "pbr_band_5y": [
-        1.0,
-        1.45
-      ],
-      "per_band_5y": [
-        16.03,
-        39.71
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=035420",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "035720": {
-      "name": "카카오",
-      "preferred_metric": "PER",
-      "bps": 26703.0,
-      "eps_fwd": 1316.0,
-      "pbr_band_5y": [
-        1.35,
-        2.46
-      ],
-      "per_band_5y": [
-        40.02,
-        66.92
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=035720",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "010120": {
-      "name": "LS ELECTRIC",
-      "preferred_metric": "PER",
-      "bps": 14319.0,
-      "eps_fwd": 3575.0,
-      "pbr_band_5y": [
-        1.24,
-        16.99
-      ],
-      "per_band_5y": [
-        23.53,
-        115.93
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=010120",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "028260": {
-      "name": "삼성물산",
-      "preferred_metric": "PBR",
-      "bps": 646552.0,
-      "eps_fwd": 16304.0,
-      "pbr_band_5y": [
-        0.53,
-        1.02
-      ],
-      "per_band_5y": [
-        7.3,
-        19.25
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=028260",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    },
-    "006400": {
-      "name": "삼성SDI",
-      "preferred_metric": "PBR",
-      "bps": 308649.0,
-      "eps_fwd": 8522.0,
-      "pbr_band_5y": [
-        0.69,
-        2.02
-      ],
-      "per_band_5y": [
-        29.06,
-        759.17
-      ],
-      "source_url": "https://finance.naver.com/item/main.naver?code=006400",
-      "source_date": "2026-08-30",
-      "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
-      "band_quality": "dart_quarterly"
-    }
+ "as_of": "2026-09-20T18:06:36+09:00",
+ "update_cadence": "sunday_strategy 주간 갱신(분기 실적 후 필수). 모든 값은 출처 URL+게재일 동반(web_verify_guard.source_date_verification 동일 적용). 값이 null 이거나 source_date 가 90일 초과면 check_valuation_guard 가 verdict=skip 으로 아무것도 막지 않는다(결측이 새 차단 룰이 되는 래칫 방지).",
+ "schema_note": "bps=주당순자산(최근 분기), eps_fwd=12개월 선행 EPS(1차 소스: state/consensus.json 의 eps_consensus), pbr_band_5y/per_band_5y=[하단, 상단] 5년 밴드. preferred_metric: 사이클 업종(반도체·조선·자동차·전지·중공업)은 PER 함정(피크 실적=최저 PER) 때문에 PBR, 비사이클은 PER.",
+ "band_width_cap": 3.0,
+ "band_width_cap_note": "기준가(anchor)용 밴드 상단 캡 — 유효 상단 = min(밴드상단, 밴드하단 × 이 값). 5년 멀티플 밴드가 넓으면 중앙값이 적정가가 아니라 임의값이 된다(2026-08-19: LS ELECTRIC PER 24.2~72.2 = 5.0배 폭, 카카오 상승여력 +52% 중 49%p 가 이 성분). backtest_valuation_anchor.py 로 3.0 채택 — 기울기 β(D+120) 0.098→0.141·(D+250) 0.211→0.295 로 45% 개선하면서 수준비율(오늘 기준 가격÷적정가)을 0.95→1.04 로 목표대 0.90~0.95 근처에 둔다. 더 조이면(2.0) 기울기는 낫지만 수준이 1.22 로 과보수가 되고 18종 중 15종에 걸려 가드가 아니라 재설계가 된다. 3.0 은 폭 3.0 초과 8종에만 걸린다. 캡은 기준가에만 적용하고 천장 캡(policy.valuation_anchor)은 건드리지 않는다. null 이면 캡 없음.",
+ "tickers": {
+  "005930": {
+   "name": "삼성전자",
+   "preferred_metric": "PBR",
+   "bps": 85953.0,
+   "eps_fwd": 51400.0,
+   "pbr_band_5y": [
+    0.91,
+    3.82
+   ],
+   "per_band_5y": [
+    10.45,
+    28.6
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=005930",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
   },
-  "weekly_refresh_note": "[2026-09-13 일요일 주간 갱신 — 정책 v2.11 valuation_anchor] 1차 소스 `state/consensus.json` 은 오늘 08:23 재수집됐으나 **fetched_ok=0**(FnGuide 컴퍼니가이드 20종 전부 fetch 실패, 직전값 보존·stale) 이라 eps_fwd 를 컨센서스로 새로 채울 수 없었다. 규약대로 **직전값을 보존하고 임의 추정치로 덮어쓰지 않는다** — 결측이 차단 룰이 되지 않도록 null 은 null 로 둔다(verdict=skip). bps·pbr_band_5y·per_band_5y 는 DART 분기 자본총계 기반 산출본이며 다음 갱신 트리거는 3분기 실적 발표(10월 하순~11월)다. `state/fundamentals.json` 도 DART_API_KEY 미설정으로 이번 주 갱신 없이 직전 32종 보존(stale) — stale ≠ low 이며 진입 차단 사유가 아니다. 오늘 `check_valuation_guard.py` 실행 결과: **ok 17 · deep_value 1 · cap_target 0 · overheat_entry 0**. 유일한 표시는 카카오(035720) — 현재 PER 26.22 가 5년 밴드 하단 40.02 를 밑도는 deep_value 로, '싸다'가 아니라 **밸류트랩 주의**이며 단독 매수신호가 아니다(W38 watch_items 에 그대로 이월). 보유 4종(KB금융·신한지주·하나금융지주·삼성물산)은 목표가가 밴드 천장을 넘지 않았고 현재가도 밴드 상단 안쪽이라 W38 배치 계획을 막는 밸류에이션 사유는 없다."
+  "000660": {
+   "name": "SK하이닉스",
+   "preferred_metric": "PBR",
+   "bps": 370628.0,
+   "eps_fwd": 330600.0,
+   "pbr_band_5y": [
+    1.74,
+    7.52
+   ],
+   "per_band_5y": [
+    5.2,
+    37.78
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=000660",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "005380": {
+   "name": "현대차",
+   "preferred_metric": "PBR",
+   "bps": 464535.0,
+   "eps_fwd": 36318.0,
+   "pbr_band_5y": [
+    0.46,
+    1.31
+   ],
+   "per_band_5y": [
+    4.16,
+    18.68
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=005380",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "009540": {
+   "name": "HD한국조선해양",
+   "preferred_metric": "PBR",
+   "bps": 209763.0,
+   "eps_fwd": 59083.0,
+   "pbr_band_5y": [
+    0.84,
+    2.45
+   ],
+   "per_band_5y": [
+    8.02,
+    83.67
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=009540",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "010140": {
+   "name": "삼성중공업",
+   "preferred_metric": "PBR",
+   "bps": 5579.0,
+   "eps_fwd": 1060.0,
+   "pbr_band_5y": [
+    1.86,
+    6.04
+   ],
+   "per_band_5y": [
+    33.77,
+    291.56
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=010140",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "012450": {
+   "name": "한화에어로스페이스",
+   "preferred_metric": "PER",
+   "bps": 233266.0,
+   "eps_fwd": 44500.0,
+   "pbr_band_5y": [
+    2.75,
+    7.69
+   ],
+   "per_band_5y": [
+    14.14,
+    57.4
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=012450",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "267260": {
+   "name": "HD현대일렉트릭",
+   "preferred_metric": "PER",
+   "bps": 62664.0,
+   "eps_fwd": 26258.0,
+   "pbr_band_5y": [
+    4.2,
+    18.8
+   ],
+   "per_band_5y": [
+    21.52,
+    71.89
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=267260",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "373220": {
+   "name": "LG에너지솔루션",
+   "preferred_metric": "PBR",
+   "bps": 95361.0,
+   "eps_fwd": null,
+   "pbr_band_5y": [
+    3.18,
+    5.23
+   ],
+   "per_band_5y": [
+    127.1,
+    1556.5
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=373220",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "079550": {
+   "name": "LIG넥스원(LIG디펜스앤에어로스페이스)",
+   "preferred_metric": "PER",
+   "bps": 73035.0,
+   "eps_fwd": 16311.0,
+   "pbr_band_5y": [
+    2.79,
+    12.42
+   ],
+   "per_band_5y": [
+    24.54,
+    77.4
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=079550",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "042700": {
+   "name": "한미반도체",
+   "preferred_metric": "PBR",
+   "bps": 7873.0,
+   "eps_fwd": 2330.0,
+   "pbr_band_5y": [
+    11.91,
+    43.79
+   ],
+   "per_band_5y": [
+    36.35,
+    161.76
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=042700",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "055550": {
+   "name": "신한지주",
+   "preferred_metric": "PER",
+   "bps": 124659.0,
+   "eps_fwd": 12189.0,
+   "pbr_band_5y": [
+    0.38,
+    0.84
+   ],
+   "per_band_5y": [
+    5.1,
+    11.45
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=055550",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "086790": {
+   "name": "하나금융지주",
+   "preferred_metric": "PER",
+   "bps": 167901.0,
+   "eps_fwd": 17000.0,
+   "pbr_band_5y": [
+    0.38,
+    0.79
+   ],
+   "per_band_5y": [
+    4.44,
+    9.29
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=086790",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "105560": {
+   "name": "KB금융",
+   "preferred_metric": "PER",
+   "bps": 166602.0,
+   "eps_fwd": 19067.0,
+   "pbr_band_5y": [
+    0.41,
+    1.02
+   ],
+   "per_band_5y": [
+    5.79,
+    12.88
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=105560",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "035420": {
+   "name": "NAVER",
+   "preferred_metric": "PER",
+   "bps": 196875.0,
+   "eps_fwd": 12250.0,
+   "pbr_band_5y": [
+    1.0,
+    1.45
+   ],
+   "per_band_5y": [
+    16.03,
+    39.71
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=035420",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "035720": {
+   "name": "카카오",
+   "preferred_metric": "PER",
+   "bps": 26703.0,
+   "eps_fwd": 1316.0,
+   "pbr_band_5y": [
+    1.35,
+    2.46
+   ],
+   "per_band_5y": [
+    40.02,
+    66.92
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=035720",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "010120": {
+   "name": "LS ELECTRIC",
+   "preferred_metric": "PER",
+   "bps": 14319.0,
+   "eps_fwd": 3575.0,
+   "pbr_band_5y": [
+    1.24,
+    16.99
+   ],
+   "per_band_5y": [
+    23.53,
+    115.93
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=010120",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "028260": {
+   "name": "삼성물산",
+   "preferred_metric": "PBR",
+   "bps": 646552.0,
+   "eps_fwd": 16304.0,
+   "pbr_band_5y": [
+    0.53,
+    1.02
+   ],
+   "per_band_5y": [
+    7.3,
+    19.25
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=028260",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  },
+  "006400": {
+   "name": "삼성SDI",
+   "preferred_metric": "PBR",
+   "bps": 308649.0,
+   "eps_fwd": 8522.0,
+   "pbr_band_5y": [
+    0.69,
+    2.02
+   ],
+   "per_band_5y": [
+    29.06,
+    759.17
+   ],
+   "source_url": "https://finance.naver.com/item/main.naver?code=006400",
+   "source_date": "2026-08-30",
+   "method": "DART 분기 자본총계 11개(2023연간~) ÷ 역산주식수 → 분기 BPS(t), TTM 순이익 → EPS(t). price_history 647일 종가와 결합한 실측 멀티플 시계열의 5/95퍼센타일 밴드. 한계: 주식수 고정(증자·소각 미반영)·창 ~2.5년.",
+   "band_quality": "dart_quarterly"
+  }
+ },
+ "weekly_refresh_note": "[2026-09-13 일요일 주간 갱신 — 정책 v2.11 valuation_anchor] 1차 소스 `state/consensus.json` 은 오늘 08:23 재수집됐으나 **fetched_ok=0**(FnGuide 컴퍼니가이드 20종 전부 fetch 실패, 직전값 보존·stale) 이라 eps_fwd 를 컨센서스로 새로 채울 수 없었다. 규약대로 **직전값을 보존하고 임의 추정치로 덮어쓰지 않는다** — 결측이 차단 룰이 되지 않도록 null 은 null 로 둔다(verdict=skip). bps·pbr_band_5y·per_band_5y 는 DART 분기 자본총계 기반 산출본이며 다음 갱신 트리거는 3분기 실적 발표(10월 하순~11월)다. `state/fundamentals.json` 도 DART_API_KEY 미설정으로 이번 주 갱신 없이 직전 32종 보존(stale) — stale ≠ low 이며 진입 차단 사유가 아니다. 오늘 `check_valuation_guard.py` 실행 결과: **ok 17 · deep_value 1 · cap_target 0 · overheat_entry 0**. 유일한 표시는 카카오(035720) — 현재 PER 26.22 가 5년 밴드 하단 40.02 를 밑도는 deep_value 로, '싸다'가 아니라 **밸류트랩 주의**이며 단독 매수신호가 아니다(W38 watch_items 에 그대로 이월). 보유 4종(KB금융·신한지주·하나금융지주·삼성물산)은 목표가가 밴드 천장을 넘지 않았고 현재가도 밴드 상단 안쪽이라 W38 배치 계획을 막는 밸류에이션 사유는 없다.",
+ "weekly_refresh_2026_W39": {
+  "as_of": "2026-09-20T18:20:00+09:00",
+  "attempted": "scripts/fetch_valuation.py 실행 — 18종 전부 네이버 파싱 실패, DART 키 미설정. **갱신 0건, 직전값(기준일 2026-08-30) 보존.**",
+  "why_not_stale_blocking": "보존된 앵커의 기준일은 2026-08-30 이고 그 이후 국내 분기 실적 발표는 **0건**이다(2분기 시즌 종료, 3분기 시즌은 10월 하순 시작). 즉 **갱신할 새 실적이 아직 없다** — 값이 낡아서가 아니라 새 값이 없어서 그대로다. 정책상 데이터를 못 채우면 null 유지·판정 skip 이고 결측이 차단 룰이 되지 않는다.",
+  "eps_source_note": "1차 소스인 state/consensus.json 도 이번 주 FnGuide fetch 0건 성공(직전값 보존)이라 eps_fwd 갱신분이 없다.",
+  "guard_result": "scripts/check_valuation_guard.py — 목표가 천장 초과(cap_target) **0종** · 밴드 상단 초과(overheat_entry) **0종** · 정상 17종 · 밴드 하단 미만(deep_value) 1종(카카오: 현재 PER 25.53 < 밴드 하단 40.02 — 밸류트랩 주의이며 단독 매수신호가 아니다). **이번 주 어떤 종목도 밸류에이션으로 막히지 않았고, 이번 주 유일한 진입 후보인 삼성SDI 도 정상(현재 PBR 1.76, 5년 밴드 0.69~2.02 안쪽)이다.**",
+  "next_mandatory_refresh": "2026년 3분기 실적 발표 직후(10월 하순) — 사이클 업종은 PBR 우선(피크 실적에서 PER 이 가장 낮게 보이는 함정)."
+ }
 }

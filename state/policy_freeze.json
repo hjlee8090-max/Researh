@@ -1,13 +1,13 @@
 {
   "active": true,
   "stage": "stage0",
-  "since": "2026-09-02",
-  "reason": "Stage 0 — reports/2026-09-02-pipeline-review.md D-1: 왕복 표본 확보 전 전략 파라미터 전면 동결(버그 수정·게이트 강화만 허용)",
-  "baseline_version": "2.36",
-  "baseline_sha256": "c7a220ba6105f5e91a827c4e9aaa2b9e7d05e3bb8f3fc4d6c110810431bfe467",
+  "since": "2026-09-23",
+  "reason": "사용자 결정 D-1(2026-09-23): momentum_strategy.config.min_score 30→0 단일 변경 후 v2.37 재baseline — 근거 reports/2026-09-23-september-pnl-review.md §4·state/backtest_account_fit.json. 나머지 파라미터 동결 유지(rebalance_days·top_n·ETF·estimate_gate 는 backlog 순차).",
+  "baseline_version": "2.37",
+  "baseline_sha256": "6133fe1e90bd685e522efd07e6d86e6847255335c84f3535da0c70aad361caf6",
   "baseline_key_sha256": {
-    "version": "5cf3dafa6b324214a89a235c27a6ac71007b896f7e6c57c308db39ddb78c4819",
-    "momentum_strategy": "aa853f0b2ac2025290323a70d7252bb3cd9a6c89ac6f8d9bbc80e9ad87059ad7",
+    "version": "7c5c69d5b56d92a638483ac95ad64627a6ec3d97655f7d535072f355de5deaf6",
+    "momentum_strategy": "49f293c0572aeed6837d7c165ce36a1c83214f474a51c027c6527421e4306310",
     "universe": "c53d009413240b2277f91d59e32e986c9bf0c20ef7c5bdb0e7ec1db7703c43be",
     "horizon": "69b7f9b3c436834004854de67c860b9186e948a92d1aa5e74dc0d320e2adc130",
     "risk": "fc928a4830674cd314ec2581f5eed5f545c8c4a3fa23c0167cd55c5622b5a579",
@@ -98,7 +98,9 @@
       "proposed": "min_score 30 → 0 (≤10 허용) · rebalance_days 21 → 42 · top_n 6 유지 또는 10. 확정 순위: min_score 가 1순위(단독으로도 효과), 나머지는 유력안",
       "expected_effect": "min_score 30 은 backtest_strategy.py 검증 범위 밖 파라미터로, 2026-08 이후 매수 가능 종목을 거의 매일 0~1개로 만들어 spec_live 그림자가 동결 이후 체결 0건·주식비중 0%(KOSPI +6.94% 구간). 정수주 백테스트 3창 전부에서 min_score 30 이 최하위(동결 이후 0.00% / 크래시 이후 -4.74% vs 하한 0 -4.12% / 2025~ +117% vs 하한 0 +232%). rebalance 42 는 크래시 이후 창에서 21 대비 +2~10%p.",
       "required_samples": "backlog[0] 이 요구한 '정수주 제약 포함 백테스트 재실행' 충족 — state/backtest_account_fit.json (scripts/backtest_account_fit.py, 그림자 엔진 재사용, 3창×24조합×2유니버스=144행). 그림자 대조 20거래일은 2026-10-01(목) 도래.",
-      "note": "동결 중 등록만. 해제·재baseline 은 사람이 check_policy_freeze.py --init 으로. 적용 시 momentum_signal.py 는 policy 블록을 읽으므로 코드 변경 없음. 실효 첫 거래일은 추석 휴장(9/24~27) 뒤 9/28."
+      "note": "동결 중 등록만. 해제·재baseline 은 사람이 check_policy_freeze.py --init 으로. 적용 시 momentum_signal.py 는 policy 블록을 읽으므로 코드 변경 없음. 실효 첫 거래일은 추석 휴장(9/24~27) 뒤 9/28.",
+      "status": "partially_applied",
+      "applied": "2026-09-23 v2.37 — min_score 30→0 만 적용(사용자 승인 D-1). rebalance_days 21→42·top_n 은 미적용: D-1 효과를 1리밸런스 주기 분리 관측한 뒤 순차 검토."
     },
     {
       "date": "2026-09-23",
@@ -127,6 +129,12 @@
       "action": "init",
       "reason": "Stage 0 — reports/2026-09-02-pipeline-review.md D-1: 왕복 표본 확보 전 전략 파라미터 전면 동결(버그 수정·게이트 강화만 허용)",
       "baseline_version": "2.36"
+    },
+    {
+      "date": "2026-09-23",
+      "action": "init",
+      "reason": "사용자 결정 D-1(2026-09-23): momentum_strategy.config.min_score 30→0 단일 변경 후 v2.37 재baseline — 근거 reports/2026-09-23-september-pnl-review.md §4·state/backtest_account_fit.json. 나머지 파라미터 동결 유지(rebalance_days·top_n·ETF·estimate_gate 는 backlog 순차).",
+      "baseline_version": "2.37"
     }
   ]
 }

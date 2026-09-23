@@ -151,8 +151,8 @@ A 는 "무엇을 들고 있었나"의 문제, B 는 "어떻게 갈아탔나"의 
 
 ## 6. 기록 분리
 
-### Decision Log (사용자 확정 대기)
-- D-1 min_score 30 → 0 — 확정 권고.
+### Decision Log
+- D-1 min_score 30 → 0 — **사용자 승인·적용 완료(2026-09-23, policy v2.37, §7)**.
 - D-2 rebalance_days 21 → 42 — 유력안, D-1 뒤 순차.
 - D-5 cutover 판정일 10/1 — 판정 지표 = 라이브 − spec_backtest 그림자 격차 부호.
 
@@ -170,3 +170,36 @@ A 는 "무엇을 들고 있었나"의 문제, B 는 "어떻게 갈아탔나"의 
 
 ### Change Log
 - 2026-09-23 본 진단 작성. `scripts/backtest_account_fit.py` 신설(그림자 엔진 재사용, 표준 라이브러리) → `state/backtest_account_fit.json`. `state/etf_history.json` 1회 수집. `state/policy_freeze.json.backlog` 에 D-1/D-2·D-4·D-3 후보 3건 등록. `config/policy.json`·매매·주간 계획 무변경.
+- 2026-09-23 (같은 날, 사용자 승인) **D-1 적용** — §7.
+
+---
+
+## 7. D-1 적용 기록 (2026-09-23, 사용자 승인)
+
+**바꾼 것 (단일 변경).**
+- `config/policy.json` v2.36 → **v2.37**: `momentum_strategy.config.min_score` **30 → 0**. rules 문구·config_note 에 유래 1줄, changelog 1건. rebalance_days 21·top_n 6·tracked_only·`discovery_gate.promote_score_min` 30 은 그대로(한 번에 한 실험).
+- 정책 동결: `check_policy_freeze.py --init` 으로 **v2.37 을 새 baseline** 으로 재설정(since 2026-09-23, history 에 사유 기록). 동결은 계속 활성이다 — 다음 변경도 backlog → 해제 → 재baseline 순서.
+- backlog 해당 항목 `status: partially_applied`.
+- `docs/strategy_momentum.md`·`scripts/shadow_account.py` 의 "하한 30" 문구 갱신. 생성 파일(`momentum_signal.json` 등)은 커밋하지 않음 — main 의 정기 수집이 재생성한다.
+
+**적용 직후 엔진 산출 (9/23 08:34 일봉, 로컬 재실행·미커밋).**
+
+| 순위 | 종목 | 점수 | 실행 가능 배분 | 비고 |
+|---|---|---|---|---|
+| 1 | SK하이닉스 | 39.9 | 제외 | 1주 184만원 > 종목당 상한 |
+| 2 | 하나금융지주 | 25.2 | 5주 14.7% | 보유 3주 |
+| 3 | 신한지주 | 23.9 | 6주 14.7% | 9/21 청산했던 이름 — 엔진은 다시 산다 |
+| 4 | 삼성SDI | 22.7 | 1주 11.5% | 보유 1주 |
+| 5 | LS ELECTRIC | 20.0 | 3주 13.7% | 신규 |
+| 6 | 삼성전자 | 19.6 | 2주 12.0% | 신규 — 9월 내내 🔴로 막혀 있던 이름 |
+| 7 | KB금융 | 19.4 | 4주 15.3% | 보유 5주 |
+| 9 | 삼성물산 | 7.1 | — | 보유 2주. 보유 수 ≤ top_n 이라 회전아웃 대상 아님 |
+
+하한 30 에서 "매수 가능 0 → 폴백 하나금융지주 10주"였던 산출이, 하한 0 에서는 **6종 81.8% 배치·현금 18.2%** 로 바뀐다. 이것이 D-1 의 전부다.
+
+**실효 시점 — 두 조건.**
+1. 이 브랜치가 **main 에 머지**돼야 루틴(main 을 clone)이 v2.37 을 읽는다. 머지 전에는 아무것도 바뀌지 않는다.
+2. 엔진 진입 의도(`order_intents`)는 **리밸런스일에만** 산출된다(빈 슬롯 채우기 포함). anchor 9/2 + 21거래일 = **10/6(화)**. 9/23 dry-run 결과도 "리밸런스일 아님(6거래일 남음) — 신규 진입 의도 없음". 10/6 예상: 빈 슬롯 2 → 신한지주 6주 + LS ELECTRIC 3주 ≈ 131만원, 주식 비중 ≈ 84%.
+   - 9/28 개장부터 반영하려면 `state/stage.json.rebalance_anchor` 를 `2026-09-28` 로 바꾸면 된다(동결 대상 아님, 한 줄). 대가: 4일 휴장 뒤 첫 시가에 약 130만원을 한 번에 넣는다 — 미중 정상회담(9/24)이 그 사이에 있다. **이 리포트는 이 결정을 하지 않는다(사용자 판단).**
+
+**Warning.** 그림자 `spec_live` 는 매 실행 전체 재계산이라 다음 갱신부터 하한 0 으로 9/2 부터 다시 그려진다. "하한 30 = 동결 이후 체결 0" 기록은 이 리포트 §1·§3 과 git 이력에만 남는다.

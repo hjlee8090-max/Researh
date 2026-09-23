@@ -9,7 +9,8 @@
 무엇: price_history.json(레포 커밋본) 만으로 매 실행 시 출발일부터 **전체 경로를 재계산**한다
 (상태 파일 누적 없음 → 드리프트·오염 없음, 멱등). 변형(variant) 2종:
   - spec_backtest : backtest_strategy.json.recommended_config (Top10·42거래일 리밸·MA200·60/120) — 검증된 명세
-  - spec_live     : policy.momentum_strategy.config (Top6·21거래일·min_score 30) — 라이브가 따른다고 선언한 명세.
+  - spec_live     : policy.momentum_strategy.config (Top6·21거래일·min_score = policy 현재값; 2026-09-02~23 은 30, v2.37 부터 0) — 라이브가 따른다고 선언한 명세.
+                    매 실행 전체 재계산이므로 policy 값이 바뀌면 동결 이후 곡선도 새 값으로 다시 그려진다(옛 값의 기록은 git 이력·reports/2026-09-23-september-pnl-review.md).
                     tracked_only 는 과거 시점의 candidates 를 복원할 수 없어 적용하지 않는다(명시).
 두 변형 모두 **오버레이 없음**(하드스톱·트레일링·orange/red·R/R 룰·thesis 무효화 전부 없음).
 리밸런스일에만 회전: 자격 이탈 종목 매도, 신규 편입 종목 매수. 유지 종목은 손대지 않는다.

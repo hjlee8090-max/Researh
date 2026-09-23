@@ -6,7 +6,8 @@
   "llm": "Stage 1 dry-run — 코드가 주문 의도(order_intents)를 매일 산출하고 LLM 루틴이 집행/거부를 기록한다. 원장 기록 주체는 아직 LLM.",
   "code": "Stage 1 cutover — 주문 의도가 곧 주문. LLM 은 거부권(사유 기록)만. 전환 기준: reports/2026-09-02-pipeline-review.md §6-2 Stage 0→1 행 + docs/plan_stage1.md §3"
  },
- "rebalance_anchor": "2026-09-02",
+ "rebalance_anchor": "2026-09-28",
+ "rebalance_anchor_note": "2026-09-23 사용자 결정 — 9/2 → 9/28 이동. D-1(policy v2.37 min_score 0) 적용분을 추석 휴장(9/24~27) 뒤 첫 거래일 개장에 반영하기 위해 첫 리밸런스일을 앞당김(원래 그리드는 10/6). 이후 21거래일 주기. 앵커 도래 전(9/23~27)은 리밸런스일이 아니다(build_order_intents anchor_pending). 근거·리스크: reports/2026-09-23-september-pnl-review.md §7",
  "hard_exit_rules": [
   "hard_stop(position.stop_price 종가 이탈)",
   "trend_break(종가 < MA200)",

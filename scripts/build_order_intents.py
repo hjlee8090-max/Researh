@@ -54,6 +54,19 @@ def trading_dates():
     return sorted(b["date"] for b in (h.get("index", {}).get("bars") or []) if b.get("close"))
 
 
+def business_days_until(from_date: str, to_date: str) -> int:
+    """(from_date, to_date] 구간의 KRX 영업일 수 — config/market_calendar.json 기준(check_market_open.evaluate)."""
+    from check_market_open import evaluate as market_open
+    d = datetime.strptime(from_date, "%Y-%m-%d").date()
+    end = datetime.strptime(to_date, "%Y-%m-%d").date()
+    n = 0
+    while d < end:
+        d += timedelta(days=1)
+        if market_open(d)[0]:
+            n += 1
+    return n
+
+
 def ma200_map():
     """종목별 MA200 — momentum_signal.full_ranking 이 이미 계산해 둔 값을 쓴다(단일 산식)."""
     return {}
@@ -134,6 +147,12 @@ def main() -> int:
     days_since = grid.index(data_date) if data_date in grid else 0
     is_rebal = (days_since % rebal_days == 0)
     to_next = rebal_days - (days_since % rebal_days)
+    anchor_pending = bool(data_date) and data_date < anchor
+    if anchor_pending:
+        # 미래 앵커(사람이 첫 리밸런스일을 잡아 둔 경우, 2026-09-23 anchor=9/28) — 도래 전에는 리밸런스일이 아니다.
+        # 이 분기가 없으면 grid 가 비어 days_since=0 → 오늘(휴장일 포함)을 리밸런스일로 오판해 진입 의도가 생긴다.
+        is_rebal = False
+        to_next = business_days_until(data_date, anchor)
 
     equity = float(portfolio.get("equity") or 0)
     cash = float(portfolio.get("cash") or 0)
@@ -209,6 +228,8 @@ def main() -> int:
     entry_note = None
     if reset_pending:
         entry_note = "자본 리셋 pending — 현금화 완료(보유 0) 후 다음 리밸런스일부터 진입"
+    elif anchor_pending:
+        entry_note = f"리밸런스 앵커 {anchor} 미도래(앵커까지 {to_next}거래일) — 신규 진입 의도 없음"
     elif not is_rebal:
         entry_note = f"리밸런스일 아님(다음 리밸런스까지 {to_next}거래일) — 신규 진입 의도 없음"
     elif vacant <= 0:
@@ -258,8 +279,8 @@ def main() -> int:
         "spec": {"engine": "state/momentum_signal.json", "top_n": top_n, "rebalance_days": rebal_days,
                  "hard_exit_rules": ["hard_stop", "trend_break", "rebalance_rotation"],
                  "sizing": {"max_position_weight_pct": cap_pct, "min_cash_weight_pct": min_cash_pct}},
-        "rebalance": {"anchor": anchor, "trading_days_since_anchor": days_since, "is_rebalance_day": is_rebal,
-                      "trading_days_to_next": 0 if is_rebal else to_next},
+        "rebalance": {"anchor": anchor, "anchor_pending": anchor_pending, "trading_days_since_anchor": days_since,
+                      "is_rebalance_day": is_rebal, "trading_days_to_next": 0 if is_rebal else to_next},
         "account": {"equity": equity, "cash": cash, "held": len(held), "vacant_slots_after_exits": max(0, vacant)},
         "capital_reset": {"status": cap_reset.get("status"), "requested": cap_reset.get("requested"), "done_date": cap_reset.get("done_date")},
         "intents": intents,

@@ -159,6 +159,7 @@ scripts/
   **오버레이 없이** 정수주·거래비용 포함으로 페이퍼 체결해 라이브와 같은 출발점(동결일 라이브 equity)에서 나란히 기록. `fetch_history.yml` 이 평일 매일 재계산·커밋(멱등).
   판정 질문은 하나 — "LLM+게이트 레이어가 검증 전략에 더하는가, 빼는가". 단계 이동 기준은 진단 리포트 §6-2.
 - 어떤 프롬프트도 이 파일들을 의무 적재하지 않는다(핫패스 아님). 일일 감사가 동결 상태·그림자 신선도를 표면화한다.
+- **계좌 정합 백테스트(2026-09-23)**: `scripts/backtest_account_fit.py` → `state/backtest_account_fit.json` — 그림자 엔진(정수주·상한·비용)으로 top_n × min_score × 리밸주기 그리드를 3창(동결 이후·크래시 이후·2025~)에서 재실행(backlog[0] 요구분). `--extra-history state/etf_history.json`(1회 수집, 종가만) 이 ETF 보강 변형. 결론·결정 후보(min_score 30 제거 1순위)는 `reports/2026-09-23-september-pnl-review.md`.
 
 ## Stage 1 — 실행의 코드화, dry-run (2026-09-02 착수, `docs/plan_stage1.md`)
 - **주문 의도**: `scripts/build_order_intents.py` → `state/order_intents.json`. 검증 엔진 바스켓(`momentum_signal.json`)·보유·손절선으로 "명세가 시키는 주문"을 결정론 산출

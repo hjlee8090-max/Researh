@@ -89,6 +89,36 @@
       "expected_effect": "같은 종목에 반복 (b) 처방(무의미한 손절 재상향)을 막고 R/R 하한 미달 구조를 조기에 익절/부분익절로 정리",
       "required_samples": "동결 해제 후 재발 사례 1~2건 추가 관측(현재는 하나금융지주 단일 사례) — 승격 전 재현성 확인",
       "note": "expiry 2026-09-08 도래분 §1-2-b 만료 판정에서 승격 후보로 상정(state/lessons.md 2026-09-01 항목 참조). 동결 중이라 등록만."
+    },
+    {
+      "date": "2026-09-23",
+      "proposer": "user_request+analysis (reports/2026-09-23-september-pnl-review.md)",
+      "field": "momentum_strategy.config.{min_score, rebalance_days, top_n} (+ position_sizing.max_positions 동기)",
+      "current": "min_score 30 · rebalance_days 21 · top_n 6 (max_positions 6)",
+      "proposed": "min_score 30 → 0 (≤10 허용) · rebalance_days 21 → 42 · top_n 6 유지 또는 10. 확정 순위: min_score 가 1순위(단독으로도 효과), 나머지는 유력안",
+      "expected_effect": "min_score 30 은 backtest_strategy.py 검증 범위 밖 파라미터로, 2026-08 이후 매수 가능 종목을 거의 매일 0~1개로 만들어 spec_live 그림자가 동결 이후 체결 0건·주식비중 0%(KOSPI +6.94% 구간). 정수주 백테스트 3창 전부에서 min_score 30 이 최하위(동결 이후 0.00% / 크래시 이후 -4.74% vs 하한 0 -4.12% / 2025~ +117% vs 하한 0 +232%). rebalance 42 는 크래시 이후 창에서 21 대비 +2~10%p.",
+      "required_samples": "backlog[0] 이 요구한 '정수주 제약 포함 백테스트 재실행' 충족 — state/backtest_account_fit.json (scripts/backtest_account_fit.py, 그림자 엔진 재사용, 3창×24조합×2유니버스=144행). 그림자 대조 20거래일은 2026-10-01(목) 도래.",
+      "note": "동결 중 등록만. 해제·재baseline 은 사람이 check_policy_freeze.py --init 으로. 적용 시 momentum_signal.py 는 policy 블록을 읽으므로 코드 변경 없음. 실효 첫 거래일은 추석 휴장(9/24~27) 뒤 9/28."
+    },
+    {
+      "date": "2026-09-23",
+      "proposer": "user_request+analysis (reports/2026-09-23-september-pnl-review.md)",
+      "field": "universe / fetch_history 종목군 — backlog[0] (b) 'ETF 로 유니버스 보강' 구체화",
+      "current": "대형주 32종목(SK하이닉스 1주 = 계좌의 ~40% 로 종목당 상한 초과 → 영구 제외), ETF 0",
+      "proposed": "KODEX 200(069500)·TIGER 200(102110)·KODEX 반도체(091160)·KODEX 2차전지산업(305720) 4종을 유니버스·candidates 에 추가(모멘텀 랭킹에서 개별 종목과 동일 취급)",
+      "expected_effect": "1주 가격이 계좌 상한을 넘는 주도주의 노출을 ETF 로 대체 — 정수주 백테스트: 동결 이후 Top10/하한0/42일 +1.75% → +3.03%, 2025~ +232% → +283%(KOSPI +193%). 단 크래시 이후 창은 -4.12% → -9.26% 로 낙폭이 커진다(지수 ETF 가 개별 추세필터보다 늦게 빠짐) — 순이득이 아니라 트레이드오프.",
+      "required_samples": "state/etf_history.json(2026-09-23 1회 수동 수집, 종가만) 으로 백테스트 완료. fetch_history.yml 종목군 연동·candidates 승격은 동결 해제 후.",
+      "note": "확인 필요 ①지수 ETF 를 코어(고정 비중)로 둘지, 개별 종목과 같은 랭킹 경쟁에 둘지(백테스트는 후자) ②섹터 ETF 편입 시 개별 종목과의 섹터 중복 한도 ③ETF 는 거래세 면제라 policy.trading_cost 매도 0.18% 과대 — 비용 모델 분리 여부."
+    },
+    {
+      "date": "2026-09-23",
+      "proposer": "user_request+analysis (reports/2026-09-23-september-pnl-review.md)",
+      "field": "entry_filters.estimate_gate.applies_to — 엔진 의도(order_intents momentum_basket_entry)에 대한 적용 범위",
+      "current": "score_candidates tradable 판정 전체에 차단으로 적용 — 엔진 의도도 차단됨(oi-20260903-1 삼성SDI 만료 사례: 상한가 476,900 vs 종가 539,000, t+5 +6.5% 일실)",
+      "proposed": "엔진 의도(momentum_basket_entry)에는 차단 → advisory 강등(리포트 표기만), LLM 재량 진입에는 차단 유지",
+      "expected_effect": "엔진 의도 만료율 감소(동결 이후 엔진 의도 2건 중 2건 만료, 그중 1건이 이 게이트). 9월 차단 30건은 SK하이닉스 8·삼성전자 8·LS ELECTRIC 7·한미반도체 4 로 리셋 이후 +8~14% 오른 이름들이지만, 이는 min_score/상한에 먼저 막힌 종목이라 이 게이트 단독 효과는 아니다.",
+      "required_samples": "확인 필요 — estimate_scorecard.gate_cost 는 전 기간(144건) fwd20 중앙값 -3.63%·양수율 41% 로 '차단 정당' 판정 중. 9월 차단 30건의 20거래일 채점(10월 초 도래) 확인 후 결정. 판정 기준(사전 등록): 9월 차단분 fwd20 중앙값 ≥ +3% 이면 강등, 아니면 현행 유지.",
+      "note": "세 후보 중 근거가 가장 약함(유력안 아님 — 확인 필요). 동결 중 등록만."
     }
   ],
   "history": [

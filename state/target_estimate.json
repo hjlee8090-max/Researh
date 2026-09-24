@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-09-24T09:07:34+09:00",
-  "snapshot_as_of": "2026-09-24T09:07:31+09:00",
+  "as_of": "2026-09-24T10:17:23+09:00",
+  "snapshot_as_of": "2026-09-24T10:17:20+09:00",
   "horizon_months": 12,
   "formula": "추정목표가 = 기준가(밸류밴드·컨센 평균, 결측 시 현재가) × (1 + 추세게이트×(테마P(호라이즌할인) + 양뉴스P(시간감쇠·확률·기반영차감)) + 음뉴스P + 섹터활발성P + 모멘텀틸트(초과수익+52주고점)) → min(컨센×1.15, 밸류천장) 캡 [v1.1 백테스트 보정]",
   "kospi_ret_60d_pct": -15.82,
@@ -15,10 +15,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 2.16,
-        "news": 4.41,
+        "news": 2.91,
         "sector": 4.07,
         "momentum": 1.0,
-        "total": 11.64
+        "total": 10.14
       },
       "trend_gate": {
         "factor": 1.0,
@@ -26,14 +26,14 @@
         "pct_of_52w_high": 48.49,
         "ungated": {
           "theme": 2.16,
-          "news": 4.41
+          "news": 2.91
         }
       },
-      "raw_estimate": 58100.0,
+      "raw_estimate": 57400.0,
       "cap_applied": null,
-      "estimate": 58100.0,
-      "expected_return_pct": 71.9,
-      "entry_cap_price": 54900.0,
+      "estimate": 57400.0,
+      "expected_return_pct": 69.8,
+      "entry_cap_price": 54200.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -42,7 +42,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 62.4,
+      "entry_cap_gap_pct": 60.4,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +23%p) · 섹터값 0.02(집중도 평소 0.82배·heat 0.025)",
@@ -103,6 +103,34 @@
         ],
         "news_parts": [
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -146,12 +174,28 @@
         "prev_estimate": 58100.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": 0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -700.0,
+        "entry_cap_delta_krw": -700.0,
+        "news_pct_delta": -1.49,
+        "expected_return_delta_pct": -2.1
       },
       "new_news_since_prev": [
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
         {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -161,8 +205,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **58,100원**(+71.9%, 등급 B · ⚠밴드이탈) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+4/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **54,900원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 62.4% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **57,400원**(+69.8%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼700원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_rate_shock(해외) -0.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **54,200원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 60.4% 낮음) · 직전 리포트 대비 ▼700원"
     },
     {
       "ticker": "035420",
@@ -174,10 +218,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.46,
-        "news": -2.65,
+        "news": -4.15,
         "sector": 4.07,
         "momentum": 1.0,
-        "total": 5.88
+        "total": 4.38
       },
       "trend_gate": {
         "factor": 1.0,
@@ -185,14 +229,14 @@
         "pct_of_52w_high": 64.47,
         "ungated": {
           "theme": 3.46,
-          "news": -2.65
+          "news": -4.15
         }
       },
-      "raw_estimate": 284500.0,
+      "raw_estimate": 280500.0,
       "cap_applied": null,
-      "estimate": 284500.0,
-      "expected_return_pct": 45.2,
-      "entry_cap_price": 269600.0,
+      "estimate": 280500.0,
+      "expected_return_pct": 43.1,
+      "entry_cap_price": 265800.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -201,7 +245,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 37.6,
+      "entry_cap_gap_pct": 35.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +23%p) · 섹터값 0.02(집중도 평소 0.82배·heat 0.025)",
@@ -262,6 +306,34 @@
         ],
         "news_parts": [
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -305,12 +377,28 @@
         "prev_estimate": 284400.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.1
+        "estimate_delta_krw": -3900.0,
+        "entry_cap_delta_krw": -3700.0,
+        "news_pct_delta": -1.51,
+        "expected_return_delta_pct": -2.0
       },
       "new_news_since_prev": [
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
         {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -320,8 +408,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **284,500원**(+45.2%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+3/뉴스-3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **269,600원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 37.6% 낮음) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **280,500원**(+43.1%, 등급 A) · 직전 리포트 대비 ▼3,900원 · 프리미엄 테마+3/뉴스-4/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.0%; global_rate_shock(해외) -0.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **265,800원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 35.6% 낮음) · 직전 리포트 대비 ▼3,700원"
     },
     {
       "ticker": "267260",
@@ -333,10 +421,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.9,
-        "news": 2.67,
+        "news": 1.17,
         "sector": 4.54,
         "momentum": -3.5,
-        "total": 4.61
+        "total": 3.11
       },
       "trend_gate": {
         "factor": 0.3,
@@ -344,14 +432,14 @@
         "pct_of_52w_high": 49.86,
         "ungated": {
           "theme": 3.0,
-          "news": 8.89
+          "news": 7.39
         }
       },
-      "raw_estimate": 964100.0,
+      "raw_estimate": 950200.0,
       "cap_applied": null,
-      "estimate": 964100.0,
-      "expected_return_pct": 35.2,
-      "entry_cap_price": 889100.0,
+      "estimate": 950200.0,
+      "expected_return_pct": 33.3,
+      "entry_cap_price": 876200.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -360,7 +448,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 24.7,
+      "entry_cap_gap_pct": 22.9,
       "entry_cap_note": null,
       "entry_cap_caution": "falling knife(60일 -24%) — 추격 금지(추세 약세)",
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +15%p) · 섹터값 0.13(집중도 평소 0.95배·heat 0.192)",
@@ -453,6 +541,34 @@
             ]
           },
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -496,10 +612,10 @@
         "prev_estimate": 964000.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -13800.0,
+        "entry_cap_delta_krw": -12800.0,
+        "news_pct_delta": -1.51,
+        "expected_return_delta_pct": -1.9
       },
       "new_news_since_prev": [
         {
@@ -511,6 +627,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE8xTnZkeXZpSVlqX3d4NjFVdXdmYUpUWVZrVVRYRjlrSVRBaXhZSUNTVTRvQllDXzl5eGVnY3E1WnFtTG5Idmc?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -519,8 +651,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **964,100원**(+35.2%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+1/뉴스+3/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **889,100원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 24.7% 낮음) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **950,200원**(+33.3%, 등급 A) · 직전 리포트 대비 ▼13,800원 · 프리미엄 테마+1/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **876,200원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 22.9% 낮음) · 직전 리포트 대비 ▼12,800원"
     },
     {
       "ticker": "012450",
@@ -532,10 +664,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.15,
-        "news": 9.73,
+        "news": 8.23,
         "sector": 4.0,
         "momentum": 1.0,
-        "total": 17.88
+        "total": 16.38
       },
       "trend_gate": {
         "factor": 1.0,
@@ -543,14 +675,14 @@
         "pct_of_52w_high": 62.3,
         "ungated": {
           "theme": 3.15,
-          "news": 9.73
+          "news": 8.23
         }
       },
-      "raw_estimate": 1349400.0,
+      "raw_estimate": 1332200.0,
       "cap_applied": null,
-      "estimate": 1349400.0,
-      "expected_return_pct": 30.9,
-      "entry_cap_price": 1231400.0,
+      "estimate": 1332200.0,
+      "expected_return_pct": 29.2,
+      "entry_cap_price": 1215700.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -559,7 +691,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 19.4,
+      "entry_cap_gap_pct": 17.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +16%p) · 섹터값 0.00(집중도 평소 0.6배·heat 0.0)",
@@ -629,7 +761,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -3.82,
             "contrib_pct": 1.76,
-            "note": "한화에어로스페이스, 美 탄약 생산 거점 구축에 3조원 투자 - 지디넷코리아",
+            "note": "한화에어로스페이스, 美 탄약 생산 거점 구축에 3조원 투자 - zdnet.co.kr",
             "source_url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE10SER6cUx5SXR1aVVyMk1NVE1rd0hGWi15ektBekNrUE15Qm42eUczdXg5eEVQN01SSHZRTEQ4MDlTY1FUbjh5dUVyQkV6c2J6MG01QzJn?oc=5",
             "matched_keywords": [
               "조원투자",
@@ -650,6 +782,34 @@
             "matched_keywords": [
               "국산화"
             ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -695,10 +855,10 @@
         "prev_estimate": 1350000.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -600.0,
-        "entry_cap_delta_krw": -600.0,
-        "news_pct_delta": -0.05,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -17800.0,
+        "entry_cap_delta_krw": -16300.0,
+        "news_pct_delta": -1.55,
+        "expected_return_delta_pct": -1.7
       },
       "new_news_since_prev": [
         {
@@ -706,7 +866,7 @@
           "type": "capex_expansion",
           "date": "2026-09-22",
           "contrib_pct": 1.76,
-          "note": "한화에어로스페이스, 美 탄약 생산 거점 구축에 3조원 투자 - 지디넷코리아",
+          "note": "한화에어로스페이스, 美 탄약 생산 거점 구축에 3조원 투자 - zdnet.co.kr",
           "source_url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE10SER6cUx5SXR1aVVyMk1NVE1rd0hGWi15ektBekNrUE15Qm42eUczdXg5eEVQN01SSHZRTEQ4MDlTY1FUbjh5dUVyQkV6c2J6MG01QzJn?oc=5"
         },
         {
@@ -718,6 +878,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBBNmhQRkpJTkR4YVlFMVpGTjlPdmRWekszOVByWE4tdTBZRHBkVVp5R0hwMU45dlE3NmlFLTdlcTI5eHh2UDhEOTNvYmdLcTVta0xlWjJxam40VWpBMm9zY2JXNWNqWW5mYi1XZWtYNm5Pcjg?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -726,8 +902,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,349,400원**(+30.9%, 등급 A) · 직전 리포트 대비 ▼600원 · 프리미엄 테마+3/뉴스+10/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,231,400원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 19.4% 낮음) · 직전 리포트 대비 ▼600원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,332,200원**(+29.2%, 등급 A) · 직전 리포트 대비 ▼17,800원 · 프리미엄 테마+3/뉴스+8/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,215,700원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 17.9% 낮음) · 직전 리포트 대비 ▼16,300원"
     },
     {
       "ticker": "028260",
@@ -739,10 +915,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.76,
-        "news": 3.24,
+        "news": 2.6,
         "sector": 5.6,
         "momentum": -3.5,
-        "total": 7.1
+        "total": 6.46
       },
       "trend_gate": {
         "factor": 0.3,
@@ -753,11 +929,11 @@
           "news": 12.0
         }
       },
-      "raw_estimate": 465700.0,
+      "raw_estimate": 462900.0,
       "cap_applied": null,
-      "estimate": 465700.0,
-      "expected_return_pct": 26.4,
-      "entry_cap_price": 426400.0,
+      "estimate": 462900.0,
+      "expected_return_pct": 25.6,
+      "entry_cap_price": 423800.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -766,7 +942,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 15.7,
+      "entry_cap_gap_pct": 15.0,
       "entry_cap_note": null,
       "entry_cap_caution": "falling knife(60일 -22%) — 추격 금지(추세 약세)",
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -885,16 +1061,30 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-20",
+            "date": "2026-09-24",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.96,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 1.54,
-            "contrib_pct": -0.86,
-            "note": "Global bond selloff debt, inflation and rising yields - The Financial Express",
-            "source_url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOVm05TnM3eG1fUjhka0gxM2pGTUtid1ZaNlQ1dF84THZrUnRBTHk0ODlFQ2FiUVpNbGJmSkE0Q2FCaGptT2RFS0VZRTFWMVdvMlE5UVUtNjFOTC1Ea1hib1c3eXVWZlc0V09BV2dnZ2E4MENVRlVZTTlTOHFvNWtvQ2ZmMC1XLVd0T2l0ZVBVbDhrZWxLU25lNXlqMUowdWI2Szk5bk4yOVN6bkJiUDFYVmhjRGVUaThoTXFmZVRfUHJKQ3Jua0hZ0gHHAUFVX3lxTE5WbTlOczd4bV9SOGRrSDEzakZNS2J3Vlo2VDV0XzhMdmtSdEFMeTQ4OUVDYWJRWk1sYmZKQTRDYUJoam1PZEVLRVlFMVYxV28yUTlRVS02MU5MLURrWGJvVzd5dVZmVzRXT0FXZ2dnYTgwQ1VGVVlNOVM4cW81a29DZmYwLVctV3RPaXRlUFVsOGtlbEtTbmU1eWoxSjB1YjZLOTluTjI5U3puQmJQMVhWaGNEZVRpOGhNcWZlVF9QckpDcm5rSFk?oc=5"
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -940,10 +1130,10 @@
         "prev_estimate": 464700.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 1000.0,
-        "entry_cap_delta_krw": 900.0,
-        "news_pct_delta": 0.24,
-        "expected_return_delta_pct": 0.3
+        "estimate_delta_krw": -1800.0,
+        "entry_cap_delta_krw": -1700.0,
+        "news_pct_delta": -0.4,
+        "expected_return_delta_pct": -0.5
       },
       "new_news_since_prev": [
         {
@@ -973,10 +1163,18 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-20",
-          "contrib_pct": -0.86,
-          "note": "Global bond selloff debt, inflation and rising yields - The Financial Express",
-          "source_url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOVm05TnM3eG1fUjhka0gxM2pGTUtid1ZaNlQ1dF84THZrUnRBTHk0ODlFQ2FiUVpNbGJmSkE0Q2FCaGptT2RFS0VZRTFWMVdvMlE5UVUtNjFOTC1Ea1hib1c3eXVWZlc0V09BV2dnZ2E4MENVRlVZTTlTOHFvNWtvQ2ZmMC1XLVd0T2l0ZVBVbDhrZWxLU25lNXlqMUowdWI2Szk5bk4yOVN6bkJiUDFYVmhjRGVUaThoTXFmZVRfUHJKQ3Jua0hZ0gHHAUFVX3lxTE5WbTlOczd4bV9SOGRrSDEzakZNS2J3Vlo2VDV0XzhMdmtSdEFMeTQ4OUVDYWJRWk1sYmZKQTRDYUJoam1PZEVLRVlFMVYxV28yUTlRVS02MU5MLURrWGJvVzd5dVZmVzRXT0FXZ2dnYTgwQ1VGVVlNOVM4cW81a29DZmYwLVctV3RPaXRlUFVsOGtlbEtTbmU1eWoxSjB1YjZLOTluTjI5U3puQmJQMVhWaGNEZVRpOGhNcWZlVF9QckpDcm5rSFk?oc=5"
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -987,8 +1185,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **465,700원**(+26.4%, 등급 A) · 직전 리포트 대비 ▲1,000원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **426,400원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.7% 낮음) · 직전 리포트 대비 ▲900원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **462,900원**(+25.6%, 등급 A) · 직전 리포트 대비 ▼1,800원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **423,800원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.0% 낮음) · 직전 리포트 대비 ▼1,700원"
     },
     {
       "ticker": "105560",
@@ -1000,10 +1198,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 7.89,
+        "news": 6.39,
         "sector": 5.6,
         "momentum": 3.0,
-        "total": 21.39
+        "total": 19.89
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1011,14 +1209,14 @@
         "pct_of_52w_high": 89.51,
         "ungated": {
           "theme": 4.9,
-          "news": 7.89
+          "news": 6.39
         }
       },
-      "raw_estimate": 213700.0,
+      "raw_estimate": 211100.0,
       "cap_applied": null,
-      "estimate": 213700.0,
-      "expected_return_pct": 22.7,
-      "entry_cap_price": 201500.0,
+      "estimate": 211100.0,
+      "expected_return_pct": 21.3,
+      "entry_cap_price": 199100.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1027,7 +1225,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 15.7,
+      "entry_cap_gap_pct": 14.4,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -1099,11 +1297,39 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -3.18,
             "contrib_pct": 3.48,
-            "note": "KB금융, 호실적에도 양종희 회장 연임 대신 ‘변화’ 선택 - insnews.co.kr",
-            "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9pcXZ5RWRRRUFMdHdWelBfOW54SHR1UXJRWEpEUllLX1VwcXV2anloeVZQNnllT1I0cnNXekdDd2E1Uzd4ZHB1SG1vbGJVY3UtT0dackRzamZ1cTlVaDZyeUtwYWdjRHh1eEg40gFvQVVfeXFMTzRueUcwcDBqbFF5N3lrWWk3anZnU2d3VVpMQ3psVEQ0VS1yVkZFNG1oaUlETjlJaGxHLVhpdU9NN0lLV1RWY3g0R0gwMG1DSE1RNTc2YkowWktQRUZqYWZObW5xWDNuYlNIODdHa0w0?oc=5",
+            "note": "KB금융, 호실적에도 양종희 회장 연임 대신 ‘변화’ 선택 - 한국보험신문",
+            "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE80bnlHMHAwamxReTd5a1lpN2p2Z1Nnd1VaTEN6bFRENFUtclZGRTRtaGlJRE45SWhsRy1YaXVPTTdJS1dUVmN4NEdIMDBtQ0hNUTU3NmJKMFpLUEVGamFmTm1ucVgzbmJTSDg3R2tMNNIBb0FVX3lxTE80bnlHMHAwamxReTd5a1lpN2p2Z1Nnd1VaTEN6bFRENFUtclZGRTRtaGlJRE45SWhsRy1YaXVPTTdJS1dUVmN4NEdIMDBtQ0hNUTU3NmJKMFpLUEVGamFmTm1ucVgzbmJTSDg3R2tMNA?oc=5",
             "matched_keywords": [
               "호실적"
             ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1161,10 +1387,10 @@
         "prev_estimate": 213800.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -100.0,
-        "entry_cap_delta_krw": -100.0,
-        "news_pct_delta": -0.03,
-        "expected_return_delta_pct": -0.1
+        "estimate_delta_krw": -2700.0,
+        "entry_cap_delta_krw": -2500.0,
+        "news_pct_delta": -1.53,
+        "expected_return_delta_pct": -1.5
       },
       "new_news_since_prev": [
         {
@@ -1172,8 +1398,24 @@
           "type": "earnings_surprise_beat",
           "date": "2026-09-21",
           "contrib_pct": 3.48,
-          "note": "KB금융, 호실적에도 양종희 회장 연임 대신 ‘변화’ 선택 - insnews.co.kr",
-          "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9pcXZ5RWRRRUFMdHdWelBfOW54SHR1UXJRWEpEUllLX1VwcXV2anloeVZQNnllT1I0cnNXekdDd2E1Uzd4ZHB1SG1vbGJVY3UtT0dackRzamZ1cTlVaDZyeUtwYWdjRHh1eEg40gFvQVVfeXFMTzRueUcwcDBqbFF5N3lrWWk3anZnU2d3VVpMQ3psVEQ0VS1yVkZFNG1oaUlETjlJaGxHLVhpdU9NN0lLV1RWY3g0R0gwMG1DSE1RNTc2YkowWktQRUZqYWZObW5xWDNuYlNIODdHa0w0?oc=5"
+          "note": "KB금융, 호실적에도 양종희 회장 연임 대신 ‘변화’ 선택 - 한국보험신문",
+          "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE80bnlHMHAwamxReTd5a1lpN2p2Z1Nnd1VaTEN6bFRENFUtclZGRTRtaGlJRE45SWhsRy1YaXVPTTdJS1dUVmN4NEdIMDBtQ0hNUTU3NmJKMFpLUEVGamFmTm1ucVgzbmJTSDg3R2tMNNIBb0FVX3lxTE80bnlHMHAwamxReTd5a1lpN2p2Z1Nnd1VaTEN6bFRENFUtclZGRTRtaGlJRE45SWhsRy1YaXVPTTdJS1dUVmN4NEdIMDBtQ0hNUTU3NmJKMFpLUEVGamFmTm1ucVgzbmJTSDg3R2tMNA?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1184,8 +1426,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **213,700원**(+22.7%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+5/뉴스+8/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **201,500원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 15.7% 낮음) · 직전 리포트 대비 ▼100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **211,100원**(+21.3%, 등급 A) · 직전 리포트 대비 ▼2,700원 · 프리미엄 테마+5/뉴스+6/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **199,100원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 14.4% 낮음) · 직전 리포트 대비 ▼2,500원"
     },
     {
       "ticker": "055550",
@@ -1197,10 +1439,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 9.89,
+        "news": 8.39,
         "sector": 5.6,
         "momentum": 1.5,
-        "total": 21.89
+        "total": 20.39
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1208,14 +1450,14 @@
         "pct_of_52w_high": 94.51,
         "ungated": {
           "theme": 4.9,
-          "news": 9.89
+          "news": 8.39
         }
       },
-      "raw_estimate": 128600.0,
+      "raw_estimate": 127000.0,
       "cap_applied": null,
-      "estimate": 128600.0,
-      "expected_return_pct": 16.8,
-      "entry_cap_price": 120500.0,
+      "estimate": 127000.0,
+      "expected_return_pct": 15.3,
+      "entry_cap_price": 119000.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1224,7 +1466,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 9.4,
+      "entry_cap_gap_pct": 8.1,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -1311,7 +1553,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -3.61,
             "contrib_pct": 2.24,
-            "note": "주주환원 확대한 신한금융, ‘밸류업 2.0’ 통했다…한국IR대상 최고 영예 - economist.co.kr",
+            "note": "주주환원 확대한 신한금융, ‘밸류업 2.0’ 통했다…한국IR대상 최고 영예 - 이코노미스트",
             "source_url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFA1b1pMaEY0YmxWcEF1NW9tOUVqQ2NvLTZHVU9IUFNUZUhUeWZjbG9MNmdoazB2d2Njc3VZNjJ2LWtrckVjelBZemN1TVpZdW03Sl9aa0E2dlVJU3JXdkNzdVZB?oc=5",
             "matched_keywords": [
               "주주환원확대",
@@ -1332,6 +1574,34 @@
             "matched_keywords": [
               "밸류업"
             ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1377,10 +1647,10 @@
         "prev_estimate": 128600.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": -0.06,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -1600.0,
+        "entry_cap_delta_krw": -1500.0,
+        "news_pct_delta": -1.56,
+        "expected_return_delta_pct": -1.5
       },
       "new_news_since_prev": [
         {
@@ -1396,7 +1666,7 @@
           "type": "buyback_cancellation",
           "date": "2026-09-18",
           "contrib_pct": 2.24,
-          "note": "주주환원 확대한 신한금융, ‘밸류업 2.0’ 통했다…한국IR대상 최고 영예 - economist.co.kr",
+          "note": "주주환원 확대한 신한금융, ‘밸류업 2.0’ 통했다…한국IR대상 최고 영예 - 이코노미스트",
           "source_url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFA1b1pMaEY0YmxWcEF1NW9tOUVqQ2NvLTZHVU9IUFNUZUhUeWZjbG9MNmdoazB2d2Njc3VZNjJ2LWtrckVjelBZemN1TVpZdW03Sl9aa0E2dlVJU3JXdkNzdVZB?oc=5"
         },
         {
@@ -1408,6 +1678,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBuQUZIU1EyaUdSQkl1VVcyc1BrcGZTLU5uUy14RzNmdmpFSmdoR2tVaWdPVW9rdUhRY3FMRmMwU3NEa1loajJFUVpUeS1yLW1rSFhlZjhZSFhLSHZHRC1YVi1EemNjaW1vU2fSAW5BVV95cUxOZzJDa0FtV2p1UUc5cm9mMWFIcVVQNFcyMGtLdHowblhybVMySTZULW5vb0NzV3kzTVZWUGdjNE1QWDZXMXh3NmUxWjMydEtZS3IzMFlhUDdsdlJEWGJhdU1ibGs2OXRwZjlDMlpIUQ?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -1416,8 +1702,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **128,600원**(+16.8%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+10/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **120,500원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 9.4% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **127,000원**(+15.3%, 등급 A) · 직전 리포트 대비 ▼1,600원 · 프리미엄 테마+5/뉴스+8/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **119,000원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 8.1% 낮음) · 직전 리포트 대비 ▼1,500원"
     },
     {
       "ticker": "068270",
@@ -1429,10 +1715,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.55,
-        "news": 8.36,
+        "news": 6.86,
         "sector": 4.88,
         "momentum": 2.0,
-        "total": 16.79
+        "total": 15.29
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1440,14 +1726,14 @@
         "pct_of_52w_high": 74.44,
         "ungated": {
           "theme": 1.55,
-          "news": 8.36
+          "news": 6.86
         }
       },
-      "raw_estimate": 208000.0,
+      "raw_estimate": 205300.0,
       "cap_applied": null,
-      "estimate": 208000.0,
-      "expected_return_pct": 16.8,
-      "entry_cap_price": 199300.0,
+      "estimate": 205300.0,
+      "expected_return_pct": 15.3,
+      "entry_cap_price": 196700.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1456,7 +1742,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 11.9,
+      "entry_cap_gap_pct": 10.4,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +26%p) · 섹터값 0.22(집중도 평소 1.05배·heat 0.314)",
@@ -1528,11 +1814,39 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -1.01,
             "contrib_pct": 1.76,
-            "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - joongboo.com",
+            "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - 중부일보",
             "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5nblYtWmI3TXpoN0dhYzBCSFRnTk5jRW5oQy13bVhPNlVRM0JPU2tOeEpaQXpnc2hwRVM4aGxNQUZqaEdCaFFPVUJHdkx5RnVyaDBFWHZqS1pFekdCX0Y5WkMwb3ItVjk1WEJSLWRBWQ?oc=5",
             "matched_keywords": [
               "증설"
             ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1578,10 +1892,10 @@
         "prev_estimate": 208100.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -100.0,
-        "entry_cap_delta_krw": -100.0,
-        "news_pct_delta": -0.03,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -2800.0,
+        "entry_cap_delta_krw": -2700.0,
+        "news_pct_delta": -1.53,
+        "expected_return_delta_pct": -1.5
       },
       "new_news_since_prev": [
         {
@@ -1597,8 +1911,24 @@
           "type": "capex_expansion",
           "date": "2026-09-22",
           "contrib_pct": 1.76,
-          "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - joongboo.com",
+          "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - 중부일보",
           "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5nblYtWmI3TXpoN0dhYzBCSFRnTk5jRW5oQy13bVhPNlVRM0JPU2tOeEpaQXpnc2hwRVM4aGxNQUZqaEdCaFFPVUJHdkx5RnVyaDBFWHZqS1pFekdCX0Y5WkMwb3ItVjk1WEJSLWRBWQ?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1609,8 +1939,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **208,000원**(+16.8%, 등급 B) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **199,300원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 11.9% 낮음) · 직전 리포트 대비 ▼100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **205,300원**(+15.3%, 등급 B) · 직전 리포트 대비 ▼2,800원 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **196,700원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 10.4% 낮음) · 직전 리포트 대비 ▼2,700원"
     },
     {
       "ticker": "207940",
@@ -1622,10 +1952,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 2.0,
-        "news": 8.46,
+        "news": 6.96,
         "sector": 4.88,
         "momentum": 1.0,
-        "total": 16.34
+        "total": 14.84
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1633,14 +1963,14 @@
         "pct_of_52w_high": 69.1,
         "ungated": {
           "theme": 2.0,
-          "news": 8.46
+          "news": 6.96
         }
       },
-      "raw_estimate": 1597300.0,
+      "raw_estimate": 1576800.0,
       "cap_applied": null,
-      "estimate": 1597300.0,
-      "expected_return_pct": 16.3,
-      "entry_cap_price": 1528500.0,
+      "estimate": 1576800.0,
+      "expected_return_pct": 14.8,
+      "entry_cap_price": 1508900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1649,7 +1979,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 11.3,
+      "entry_cap_gap_pct": 9.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +26%p) · 섹터값 0.22(집중도 평소 1.05배·heat 0.314)",
@@ -1712,6 +2042,34 @@
             ]
           },
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -1755,10 +2113,10 @@
         "prev_estimate": 1598300.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -1000.0,
-        "entry_cap_delta_krw": -1000.0,
-        "news_pct_delta": -0.05,
-        "expected_return_delta_pct": -0.1
+        "estimate_delta_krw": -21500.0,
+        "entry_cap_delta_krw": -20600.0,
+        "news_pct_delta": -1.55,
+        "expected_return_delta_pct": -1.6
       },
       "new_news_since_prev": [
         {
@@ -1770,6 +2128,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9GcGdjLUgySXExOTNUcTl4THpUUkpMcVpScnQxa2lfeGNpbDV0Wk5Kc1FiRjNwUWRuLWxBS3hXSmo5cDRvVVcxZnczdGFhaW03UmfSAVNBVV95cUxORHJDUHBpYkI4dUx5dHZDN3FVcHVxazUtTlJrbnVRa3hkSzVUNHNRMm8wQXNYazZyay02aUNZVU9pUE5OQXNUZmk5Y1c5SWtHTFVVUQ?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -1778,8 +2152,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,597,300원**(+16.3%, 등급 B) · 직전 리포트 대비 ▼1,000원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.0%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,528,500원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 11.3% 낮음) · 직전 리포트 대비 ▼1,000원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,576,800원**(+14.8%, 등급 B) · 직전 리포트 대비 ▼21,500원 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.0%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,508,900원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 9.9% 낮음) · 직전 리포트 대비 ▼20,600원"
     },
     {
       "ticker": "373220",
@@ -1791,10 +2165,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.82,
-        "news": 2.38,
+        "news": 0.88,
         "sector": 5.16,
         "momentum": -2.5,
-        "total": 6.86
+        "total": 5.36
       },
       "trend_gate": {
         "factor": 0.6,
@@ -1802,14 +2176,14 @@
         "pct_of_52w_high": 66.79,
         "ungated": {
           "theme": 3.04,
-          "news": 6.9
+          "news": 5.4
         }
       },
-      "raw_estimate": 402300.0,
+      "raw_estimate": 396700.0,
       "cap_applied": null,
-      "estimate": 402300.0,
-      "expected_return_pct": 14.3,
-      "entry_cap_price": 371700.0,
+      "estimate": 396700.0,
+      "expected_return_pct": 12.7,
+      "entry_cap_price": 366500.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1818,7 +2192,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 5.6,
+      "entry_cap_gap_pct": 4.1,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +29%p) · 섹터값 0.29(집중도 평소 1.09배·heat 0.36)",
@@ -1927,7 +2301,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -9.53,
             "contrib_pct": 2.77,
-            "note": "[종목 포커스] LG에너지솔루션, 북미 ESS 대규모 수주로 주가 탄력 받을까 - dailyinvest.kr",
+            "note": "[종목 포커스] LG에너지솔루션, 북미 ESS 대규모 수주로 주가 탄력 받을까 - 데일리인베스트",
             "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFB3bXQtMUxtVElQM3JDcTl4akdISDRWeUFLMmpXa25WbFBwQUIxRWg0bWlkRk1XTVZRcVJ1czl2bWtDazNrcVdqMTVOWDVnZC1nb3VHUnMzemphZHhKWUozZFdQR2l0amJWWjVz0gFvQVVfeXFMTmNRNUp4akVNVl9XSC15cGpFMklBZTN2NTJFQmpseklNdDIxVTBuQkxDeUc2M29VcTdWWFI2Yzc0ZE1Xc2puSWtHeVVGbm5yUlIzbldXS2pmeUg1QnJaUUhHZURaQ0dzNWFVY3Z2QUhr?oc=5",
             "matched_keywords": [
               "대규모수주"
@@ -1947,6 +2321,34 @@
             "matched_keywords": [
               "전고체"
             ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1992,10 +2394,10 @@
         "prev_estimate": 402700.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -400.0,
-        "entry_cap_delta_krw": -300.0,
-        "news_pct_delta": -0.08,
-        "expected_return_delta_pct": -0.1
+        "estimate_delta_krw": -6000.0,
+        "entry_cap_delta_krw": -5500.0,
+        "news_pct_delta": -1.58,
+        "expected_return_delta_pct": -1.7
       },
       "new_news_since_prev": [
         {
@@ -2019,7 +2421,7 @@
           "type": "order_backlog_surprise",
           "date": "2026-09-17",
           "contrib_pct": 2.77,
-          "note": "[종목 포커스] LG에너지솔루션, 북미 ESS 대규모 수주로 주가 탄력 받을까 - dailyinvest.kr",
+          "note": "[종목 포커스] LG에너지솔루션, 북미 ESS 대규모 수주로 주가 탄력 받을까 - 데일리인베스트",
           "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFB3bXQtMUxtVElQM3JDcTl4akdISDRWeUFLMmpXa25WbFBwQUIxRWg0bWlkRk1XTVZRcVJ1czl2bWtDazNrcVdqMTVOWDVnZC1nb3VHUnMzemphZHhKWUozZFdQR2l0amJWWjVz0gFvQVVfeXFMTmNRNUp4akVNVl9XSC15cGpFMklBZTN2NTJFQmpseklNdDIxVTBuQkxDeUc2M29VcTdWWFI2Yzc0ZE1Xc2puSWtHeVVGbm5yUlIzbldXS2pmeUg1QnJaUUhHZURaQ0dzNWFVY3Z2QUhr?oc=5"
         },
         {
@@ -2031,6 +2433,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTX9IBeEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTXw?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -2039,8 +2457,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **402,300원**(+14.3%, 등급 A) · 직전 리포트 대비 ▼400원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; tech_breakthrough(자동) +3.5%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **371,700원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 5.6% 낮음) · 직전 리포트 대비 ▼300원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **396,700원**(+12.7%, 등급 A) · 직전 리포트 대비 ▼6,000원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; tech_breakthrough(자동) +3.5%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **366,500원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 4.1% 낮음) · 직전 리포트 대비 ▼5,500원"
     },
     {
       "ticker": "079550",
@@ -2052,10 +2470,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.89,
-        "news": 2.65,
+        "news": 1.15,
         "sector": 4.0,
         "momentum": -2.5,
-        "total": 6.04
+        "total": 4.54
       },
       "trend_gate": {
         "factor": 0.6,
@@ -2063,14 +2481,14 @@
         "pct_of_52w_high": 62.52,
         "ungated": {
           "theme": 3.15,
-          "news": 4.41
+          "news": 2.91
         }
       },
-      "raw_estimate": 795100.0,
+      "raw_estimate": 783800.0,
       "cap_applied": null,
-      "estimate": 795100.0,
-      "expected_return_pct": 13.7,
-      "entry_cap_price": 722900.0,
+      "estimate": 783800.0,
+      "expected_return_pct": 12.1,
+      "entry_cap_price": 712700.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2079,7 +2497,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 3.4,
+      "entry_cap_gap_pct": 2.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +16%p) · 섹터값 0.00(집중도 평소 0.6배·heat 0.0)",
@@ -2141,6 +2559,34 @@
         ],
         "news_parts": [
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -2184,12 +2630,28 @@
         "prev_estimate": 795000.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": 0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -11200.0,
+        "entry_cap_delta_krw": -10200.0,
+        "news_pct_delta": -1.49,
+        "expected_return_delta_pct": -1.6
       },
       "new_news_since_prev": [
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
         {
           "kind": "catalyst",
           "type": "earnings_report",
@@ -2199,8 +2661,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **795,100원**(+13.7%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **722,900원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 3.4% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **783,800원**(+12.1%, 등급 A) · 직전 리포트 대비 ▼11,200원 · 프리미엄 테마+2/뉴스+1/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_rate_shock(해외) -0.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **712,700원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음) · 직전 리포트 대비 ▼10,200원"
     },
     {
       "ticker": "006400",
@@ -2318,7 +2780,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -3.84,
             "contrib_pct": 1.74,
-            "note": "\"삼성SDI, 전력 인프라 기업으로 재평가…목표가↑\"-iM - hankyung.com",
+            "note": "\"삼성SDI, 전력 인프라 기업으로 재평가…목표가↑\"-iM - 한국경제",
             "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5iRmpzSUpSOVoxdi10NWtTYVFPREVjZDhoVkxLTGwxWWJJWUFyWXVOTGxDMkZQbHNrcjBpVVVxaUt2d0I4SmRUWkRrZ2xpak03ZG9IVFBHX3hCUQ?oc=5",
             "matched_keywords": [
               "목표가↑"
@@ -2348,8 +2810,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -3.84,
             "contrib_pct": 3.48,
-            "note": "iM증권 \"삼성SDI 3분기 어닝 서프라이즈 전망\"…목표가↑ - 연합뉴스",
-            "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBBRFlNMFUwUnl5VDd3N01NbWlmREdZMF96ZURONEZWYXdHV2RtN1MwNDFKeXRSbElCdk05cTRwUC1qQmdlSFJSV2I1OHU4TEJFNU56dUtGd2JTTk03TmhXONIBYEFVX3lxTFBBRFlNMFUwUnl5VDd3N01NbWlmREdZMF96ZURONEZWYXdHV2RtN1MwNDFKeXRSbElCdk05cTRwUC1qQmdlSFJSV2I1OHU4TEJFNU56dUtGd2JTTk03TmhXOA?oc=5",
+            "note": "iM증권 \"삼성SDI 3분기 어닝 서프라이즈 전망\"…목표가↑ - yna.co.kr",
+            "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9jQndWZi1WRXFpSWh1Y1BRV1k5TmZoZ3RRRzBMYzBjQTYwRVkyZkFOS05LOGpBM2o3dXZYM3F4d0dPSzR3LU1GZ2R5RE9UbmNyWjlJVVQ4WmJYV1nSAWBBVV95cUxQQURZTTBVMFJ5eVQ3dzdNTW1pZkRHWTBfemVETjRGVmF3R1dkbTdTMDQxSnl0UmxJQnZNOXE0cFAtakJnZUhSUldiNTh1OExCRTVOenVLRndiU05NN05oVzg?oc=5",
             "matched_keywords": [
               "어닝서프라이즈"
             ]
@@ -2384,6 +2846,34 @@
               "전고체",
               "상용화"
             ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2440,7 +2930,7 @@
           "type": "analyst_target_upgrade",
           "date": "2026-09-21",
           "contrib_pct": 1.74,
-          "note": "\"삼성SDI, 전력 인프라 기업으로 재평가…목표가↑\"-iM - hankyung.com",
+          "note": "\"삼성SDI, 전력 인프라 기업으로 재평가…목표가↑\"-iM - 한국경제",
           "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5iRmpzSUpSOVoxdi10NWtTYVFPREVjZDhoVkxLTGwxWWJJWUFyWXVOTGxDMkZQbHNrcjBpVVVxaUt2d0I4SmRUWkRrZ2xpak03ZG9IVFBHX3hCUQ?oc=5"
         },
         {
@@ -2456,8 +2946,8 @@
           "type": "earnings_surprise_beat",
           "date": "2026-09-21",
           "contrib_pct": 3.48,
-          "note": "iM증권 \"삼성SDI 3분기 어닝 서프라이즈 전망\"…목표가↑ - 연합뉴스",
-          "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBBRFlNMFUwUnl5VDd3N01NbWlmREdZMF96ZURONEZWYXdHV2RtN1MwNDFKeXRSbElCdk05cTRwUC1qQmdlSFJSV2I1OHU4TEJFNU56dUtGd2JTTk03TmhXONIBYEFVX3lxTFBBRFlNMFUwUnl5VDd3N01NbWlmREdZMF96ZURONEZWYXdHV2RtN1MwNDFKeXRSbElCdk05cTRwUC1qQmdlSFJSV2I1OHU4TEJFNU56dUtGd2JTTk03TmhXOA?oc=5"
+          "note": "iM증권 \"삼성SDI 3분기 어닝 서프라이즈 전망\"…목표가↑ - yna.co.kr",
+          "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9jQndWZi1WRXFpSWh1Y1BRV1k5TmZoZ3RRRzBMYzBjQTYwRVkyZkFOS05LOGpBM2o3dXZYM3F4d0dPSzR3LU1GZ2R5RE9UbmNyWjlJVVQ4WmJYV1nSAWBBVV95cUxQQURZTTBVMFJ5eVQ3dzdNTW1pZkRHWTBfemVETjRGVmF3R1dkbTdTMDQxSnl0UmxJQnZNOXE0cFAtakJnZUhSUldiNTh1OExCRTVOenVLRndiU05NN05oVzg?oc=5"
         },
         {
           "kind": "news_auto",
@@ -2474,6 +2964,22 @@
           "contrib_pct": 3.16,
           "note": "전고체 상용화 속도전…삼성SDI·CATL 앞서고 파나소닉 추격 - 메트로신문",
           "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1SUFFwazBFR0UyVjJYejhNcHBRU1BjUFlPRE41dU1SRkUwUF9yS3hOZFF0ZWY1aVhOTVMxZmNfWmp0SkZfeHY2YndHc045WC1zU3RES3gzdmRtVVFnQXVOMw?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2497,10 +3003,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 4.39,
+        "news": 2.89,
         "sector": 5.6,
         "momentum": 1.5,
-        "total": 16.39
+        "total": 14.89
       },
       "trend_gate": {
         "factor": 1.0,
@@ -2508,14 +3014,14 @@
         "pct_of_52w_high": 93.82,
         "ungated": {
           "theme": 4.9,
-          "news": 4.39
+          "news": 2.89
         }
       },
-      "raw_estimate": 145700.0,
+      "raw_estimate": 143800.0,
       "cap_applied": null,
-      "estimate": 145700.0,
-      "expected_return_pct": 9.0,
-      "entry_cap_price": 136400.0,
+      "estimate": 143800.0,
+      "expected_return_pct": 7.6,
+      "entry_cap_price": 134600.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2524,7 +3030,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 2.0,
+      "entry_cap_gap_pct": 0.7,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -2596,11 +3102,39 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -2.52,
             "contrib_pct": 1.74,
-            "note": "하나금융지주, 5대 금융 첫 ‘탈서울’…정부 인센티브도 달라져야 하나 - PRESS9",
+            "note": "하나금융지주, 5대 금융 첫 ‘탈서울’…정부 인센티브도 달라져야 하나 - press9.kr",
             "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1qNGMtRU9Wc0VDbFJuVVVtLUE5a3JzRVN1bmtONVY0dFlsc2tTN2RyV0hjOFA4bmxnRzNMc0sybEFaUEVMQ3dHbTgxTE9jVngzaUlsalVmcHFNb1R6TkR3T3FVbHk?oc=5",
             "matched_keywords": [
               "인센티브"
             ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2646,10 +3180,10 @@
         "prev_estimate": 145700.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -1900.0,
+        "entry_cap_delta_krw": -1800.0,
+        "news_pct_delta": -1.51,
+        "expected_return_delta_pct": -1.4
       },
       "new_news_since_prev": [
         {
@@ -2657,8 +3191,24 @@
           "type": "policy_support",
           "date": "2026-09-21",
           "contrib_pct": 1.74,
-          "note": "하나금융지주, 5대 금융 첫 ‘탈서울’…정부 인센티브도 달라져야 하나 - PRESS9",
+          "note": "하나금융지주, 5대 금융 첫 ‘탈서울’…정부 인센티브도 달라져야 하나 - press9.kr",
           "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1qNGMtRU9Wc0VDbFJuVVVtLUE5a3JzRVN1bmtONVY0dFlsc2tTN2RyV0hjOFA4bmxnRzNMc0sybEFaUEVMQ3dHbTgxTE9jVngzaUlsalVmcHFNb1R6TkR3T3FVbHk?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2669,8 +3219,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **145,700원**(+9.0%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+4/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +2.0%; policy_support(자동) +1.7%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **136,400원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **143,800원**(+7.6%, 등급 A) · 직전 리포트 대비 ▼1,900원 · 프리미엄 테마+5/뉴스+3/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +2.0%; policy_support(자동) +1.7%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **134,600원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 0.7% 낮음) · 직전 리포트 대비 ▼1,800원"
     },
     {
       "ticker": "005380",
@@ -2682,10 +3232,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.6,
-        "news": -5.36,
+        "news": -6.87,
         "sector": 3.2,
         "momentum": -1.5,
-        "total": -2.06
+        "total": -3.57
       },
       "trend_gate": {
         "factor": 0.3,
@@ -2693,14 +3243,14 @@
         "pct_of_52w_high": 45.59,
         "ungated": {
           "theme": 5.35,
-          "news": -5.36
+          "news": -6.87
         }
       },
-      "raw_estimate": 376100.0,
+      "raw_estimate": 370300.0,
       "cap_applied": null,
-      "estimate": 376100.0,
-      "expected_return_pct": 5.4,
-      "entry_cap_price": 355500.0,
+      "estimate": 370300.0,
+      "expected_return_pct": 3.7,
+      "entry_cap_price": 350100.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2709,7 +3259,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -0.4,
+      "entry_cap_gap_pct": -1.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.57배·heat 0.0)",
@@ -2781,17 +3331,45 @@
         "news_parts": [
           {
             "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_tariff_trade",
-            "date": "2026-09-23",
+            "date": "2026-09-24",
             "impact_pct": -4.0,
             "channel": "policy",
             "transmission": 0.4,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.95,
-            "note": "US-Built Vehicles Drop to 28.4% of Canadian Sales as Tariffs Bite - eletric-vehicles.com",
-            "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNdU9mbnJ6VFM0c1N0b1pkaUEyMjBvTjFFdUlqaGtJNC1ncmVkVjVlNTFzeWR0eVhXMVIyMmp1QXF4NzFrMmctQ2tXeXR6T2Zjb3RRR1NINk9nUlYwVzZpRzhxbTlVbFB1aHBtNmFuVVVzZUJoZnc4LVI5cUllYzlKdWMzU01uWEE4eW1IX2R3Z2paeXQyZVJOVDIza0RscXNUMFZV?oc=5"
+            "contrib_pct": -0.96,
+            "note": "U.S.-Made Vehicle Sales Drop In Canada Due To Tariffs - GM Authority",
+            "source_url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQdXB6S2dZZGZXakFlZWhfNnR2VnVOcFl4WEZDdGNzdFFvUlFIOGRaTEJoS3Q5RkROR3Y0TlJjV2RPYWhsM2x4QldaWnlWLTZrVkhGTDM5VUxyZHU3d2ZkZGpoZE5uWFdrTThDT0ZzbXdMWllFcjFvOHhJRnBvaktCamgzYk04d041eGdGZ0V1UmxLWTZE?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2837,19 +3415,35 @@
         "prev_estimate": 376100.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -5800.0,
+        "entry_cap_delta_krw": -5400.0,
+        "news_pct_delta": -1.51,
+        "expected_return_delta_pct": -1.7
       },
       "new_news_since_prev": [
         {
           "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_tariff_trade",
-          "date": "2026-09-23",
-          "contrib_pct": -0.95,
-          "note": "US-Built Vehicles Drop to 28.4% of Canadian Sales as Tariffs Bite - eletric-vehicles.com",
-          "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNdU9mbnJ6VFM0c1N0b1pkaUEyMjBvTjFFdUlqaGtJNC1ncmVkVjVlNTFzeWR0eVhXMVIyMmp1QXF4NzFrMmctQ2tXeXR6T2Zjb3RRR1NINk9nUlYwVzZpRzhxbTlVbFB1aHBtNmFuVVVzZUJoZnc4LVI5cUllYzlKdWMzU01uWEE4eW1IX2R3Z2paeXQyZVJOVDIza0RscXNUMFZV?oc=5"
+          "date": "2026-09-24",
+          "contrib_pct": -0.96,
+          "note": "U.S.-Made Vehicle Sales Drop In Canada Due To Tariffs - GM Authority",
+          "source_url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQdXB6S2dZZGZXakFlZWhfNnR2VnVOcFl4WEZDdGNzdFFvUlFIOGRaTEJoS3Q5RkROR3Y0TlJjV2RPYWhsM2x4QldaWnlWLTZrVkhGTDM5VUxyZHU3d2ZkZGpoZE5uWFdrTThDT0ZzbXdMWllFcjFvOHhJRnBvaktCamgzYk04d041eGdGZ0V1UmxLWTZE?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2860,8 +3454,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **376,100원**(+5.4%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스-5/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; global_tariff_trade(해외) -0.9%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **355,500원**(R/R≥1.0·ATR 2.9%×2≈손절 5.8% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.4% 상회)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **370,300원**(+3.7%, 등급 A) · 직전 리포트 대비 ▼5,800원 · 프리미엄 테마+2/뉴스-7/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; global_tariff_trade(해외) -1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **350,100원**(R/R≥1.0·ATR 2.9%×2≈손절 5.8% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.9% 상회) · 직전 리포트 대비 ▼5,400원"
     },
     {
       "ticker": "042700",
@@ -2873,10 +3467,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 5.38,
-        "news": 7.57,
+        "news": 5.22,
         "sector": 4.96,
         "momentum": 1.0,
-        "total": 18.91
+        "total": 16.56
       },
       "trend_gate": {
         "factor": 1.0,
@@ -2884,14 +3478,14 @@
         "pct_of_52w_high": 57.04,
         "ungated": {
           "theme": 5.38,
-          "news": 7.57
+          "news": 5.22
         }
       },
-      "raw_estimate": 256000.0,
+      "raw_estimate": 250900.0,
       "cap_applied": null,
-      "estimate": 256000.0,
-      "expected_return_pct": 5.3,
-      "entry_cap_price": 231300.0,
+      "estimate": 250900.0,
+      "expected_return_pct": 3.3,
+      "entry_cap_price": 226700.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2900,7 +3494,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -4.8,
+      "entry_cap_gap_pct": -6.7,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.44(집중도 평소 1.04배·heat 0.303)",
@@ -2963,6 +3557,21 @@
         "news_parts": [
           {
             "kind": "news_auto",
+            "type": "regulation_or_tariff",
+            "date": "2026-09-18",
+            "impact_pct": -4.0,
+            "decay": 0.93,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.7,
+            "contrib_pct": -2.24,
+            "note": "법무법인 태평양·리드 스미스, 한미 반도체 수출통제 세미나 - 조선비즈 - Chosunbiz",
+            "source_url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOUloweU5nTl83eHpydXVLU2h0M3pub2NpSEhQX01uVTNscnRpeDAxR0tjVll2bXVESVcza2ZJcHVwQ0hyT0dqRzY1bHVBOVg0b0Q4V1g2SGx0bjk1ZHNDNmpYMG5fWXkxUWZLTnJWZkxvQWhCakFsRVhNeGVtelRFLUpRVdIBlwFBVV95cUxPYTBnMk8tLVlmNjBWbDA1a1Y4RS1SdkVrY0FwOFNobDZPRE1qOUptTmZtYV9lSFlYME5MSThIb3drRzdQcGplYlIxa3hyb1RVZF9aM2ttbUVXRmVJcmRwbGlfNWFmZ0lKa24tb1BuNmtMcm1TemVZTWc2Ym1iRXZ6RHNXaENpZjRGRThyT0JBZ1lKZE9Hang4?oc=5",
+            "matched_keywords": [
+              "수출통제"
+            ]
+          },
+          {
+            "kind": "news_auto",
             "type": "supply_contract_major",
             "date": "2026-09-22",
             "impact_pct": 8.0,
@@ -2980,30 +3589,30 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-20",
+            "date": "2026-09-24",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.96,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 0.7,
-            "contrib_pct": -0.86,
-            "note": "Global bond selloff debt, inflation and rising yields - The Financial Express",
-            "source_url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOVm05TnM3eG1fUjhka0gxM2pGTUtid1ZaNlQ1dF84THZrUnRBTHk0ODlFQ2FiUVpNbGJmSkE0Q2FCaGptT2RFS0VZRTFWMVdvMlE5UVUtNjFOTC1Ea1hib1c3eXVWZlc0V09BV2dnZ2E4MENVRlVZTTlTOHFvNWtvQ2ZmMC1XLVd0T2l0ZVBVbDhrZWxLU25lNXlqMUowdWI2Szk5bk4yOVN6bkJiUDFYVmhjRGVUaThoTXFmZVRfUHJKQ3Jua0hZ0gHHAUFVX3lxTE5WbTlOczd4bV9SOGRrSDEzakZNS2J3Vlo2VDV0XzhMdmtSdEFMeTQ4OUVDYWJRWk1sYmZKQTRDYUJoam1PZEVLRVlFMVYxV28yUTlRVS02MU5MLURrWGJvVzd5dVZmVzRXT0FXZ2dnYTgwQ1VGVVlNOVM4cW81a29DZmYwLVctV3RPaXRlUFVsOGtlbEtTbmU1eWoxSjB1YjZLOTluTjI5U3puQmJQMVhWaGNEZVRpOGhNcWZlVF9QckpDcm5rSFk?oc=5"
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
           },
           {
             "kind": "news_global",
             "type": "global_risk_off",
-            "date": "2026-09-14",
+            "date": "2026-09-24",
             "impact_pct": -4.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.89,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 1.59,
-            "contrib_pct": -0.53,
-            "note": "U.S. Treasury Buybacks Fuel ‘Price Manipulation’ Suspicions, Long-Term Bond Sell-Off Deepens as Policy Credibility Erodes - economy.ac",
-            "source_url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE12RV9NOExqM0xUZzBDQ0IyeU01b0lkYjNoUjI3YUNRRXk3MmF5em1yZ2huTW83RDJLUGRFWDlkZ3liRFhyWk9zUkM5VWFOLS0zZzhPODRhZw?oc=5"
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -3049,12 +3658,20 @@
         "prev_estimate": 253800.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 2200.0,
-        "entry_cap_delta_krw": 1900.0,
-        "news_pct_delta": 0.9,
-        "expected_return_delta_pct": 0.9
+        "estimate_delta_krw": -2900.0,
+        "entry_cap_delta_krw": -2700.0,
+        "news_pct_delta": -1.45,
+        "expected_return_delta_pct": -1.1
       },
       "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "regulation_or_tariff",
+          "date": "2026-09-18",
+          "contrib_pct": -2.24,
+          "note": "법무법인 태평양·리드 스미스, 한미 반도체 수출통제 세미나 - 조선비즈 - Chosunbiz",
+          "source_url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOUloweU5nTl83eHpydXVLU2h0M3pub2NpSEhQX01uVTNscnRpeDAxR0tjVll2bXVESVcza2ZJcHVwQ0hyT0dqRzY1bHVBOVg0b0Q4V1g2SGx0bjk1ZHNDNmpYMG5fWXkxUWZLTnJWZkxvQWhCakFsRVhNeGVtelRFLUpRVdIBlwFBVV95cUxPYTBnMk8tLVlmNjBWbDA1a1Y4RS1SdkVrY0FwOFNobDZPRE1qOUptTmZtYV9lSFlYME5MSThIb3drRzdQcGplYlIxa3hyb1RVZF9aM2ttbUVXRmVJcmRwbGlfNWFmZ0lKa24tb1BuNmtMcm1TemVZTWc2Ym1iRXZ6RHNXaENpZjRGRThyT0JBZ1lKZE9Hang4?oc=5"
+        },
         {
           "kind": "news_auto",
           "type": "supply_contract_major",
@@ -3066,18 +3683,18 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-20",
-          "contrib_pct": -0.86,
-          "note": "Global bond selloff debt, inflation and rising yields - The Financial Express",
-          "source_url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOVm05TnM3eG1fUjhka0gxM2pGTUtid1ZaNlQ1dF84THZrUnRBTHk0ODlFQ2FiUVpNbGJmSkE0Q2FCaGptT2RFS0VZRTFWMVdvMlE5UVUtNjFOTC1Ea1hib1c3eXVWZlc0V09BV2dnZ2E4MENVRlVZTTlTOHFvNWtvQ2ZmMC1XLVd0T2l0ZVBVbDhrZWxLU25lNXlqMUowdWI2Szk5bk4yOVN6bkJiUDFYVmhjRGVUaThoTXFmZVRfUHJKQ3Jua0hZ0gHHAUFVX3lxTE5WbTlOczd4bV9SOGRrSDEzakZNS2J3Vlo2VDV0XzhMdmtSdEFMeTQ4OUVDYWJRWk1sYmZKQTRDYUJoam1PZEVLRVlFMVYxV28yUTlRVS02MU5MLURrWGJvVzd5dVZmVzRXT0FXZ2dnYTgwQ1VGVVlNOVM4cW81a29DZmYwLVctV3RPaXRlUFVsOGtlbEtTbmU1eWoxSjB1YjZLOTluTjI5U3puQmJQMVhWaGNEZVRpOGhNcWZlVF9QckpDcm5rSFk?oc=5"
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
-          "date": "2026-09-14",
-          "contrib_pct": -0.53,
-          "note": "U.S. Treasury Buybacks Fuel ‘Price Manipulation’ Suspicions, Long-Term Bond Sell-Off Deepens as Policy Credibility Erodes - economy.ac",
-          "source_url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE12RV9NOExqM0xUZzBDQ0IyeU01b0lkYjNoUjI3YUNRRXk3MmF5em1yZ2huTW83RDJLUGRFWDlkZ3liRFhyWk9zUkM5VWFOLS0zZzhPODRhZw?oc=5"
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -3088,8 +3705,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **256,000원**(+5.3%, 등급 A) · 직전 리포트 대비 ▲2,200원 · 프리미엄 테마+5/뉴스+8/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **231,300원**(R/R≥1.0·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 243,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.8% 상회) · 직전 리포트 대비 ▲1,900원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **250,900원**(+3.3%, 등급 A) · 직전 리포트 대비 ▼2,900원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **226,700원**(R/R≥1.0·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 243,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.7% 상회) · 직전 리포트 대비 ▼2,700원"
     },
     {
       "ticker": "009540",
@@ -3101,10 +3718,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.73,
-        "news": 3.3,
+        "news": 1.8,
         "sector": 0.0,
         "momentum": -2.5,
-        "total": 2.53
+        "total": 1.03
       },
       "trend_gate": {
         "factor": 0.6,
@@ -3112,14 +3729,14 @@
         "pct_of_52w_high": 67.75,
         "ungated": {
           "theme": 2.88,
-          "news": 5.5
+          "news": 4.0
         }
       },
-      "raw_estimate": 348600.0,
+      "raw_estimate": 343500.0,
       "cap_applied": null,
-      "estimate": 348600.0,
-      "expected_return_pct": 4.1,
-      "entry_cap_price": 319600.0,
+      "estimate": 343500.0,
+      "expected_return_pct": 2.5,
+      "entry_cap_price": 314900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3128,7 +3745,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -4.6,
+      "entry_cap_gap_pct": -6.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+51) 전후 재평가 · 섹터값 0.00(집중도 평소 0.77배·heat 0.0)",
@@ -3205,6 +3822,34 @@
             "source_url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQM2tVR2l6TkdRZnJKaDBSdzZtQlRfVkliVTcwTUMzejlHN3RpX00wOUdSNmRldzZ5QUxQMXJadUhLVnpZY0QtSXcyR0Vnb25SUnA2NEN4YkRLald2czR0blJUckpnY1Y4NzdGUEpFY29LNzV5SjZkOG1vNWtFYnJwRE9lY1NqTHpOQ1c1TktwTEVmNzNyOGQ5OU5XTXZESnBFUlZCTHEtWTNQWHIwclNyOWU2OXFuYXhCVzRLWA?oc=5"
           },
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -3248,10 +3893,10 @@
         "prev_estimate": 348700.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -100.0,
-        "entry_cap_delta_krw": -100.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -5200.0,
+        "entry_cap_delta_krw": -4800.0,
+        "news_pct_delta": -1.51,
+        "expected_return_delta_pct": -1.6
       },
       "new_news_since_prev": [
         {
@@ -3263,6 +3908,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQM2tVR2l6TkdRZnJKaDBSdzZtQlRfVkliVTcwTUMzejlHN3RpX00wOUdSNmRldzZ5QUxQMXJadUhLVnpZY0QtSXcyR0Vnb25SUnA2NEN4YkRLald2czR0blJUckpnY1Y4NzdGUEpFY29LNzV5SjZkOG1vNWtFYnJwRE9lY1NqTHpOQ1c1TktwTEVmNzNyOGQ5OU5XTXZESnBFUlZCTHEtWTNQWHIwclNyOWU2OXFuYXhCVzRLWA?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -3271,8 +3932,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **348,600원**(+4.1%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+2/뉴스+3/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **319,600원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.6% 상회) · 직전 리포트 대비 ▼100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **343,500원**(+2.5%, 등급 A) · 직전 리포트 대비 ▼5,200원 · 프리미엄 테마+2/뉴스+2/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **314,900원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.0% 상회) · 직전 리포트 대비 ▼4,800원"
     },
     {
       "ticker": "010140",
@@ -3284,10 +3945,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.77,
-        "news": 3.88,
+        "news": 2.38,
         "sector": 0.0,
         "momentum": -3.5,
-        "total": 1.15
+        "total": -0.35
       },
       "trend_gate": {
         "factor": 0.3,
@@ -3295,14 +3956,14 @@
         "pct_of_52w_high": 57.85,
         "ungated": {
           "theme": 2.56,
-          "news": 12.0
+          "news": 11.42
         }
       },
-      "raw_estimate": 20800.0,
+      "raw_estimate": 20500.0,
       "cap_applied": null,
-      "estimate": 20800.0,
-      "expected_return_pct": 1.7,
-      "entry_cap_price": 19100.0,
+      "estimate": 20500.0,
+      "expected_return_pct": 0.2,
+      "entry_cap_price": 18900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3311,7 +3972,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -6.6,
+      "entry_cap_gap_pct": -7.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+51) 전후 재평가 · 섹터값 0.00(집중도 평소 0.77배·heat 0.0)",
@@ -3448,6 +4109,34 @@
             "source_url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQM2tVR2l6TkdRZnJKaDBSdzZtQlRfVkliVTcwTUMzejlHN3RpX00wOUdSNmRldzZ5QUxQMXJadUhLVnpZY0QtSXcyR0Vnb25SUnA2NEN4YkRLald2czR0blJUckpnY1Y4NzdGUEpFY29LNzV5SjZkOG1vNWtFYnJwRE9lY1NqTHpOQ1c1TktwTEVmNzNyOGQ5OU5XTXZESnBFUlZCTHEtWTNQWHIwclNyOWU2OXFuYXhCVzRLWA?oc=5"
           },
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -3491,10 +4180,10 @@
         "prev_estimate": 20800.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": -0.02,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -300.0,
+        "entry_cap_delta_krw": -200.0,
+        "news_pct_delta": -1.52,
+        "expected_return_delta_pct": -1.5
       },
       "new_news_since_prev": [
         {
@@ -3530,6 +4219,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQM2tVR2l6TkdRZnJKaDBSdzZtQlRfVkliVTcwTUMzejlHN3RpX00wOUdSNmRldzZ5QUxQMXJadUhLVnpZY0QtSXcyR0Vnb25SUnA2NEN4YkRLald2czR0blJUckpnY1Y4NzdGUEpFY29LNzV5SjZkOG1vNWtFYnJwRE9lY1NqTHpOQ1c1TktwTEVmNzNyOGQ5OU5XTXZESnBFUlZCTHEtWTNQWHIwclNyOWU2OXFuYXhCVzRLWA?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -3538,8 +4243,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **20,800원**(+1.7%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+4/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **19,100원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 20,450원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.6% 상회)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **20,500원**(+0.2%, 등급 A) · 직전 리포트 대비 ▼300원 · 프리미엄 테마+1/뉴스+2/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **18,900원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 20,450원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.6% 상회) · 직전 리포트 대비 ▼200원"
     },
     {
       "ticker": "010120",
@@ -3551,10 +4256,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.6,
-        "news": 4.45,
+        "news": 2.95,
         "sector": 4.54,
         "momentum": -2.5,
-        "total": 8.09
+        "total": 6.59
       },
       "trend_gate": {
         "factor": 0.6,
@@ -3562,14 +4267,14 @@
         "pct_of_52w_high": 61.79,
         "ungated": {
           "theme": 2.66,
-          "news": 8.09
+          "news": 6.59
         }
       },
-      "raw_estimate": 202800.0,
+      "raw_estimate": 200000.0,
       "cap_applied": null,
-      "estimate": 202800.0,
-      "expected_return_pct": -2.0,
-      "entry_cap_price": 187100.0,
+      "estimate": 200000.0,
+      "expected_return_pct": -3.4,
+      "entry_cap_price": 184500.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3578,7 +4283,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -9.6,
+      "entry_cap_gap_pct": -10.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +15%p) · 섹터값 0.13(집중도 평소 0.95배·heat 0.192)",
@@ -3686,6 +4391,34 @@
             ]
           },
           {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
             "kind": "catalyst",
             "type": "earnings_report",
             "date": "2026-11-14",
@@ -3729,10 +4462,10 @@
         "prev_estimate": 207000.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -4200.0,
-        "entry_cap_delta_krw": -3900.0,
-        "news_pct_delta": -2.28,
-        "expected_return_delta_pct": -2.0
+        "estimate_delta_krw": -7000.0,
+        "entry_cap_delta_krw": -6500.0,
+        "news_pct_delta": -3.78,
+        "expected_return_delta_pct": -3.4
       },
       "new_news_since_prev": [
         {
@@ -3760,6 +4493,22 @@
           "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5tX1NEYnJFMm1OZlNWSDZNbE1HY0FvcmJoVUVlcWNIakFrMFN6TVBCQjh6cFJjRFl3NGlNNXZ4aTd0WTIyN2c2ZEtjUjhTTnNUekZmdU0tZXNZVTlWZlREZnpwVVRTQndJVzVn?oc=5"
         },
         {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
           "kind": "catalyst",
           "type": "earnings_report",
           "date": "2026-11-14",
@@ -3768,8 +4517,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **202,800원**(-2.0%, 등급 A) · 직전 리포트 대비 ▼4,200원 · 프리미엄 테마+2/뉴스+4/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; order_backlog_surprise(자동) +2.9%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **187,100원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 207,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 9.6% 상회) · 직전 리포트 대비 ▼3,900원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **200,000원**(-3.4%, 등급 A) · 직전 리포트 대비 ▼7,000원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; order_backlog_surprise(자동) +2.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **184,500원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 207,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 10.9% 상회) · 직전 리포트 대비 ▼6,500원"
     },
     {
       "ticker": "000660",
@@ -3781,10 +4530,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.8,
-        "news": 2.63,
+        "news": 1.19,
         "sector": 4.96,
         "momentum": -1.5,
-        "total": 7.89
+        "total": 6.45
       },
       "trend_gate": {
         "factor": 0.3,
@@ -3792,14 +4541,14 @@
         "pct_of_52w_high": 62.37,
         "ungated": {
           "theme": 6.01,
-          "news": 10.0
+          "news": 7.46
         }
       },
-      "raw_estimate": 1700800.0,
+      "raw_estimate": 1678100.0,
       "cap_applied": null,
-      "estimate": 1700800.0,
-      "expected_return_pct": -8.7,
-      "entry_cap_price": 1554400.0,
+      "estimate": 1678100.0,
+      "expected_return_pct": -9.9,
+      "entry_cap_price": 1533600.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3808,7 +4557,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -16.6,
+      "entry_cap_gap_pct": -17.7,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.44(집중도 평소 1.04배·heat 0.303)",
@@ -3878,7 +4627,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -1.9,
             "contrib_pct": 2.32,
-            "note": "삼성·SK하이닉스 통 크게 쐈지만…갈 길 먼 기업 ‘주주환원’ 확대 - economist.co.kr",
+            "note": "삼성·SK하이닉스 통 크게 쐈지만…갈 길 먼 기업 ‘주주환원’ 확대 - 이코노미스트",
             "source_url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE1sdk82Sll6THhMYmtmX3hNSmpoV3JxQ1hjM2xEbEg1WHNZRnY0aEdMdGtKNWh5RENjNXFzOFpkOHNHeHJiRDM3ODN3SG5melFnQjE1dmFGRE1xbzVzYnRfMlhR?oc=5",
             "matched_keywords": [
               "주주환원"
@@ -3901,20 +4650,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_customer_demand",
-            "date": "2026-09-21",
-            "impact_pct": 6.0,
-            "channel": "peer",
-            "transmission": 0.45,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -1.9,
-            "contrib_pct": 1.57,
-            "note": "Micron’s HBM Is Sold Out Through 2026 and Data Centre Revenue Grew 150% — Is MU a Buy at $914? - TradingKey",
-            "source_url": "https://news.google.com/rss/articles/CBMiiAJBVV95cUxPTmtmTW4xSmZhZ0xhdkNlTWtVSm1laEp1ckUyT084X0hHY0M2MEJkanFUQWZUTW5jOWtCVGVYeXlEaFk0MkZVSUYta1pGTlB0VjZJY0JpSTZ0bnlFOUpUTjZhWWdtbzltTnB6dkx3R1FZWGVpenpYZkh1Rnc1VlpFM0FBMDFnV3pobGZGRGFYREM2Uk9rZjFyNmF5NHROUW1SOVpDT2NuRF82cHJYLWp1aTB5QkdoRmtKb19kSlU1dmJ6bjZycGlNWVQ4cTkwWnVZWm1qTXZpa0NLVWtacWxVYnRNdDlOdWVpWVQ4SUpoemxhNkFZeXdvbjZtZkhoUFdLUmNBVkZVN3Y?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_peer_pricing",
             "date": "2026-09-22",
             "impact_pct": 3.0,
@@ -3929,17 +4664,31 @@
           },
           {
             "kind": "news_global",
-            "type": "global_risk_off",
-            "date": "2026-09-14",
-            "impact_pct": -4.0,
-            "channel": "customer",
+            "type": "global_rate_shock",
+            "date": "2026-09-24",
+            "impact_pct": -6.0,
+            "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.89,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 4.76,
-            "contrib_pct": -0.53,
-            "note": "Chip Stocks Tumble as AI Pacing Call Reaches Beyond Memory: Intel Drops 7%, AMD Sinks 6%, NVIDIA Pulls Back - 24/7 Wall St.",
-            "source_url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNWVotaFlCUllmUDFoWHpPdmtPamVBQzNkcTZCaW9TelVPa3ZmNGVnZ3dqRDE0ajduS0hUSEF1ekZRamNtb2Q5MXlnb0RBd1g4QXMweG50ZWFfdUp0ZS1DaFp2dEJfdDNkWGVQWHotOXZBeEFrU0wxNWtKTjRNX3F6b1lOaHNkOGJ5SGswMkV4aGFKbzlIMWJHXzlxdnNwTHpTaE1FbFBLYkN4M3JEZk1DWVdsODZ6VkhraEctYWVKRzcyRWJWN01kczJSdWtGVVFmUjRhYnAxUkJMbWE3SXFZ?oc=5"
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -3985,10 +4734,10 @@
         "prev_estimate": 1698900.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": 1900.0,
-        "entry_cap_delta_krw": 1800.0,
-        "news_pct_delta": 0.03,
-        "expected_return_delta_pct": 0.1
+        "estimate_delta_krw": -20800.0,
+        "entry_cap_delta_krw": -19000.0,
+        "news_pct_delta": -1.41,
+        "expected_return_delta_pct": -1.1
       },
       "new_news_since_prev": [
         {
@@ -3996,7 +4745,7 @@
           "type": "buyback_cancellation",
           "date": "2026-09-21",
           "contrib_pct": 2.32,
-          "note": "삼성·SK하이닉스 통 크게 쐈지만…갈 길 먼 기업 ‘주주환원’ 확대 - economist.co.kr",
+          "note": "삼성·SK하이닉스 통 크게 쐈지만…갈 길 먼 기업 ‘주주환원’ 확대 - 이코노미스트",
           "source_url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE1sdk82Sll6THhMYmtmX3hNSmpoV3JxQ1hjM2xEbEg1WHNZRnY0aEdMdGtKNWh5RENjNXFzOFpkOHNHeHJiRDM3ODN3SG5melFnQjE1dmFGRE1xbzVzYnRfMlhR?oc=5"
         },
         {
@@ -4009,14 +4758,6 @@
         },
         {
           "kind": "news_global",
-          "type": "global_customer_demand",
-          "date": "2026-09-21",
-          "contrib_pct": 1.57,
-          "note": "Micron’s HBM Is Sold Out Through 2026 and Data Centre Revenue Grew 150% — Is MU a Buy at $914? - TradingKey",
-          "source_url": "https://news.google.com/rss/articles/CBMiiAJBVV95cUxPTmtmTW4xSmZhZ0xhdkNlTWtVSm1laEp1ckUyT084X0hHY0M2MEJkanFUQWZUTW5jOWtCVGVYeXlEaFk0MkZVSUYta1pGTlB0VjZJY0JpSTZ0bnlFOUpUTjZhWWdtbzltTnB6dkx3R1FZWGVpenpYZkh1Rnc1VlpFM0FBMDFnV3pobGZGRGFYREM2Uk9rZjFyNmF5NHROUW1SOVpDT2NuRF82cHJYLWp1aTB5QkdoRmtKb19kSlU1dmJ6bjZycGlNWVQ4cTkwWnVZWm1qTXZpa0NLVWtacWxVYnRNdDlOdWVpWVQ4SUpoemxhNkFZeXdvbjZtZkhoUFdLUmNBVkZVN3Y?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_peer_pricing",
           "date": "2026-09-22",
           "contrib_pct": 0.49,
@@ -4025,11 +4766,19 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_risk_off",
-          "date": "2026-09-14",
-          "contrib_pct": -0.53,
-          "note": "Chip Stocks Tumble as AI Pacing Call Reaches Beyond Memory: Intel Drops 7%, AMD Sinks 6%, NVIDIA Pulls Back - 24/7 Wall St.",
-          "source_url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNWVotaFlCUllmUDFoWHpPdmtPamVBQzNkcTZCaW9TelVPa3ZmNGVnZ3dqRDE0ajduS0hUSEF1ekZRamNtb2Q5MXlnb0RBd1g4QXMweG50ZWFfdUp0ZS1DaFp2dEJfdDNkWGVQWHotOXZBeEFrU0wxNWtKTjRNX3F6b1lOaHNkOGJ5SGswMkV4aGFKbzlIMWJHXzlxdnNwTHpTaE1FbFBLYkN4M3JEZk1DWVdsODZ6VkhraEctYWVKRzcyRWJWN01kczJSdWtGVVFmUjRhYnAxUkJMbWE3SXFZ?oc=5"
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -4040,8 +4789,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,700,800원**(-8.7%, 등급 A) · 직전 리포트 대비 ▲1,900원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,554,400원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 16.6% 상회) · 직전 리포트 대비 ▲1,800원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,678,100원**(-9.9%, 등급 A) · 직전 리포트 대비 ▼20,800원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,533,600원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.7% 상회) · 직전 리포트 대비 ▼19,000원"
     },
     {
       "ticker": "005930",
@@ -4053,10 +4802,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.41,
-        "news": 2.18,
+        "news": 3.51,
         "sector": 4.96,
         "momentum": -1.5,
-        "total": 9.05
+        "total": 10.38
       },
       "trend_gate": {
         "factor": 0.6,
@@ -4064,14 +4813,14 @@
         "pct_of_52w_high": 76.5,
         "ungated": {
           "theme": 5.69,
-          "news": 5.6
+          "news": 7.89
         }
       },
-      "raw_estimate": 241500.0,
+      "raw_estimate": 244500.0,
       "cap_applied": null,
-      "estimate": 241500.0,
-      "expected_return_pct": -15.7,
-      "entry_cap_price": 226300.0,
+      "estimate": 244500.0,
+      "expected_return_pct": -14.7,
+      "entry_cap_price": 229100.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4080,7 +4829,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -21.0,
+      "entry_cap_gap_pct": -20.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.44(집중도 평소 1.04배·heat 0.303)",
@@ -4174,16 +4923,16 @@
           {
             "kind": "news_auto",
             "type": "buyback_cancellation",
-            "date": "2026-09-22",
+            "date": "2026-09-24",
             "impact_pct": 4.0,
-            "decay": 0.98,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 2.35,
-            "contrib_pct": 0.0,
-            "note": "[주간증시전망] 삼성전자 특별배당 받으려면? “28일까지 주식 사야”…이래서 주가 올랐나? - v.daum.net",
-            "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE9aOUdZVF9KOHpESUNkMF9KOU1qV0tTcS1Bb2dLUV9McHJzT2lTTjh3YlN6RzRBRlJYOWZvdG90NFlkdWJCNmc?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 2.4,
+            "note": "‘박스권 탈출’ 삼성전자…주주환원 타고 ‘60만전자’ 기대감 - v.daum.net",
+            "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9DTEctc1F5S252VmYxcjJuVjRoTjdGZGUzSjJLSXl1LWlSSVQzaUhPWEw0aEFCay0xcERoOUFjWlpoTEQ5SDVuWXdEMGt3V0U?oc=5",
             "matched_keywords": [
-              "특별배당"
+              "주주환원"
             ]
           },
           {
@@ -4210,7 +4959,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 2.35,
             "contrib_pct": 0.58,
-            "note": "삼성전자 덕에 '잭팟' 터졌다…한 달 만에 주가 74% '폭등' [종목+] - hankyung.com",
+            "note": "삼성전자 덕에 '잭팟' 터졌다…한 달 만에 주가 74% '폭등' [종목+] - 한국경제",
             "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1uMzZOWGFKNjV2QUNlNGFqazlHNmtkRmpuMnM0UUVvbTRVWFh1amdVaFZNeWlSUXVobTlKQmNUeGdnV0RfTERid0hOMjk5VkRtcExWTzhpNmt1dw?oc=5",
             "matched_keywords": [
               "잭팟"
@@ -4219,30 +4968,30 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-20",
+            "date": "2026-09-24",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.96,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 7.48,
-            "contrib_pct": -0.86,
-            "note": "Global bond selloff debt, inflation and rising yields - The Financial Express",
-            "source_url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOVm05TnM3eG1fUjhka0gxM2pGTUtid1ZaNlQ1dF84THZrUnRBTHk0ODlFQ2FiUVpNbGJmSkE0Q2FCaGptT2RFS0VZRTFWMVdvMlE5UVUtNjFOTC1Ea1hib1c3eXVWZlc0V09BV2dnZ2E4MENVRlVZTTlTOHFvNWtvQ2ZmMC1XLVd0T2l0ZVBVbDhrZWxLU25lNXlqMUowdWI2Szk5bk4yOVN6bkJiUDFYVmhjRGVUaThoTXFmZVRfUHJKQ3Jua0hZ0gHHAUFVX3lxTE5WbTlOczd4bV9SOGRrSDEzakZNS2J3Vlo2VDV0XzhMdmtSdEFMeTQ4OUVDYWJRWk1sYmZKQTRDYUJoam1PZEVLRVlFMVYxV28yUTlRVS02MU5MLURrWGJvVzd5dVZmVzRXT0FXZ2dnYTgwQ1VGVVlNOVM4cW81a29DZmYwLVctV3RPaXRlUFVsOGtlbEtTbmU1eWoxSjB1YjZLOTluTjI5U3puQmJQMVhWaGNEZVRpOGhNcWZlVF9QckpDcm5rSFk?oc=5"
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
           },
           {
             "kind": "news_global",
             "type": "global_risk_off",
-            "date": "2026-09-14",
+            "date": "2026-09-24",
             "impact_pct": -4.0,
-            "channel": "customer",
+            "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.89,
+            "decay": 1.0,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 9.36,
-            "contrib_pct": -0.53,
-            "note": "Chip Stocks Tumble as AI Pacing Call Reaches Beyond Memory: Intel Drops 7%, AMD Sinks 6%, NVIDIA Pulls Back - 24/7 Wall St.",
-            "source_url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNWVotaFlCUllmUDFoWHpPdmtPamVBQzNkcTZCaW9TelVPa3ZmNGVnZ3dqRDE0ajduS0hUSEF1ekZRamNtb2Q5MXlnb0RBd1g4QXMweG50ZWFfdUp0ZS1DaFp2dEJfdDNkWGVQWHotOXZBeEFrU0wxNWtKTjRNX3F6b1lOaHNkOGJ5SGswMkV4aGFKbzlIMWJHXzlxdnNwTHpTaE1FbFBLYkN4M3JEZk1DWVdsODZ6VkhraEctYWVKRzcyRWJWN01kczJSdWtGVVFmUjRhYnAxUkJMbWE3SXFZ?oc=5"
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.6,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -4288,10 +5037,10 @@
         "prev_estimate": 242700.0,
         "prev_as_of": "2026-09-23T22:32:44+09:00",
         "prev_slot": "2026-09-23-18",
-        "estimate_delta_krw": -1200.0,
-        "entry_cap_delta_krw": -1100.0,
-        "news_pct_delta": -0.62,
-        "expected_return_delta_pct": -0.4
+        "estimate_delta_krw": 1800.0,
+        "entry_cap_delta_krw": 1700.0,
+        "news_pct_delta": 0.71,
+        "expected_return_delta_pct": 0.6
       },
       "new_news_since_prev": [
         {
@@ -4301,6 +5050,14 @@
           "contrib_pct": -1.56,
           "note": "오포 등 中 스마트폰 제조사들이 삼성전자가 제시한 3분기 D램 가격 인상안을 보이콧 — 메모리 판가 인상 저항·가격 결정력 약화 신호 (뉴스1 7/24, sunday_policy_review §1-5 news_loop.unclassified_samples 검토로 발견)",
           "source_url": null
+        },
+        {
+          "kind": "news_auto",
+          "type": "buyback_cancellation",
+          "date": "2026-09-24",
+          "contrib_pct": 2.4,
+          "note": "‘박스권 탈출’ 삼성전자…주주환원 타고 ‘60만전자’ 기대감 - v.daum.net",
+          "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9DTEctc1F5S252VmYxcjJuVjRoTjdGZGUzSjJLSXl1LWlSSVQzaUhPWEw0aEFCay0xcERoOUFjWlpoTEQ5SDVuWXdEMGt3V0U?oc=5"
         },
         {
           "kind": "news_auto",
@@ -4315,24 +5072,24 @@
           "type": "order_backlog_surprise",
           "date": "2026-09-22",
           "contrib_pct": 0.58,
-          "note": "삼성전자 덕에 '잭팟' 터졌다…한 달 만에 주가 74% '폭등' [종목+] - hankyung.com",
+          "note": "삼성전자 덕에 '잭팟' 터졌다…한 달 만에 주가 74% '폭등' [종목+] - 한국경제",
           "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1uMzZOWGFKNjV2QUNlNGFqazlHNmtkRmpuMnM0UUVvbTRVWFh1amdVaFZNeWlSUXVobTlKQmNUeGdnV0RfTERid0hOMjk5VkRtcExWTzhpNmt1dw?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-20",
-          "contrib_pct": -0.86,
-          "note": "Global bond selloff debt, inflation and rising yields - The Financial Express",
-          "source_url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOVm05TnM3eG1fUjhka0gxM2pGTUtid1ZaNlQ1dF84THZrUnRBTHk0ODlFQ2FiUVpNbGJmSkE0Q2FCaGptT2RFS0VZRTFWMVdvMlE5UVUtNjFOTC1Ea1hib1c3eXVWZlc0V09BV2dnZ2E4MENVRlVZTTlTOHFvNWtvQ2ZmMC1XLVd0T2l0ZVBVbDhrZWxLU25lNXlqMUowdWI2Szk5bk4yOVN6bkJiUDFYVmhjRGVUaThoTXFmZVRfUHJKQ3Jua0hZ0gHHAUFVX3lxTE5WbTlOczd4bV9SOGRrSDEzakZNS2J3Vlo2VDV0XzhMdmtSdEFMeTQ4OUVDYWJRWk1sYmZKQTRDYUJoam1PZEVLRVlFMVYxV28yUTlRVS02MU5MLURrWGJvVzd5dVZmVzRXT0FXZ2dnYTgwQ1VGVVlNOVM4cW81a29DZmYwLVctV3RPaXRlUFVsOGtlbEtTbmU1eWoxSjB1YjZLOTluTjI5U3puQmJQMVhWaGNEZVRpOGhNcWZlVF9QckpDcm5rSFk?oc=5"
+          "date": "2026-09-24",
+          "contrib_pct": -0.9,
+          "note": "U.S. Stocks Drop as Treasury Yields Surge - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNOFpoZ25MRHVkM25IWElidjV6R1FQVWkydHlnN1poQXFxamNPR1hMdzgtanpWS01KWjdMRW9FdDhUS1JJaDktemVHeHQ4TVhxV2dickt4SUw3WUxPRF9LVGJhaDRwM2NRSXZ4U21saDVZMXFRcmtoX3ZjbDY5UU85bm1pZ25pSGNQZUt0VnpSZzI?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
-          "date": "2026-09-14",
-          "contrib_pct": -0.53,
-          "note": "Chip Stocks Tumble as AI Pacing Call Reaches Beyond Memory: Intel Drops 7%, AMD Sinks 6%, NVIDIA Pulls Back - 24/7 Wall St.",
-          "source_url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNWVotaFlCUllmUDFoWHpPdmtPamVBQzNkcTZCaW9TelVPa3ZmNGVnZ3dqRDE0ajduS0hUSEF1ekZRamNtb2Q5MXlnb0RBd1g4QXMweG50ZWFfdUp0ZS1DaFp2dEJfdDNkWGVQWHotOXZBeEFrU0wxNWtKTjRNX3F6b1lOaHNkOGJ5SGswMkV4aGFKbzlIMWJHXzlxdnNwTHpTaE1FbFBLYkN4M3JEZk1DWVdsODZ6VkhraEctYWVKRzcyRWJWN01kczJSdWtGVVFmUjRhYnAxUkJMbWE3SXFZ?oc=5"
+          "date": "2026-09-24",
+          "contrib_pct": -0.6,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -4343,10 +5100,10 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **241,500원**(-15.7%, 등급 A) · 직전 리포트 대비 ▼1,200원 · 프리미엄 테마+3/뉴스+2/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **226,300원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.0% 상회) · 직전 리포트 대비 ▼1,100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **244,500원**(-14.7%, 등급 A) · 직전 리포트 대비 ▲1,800원 · 프리미엄 테마+3/뉴스+4/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **229,100원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 20.0% 상회) · 직전 리포트 대비 ▲1,700원"
     }
   ],
-  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-09-24T09:07:34+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 33,800 | 54,900 | 58,100 | +71.9% | 0 | 🟢진입가능 | B |\n| NAVER(035420) | 196,000 | 269,600 | 284,500 | +45.2% | ▲100 | 🟢진입가능 | A |\n| HD현대일렉트릭(267260) | 713,000 | 889,100 | 964,100 | +35.2% | ▲100 | 🟡진입주의 | A |\n| 한화에어로스페이스(012450) | 1,031,000 | 1,231,400 | 1,349,400 | +30.9% | ▼600 | 🟢진입가능 | A |\n| 삼성물산(028260) | 368,500 | 426,400 | 465,700 | +26.4% | ▲1,000 | 🟡진입주의 | A |\n| KB금융(105560) | 174,100 | 201,500 | 213,700 | +22.7% | ▼100 | 🟢진입가능 | A |\n| 신한지주(055550) | 110,100 | 120,500 | 128,600 | +16.8% | 0 | 🟢진입가능 | A |\n| 셀트리온(068270) | 178,100 | 199,300 | 208,000 | +16.8% | ▼100 | 🟢진입가능 | B |\n| 삼성바이오로직스(207940) | 1,373,000 | 1,528,500 | 1,597,300 | +16.3% | ▼1,000 | 🟢진입가능 | B |\n| LG에너지솔루션(373220) | 352,000 | 371,700 | 402,300 | +14.3% | ▼400 | 🟢진입가능 | A |\n| LIG넥스원(LIG D&A)(079550) | 699,000 | 722,900 | 795,100 | +13.7% | ▲100 | 🟢진입가능 | A |\n| 삼성SDI(006400) | 521,000 | 533,800 | 578,000 | +10.9% | 0 | 🟢진입가능 | A |\n| 하나금융지주(086790) | 133,700 | 136,400 | 145,700 | +9.0% | 0 | 🟢진입가능 | A |\n| 현대차(005380) | 357,000 | 355,500 | 376,100 | +5.4% | 0 | 🔴+0% 상회 | A |\n| 한미반도체(042700) | 243,000 | 231,300 | 256,000 | +5.3% | ▲2,200 | 🔴+5% 상회 | A |\n| HD한국조선해양(009540) | 335,000 | 319,600 | 348,600 | +4.1% | ▼100 | 🔴+5% 상회 | A |\n| 삼성중공업(010140) | 20,450 | 19,100 | 20,800 | +1.7% | 0 | 🔴+7% 상회 | A |\n| LS ELECTRIC(010120) | 207,000 | 187,100 | 202,800 | -2.0% | ▼4,200 | 🔴+11% 상회 | A |\n| SK하이닉스(000660) | 1,863,000 | 1,554,400 | 1,700,800 | -8.7% | ▲1,900 | 🔴+20% 상회 | A |\n| 삼성전자(005930) | 286,500 | 226,300 | 241,500 | -15.7% | ▼1,200 | 🔴+27% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **58,100원**(+71.9%, 등급 B · ⚠밴드이탈) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+4/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **284,500원**(+45.2%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+3/뉴스-3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.0%\n- 뉴스 반영 추정 목표 매도가 **964,100원**(+35.2%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+1/뉴스+3/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **1,349,400원**(+30.9%, 등급 A) · 직전 리포트 대비 ▼600원 · 프리미엄 테마+3/뉴스+10/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **465,700원**(+26.4%, 등급 A) · 직전 리포트 대비 ▲1,000원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **213,700원**(+22.7%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+5/뉴스+8/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **128,600원**(+16.8%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+10/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **208,000원**(+16.8%, 등급 B) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **1,597,300원**(+16.3%, 등급 B) · 직전 리포트 대비 ▼1,000원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.0%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **402,300원**(+14.3%, 등급 A) · 직전 리포트 대비 ▼400원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; tech_breakthrough(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **795,100원**(+13.7%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **578,000원**(+10.9%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+4/뉴스+12(캡)/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **145,700원**(+9.0%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+4/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +2.0%; policy_support(자동) +1.7%\n- 뉴스 반영 추정 목표 매도가 **376,100원**(+5.4%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스-5/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; global_tariff_trade(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **256,000원**(+5.3%, 등급 A) · 직전 리포트 대비 ▲2,200원 · 프리미엄 테마+5/뉴스+8/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **348,600원**(+4.1%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+2/뉴스+3/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **20,800원**(+1.7%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+4/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **202,800원**(-2.0%, 등급 A) · 직전 리포트 대비 ▼4,200원 · 프리미엄 테마+2/뉴스+4/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; order_backlog_surprise(자동) +2.9%\n- 뉴스 반영 추정 목표 매도가 **1,700,800원**(-8.7%, 등급 A) · 직전 리포트 대비 ▲1,900원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **241,500원**(-15.7%, 등급 A) · 직전 리포트 대비 ▼1,200원 · 프리미엄 테마+3/뉴스+2/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **54,900원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 62.4% 낮음)\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **269,600원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 37.6% 낮음) · 직전 리포트 대비 ▲100원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **889,100원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 24.7% 낮음) · 직전 리포트 대비 ▲100원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,231,400원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 19.4% 낮음) · 직전 리포트 대비 ▼600원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **426,400원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.7% 낮음) · 직전 리포트 대비 ▲900원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **201,500원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 15.7% 낮음) · 직전 리포트 대비 ▼100원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **120,500원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 9.4% 낮음)\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **199,300원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 11.9% 낮음) · 직전 리포트 대비 ▼100원\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,528,500원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 11.3% 낮음) · 직전 리포트 대비 ▼1,000원\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **371,700원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 5.6% 낮음) · 직전 리포트 대비 ▼300원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **722,900원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 3.4% 낮음)\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **533,800원**(R/R≥1.0·ATR 4.1%×2≈손절 8.3% 기준) · 현재가 521,000원 🟢진입 가능(현재가가 상한가보다 2.5% 낮음)\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **136,400원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음)\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **231,300원**(R/R≥1.0·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 243,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.8% 상회) · 직전 리포트 대비 ▲1,900원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **319,600원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 4.6% 상회) · 직전 리포트 대비 ▼100원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **187,100원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 207,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 9.6% 상회) · 직전 리포트 대비 ▼3,900원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,554,400원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 16.6% 상회) · 직전 리포트 대비 ▲1,800원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **226,300원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.0% 상회) · 직전 리포트 대비 ▼1,100원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-09-24T10:17:23+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 33,800 | 54,200 | 57,400 | +69.8% | ▼700 | 🟢진입가능 | B |\n| NAVER(035420) | 196,000 | 265,800 | 280,500 | +43.1% | ▼3,900 | 🟢진입가능 | A |\n| HD현대일렉트릭(267260) | 713,000 | 876,200 | 950,200 | +33.3% | ▼13,800 | 🟡진입주의 | A |\n| 한화에어로스페이스(012450) | 1,031,000 | 1,215,700 | 1,332,200 | +29.2% | ▼17,800 | 🟢진입가능 | A |\n| 삼성물산(028260) | 368,500 | 423,800 | 462,900 | +25.6% | ▼1,800 | 🟡진입주의 | A |\n| KB금융(105560) | 174,100 | 199,100 | 211,100 | +21.3% | ▼2,700 | 🟢진입가능 | A |\n| 신한지주(055550) | 110,100 | 119,000 | 127,000 | +15.3% | ▼1,600 | 🟢진입가능 | A |\n| 셀트리온(068270) | 178,100 | 196,700 | 205,300 | +15.3% | ▼2,800 | 🟢진입가능 | B |\n| 삼성바이오로직스(207940) | 1,373,000 | 1,508,900 | 1,576,800 | +14.8% | ▼21,500 | 🟢진입가능 | B |\n| LG에너지솔루션(373220) | 352,000 | 366,500 | 396,700 | +12.7% | ▼6,000 | 🟢진입가능 | A |\n| LIG넥스원(LIG D&A)(079550) | 699,000 | 712,700 | 783,800 | +12.1% | ▼11,200 | 🟢진입가능 | A |\n| 삼성SDI(006400) | 521,000 | 533,800 | 578,000 | +10.9% | 0 | 🟢진입가능 | A |\n| 하나금융지주(086790) | 133,700 | 134,600 | 143,800 | +7.6% | ▼1,900 | 🟢진입가능 | A |\n| 현대차(005380) | 357,000 | 350,100 | 370,300 | +3.7% | ▼5,800 | 🔴+2% 상회 | A |\n| 한미반도체(042700) | 243,000 | 226,700 | 250,900 | +3.3% | ▼2,900 | 🔴+7% 상회 | A |\n| HD한국조선해양(009540) | 335,000 | 314,900 | 343,500 | +2.5% | ▼5,200 | 🔴+6% 상회 | A |\n| 삼성중공업(010140) | 20,450 | 18,900 | 20,500 | +0.2% | ▼300 | 🔴+8% 상회 | A |\n| LS ELECTRIC(010120) | 207,000 | 184,500 | 200,000 | -3.4% | ▼7,000 | 🔴+12% 상회 | A |\n| SK하이닉스(000660) | 1,863,000 | 1,533,600 | 1,678,100 | -9.9% | ▼20,800 | 🔴+21% 상회 | A |\n| 삼성전자(005930) | 286,500 | 229,100 | 244,500 | -14.7% | ▲1,800 | 🔴+25% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **57,400원**(+69.8%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼700원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **280,500원**(+43.1%, 등급 A) · 직전 리포트 대비 ▼3,900원 · 프리미엄 테마+3/뉴스-4/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.0%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **950,200원**(+33.3%, 등급 A) · 직전 리포트 대비 ▼13,800원 · 프리미엄 테마+1/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **1,332,200원**(+29.2%, 등급 A) · 직전 리포트 대비 ▼17,800원 · 프리미엄 테마+3/뉴스+8/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **462,900원**(+25.6%, 등급 A) · 직전 리포트 대비 ▼1,800원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **211,100원**(+21.3%, 등급 A) · 직전 리포트 대비 ▼2,700원 · 프리미엄 테마+5/뉴스+6/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **127,000원**(+15.3%, 등급 A) · 직전 리포트 대비 ▼1,600원 · 프리미엄 테마+5/뉴스+8/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **205,300원**(+15.3%, 등급 B) · 직전 리포트 대비 ▼2,800원 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **1,576,800원**(+14.8%, 등급 B) · 직전 리포트 대비 ▼21,500원 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.0%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **396,700원**(+12.7%, 등급 A) · 직전 리포트 대비 ▼6,000원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; tech_breakthrough(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **783,800원**(+12.1%, 등급 A) · 직전 리포트 대비 ▼11,200원 · 프리미엄 테마+2/뉴스+1/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **578,000원**(+10.9%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+4/뉴스+12(캡)/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **143,800원**(+7.6%, 등급 A) · 직전 리포트 대비 ▼1,900원 · 프리미엄 테마+5/뉴스+3/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +2.0%; policy_support(자동) +1.7%\n- 뉴스 반영 추정 목표 매도가 **370,300원**(+3.7%, 등급 A) · 직전 리포트 대비 ▼5,800원 · 프리미엄 테마+2/뉴스-7/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; global_tariff_trade(해외) -1.0%\n- 뉴스 반영 추정 목표 매도가 **250,900원**(+3.3%, 등급 A) · 직전 리포트 대비 ▼2,900원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+1% · 📰 원인 뉴스: supply_contract_major(자동) +4.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **343,500원**(+2.5%, 등급 A) · 직전 리포트 대비 ▼5,200원 · 프리미엄 테마+2/뉴스+2/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **20,500원**(+0.2%, 등급 A) · 직전 리포트 대비 ▼300원 · 프리미엄 테마+1/뉴스+2/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **200,000원**(-3.4%, 등급 A) · 직전 리포트 대비 ▼7,000원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; order_backlog_surprise(자동) +2.9%\n- 뉴스 반영 추정 목표 매도가 **1,678,100원**(-9.9%, 등급 A) · 직전 리포트 대비 ▼20,800원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **244,500원**(-14.7%, 등급 A) · 직전 리포트 대비 ▲1,800원 · 프리미엄 테마+3/뉴스+4/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.6%; earnings_report(촉매) +3.4%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **54,200원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 60.4% 낮음) · 직전 리포트 대비 ▼700원\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **265,800원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 35.6% 낮음) · 직전 리포트 대비 ▼3,700원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **876,200원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 22.9% 낮음) · 직전 리포트 대비 ▼12,800원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,215,700원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 17.9% 낮음) · 직전 리포트 대비 ▼16,300원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **423,800원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.0% 낮음) · 직전 리포트 대비 ▼1,700원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **199,100원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 14.4% 낮음) · 직전 리포트 대비 ▼2,500원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **119,000원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 8.1% 낮음) · 직전 리포트 대비 ▼1,500원\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **196,700원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 10.4% 낮음) · 직전 리포트 대비 ▼2,700원\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,508,900원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 9.9% 낮음) · 직전 리포트 대비 ▼20,600원\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **366,500원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 4.1% 낮음) · 직전 리포트 대비 ▼5,500원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **712,700원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음) · 직전 리포트 대비 ▼10,200원\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **533,800원**(R/R≥1.0·ATR 4.1%×2≈손절 8.3% 기준) · 현재가 521,000원 🟢진입 가능(현재가가 상한가보다 2.5% 낮음)\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **134,600원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 0.7% 낮음) · 직전 리포트 대비 ▼1,800원\n- 현대차(005380) — 뉴스 반영 신규진입 상한가 **350,100원**(R/R≥1.0·ATR 2.9%×2≈손절 5.8% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.9% 상회) · 직전 리포트 대비 ▼5,400원\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **226,700원**(R/R≥1.0·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 243,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.7% 상회) · 직전 리포트 대비 ▼2,700원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **314,900원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.0% 상회) · 직전 리포트 대비 ▼4,800원\n- 삼성중공업(010140) — 뉴스 반영 신규진입 상한가 **18,900원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 20,450원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.6% 상회) · 직전 리포트 대비 ▼200원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **184,500원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 207,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 10.9% 상회) · 직전 리포트 대비 ▼6,500원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,533,600원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.7% 상회) · 직전 리포트 대비 ▼19,000원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **229,100원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 20.0% 상회) · 직전 리포트 대비 ▲1,700원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
   "disclaimer": "학습·시뮬레이션 목적의 거친 추정 — 투자 권유 아님. watchlist.target_price 를 자동 갱신하지 않으며, routine 이 dynamic_exit_model 목표가 산정 시 참고 레이어로만 쓴다."
 }

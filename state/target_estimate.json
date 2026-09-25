@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-09-25T09:07:34+09:00",
-  "snapshot_as_of": "2026-09-25T09:07:30+09:00",
+  "as_of": "2026-09-25T10:22:48+09:00",
+  "snapshot_as_of": "2026-09-25T10:22:45+09:00",
   "horizon_months": 12,
   "formula": "추정목표가 = 기준가(밸류밴드·컨센 평균, 결측 시 현재가) × (1 + 추세게이트×(테마P(호라이즌할인) + 양뉴스P(시간감쇠·확률·기반영차감)) + 음뉴스P + 섹터활발성P + 모멘텀틸트(초과수익+52주고점)) → min(컨센×1.15, 밸류천장) 캡 [v1.1 백테스트 보정]",
   "kospi_ret_60d_pct": -15.82,
@@ -15,10 +15,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 2.16,
-        "news": 2.95,
+        "news": 3.22,
         "sector": 4.07,
         "momentum": 1.0,
-        "total": 10.18
+        "total": 10.45
       },
       "trend_gate": {
         "factor": 1.0,
@@ -26,14 +26,14 @@
         "pct_of_52w_high": 48.49,
         "ungated": {
           "theme": 2.16,
-          "news": 2.95
+          "news": 3.22
         }
       },
-      "raw_estimate": 57400.0,
+      "raw_estimate": 57500.0,
       "cap_applied": null,
-      "estimate": 57400.0,
-      "expected_return_pct": 69.8,
-      "entry_cap_price": 54200.0,
+      "estimate": 57500.0,
+      "expected_return_pct": 70.1,
+      "entry_cap_price": 54300.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -42,7 +42,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 60.4,
+      "entry_cap_gap_pct": 60.7,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +23%p) · 섹터값 0.02(집중도 평소 0.82배·heat 0.025)",
@@ -104,17 +104,31 @@
         "news_parts": [
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.15,
+            "contrib_pct": 0.28,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -127,8 +141,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -174,27 +188,35 @@
         "prev_estimate": 57400.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": 0.04,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 100.0,
+        "entry_cap_delta_krw": 100.0,
+        "news_pct_delta": 0.31,
+        "expected_return_delta_pct": 0.3
       },
       "new_news_since_prev": [
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.28,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -213,8 +235,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **57,400원**(+69.8%, 등급 B · ⚠밴드이탈) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **54,200원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 60.4% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **57,500원**(+70.1%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **54,300원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 60.7% 낮음) · 직전 리포트 대비 ▲100원"
     },
     {
       "ticker": "035420",
@@ -226,10 +248,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.46,
-        "news": -0.58,
+        "news": -0.16,
         "sector": 4.07,
         "momentum": 1.0,
-        "total": 7.95
+        "total": 8.37
       },
       "trend_gate": {
         "factor": 1.0,
@@ -237,14 +259,14 @@
         "pct_of_52w_high": 64.47,
         "ungated": {
           "theme": 3.46,
-          "news": -0.58
+          "news": -0.16
         }
       },
-      "raw_estimate": 290100.0,
+      "raw_estimate": 291200.0,
       "cap_applied": null,
-      "estimate": 290100.0,
-      "expected_return_pct": 48.0,
-      "entry_cap_price": 274900.0,
+      "estimate": 291200.0,
+      "expected_return_pct": 48.6,
+      "entry_cap_price": 276000.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -253,7 +275,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 40.3,
+      "entry_cap_gap_pct": 40.8,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +23%p) · 섹터값 0.02(집중도 평소 0.82배·heat 0.025)",
@@ -330,17 +352,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.25,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -353,8 +389,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -400,10 +436,10 @@
         "prev_estimate": 290100.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": -0.03,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 1100.0,
+        "entry_cap_delta_krw": 1100.0,
+        "news_pct_delta": 0.39,
+        "expected_return_delta_pct": 0.6
       },
       "new_news_since_prev": [
         {
@@ -416,19 +452,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -439,8 +483,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **290,100원**(+48.0%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+3/뉴스-1/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; global_rate_shock(해외) -0.9%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **274,900원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 40.3% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **291,200원**(+48.6%, 등급 A) · 직전 리포트 대비 ▲1,100원 · 프리미엄 테마+3/뉴스-0/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; global_rate_shock(해외) -0.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **276,000원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 40.8% 낮음) · 직전 리포트 대비 ▲1,100원"
     },
     {
       "ticker": "267260",
@@ -452,10 +496,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.9,
-        "news": 1.18,
+        "news": 1.3,
         "sector": 4.54,
         "momentum": -3.5,
-        "total": 3.12
+        "total": 3.24
       },
       "trend_gate": {
         "factor": 0.3,
@@ -463,14 +507,14 @@
         "pct_of_52w_high": 49.86,
         "ungated": {
           "theme": 3.0,
-          "news": 7.38
+          "news": 7.8
         }
       },
-      "raw_estimate": 950300.0,
+      "raw_estimate": 951400.0,
       "cap_applied": null,
-      "estimate": 950300.0,
-      "expected_return_pct": 33.3,
-      "entry_cap_price": 876300.0,
+      "estimate": 951400.0,
+      "expected_return_pct": 33.4,
+      "entry_cap_price": 877400.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -479,7 +523,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 22.9,
+      "entry_cap_gap_pct": 23.1,
       "entry_cap_note": null,
       "entry_cap_caution": "falling knife(60일 -24%) — 추격 금지(추세 약세)",
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +15%p) · 섹터값 0.13(집중도 평소 0.95배·heat 0.192)",
@@ -573,17 +617,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.29,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -596,8 +654,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -643,10 +701,10 @@
         "prev_estimate": 950200.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": 0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 1200.0,
+        "entry_cap_delta_krw": 1200.0,
+        "news_pct_delta": 0.13,
+        "expected_return_delta_pct": 0.1
       },
       "new_news_since_prev": [
         {
@@ -659,19 +717,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -690,8 +756,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **950,300원**(+33.3%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+1/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.4%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **876,300원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 22.9% 낮음) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **951,400원**(+33.4%, 등급 A) · 직전 리포트 대비 ▲1,200원 · 프리미엄 테마+1/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.4%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **877,400원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 23.1% 낮음) · 직전 리포트 대비 ▲1,200원"
     },
     {
       "ticker": "012450",
@@ -703,10 +769,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.15,
-        "news": 8.21,
+        "news": 8.63,
         "sector": 4.0,
         "momentum": 1.0,
-        "total": 16.36
+        "total": 16.78
       },
       "trend_gate": {
         "factor": 1.0,
@@ -714,14 +780,14 @@
         "pct_of_52w_high": 62.3,
         "ungated": {
           "theme": 3.15,
-          "news": 8.21
+          "news": 8.63
         }
       },
-      "raw_estimate": 1332000.0,
+      "raw_estimate": 1336800.0,
       "cap_applied": null,
-      "estimate": 1332000.0,
-      "expected_return_pct": 29.2,
-      "entry_cap_price": 1215600.0,
+      "estimate": 1336800.0,
+      "expected_return_pct": 29.7,
+      "entry_cap_price": 1219900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -730,7 +796,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 17.9,
+      "entry_cap_gap_pct": 18.3,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +16%p) · 섹터값 0.00(집중도 평소 0.6배·heat 0.0)",
@@ -824,17 +890,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -5.05,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -847,8 +927,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -894,10 +974,10 @@
         "prev_estimate": 1332200.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": -200.0,
-        "entry_cap_delta_krw": -100.0,
-        "news_pct_delta": -0.02,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 4600.0,
+        "entry_cap_delta_krw": 4200.0,
+        "news_pct_delta": 0.4,
+        "expected_return_delta_pct": 0.5
       },
       "new_news_since_prev": [
         {
@@ -918,19 +998,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -949,8 +1037,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,332,000원**(+29.2%, 등급 A) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+3/뉴스+8/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,215,600원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 17.9% 낮음) · 직전 리포트 대비 ▼100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,336,800원**(+29.7%, 등급 A) · 직전 리포트 대비 ▲4,600원 · 프리미엄 테마+3/뉴스+9/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,219,900원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 18.3% 낮음) · 직전 리포트 대비 ▲4,200원"
     },
     {
       "ticker": "028260",
@@ -962,10 +1050,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.76,
-        "news": 2.59,
+        "news": 2.71,
         "sector": 5.6,
         "momentum": -3.5,
-        "total": 6.45
+        "total": 6.57
       },
       "trend_gate": {
         "factor": 0.3,
@@ -976,11 +1064,11 @@
           "news": 12.0
         }
       },
-      "raw_estimate": 462800.0,
+      "raw_estimate": 463400.0,
       "cap_applied": null,
-      "estimate": 462800.0,
-      "expected_return_pct": 25.6,
-      "entry_cap_price": 423700.0,
+      "estimate": 463400.0,
+      "expected_return_pct": 25.8,
+      "entry_cap_price": 424300.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -989,7 +1077,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 15.0,
+      "entry_cap_gap_pct": 15.1,
       "entry_cap_note": null,
       "entry_cap_caution": "falling knife(60일 -22%) — 추격 금지(추세 약세)",
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -1084,7 +1172,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": 3.52,
-            "note": "SK증권 \"삼성물산 실적 개선세 지속에 배당 증가도 기대\" - 연합뉴스",
+            "note": "SK증권 \"삼성물산 실적 개선세 지속에 배당 증가도 기대\" - yna.co.kr",
             "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1GOXFyLVBheDNlQzdYWkVLOG1MWURrZnVzVERpUmJkd3JSbDZZT1BhVTFrREpWZmpUWFY0N25ReFVTSU9FZGhJSXlrM3Zyb2lqc25mLVdvekY2UG_SAWBBVV95cUxQX1BlMUQ4aVZUUUdqUkVEUXpOcHNEQVJJQ1dKMVJhLWRkMlI3MXQ0d3NIYjNIeGRXTUFMSEQtMVFUenpfbjExSjJQVDRla1djVE81MUdXaGpEeFRoLS1XX0k?oc=5",
             "matched_keywords": [
               "실적개선세"
@@ -1099,7 +1187,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.2,
             "contrib_pct": 3.28,
-            "note": "삼성물산, 미국 카이로스파워와 ‘차세대 SMR’ 상용화 업무협약 - viva100.com",
+            "note": "삼성물산, 미국 카이로스파워와 ‘차세대 SMR’ 상용화 업무협약 - 브릿지경제",
             "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1wQ2ZqX2dvd1FsbnhMNjI5ZnZXUk81ODFKVUFFMk9ZZi04UmtUUEVOZXNFc2ZncFNzQ3RrcWIzMjZBWWV2Vi1sUWF5clNKWXgtcldwZzBBcWxQZw?oc=5",
             "matched_keywords": [
               "상용화"
@@ -1107,17 +1195,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -1.04,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -1130,8 +1232,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1177,10 +1279,10 @@
         "prev_estimate": 462900.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": -100.0,
-        "entry_cap_delta_krw": -100.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 500.0,
+        "entry_cap_delta_krw": 500.0,
+        "news_pct_delta": 0.11,
+        "expected_return_delta_pct": 0.2
       },
       "new_news_since_prev": [
         {
@@ -1196,7 +1298,7 @@
           "type": "earnings_surprise_beat",
           "date": "2026-09-23",
           "contrib_pct": 3.52,
-          "note": "SK증권 \"삼성물산 실적 개선세 지속에 배당 증가도 기대\" - 연합뉴스",
+          "note": "SK증권 \"삼성물산 실적 개선세 지속에 배당 증가도 기대\" - yna.co.kr",
           "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1GOXFyLVBheDNlQzdYWkVLOG1MWURrZnVzVERpUmJkd3JSbDZZT1BhVTFrREpWZmpUWFY0N25ReFVTSU9FZGhJSXlrM3Zyb2lqc25mLVdvekY2UG_SAWBBVV95cUxQX1BlMUQ4aVZUUUdqUkVEUXpOcHNEQVJJQ1dKMVJhLWRkMlI3MXQ0d3NIYjNIeGRXTUFMSEQtMVFUenpfbjExSjJQVDRla1djVE81MUdXaGpEeFRoLS1XX0k?oc=5"
         },
         {
@@ -1204,24 +1306,32 @@
           "type": "tech_breakthrough",
           "date": "2026-09-22",
           "contrib_pct": 3.28,
-          "note": "삼성물산, 미국 카이로스파워와 ‘차세대 SMR’ 상용화 업무협약 - viva100.com",
+          "note": "삼성물산, 미국 카이로스파워와 ‘차세대 SMR’ 상용화 업무협약 - 브릿지경제",
           "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1wQ2ZqX2dvd1FsbnhMNjI5ZnZXUk81ODFKVUFFMk9ZZi04UmtUUEVOZXNFc2ZncFNzQ3RrcWIzMjZBWWV2Vi1sUWF5clNKWXgtcldwZzBBcWxQZw?oc=5"
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1240,8 +1350,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **462,800원**(+25.6%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **423,700원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.0% 낮음) · 직전 리포트 대비 ▼100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **463,400원**(+25.8%, 등급 A) · 직전 리포트 대비 ▲500원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **424,300원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.1% 낮음) · 직전 리포트 대비 ▲500원"
     },
     {
       "ticker": "105560",
@@ -1253,10 +1363,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 6.47,
+        "news": 6.89,
         "sector": 5.6,
         "momentum": 3.0,
-        "total": 19.97
+        "total": 20.39
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1264,14 +1374,14 @@
         "pct_of_52w_high": 89.51,
         "ungated": {
           "theme": 4.9,
-          "news": 6.47
+          "news": 6.89
         }
       },
-      "raw_estimate": 211200.0,
+      "raw_estimate": 211900.0,
       "cap_applied": null,
-      "estimate": 211200.0,
-      "expected_return_pct": 21.3,
-      "entry_cap_price": 199200.0,
+      "estimate": 211900.0,
+      "expected_return_pct": 21.7,
+      "entry_cap_price": 199800.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1280,7 +1390,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 14.4,
+      "entry_cap_gap_pct": 14.8,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -1360,17 +1470,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -3.18,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -1383,8 +1507,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1442,10 +1566,10 @@
         "prev_estimate": 211200.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 700.0,
+        "entry_cap_delta_krw": 600.0,
+        "news_pct_delta": 0.42,
+        "expected_return_delta_pct": 0.4
       },
       "new_news_since_prev": [
         {
@@ -1458,19 +1582,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1489,8 +1621,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **211,200원**(+21.3%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+6/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **199,200원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 14.4% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **211,900원**(+21.7%, 등급 A) · 직전 리포트 대비 ▲700원 · 프리미엄 테마+5/뉴스+7/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **199,800원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 14.8% 낮음) · 직전 리포트 대비 ▲600원"
     },
     {
       "ticker": "068270",
@@ -1502,10 +1634,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.55,
-        "news": 6.85,
+        "news": 7.27,
         "sector": 4.88,
         "momentum": 2.0,
-        "total": 15.28
+        "total": 15.7
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1513,14 +1645,14 @@
         "pct_of_52w_high": 74.44,
         "ungated": {
           "theme": 1.55,
-          "news": 6.85
+          "news": 7.27
         }
       },
-      "raw_estimate": 205300.0,
+      "raw_estimate": 206100.0,
       "cap_applied": null,
-      "estimate": 205300.0,
-      "expected_return_pct": 15.3,
-      "entry_cap_price": 196700.0,
+      "estimate": 206100.0,
+      "expected_return_pct": 15.7,
+      "entry_cap_price": 197500.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1529,7 +1661,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 10.4,
+      "entry_cap_gap_pct": 10.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +26%p) · 섹터값 0.22(집중도 평소 1.05배·heat 0.314)",
@@ -1601,7 +1733,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -1.01,
             "contrib_pct": 1.74,
-            "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - 중부일보",
+            "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - joongboo.com",
             "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5nblYtWmI3TXpoN0dhYzBCSFRnTk5jRW5oQy13bVhPNlVRM0JPU2tOeEpaQXpnc2hwRVM4aGxNQUZqaEdCaFFPVUJHdkx5RnVyaDBFWHZqS1pFekdCX0Y5WkMwb3ItVjk1WEJSLWRBWQ?oc=5",
             "matched_keywords": [
               "증설"
@@ -1609,17 +1741,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -3.03,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -1632,8 +1778,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1679,10 +1825,10 @@
         "prev_estimate": 205300.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 800.0,
+        "entry_cap_delta_krw": 800.0,
+        "news_pct_delta": 0.41,
+        "expected_return_delta_pct": 0.4
       },
       "new_news_since_prev": [
         {
@@ -1698,24 +1844,32 @@
           "type": "capex_expansion",
           "date": "2026-09-22",
           "contrib_pct": 1.74,
-          "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - 중부일보",
+          "note": "삼성바이오·셀트리온, 송도 공장 증설·생산 확대 박차 - joongboo.com",
           "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5nblYtWmI3TXpoN0dhYzBCSFRnTk5jRW5oQy13bVhPNlVRM0JPU2tOeEpaQXpnc2hwRVM4aGxNQUZqaEdCaFFPVUJHdkx5RnVyaDBFWHZqS1pFekdCX0Y5WkMwb3ItVjk1WEJSLWRBWQ?oc=5"
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1734,8 +1888,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **205,300원**(+15.3%, 등급 B) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **196,700원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 10.4% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **206,100원**(+15.7%, 등급 B) · 직전 리포트 대비 ▲800원 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **197,500원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 10.9% 낮음) · 직전 리포트 대비 ▲800원"
     },
     {
       "ticker": "055550",
@@ -1747,10 +1901,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 6.86,
+        "news": 7.28,
         "sector": 5.6,
         "momentum": 1.5,
-        "total": 18.86
+        "total": 19.28
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1758,14 +1912,14 @@
         "pct_of_52w_high": 94.51,
         "ungated": {
           "theme": 4.9,
-          "news": 6.86
+          "news": 7.28
         }
       },
-      "raw_estimate": 125400.0,
+      "raw_estimate": 125800.0,
       "cap_applied": null,
-      "estimate": 125400.0,
-      "expected_return_pct": 13.9,
-      "entry_cap_price": 117500.0,
+      "estimate": 125800.0,
+      "expected_return_pct": 14.3,
+      "entry_cap_price": 117900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1774,7 +1928,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 6.7,
+      "entry_cap_gap_pct": 7.1,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -1870,17 +2024,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -3.78,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -1893,8 +2061,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -1940,10 +2108,10 @@
         "prev_estimate": 125400.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 400.0,
+        "entry_cap_delta_krw": 400.0,
+        "news_pct_delta": 0.41,
+        "expected_return_delta_pct": 0.4
       },
       "new_news_since_prev": [
         {
@@ -1964,19 +2132,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -1995,8 +2171,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **125,400원**(+13.9%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+7/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **117,500원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 6.7% 낮음)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **125,800원**(+14.3%, 등급 A) · 직전 리포트 대비 ▲400원 · 프리미엄 테마+5/뉴스+7/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **117,900원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 7.1% 낮음) · 직전 리포트 대비 ▲400원"
     },
     {
       "ticker": "373220",
@@ -2008,10 +2184,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.82,
-        "news": 1.79,
+        "news": 1.0,
         "sector": 5.16,
         "momentum": -2.5,
-        "total": 6.27
+        "total": 5.48
       },
       "trend_gate": {
         "factor": 0.6,
@@ -2019,14 +2195,14 @@
         "pct_of_52w_high": 66.79,
         "ungated": {
           "theme": 3.04,
-          "news": 6.92
+          "news": 5.62
         }
       },
-      "raw_estimate": 400100.0,
+      "raw_estimate": 397100.0,
       "cap_applied": null,
-      "estimate": 400100.0,
-      "expected_return_pct": 13.7,
-      "entry_cap_price": 369600.0,
+      "estimate": 397100.0,
+      "expected_return_pct": 12.8,
+      "entry_cap_price": 366900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2035,7 +2211,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 5.0,
+      "entry_cap_gap_pct": 4.2,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +29%p) · 섹터값 0.29(집중도 평소 1.09배·heat 0.36)",
@@ -2152,21 +2328,6 @@
           },
           {
             "kind": "news_auto",
-            "type": "policy_support",
-            "date": "2026-09-21",
-            "impact_pct": 3.0,
-            "decay": 0.96,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -2.03,
-            "contrib_pct": 1.72,
-            "note": "LG에너지솔루션 3.30% 하락…북미 보조금 제외 수익성 과제 - 잡포스트",
-            "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTFA2WElod0JkMnFhQlJaMlhKcXlrMmNHN0Z4YjNVVXk2YVVfVGE3bEJDc2dOeGU3ODVOX080WGFjWDB5dDhuQVdCcDRBdjZHZzJia3lmUDVaaXc1bWEtdE5rQ0pLdFhjZlc1dV9JQVhvVU9Td9IBckFVX3lxTFA2WElod0JkMnFhQlJaMlhKcXlrMmNHN0Z4YjNVVXk2YVVfVGE3bEJDc2dOeGU3ODVOX080WGFjWDB5dDhuQVdCcDRBdjZHZzJia3lmUDVaaXc1bWEtdE5rQ0pLdFhjZlc1dV9JQVhvVU9Tdw?oc=5",
-            "matched_keywords": [
-              "보조금"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "tech_breakthrough",
             "date": "2026-09-21",
             "impact_pct": 6.0,
@@ -2175,24 +2336,38 @@
             "realized_since_event_pct": -2.03,
             "contrib_pct": 3.44,
             "note": "LG에너지솔루션, 상반기 R&D에 7259억 '역대 최대'…전고체·소듐 등 차세대 기술 속도 - 뉴시스",
-            "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTX9IBeEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTXw?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBhdFNSTlA0dlA1amFZWlJoaE54eXc3UjlxRVRKQkg1WlRiUlhIQVNpcWJMczg3R0o5R0lJUnJWMjIwX1dRWVkxMzVadGJ1bDJEbmlaZkRmQ1dEQkZobFFHatIBeEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTXw?oc=5",
             "matched_keywords": [
               "전고체"
             ]
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.03,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -2205,8 +2380,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2252,10 +2427,10 @@
         "prev_estimate": 400400.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": -300.0,
-        "entry_cap_delta_krw": -300.0,
-        "news_pct_delta": -0.09,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": -3300.0,
+        "entry_cap_delta_krw": -3000.0,
+        "news_pct_delta": -0.88,
+        "expected_return_delta_pct": -0.9
       },
       "new_news_since_prev": [
         {
@@ -2284,35 +2459,35 @@
         },
         {
           "kind": "news_auto",
-          "type": "policy_support",
-          "date": "2026-09-21",
-          "contrib_pct": 1.72,
-          "note": "LG에너지솔루션 3.30% 하락…북미 보조금 제외 수익성 과제 - 잡포스트",
-          "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTFA2WElod0JkMnFhQlJaMlhKcXlrMmNHN0Z4YjNVVXk2YVVfVGE3bEJDc2dOeGU3ODVOX080WGFjWDB5dDhuQVdCcDRBdjZHZzJia3lmUDVaaXc1bWEtdE5rQ0pLdFhjZlc1dV9JQVhvVU9Td9IBckFVX3lxTFA2WElod0JkMnFhQlJaMlhKcXlrMmNHN0Z4YjNVVXk2YVVfVGE3bEJDc2dOeGU3ODVOX080WGFjWDB5dDhuQVdCcDRBdjZHZzJia3lmUDVaaXc1bWEtdE5rQ0pLdFhjZlc1dV9JQVhvVU9Tdw?oc=5"
-        },
-        {
-          "kind": "news_auto",
           "type": "tech_breakthrough",
           "date": "2026-09-21",
           "contrib_pct": 3.44,
           "note": "LG에너지솔루션, 상반기 R&D에 7259억 '역대 최대'…전고체·소듐 등 차세대 기술 속도 - 뉴시스",
-          "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTX9IBeEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTXw?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBhdFNSTlA0dlA1amFZWlJoaE54eXc3UjlxRVRKQkg1WlRiUlhIQVNpcWJMczg3R0o5R0lJUnJWMjIwX1dRWVkxMzVadGJ1bDJEbmlaZkRmQ1dEQkZobFFHatIBeEFVX3lxTE8yUkJaRHF0TlJNV2dlcDVxYVVyS1ozWlNXVWdHNzc5OVlhaC1kbjMtLTIzOG9GTUlGTlRUdW9acC04dHVBakd0V2tBTXp1NXg3Z2dPb1dsRGxicmc3czRaZVJjYlc0Q213SFdicUhJRjhzZ3FFVFBTXw?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2331,8 +2506,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **400,100원**(+13.7%, 등급 A) · 직전 리포트 대비 ▼300원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.4%; tech_breakthrough(자동) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **369,600원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 5.0% 낮음) · 직전 리포트 대비 ▼300원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **397,100원**(+12.8%, 등급 A) · 직전 리포트 대비 ▼3,300원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.4%; tech_breakthrough(자동) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **366,900원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 4.2% 낮음) · 직전 리포트 대비 ▼3,000원"
     },
     {
       "ticker": "079550",
@@ -2344,10 +2519,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.89,
-        "news": 1.18,
+        "news": 1.43,
         "sector": 4.0,
         "momentum": -2.5,
-        "total": 4.57
+        "total": 4.82
       },
       "trend_gate": {
         "factor": 0.6,
@@ -2355,14 +2530,14 @@
         "pct_of_52w_high": 62.52,
         "ungated": {
           "theme": 3.15,
-          "news": 2.95
+          "news": 3.37
         }
       },
-      "raw_estimate": 784000.0,
+      "raw_estimate": 785900.0,
       "cap_applied": null,
-      "estimate": 784000.0,
-      "expected_return_pct": 12.2,
-      "entry_cap_price": 712900.0,
+      "estimate": 785900.0,
+      "expected_return_pct": 12.4,
+      "entry_cap_price": 714600.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2371,7 +2546,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 2.0,
+      "entry_cap_gap_pct": 2.2,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +16%p) · 섹터값 0.00(집중도 평소 0.6배·heat 0.0)",
@@ -2434,17 +2609,31 @@
         "news_parts": [
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -5.68,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -2457,8 +2646,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2504,27 +2693,35 @@
         "prev_estimate": 783800.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 200.0,
-        "entry_cap_delta_krw": 200.0,
-        "news_pct_delta": 0.03,
-        "expected_return_delta_pct": 0.1
+        "estimate_delta_krw": 2100.0,
+        "entry_cap_delta_krw": 1900.0,
+        "news_pct_delta": 0.28,
+        "expected_return_delta_pct": 0.3
       },
       "new_news_since_prev": [
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2543,8 +2740,243 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **784,000원**(+12.2%, 등급 A) · 직전 리포트 대비 ▲200원 · 프리미엄 테마+2/뉴스+1/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **712,900원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음) · 직전 리포트 대비 ▲200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **785,900원**(+12.4%, 등급 A) · 직전 리포트 대비 ▲2,100원 · 프리미엄 테마+2/뉴스+1/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **714,600원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 2.2% 낮음) · 직전 리포트 대비 ▲1,900원"
+    },
+    {
+      "ticker": "207940",
+      "name": "삼성바이오로직스",
+      "sector": "바이오",
+      "current_price": 1373000.0,
+      "anchor_price": 1373000.0,
+      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
+      "consensus_rejected": null,
+      "premium_pct": {
+        "theme": 2.0,
+        "news": 3.37,
+        "sector": 4.88,
+        "momentum": 1.0,
+        "total": 11.25
+      },
+      "trend_gate": {
+        "factor": 1.0,
+        "excess60_vs_kospi_pct": 10.64,
+        "pct_of_52w_high": 69.1,
+        "ungated": {
+          "theme": 2.0,
+          "news": 3.37
+        }
+      },
+      "raw_estimate": 1527500.0,
+      "cap_applied": null,
+      "estimate": 1527500.0,
+      "expected_return_pct": 11.3,
+      "entry_cap_price": 1461700.0,
+      "entry_cap_basis": {
+        "min_rr": 1.0,
+        "min_rr_tier": "strong_bull",
+        "stop_frac_pct": 4.5,
+        "stop_basis": "ATR 2.2%×2≈손절 4.5%",
+        "formula": "목표가 / (1 + min_rr × 손절%)"
+      },
+      "in_buy_zone": true,
+      "entry_cap_gap_pct": 6.5,
+      "entry_cap_note": null,
+      "entry_cap_caution": null,
+      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +26%p) · 섹터값 0.22(집중도 평소 1.05배·heat 0.314)",
+      "sector_signals": {
+        "group": "bio_cdmo",
+        "median_excess_60d": 26.380000000000003,
+        "signals_met": 1,
+        "min_signals": 1,
+        "immersion_met": true,
+        "sector_value": {
+          "sector_value": 0.22,
+          "heat": 0.314,
+          "rs": 0.0,
+          "conc_ratio": 1.05,
+          "median_excess_20d": -11.92,
+          "members": [
+            "207940",
+            "068270"
+          ],
+          "as_of": "2026-09-23",
+          "group": "bio_cdmo"
+        }
+      },
+      "grade": "B",
+      "grade_capped_by_band": false,
+      "band_freshness": null,
+      "data_layers": {
+        "valuation_band": false,
+        "consensus_target": false,
+        "price_snapshot": true,
+        "theme_exposure": true,
+        "sector_group": true,
+        "earnings_signal": true
+      },
+      "detail": {
+        "theme_parts": [
+          {
+            "theme": "bio_cdmo",
+            "exposure": 0.9,
+            "strength": 0.5,
+            "horizon": "3-6y",
+            "horizon_discount": 0.222,
+            "contrib_pct": 2.0
+          }
+        ],
+        "news_parts": [
+          {
+            "kind": "news_auto",
+            "type": "labor_dispute",
+            "date": "2026-09-22",
+            "impact_pct": -3.0,
+            "decay": 0.97,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.26,
+            "contrib_pct": 0.0,
+            "note": "삼성바이오로직스 노사, 2차 사후조정 결렬…노조, 단체 행동 준비 - 매일일보",
+            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5KM2ltTzI0MGNHUXVuS3htU3BnVC1TY2J2R1BZQzhkWkJpRTJydHFueXg4MlBRUUlZcVBNVWZJSU0yRmdXLUFVTkgzUlkwWlg2QTY5bHBzak5aazF0VEVPa0ZqaEvSAWhBVV95cUxOalpQRlM0V1JRRG5faDFDOEhfNXloVHdEdEhmT3BvdEFDeUdpSHJUTEdnVGtFQWxhdzIzalRYV0hTTmxwdUVwbGIyWmhQSWZKOGlnSXhJNWt4MkxEeUJPZ2twSUREWG5RMQ?oc=5",
+            "matched_keywords": [
+              "조정결렬"
+            ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -3.18,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-09-25",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 1.0,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-09-24",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.99,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.59,
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-11-14",
+            "d_day": 50,
+            "impact_pct": 6.0,
+            "direction": 1.0,
+            "time_weight": 0.95,
+            "probability": 0.6,
+            "contrib_pct": 3.4,
+            "id": "207940-20263Q-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2027-03-31",
+            "d_day": 187,
+            "impact_pct": 3.0,
+            "direction": 1.0,
+            "time_weight": 0.57,
+            "probability": 0.6,
+            "contrib_pct": 1.03,
+            "id": "207940-2026FY-earnings"
+          }
+        ],
+        "earnings_signal": "strong_growth",
+        "ret_60d_pct": -5.18,
+        "next_catalyst": {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "d_day": 50,
+          "impact_pct": 6.0,
+          "direction": 1.0,
+          "time_weight": 0.95,
+          "probability": 0.6,
+          "contrib_pct": 3.4,
+          "id": "207940-20263Q-earnings"
+        }
+      },
+      "delta_vs_prev": {
+        "prev_estimate": 1521100.0,
+        "prev_as_of": "2026-09-24T22:28:16+09:00",
+        "prev_slot": "2026-09-24-18",
+        "estimate_delta_krw": 6400.0,
+        "entry_cap_delta_krw": 6100.0,
+        "news_pct_delta": 0.46,
+        "expected_return_delta_pct": 0.5
+      },
+      "new_news_since_prev": [
+        {
+          "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-09-24",
+          "contrib_pct": -0.59,
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
+        },
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "contrib_pct": 3.4,
+          "note": null,
+          "source_url": null
+        },
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2027-03-31",
+          "contrib_pct": 1.03,
+          "note": null,
+          "source_url": null
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,527,500원**(+11.3%, 등급 B) · 직전 리포트 대비 ▲6,400원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,461,700원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 6.5% 낮음) · 직전 리포트 대비 ▲6,100원"
     },
     {
       "ticker": "006400",
@@ -2731,17 +3163,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -3.84,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -2754,8 +3200,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -2849,19 +3295,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -2884,219 +3338,6 @@
       "entry_cap_line": "뉴스 반영 신규진입 상한가 **533,800원**(R/R≥1.0·ATR 4.1%×2≈손절 8.3% 기준) · 현재가 521,000원 🟢진입 가능(현재가가 상한가보다 2.5% 낮음)"
     },
     {
-      "ticker": "207940",
-      "name": "삼성바이오로직스",
-      "sector": "바이오",
-      "current_price": 1373000.0,
-      "anchor_price": 1373000.0,
-      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
-      "consensus_rejected": null,
-      "premium_pct": {
-        "theme": 2.0,
-        "news": 2.95,
-        "sector": 4.88,
-        "momentum": 1.0,
-        "total": 10.83
-      },
-      "trend_gate": {
-        "factor": 1.0,
-        "excess60_vs_kospi_pct": 10.64,
-        "pct_of_52w_high": 69.1,
-        "ungated": {
-          "theme": 2.0,
-          "news": 2.95
-        }
-      },
-      "raw_estimate": 1521700.0,
-      "cap_applied": null,
-      "estimate": 1521700.0,
-      "expected_return_pct": 10.8,
-      "entry_cap_price": 1456200.0,
-      "entry_cap_basis": {
-        "min_rr": 1.0,
-        "min_rr_tier": "strong_bull",
-        "stop_frac_pct": 4.5,
-        "stop_basis": "ATR 2.2%×2≈손절 4.5%",
-        "formula": "목표가 / (1 + min_rr × 손절%)"
-      },
-      "in_buy_zone": true,
-      "entry_cap_gap_pct": 6.1,
-      "entry_cap_note": null,
-      "entry_cap_caution": null,
-      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +26%p) · 섹터값 0.22(집중도 평소 1.05배·heat 0.314)",
-      "sector_signals": {
-        "group": "bio_cdmo",
-        "median_excess_60d": 26.380000000000003,
-        "signals_met": 1,
-        "min_signals": 1,
-        "immersion_met": true,
-        "sector_value": {
-          "sector_value": 0.22,
-          "heat": 0.314,
-          "rs": 0.0,
-          "conc_ratio": 1.05,
-          "median_excess_20d": -11.92,
-          "members": [
-            "207940",
-            "068270"
-          ],
-          "as_of": "2026-09-23",
-          "group": "bio_cdmo"
-        }
-      },
-      "grade": "B",
-      "grade_capped_by_band": false,
-      "band_freshness": null,
-      "data_layers": {
-        "valuation_band": false,
-        "consensus_target": false,
-        "price_snapshot": true,
-        "theme_exposure": true,
-        "sector_group": true,
-        "earnings_signal": true
-      },
-      "detail": {
-        "theme_parts": [
-          {
-            "theme": "bio_cdmo",
-            "exposure": 0.9,
-            "strength": 0.5,
-            "horizon": "3-6y",
-            "horizon_discount": 0.222,
-            "contrib_pct": 2.0
-          }
-        ],
-        "news_parts": [
-          {
-            "kind": "news_auto",
-            "type": "labor_dispute",
-            "date": "2026-09-22",
-            "impact_pct": -3.0,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -2.26,
-            "contrib_pct": 0.0,
-            "note": "삼성바이오로직스 노사, 2차 사후조정 결렬…노조, 단체 행동 준비 - 매일일보",
-            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5KM2ltTzI0MGNHUXVuS3htU3BnVC1TY2J2R1BZQzhkWkJpRTJydHFueXg4MlBRUUlZcVBNVWZJSU0yRmdXLUFVTkgzUlkwWlg2QTY5bHBzak5aazF0VEVPa0ZqaEvSAWhBVV95cUxOalpQRlM0V1JRRG5faDFDOEhfNXloVHdEdEhmT3BvdEFDeUdpSHJUTEdnVGtFQWxhdzIzalRYV0hTTmxwdUVwbGIyWmhQSWZKOGlnSXhJNWt4MkxEeUJPZ2twSUREWG5RMQ?oc=5",
-            "matched_keywords": [
-              "조정결렬"
-            ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_shock",
-            "date": "2026-09-24",
-            "impact_pct": -6.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
-          },
-          {
-            "kind": "news_global",
-            "type": "global_risk_off",
-            "date": "2026-09-24",
-            "impact_pct": -4.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.99,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-11-14",
-            "d_day": 50,
-            "impact_pct": 6.0,
-            "direction": 1.0,
-            "time_weight": 0.95,
-            "probability": 0.6,
-            "contrib_pct": 3.4,
-            "id": "207940-20263Q-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2027-03-31",
-            "d_day": 187,
-            "impact_pct": 3.0,
-            "direction": 1.0,
-            "time_weight": 0.57,
-            "probability": 0.6,
-            "contrib_pct": 1.03,
-            "id": "207940-2026FY-earnings"
-          }
-        ],
-        "earnings_signal": "strong_growth",
-        "ret_60d_pct": -5.18,
-        "next_catalyst": {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "d_day": 50,
-          "impact_pct": 6.0,
-          "direction": 1.0,
-          "time_weight": 0.95,
-          "probability": 0.6,
-          "contrib_pct": 3.4,
-          "id": "207940-20263Q-earnings"
-        }
-      },
-      "delta_vs_prev": {
-        "prev_estimate": 1521100.0,
-        "prev_as_of": "2026-09-24T22:28:16+09:00",
-        "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 600.0,
-        "entry_cap_delta_krw": 600.0,
-        "news_pct_delta": 0.04,
-        "expected_return_delta_pct": 0.0
-      },
-      "new_news_since_prev": [
-        {
-          "kind": "news_global",
-          "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_risk_off",
-          "date": "2026-09-24",
-          "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
-        },
-        {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "contrib_pct": 3.4,
-          "note": null,
-          "source_url": null
-        },
-        {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2027-03-31",
-          "contrib_pct": 1.03,
-          "note": null,
-          "source_url": null
-        }
-      ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,521,700원**(+10.8%, 등급 B) · 직전 리포트 대비 ▲600원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,456,200원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 6.1% 낮음) · 직전 리포트 대비 ▲600원"
-    },
-    {
       "ticker": "086790",
       "name": "하나금융지주",
       "sector": "금융/은행",
@@ -3106,10 +3347,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 2.9,
+        "news": 3.32,
         "sector": 5.6,
         "momentum": 1.5,
-        "total": 14.9
+        "total": 15.32
       },
       "trend_gate": {
         "factor": 1.0,
@@ -3117,14 +3358,14 @@
         "pct_of_52w_high": 93.82,
         "ungated": {
           "theme": 4.9,
-          "news": 2.9
+          "news": 3.32
         }
       },
-      "raw_estimate": 143900.0,
+      "raw_estimate": 144400.0,
       "cap_applied": null,
-      "estimate": 143900.0,
-      "expected_return_pct": 7.6,
-      "entry_cap_price": 134700.0,
+      "estimate": 144400.0,
+      "expected_return_pct": 8.0,
+      "entry_cap_price": 135200.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3133,7 +3374,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 0.7,
+      "entry_cap_gap_pct": 1.1,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +37%p) · 섹터값 0.40(집중도 평소 1.23배·heat 0.534)",
@@ -3213,17 +3454,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.52,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -3236,8 +3491,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -3283,10 +3538,10 @@
         "prev_estimate": 143800.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": 0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 600.0,
+        "entry_cap_delta_krw": 600.0,
+        "news_pct_delta": 0.43,
+        "expected_return_delta_pct": 0.4
       },
       "new_news_since_prev": [
         {
@@ -3299,19 +3554,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -3322,8 +3585,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **143,900원**(+7.6%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+5/뉴스+3/섹터+6/모멘텀+2% · 📰 원인 뉴스: policy_support(자동) +1.7%; global_rate_shock(해외) -0.9%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **134,700원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 0.7% 낮음) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **144,400원**(+8.0%, 등급 A) · 직전 리포트 대비 ▲600원 · 프리미엄 테마+5/뉴스+3/섹터+6/모멘텀+2% · 📰 원인 뉴스: policy_support(자동) +1.7%; global_rate_shock(해외) -0.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **135,200원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 1.1% 낮음) · 직전 리포트 대비 ▲600원"
     },
     {
       "ticker": "005380",
@@ -3335,10 +3598,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.6,
-        "news": -6.86,
+        "news": -6.74,
         "sector": 3.2,
         "momentum": -1.5,
-        "total": -3.56
+        "total": -3.44
       },
       "trend_gate": {
         "factor": 0.3,
@@ -3346,14 +3609,14 @@
         "pct_of_52w_high": 45.59,
         "ungated": {
           "theme": 5.35,
-          "news": -6.86
+          "news": -6.44
         }
       },
-      "raw_estimate": 370400.0,
+      "raw_estimate": 370800.0,
       "cap_applied": null,
-      "estimate": 370400.0,
-      "expected_return_pct": 3.8,
-      "entry_cap_price": 350200.0,
+      "estimate": 370800.0,
+      "expected_return_pct": 3.9,
+      "entry_cap_price": 350500.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3362,7 +3625,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -1.9,
+      "entry_cap_gap_pct": -1.8,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.57배·heat 0.0)",
@@ -3434,17 +3697,31 @@
         "news_parts": [
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.29,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -3457,8 +3734,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "news_global",
@@ -3518,27 +3795,35 @@
         "prev_estimate": 370300.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": 0.01,
-        "expected_return_delta_pct": 0.1
+        "estimate_delta_krw": 500.0,
+        "entry_cap_delta_krw": 400.0,
+        "news_pct_delta": 0.13,
+        "expected_return_delta_pct": 0.2
       },
       "new_news_since_prev": [
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "news_global",
@@ -3565,8 +3850,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **370,400원**(+3.8%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스-7/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; earnings_report(촉매) -1.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **350,200원**(R/R≥1.0·ATR 2.9%×2≈손절 5.8% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.9% 상회) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **370,800원**(+3.9%, 등급 A) · 직전 리포트 대비 ▲500원 · 프리미엄 테마+2/뉴스-7/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; earnings_report(촉매) -1.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **350,500원**(R/R≥1.0·ATR 2.9%×2≈손절 5.8% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.8% 상회) · 직전 리포트 대비 ▲400원"
     },
     {
       "ticker": "009540",
@@ -3578,10 +3863,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.73,
-        "news": 1.83,
+        "news": 2.07,
         "sector": 0.0,
         "momentum": -2.5,
-        "total": 1.06
+        "total": 1.3
       },
       "trend_gate": {
         "factor": 0.6,
@@ -3589,14 +3874,14 @@
         "pct_of_52w_high": 67.75,
         "ungated": {
           "theme": 2.88,
-          "news": 4.03
+          "news": 4.45
         }
       },
-      "raw_estimate": 343600.0,
+      "raw_estimate": 344500.0,
       "cap_applied": null,
-      "estimate": 343600.0,
-      "expected_return_pct": 2.6,
-      "entry_cap_price": 315000.0,
+      "estimate": 344500.0,
+      "expected_return_pct": 2.8,
+      "entry_cap_price": 315800.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3605,7 +3890,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -6.0,
+      "entry_cap_gap_pct": -5.7,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+50) 전후 재평가 · 섹터값 0.00(집중도 평소 0.77배·heat 0.0)",
@@ -3683,17 +3968,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.08,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -3706,8 +4005,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -3753,10 +4052,10 @@
         "prev_estimate": 343500.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": 0.03,
-        "expected_return_delta_pct": 0.1
+        "estimate_delta_krw": 1000.0,
+        "entry_cap_delta_krw": 900.0,
+        "news_pct_delta": 0.27,
+        "expected_return_delta_pct": 0.3
       },
       "new_news_since_prev": [
         {
@@ -3769,19 +4068,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -3800,8 +4107,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **343,600원**(+2.6%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스+2/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **315,000원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.0% 상회) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **344,500원**(+2.8%, 등급 A) · 직전 리포트 대비 ▲1,000원 · 프리미엄 테마+2/뉴스+2/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **315,800원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.7% 상회) · 직전 리포트 대비 ▲900원"
     },
     {
       "ticker": "042700",
@@ -3813,10 +4120,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 5.38,
-        "news": 3.86,
+        "news": 3.85,
         "sector": 4.96,
         "momentum": 1.0,
-        "total": 15.2
+        "total": 15.19
       },
       "trend_gate": {
         "factor": 1.0,
@@ -3824,7 +4131,7 @@
         "pct_of_52w_high": 57.04,
         "ungated": {
           "theme": 5.38,
-          "news": 3.86
+          "news": 3.85
         }
       },
       "raw_estimate": 248000.0,
@@ -3925,8 +4232,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 1.15,
             "contrib_pct": 3.12,
-            "note": "한미반도체, 테라팹과 AI 시스템반도체용 패키징 장비 공급 계약 - edaily.co.kr",
-            "source_url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQbzVISEswaExGUkEzLVlXOTRadWVEdVBFQVNQcFJLcHlyU1RDNVdYM3dBYjkzNlhJM3RfWVd4cG9CcVJ0cnl3UU9ka01RUE9VWFFkd0FISlB0ellKbWlSZ2wtVUV3MlNiSWxHVElXTUUzd0RHXzlmRHBnZTZzVkJkRw?oc=5",
+            "note": "한미반도체, 테라팹과 AI 시스템반도체용 패키징 장비 공급 계약 - market-ink.co.kr",
+            "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBmb1d4ckY4bzlXbjhYa3VYQ2tvYlpjSThVTEtRMDFDdkZUX2h5RDk3VzVqM1o3eGZ1SG9LTkpqbzVIemJNRFBIUUdWVHRrN1ducFRHQjNBU0o1RFNRQ1dPMlNDMENPNzEyZ2VfOGxiYw?oc=5",
             "matched_keywords": [
               "공급계약"
             ]
@@ -3934,16 +4241,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -3956,8 +4263,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -4005,7 +4312,7 @@
         "prev_slot": "2026-09-24-18",
         "estimate_delta_krw": -4800.0,
         "entry_cap_delta_krw": -4300.0,
-        "news_pct_delta": -2.22,
+        "news_pct_delta": -2.23,
         "expected_return_delta_pct": -1.9
       },
       "new_news_since_prev": [
@@ -4022,24 +4329,24 @@
           "type": "supply_contract_major",
           "date": "2026-09-15",
           "contrib_pct": 3.12,
-          "note": "한미반도체, 테라팹과 AI 시스템반도체용 패키징 장비 공급 계약 - edaily.co.kr",
-          "source_url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQbzVISEswaExGUkEzLVlXOTRadWVEdVBFQVNQcFJLcHlyU1RDNVdYM3dBYjkzNlhJM3RfWVd4cG9CcVJ0cnl3UU9ka01RUE9VWFFkd0FISlB0ellKbWlSZ2wtVUV3MlNiSWxHVElXTUUzd0RHXzlmRHBnZTZzVkJkRw?oc=5"
+          "note": "한미반도체, 테라팹과 AI 시스템반도체용 패키징 장비 공급 계약 - market-ink.co.kr",
+          "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBmb1d4ckY4bzlXbjhYa3VYQ2tvYlpjSThVTEtRMDFDdkZUX2h5RDk3VzVqM1o3eGZ1SG9LTkpqbzVIemJNRFBIUUdWVHRrN1ducFRHQjNBU0o1RFNRQ1dPMlNDMENPNzEyZ2VfOGxiYw?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -4071,10 +4378,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.77,
-        "news": 2.37,
+        "news": 2.49,
         "sector": 0.0,
         "momentum": -3.5,
-        "total": -0.36
+        "total": -0.24
       },
       "trend_gate": {
         "factor": 0.3,
@@ -4082,14 +4389,14 @@
         "pct_of_52w_high": 57.85,
         "ungated": {
           "theme": 2.56,
-          "news": 11.35
+          "news": 11.77
         }
       },
-      "raw_estimate": 20500.0,
+      "raw_estimate": 20600.0,
       "cap_applied": null,
-      "estimate": 20500.0,
-      "expected_return_pct": 0.2,
-      "entry_cap_price": 18900.0,
+      "estimate": 20600.0,
+      "expected_return_pct": 0.7,
+      "entry_cap_price": 19000.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4098,7 +4405,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -7.6,
+      "entry_cap_gap_pct": -7.1,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+50) 전후 재평가 · 섹터값 0.00(집중도 평소 0.77배·heat 0.0)",
@@ -4236,17 +4543,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.49,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -4259,8 +4580,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -4306,10 +4627,10 @@
         "prev_estimate": 20500.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": -0.01,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 100.0,
+        "entry_cap_delta_krw": 100.0,
+        "news_pct_delta": 0.11,
+        "expected_return_delta_pct": 0.5
       },
       "new_news_since_prev": [
         {
@@ -4346,19 +4667,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -4377,8 +4706,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **20,500원**(+0.2%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+2/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **18,900원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 20,450원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.6% 상회)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **20,600원**(+0.7%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+1/뉴스+2/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **19,000원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 20,450원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.1% 상회) · 직전 리포트 대비 ▲100원"
     },
     {
       "ticker": "010120",
@@ -4390,10 +4719,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.6,
-        "news": 4.89,
+        "news": 5.14,
         "sector": 4.54,
         "momentum": -2.5,
-        "total": 8.53
+        "total": 8.78
       },
       "trend_gate": {
         "factor": 0.6,
@@ -4401,14 +4730,14 @@
         "pct_of_52w_high": 61.79,
         "ungated": {
           "theme": 2.66,
-          "news": 9.8
+          "news": 10.22
         }
       },
-      "raw_estimate": 203600.0,
+      "raw_estimate": 204100.0,
       "cap_applied": null,
-      "estimate": 203600.0,
-      "expected_return_pct": -1.6,
-      "entry_cap_price": 187800.0,
+      "estimate": 204100.0,
+      "expected_return_pct": -1.4,
+      "entry_cap_price": 188300.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4417,7 +4746,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -9.3,
+      "entry_cap_gap_pct": -9.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +15%p) · 섹터값 0.13(집중도 평소 0.95배·heat 0.192)",
@@ -4504,7 +4833,7 @@
             "realized_since_event_pct": -2.79,
             "contrib_pct": 2.9,
             "note": "수주잔고 7조원 LS ELECTRIC, 21만원선 강보합 - 잡포스트",
-            "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTE1rNUZZRnRNNjNHRnpuT1ZnWkdFc2N5aXdqcU9WOGZWQVpFd0xVdTlCclo5anNoNDM3RGlwenJST3llS1o1MjNFZGt2cUhoTldoRENocFhLY1NCQ0ZoUGxsU2JrN0xBeEpBUEFwb2l1UWRDd9IBckFVX3lxTE1rNUZZRnRNNjNHRnpuT1ZnWkdFc2N5aXdqcU9WOGZWQVpFd0xVdTlCclo5anNoNDM3RGlwenJST3llS1o1MjNFZGt2cUhoTldoRENocFhLY1NCQ0ZoUGxsU2JrN0xBeEpBUEFwb2l1UWRDdw?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9nT2Z3QXI1Z2thSTVLSjV4LXp0RVFfaXVGem52QjA5Q1RlU29hdFNsUGZ3U3kxRzNmcjZYRUxqeEVReW1WR284RnhHT2VNZzFWV1d5RXlWNW1ONU1zUEJ3VXM5al9fNkdfSVB4WnBn0gFyQVVfeXFMTWs1RllGdE02M0dGem5PVmdaR0VzY3lpd2pxT1Y4ZlZBWkV3TFV1OUJyWjlqc2g0MzdEaXB6clJPeWVLWjUyM0Vka3ZxSGhOV2hEQ2hwWEtjU0JDRmhQbGxTYms3TEF4SkFQQXBvaXVRZEN3?oc=5",
             "matched_keywords": [
               "수주잔고"
             ]
@@ -4518,7 +4847,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -1.12,
             "contrib_pct": -0.99,
-            "note": "[단독] LS일렉트릭·효성중공업, 미국 정부 나란히 제소…변압기 관세 불복 - ngetnews.com",
+            "note": "[단독] LS일렉트릭·효성중공업, 미국 정부 나란히 제소…변압기 관세 불복 - 뉴스저널리즘",
             "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5tX1NEYnJFMm1OZlNWSDZNbE1HY0FvcmJoVUVlcWNIakFrMFN6TVBCQjh6cFJjRFl3NGlNNXZ4aTd0WTIyN2c2ZEtjUjhTTnNUekZmdU0tZXNZVTlWZlREZnpwVVRTQndJVzVn?oc=5",
             "matched_keywords": [
               "관세"
@@ -4533,7 +4862,7 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -1.61,
             "contrib_pct": 3.2,
-            "note": "LS일렉트릭-한전, 배전용 ‘그리드포밍’ 공동 개발…전력망 안정화 기술 확보 - 미디어파인",
+            "note": "LS일렉트릭-한전, 배전용 ‘그리드포밍’ 공동 개발…전력망 안정화 기술 확보 - mediafine.co.kr",
             "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1nU0ZMSDJWZlhwaW9yTHNEc2RHOHNrb3E5LWpKRHgwUzZEQ1hqMnY5eWVTLVVmUWMwMnVmQ1ZLcHo4bFMtMTU0Q0I2MWtLY1duT1UtOUZLS2x5UG1WMGlFZmJnWDlGZkhWUnA1dDZR?oc=5",
             "matched_keywords": [
               "기술확보"
@@ -4541,17 +4870,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -2.94,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -4564,8 +4907,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -4611,10 +4954,10 @@
         "prev_estimate": 203600.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 0.0,
-        "entry_cap_delta_krw": 0.0,
-        "news_pct_delta": 0.0,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 500.0,
+        "entry_cap_delta_krw": 500.0,
+        "news_pct_delta": 0.25,
+        "expected_return_delta_pct": 0.2
       },
       "new_news_since_prev": [
         {
@@ -4631,14 +4974,14 @@
           "date": "2026-09-22",
           "contrib_pct": 2.9,
           "note": "수주잔고 7조원 LS ELECTRIC, 21만원선 강보합 - 잡포스트",
-          "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTE1rNUZZRnRNNjNHRnpuT1ZnWkdFc2N5aXdqcU9WOGZWQVpFd0xVdTlCclo5anNoNDM3RGlwenJST3llS1o1MjNFZGt2cUhoTldoRENocFhLY1NCQ0ZoUGxsU2JrN0xBeEpBUEFwb2l1UWRDd9IBckFVX3lxTE1rNUZZRnRNNjNHRnpuT1ZnWkdFc2N5aXdqcU9WOGZWQVpFd0xVdTlCclo5anNoNDM3RGlwenJST3llS1o1MjNFZGt2cUhoTldoRENocFhLY1NCQ0ZoUGxsU2JrN0xBeEpBUEFwb2l1UWRDdw?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9nT2Z3QXI1Z2thSTVLSjV4LXp0RVFfaXVGem52QjA5Q1RlU29hdFNsUGZ3U3kxRzNmcjZYRUxqeEVReW1WR284RnhHT2VNZzFWV1d5RXlWNW1ONU1zUEJ3VXM5al9fNkdfSVB4WnBn0gFyQVVfeXFMTWs1RllGdE02M0dGem5PVmdaR0VzY3lpd2pxT1Y4ZlZBWkV3TFV1OUJyWjlqc2g0MzdEaXB6clJPeWVLWjUyM0Vka3ZxSGhOV2hEQ2hwWEtjU0JDRmhQbGxTYms3TEF4SkFQQXBvaXVRZEN3?oc=5"
         },
         {
           "kind": "news_auto",
           "type": "regulation_or_tariff",
           "date": "2026-09-14",
           "contrib_pct": -0.99,
-          "note": "[단독] LS일렉트릭·효성중공업, 미국 정부 나란히 제소…변압기 관세 불복 - ngetnews.com",
+          "note": "[단독] LS일렉트릭·효성중공업, 미국 정부 나란히 제소…변압기 관세 불복 - 뉴스저널리즘",
           "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5tX1NEYnJFMm1OZlNWSDZNbE1HY0FvcmJoVUVlcWNIakFrMFN6TVBCQjh6cFJjRFl3NGlNNXZ4aTd0WTIyN2c2ZEtjUjhTTnNUekZmdU0tZXNZVTlWZlREZnpwVVRTQndJVzVn?oc=5"
         },
         {
@@ -4646,24 +4989,32 @@
           "type": "tech_breakthrough",
           "date": "2026-09-15",
           "contrib_pct": 3.2,
-          "note": "LS일렉트릭-한전, 배전용 ‘그리드포밍’ 공동 개발…전력망 안정화 기술 확보 - 미디어파인",
+          "note": "LS일렉트릭-한전, 배전용 ‘그리드포밍’ 공동 개발…전력망 안정화 기술 확보 - mediafine.co.kr",
           "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1nU0ZMSDJWZlhwaW9yTHNEc2RHOHNrb3E5LWpKRHgwUzZEQ1hqMnY5eWVTLVVmUWMwMnVmQ1ZLcHo4bFMtMTU0Q0I2MWtLY1duT1UtOUZLS2x5UG1WMGlFZmJnWDlGZkhWUnA1dDZR?oc=5"
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -4682,8 +5033,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **203,600원**(-1.6%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; tech_breakthrough(자동) +3.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **187,800원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 207,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 9.3% 상회)"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **204,100원**(-1.4%, 등급 A) · 직전 리포트 대비 ▲500원 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; tech_breakthrough(자동) +3.2%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **188,300원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 207,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 9.0% 상회) · 직전 리포트 대비 ▲500원"
     },
     {
       "ticker": "000660",
@@ -4695,10 +5046,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.8,
-        "news": 1.29,
+        "news": 1.41,
         "sector": 4.96,
         "momentum": -1.5,
-        "total": 6.55
+        "total": 6.67
       },
       "trend_gate": {
         "factor": 0.3,
@@ -4706,14 +5057,14 @@
         "pct_of_52w_high": 62.37,
         "ungated": {
           "theme": 6.01,
-          "news": 7.75
+          "news": 8.17
         }
       },
-      "raw_estimate": 1679600.0,
+      "raw_estimate": 1681500.0,
       "cap_applied": null,
-      "estimate": 1679600.0,
-      "expected_return_pct": -9.8,
-      "entry_cap_price": 1535000.0,
+      "estimate": 1681500.0,
+      "expected_return_pct": -9.7,
+      "entry_cap_price": 1536700.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4722,7 +5073,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -17.6,
+      "entry_cap_gap_pct": -17.5,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.44(집중도 평소 1.04배·heat 0.303)",
@@ -4829,17 +5180,31 @@
           },
           {
             "kind": "news_global",
+            "type": "global_rate_relief",
+            "date": "2026-09-21",
+            "impact_pct": 3.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -1.9,
+            "contrib_pct": 0.43,
+            "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+          },
+          {
+            "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -4852,8 +5217,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -4899,10 +5264,10 @@
         "prev_estimate": 1678100.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 1500.0,
-        "entry_cap_delta_krw": 1400.0,
-        "news_pct_delta": 0.1,
-        "expected_return_delta_pct": 0.1
+        "estimate_delta_krw": 3400.0,
+        "entry_cap_delta_krw": 3100.0,
+        "news_pct_delta": 0.22,
+        "expected_return_delta_pct": 0.2
       },
       "new_news_since_prev": [
         {
@@ -4931,19 +5296,27 @@
         },
         {
           "kind": "news_global",
+          "type": "global_rate_relief",
+          "date": "2026-09-21",
+          "contrib_pct": 0.43,
+          "note": "Government Bond Yields Fall as Risk Sentiment Tentatively Improves - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOclRMVXQyTkZiLThMRF9OSG9ZLVNBWE1DUkpoQUdRNDQ0akx4ZlNJZElBY2lRazk2ZlNKeE5IQU9fN2Vpc09ZRlR6RDhqV0VUcFNHSFpyTnk2V1ppbU5HcGRCMTZhZjhXV056a1RKMHUxa1daemlqZjhJcXpYdURUQmhqNU1KY3pYaDBneUc5eFp1YUVhbWhxXzFtVFozZ2xYTmxvd2xVZ3V0SlNaUllXQjMyNkRUYWYyZ1dV?oc=5"
+        },
+        {
+          "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -4962,8 +5335,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,679,600원**(-9.8%, 등급 A) · 직전 리포트 대비 ▲1,500원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,535,000원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.6% 상회) · 직전 리포트 대비 ▲1,400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,681,500원**(-9.7%, 등급 A) · 직전 리포트 대비 ▲3,400원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,536,700원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.5% 상회) · 직전 리포트 대비 ▲3,100원"
     },
     {
       "ticker": "005930",
@@ -4975,10 +5348,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.41,
-        "news": 4.02,
+        "news": 6.12,
         "sector": 4.96,
         "momentum": -1.5,
-        "total": 10.89
+        "total": 12.99
       },
       "trend_gate": {
         "factor": 0.6,
@@ -4986,14 +5359,14 @@
         "pct_of_52w_high": 76.5,
         "ungated": {
           "theme": 5.69,
-          "news": 8.69
+          "news": 12.0
         }
       },
-      "raw_estimate": 245600.0,
+      "raw_estimate": 250200.0,
       "cap_applied": null,
-      "estimate": 245600.0,
-      "expected_return_pct": -14.3,
-      "entry_cap_price": 230100.0,
+      "estimate": 250200.0,
+      "expected_return_pct": -12.7,
+      "entry_cap_price": 234400.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -5002,7 +5375,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -19.7,
+      "entry_cap_gap_pct": -18.2,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.44(집중도 평소 1.04배·heat 0.303)",
@@ -5139,6 +5512,21 @@
             ]
           },
           {
+            "kind": "news_auto",
+            "type": "tech_breakthrough",
+            "date": "2026-09-23",
+            "impact_pct": 6.0,
+            "decay": 0.98,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.52,
+            "note": "삼성전자 LPDDR6, 퀄컴 차세대 AP서 '세계 최초' 검증 성공 - 머니투데이 - 머니투데이",
+            "source_url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFB0WjVoV3RLcG44TUVEWkpqUjRVRUFoNlBQSUJ3U1I0V0N0RHREejVabzI4aFZqVzBpWTB1V0pVYmNxX3JqWjVqV282RjgzQ2Z1ZXJtOUxrdGZWN2lNX1BTZVB3UENYVGVIVU1JVNIBckFVX3lxTFBVa0NXNDExeWEyeC1GNkt6eDc3LUtZYW5Nc1pUVFRwRGc3bWZOc0hyUmQ5T1lNUEdRdko2V1FzZUhiblVuY0pYM19nR3ZjR2VyX2MxUW1oQ2RkRllLZEpWYTF6ejZZbkp2elgyV0dIZ1p3dw?oc=5",
+            "matched_keywords": [
+              "세계최초"
+            ]
+          },
+          {
             "kind": "news_global",
             "type": "global_peer_pricing",
             "date": "2026-09-24",
@@ -5155,16 +5543,16 @@
           {
             "kind": "news_global",
             "type": "global_rate_shock",
-            "date": "2026-09-24",
+            "date": "2026-09-25",
             "impact_pct": -6.0,
             "channel": "macro",
             "transmission": 0.25,
-            "decay": 0.99,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.89,
-            "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-            "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+            "contrib_pct": -0.9,
+            "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+            "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
           },
           {
             "kind": "news_global",
@@ -5177,8 +5565,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.59,
-            "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+            "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+            "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
           },
           {
             "kind": "catalyst",
@@ -5224,10 +5612,10 @@
         "prev_estimate": 245500.0,
         "prev_as_of": "2026-09-24T22:28:16+09:00",
         "prev_slot": "2026-09-24-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": 0.02,
-        "expected_return_delta_pct": 0.0
+        "estimate_delta_krw": 4700.0,
+        "entry_cap_delta_krw": 4400.0,
+        "news_pct_delta": 2.12,
+        "expected_return_delta_pct": 1.6
       },
       "new_news_since_prev": [
         {
@@ -5263,6 +5651,14 @@
           "source_url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1uMzZOWGFKNjV2QUNlNGFqazlHNmtkRmpuMnM0UUVvbTRVWFh1amdVaFZNeWlSUXVobTlKQmNUeGdnV0RfTERid0hOMjk5VkRtcExWTzhpNmt1dw?oc=5"
         },
         {
+          "kind": "news_auto",
+          "type": "tech_breakthrough",
+          "date": "2026-09-23",
+          "contrib_pct": 3.52,
+          "note": "삼성전자 LPDDR6, 퀄컴 차세대 AP서 '세계 최초' 검증 성공 - 머니투데이 - 머니투데이",
+          "source_url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFB0WjVoV3RLcG44TUVEWkpqUjRVRUFoNlBQSUJ3U1I0V0N0RHREejVabzI4aFZqVzBpWTB1V0pVYmNxX3JqWjVqV282RjgzQ2Z1ZXJtOUxrdGZWN2lNX1BTZVB3UENYVGVIVU1JVNIBckFVX3lxTFBVa0NXNDExeWEyeC1GNkt6eDc3LUtZYW5Nc1pUVFRwRGc3bWZOc0hyUmQ5T1lNUEdRdko2V1FzZUhiblVuY0pYM19nR3ZjR2VyX2MxUW1oQ2RkRllLZEpWYTF6ejZZbkp2elgyV0dIZ1p3dw?oc=5"
+        },
+        {
           "kind": "news_global",
           "type": "global_peer_pricing",
           "date": "2026-09-24",
@@ -5273,18 +5669,18 @@
         {
           "kind": "news_global",
           "type": "global_rate_shock",
-          "date": "2026-09-24",
-          "contrib_pct": -0.89,
-          "note": "US 30-Year Yield Hits Highest Since 2004 as Bond Selloff Deepens - Yahoo Finance",
-          "source_url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPTDRFZmFaX2lMQU14d2I0Y1VaYTJxM2xpS2ZOV1R0bVViRWNDcTFEY0tCaVdKMXJiSThIaERjTC0yeFdabFNua2tMT0NpaHJ3a3Z0Ynh5UnNkaUNodjcyemJDYVhSS0JYWjZkWFBrZERjX0p3cEc5RTNfZFhVblhVNjQ2c09RajFYS0J1cTBwZm8yOXFDZng5aQ?oc=5"
+          "date": "2026-09-25",
+          "contrib_pct": -0.9,
+          "note": "Global bond selloff rolls on, US 30-year yield at highest since 2004 - Reuters",
+          "source_url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOOG41MExjN21pM3Z3V2JFMGkydXNYQW5YSEFfbTd2N2pOenR6R3pKQ0ZVWnVQZElXXzdBSXNLdTl4Q0ZPMzItVkIzR3hWNjZrMUNRZzJsa2xYQVNvQ1h2REJuNW1HTGpCb2lsdjdyWkZacjV6NnI1aHA4Y2JFN0sxYm5TYlBTSkhGWkd6b2dWaWNpbTVHYkhWb0lnNFo1al9scmVqT0tXZkh5ZFU?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_risk_off",
           "date": "2026-09-24",
           "contrib_pct": -0.59,
-          "note": "U.S. 30-year bond yield rises to highest since 2004 as selloff deepens - AOL.com",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4wZXlyajRQT0NMNngtb1hNSW5ZVmZQb1lHMlNJTGZTYk9lbTM0OEZIRVhyMTJOOW1nUmxrVlNudk91UjJ2eVpoUWt6MHFzRUdsVUI4Q3I1OUQ5ZVYtOE41UkExU1gzTnVVWXVVNjdZdXI3dW8?oc=5"
+          "note": "U.S. Stocks Decline as Treasury Selloff Deepens - WSJ",
+          "source_url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbkdxd3BfVEw4UWYweEFZc3VGdTFOeDNYZ1JGSGdLZWNlSlc2bjJ5N3p6YmNTSTdOdDdQbkxEY2piQ0R0MjFnYWZ0OGxtNUVsYjhMbkx5V0lzWnFPSkVyZFJZTDBBYm1tVDVZU3lBQjRyZTFsMzlqaENEaUk1Uy1FY01CUVhIUExBQ0RwWkhhbWxZbE5HOGdwVzF2TW4wRUsydWF2a1J4MGJBMkNOWVFxSDln?oc=5"
         },
         {
           "kind": "catalyst",
@@ -5303,10 +5699,10 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **245,600원**(-14.3%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+3/뉴스+4/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **230,100원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 19.7% 상회) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **250,200원**(-12.7%, 등급 A) · 직전 리포트 대비 ▲4,700원 · 프리미엄 테마+3/뉴스+6/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; tech_breakthrough(자동) +3.5%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **234,400원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 18.2% 상회) · 직전 리포트 대비 ▲4,400원"
     }
   ],
-  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-09-25T09:07:34+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 33,800 | 54,200 | 57,400 | +69.8% | 0 | 🟢진입가능 | B |\n| NAVER(035420) | 196,000 | 274,900 | 290,100 | +48.0% | 0 | 🟢진입가능 | A |\n| HD현대일렉트릭(267260) | 713,000 | 876,300 | 950,300 | +33.3% | ▲100 | 🟡진입주의 | A |\n| 한화에어로스페이스(012450) | 1,031,000 | 1,215,600 | 1,332,000 | +29.2% | ▼200 | 🟢진입가능 | A |\n| 삼성물산(028260) | 368,500 | 423,700 | 462,800 | +25.6% | ▼100 | 🟡진입주의 | A |\n| KB금융(105560) | 174,100 | 199,200 | 211,200 | +21.3% | 0 | 🟢진입가능 | A |\n| 셀트리온(068270) | 178,100 | 196,700 | 205,300 | +15.3% | 0 | 🟢진입가능 | B |\n| 신한지주(055550) | 110,100 | 117,500 | 125,400 | +13.9% | 0 | 🟢진입가능 | A |\n| LG에너지솔루션(373220) | 352,000 | 369,600 | 400,100 | +13.7% | ▼300 | 🟢진입가능 | A |\n| LIG넥스원(LIG D&A)(079550) | 699,000 | 712,900 | 784,000 | +12.2% | ▲200 | 🟢진입가능 | A |\n| 삼성SDI(006400) | 521,000 | 533,800 | 578,000 | +10.9% | 0 | 🟢진입가능 | A |\n| 삼성바이오로직스(207940) | 1,373,000 | 1,456,200 | 1,521,700 | +10.8% | ▲600 | 🟢진입가능 | B |\n| 하나금융지주(086790) | 133,700 | 134,700 | 143,900 | +7.6% | ▲100 | 🟢진입가능 | A |\n| 현대차(005380) | 357,000 | 350,200 | 370,400 | +3.8% | ▲100 | 🔴+2% 상회 | A |\n| HD한국조선해양(009540) | 335,000 | 315,000 | 343,600 | +2.6% | ▲100 | 🔴+6% 상회 | A |\n| 한미반도체(042700) | 243,000 | 224,100 | 248,000 | +2.1% | ▼4,800 | 🔴+8% 상회 | A |\n| 삼성중공업(010140) | 20,450 | 18,900 | 20,500 | +0.2% | 0 | 🔴+8% 상회 | A |\n| LS ELECTRIC(010120) | 207,000 | 187,800 | 203,600 | -1.6% | 0 | 🔴+10% 상회 | A |\n| SK하이닉스(000660) | 1,863,000 | 1,535,000 | 1,679,600 | -9.8% | ▲1,500 | 🔴+21% 상회 | A |\n| 삼성전자(005930) | 286,500 | 230,100 | 245,600 | -14.3% | ▲100 | 🔴+25% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **57,400원**(+69.8%, 등급 B · ⚠밴드이탈) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **290,100원**(+48.0%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+3/뉴스-1/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **950,300원**(+33.3%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+1/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.4%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **1,332,000원**(+29.2%, 등급 A) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+3/뉴스+8/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **462,800원**(+25.6%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **211,200원**(+21.3%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+6/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **205,300원**(+15.3%, 등급 B) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **125,400원**(+13.9%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+5/뉴스+7/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **400,100원**(+13.7%, 등급 A) · 직전 리포트 대비 ▼300원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.4%; tech_breakthrough(자동) +3.4%\n- 뉴스 반영 추정 목표 매도가 **784,000원**(+12.2%, 등급 A) · 직전 리포트 대비 ▲200원 · 프리미엄 테마+2/뉴스+1/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **578,000원**(+10.9%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+4/뉴스+12(캡)/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **1,521,700원**(+10.8%, 등급 B) · 직전 리포트 대비 ▲600원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **143,900원**(+7.6%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+5/뉴스+3/섹터+6/모멘텀+2% · 📰 원인 뉴스: policy_support(자동) +1.7%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **370,400원**(+3.8%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스-7/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; earnings_report(촉매) -1.0%\n- 뉴스 반영 추정 목표 매도가 **343,600원**(+2.6%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스+2/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **248,000원**(+2.1%, 등급 A) · 직전 리포트 대비 ▼4,800원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; supply_contract_major(자동) +3.1%\n- 뉴스 반영 추정 목표 매도가 **20,500원**(+0.2%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+1/뉴스+2/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **203,600원**(-1.6%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; tech_breakthrough(자동) +3.2%\n- 뉴스 반영 추정 목표 매도가 **1,679,600원**(-9.8%, 등급 A) · 직전 리포트 대비 ▲1,500원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **245,600원**(-14.3%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+3/뉴스+4/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **54,200원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 60.4% 낮음)\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **274,900원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 40.3% 낮음)\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **876,300원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 22.9% 낮음) · 직전 리포트 대비 ▲100원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,215,600원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 17.9% 낮음) · 직전 리포트 대비 ▼100원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **423,700원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.0% 낮음) · 직전 리포트 대비 ▼100원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **199,200원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 14.4% 낮음)\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **196,700원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 10.4% 낮음)\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **117,500원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 6.7% 낮음)\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **369,600원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 5.0% 낮음) · 직전 리포트 대비 ▼300원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **712,900원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 2.0% 낮음) · 직전 리포트 대비 ▲200원\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **533,800원**(R/R≥1.0·ATR 4.1%×2≈손절 8.3% 기준) · 현재가 521,000원 🟢진입 가능(현재가가 상한가보다 2.5% 낮음)\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,456,200원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 6.1% 낮음) · 직전 리포트 대비 ▲600원\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **134,700원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 0.7% 낮음) · 직전 리포트 대비 ▲100원\n- 현대차(005380) — 뉴스 반영 신규진입 상한가 **350,200원**(R/R≥1.0·ATR 2.9%×2≈손절 5.8% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.9% 상회) · 직전 리포트 대비 ▲100원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **315,000원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 6.0% 상회) · 직전 리포트 대비 ▲100원\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **224,100원**(R/R≥1.0·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 243,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.8% 상회) · 직전 리포트 대비 ▼4,300원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,535,000원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.6% 상회) · 직전 리포트 대비 ▲1,400원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **230,100원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 19.7% 상회) · 직전 리포트 대비 ▲100원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-09-25T10:22:48+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 33,800 | 54,300 | 57,500 | +70.1% | ▲100 | 🟢진입가능 | B |\n| NAVER(035420) | 196,000 | 276,000 | 291,200 | +48.6% | ▲1,100 | 🟢진입가능 | A |\n| HD현대일렉트릭(267260) | 713,000 | 877,400 | 951,400 | +33.4% | ▲1,200 | 🟡진입주의 | A |\n| 한화에어로스페이스(012450) | 1,031,000 | 1,219,900 | 1,336,800 | +29.7% | ▲4,600 | 🟢진입가능 | A |\n| 삼성물산(028260) | 368,500 | 424,300 | 463,400 | +25.8% | ▲500 | 🟡진입주의 | A |\n| KB금융(105560) | 174,100 | 199,800 | 211,900 | +21.7% | ▲700 | 🟢진입가능 | A |\n| 셀트리온(068270) | 178,100 | 197,500 | 206,100 | +15.7% | ▲800 | 🟢진입가능 | B |\n| 신한지주(055550) | 110,100 | 117,900 | 125,800 | +14.3% | ▲400 | 🟢진입가능 | A |\n| LG에너지솔루션(373220) | 352,000 | 366,900 | 397,100 | +12.8% | ▼3,300 | 🟢진입가능 | A |\n| LIG넥스원(LIG D&A)(079550) | 699,000 | 714,600 | 785,900 | +12.4% | ▲2,100 | 🟢진입가능 | A |\n| 삼성바이오로직스(207940) | 1,373,000 | 1,461,700 | 1,527,500 | +11.3% | ▲6,400 | 🟢진입가능 | B |\n| 삼성SDI(006400) | 521,000 | 533,800 | 578,000 | +10.9% | 0 | 🟢진입가능 | A |\n| 하나금융지주(086790) | 133,700 | 135,200 | 144,400 | +8.0% | ▲600 | 🟢진입가능 | A |\n| 현대차(005380) | 357,000 | 350,500 | 370,800 | +3.9% | ▲500 | 🔴+2% 상회 | A |\n| HD한국조선해양(009540) | 335,000 | 315,800 | 344,500 | +2.8% | ▲1,000 | 🔴+6% 상회 | A |\n| 한미반도체(042700) | 243,000 | 224,100 | 248,000 | +2.1% | ▼4,800 | 🔴+8% 상회 | A |\n| 삼성중공업(010140) | 20,450 | 19,000 | 20,600 | +0.7% | ▲100 | 🔴+8% 상회 | A |\n| LS ELECTRIC(010120) | 207,000 | 188,300 | 204,100 | -1.4% | ▲500 | 🔴+10% 상회 | A |\n| SK하이닉스(000660) | 1,863,000 | 1,536,700 | 1,681,500 | -9.7% | ▲3,400 | 🔴+21% 상회 | A |\n| 삼성전자(005930) | 286,500 | 234,400 | 250,200 | -12.7% | ▲4,700 | 🔴+22% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **57,500원**(+70.1%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+2/뉴스+3/섹터+4/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **291,200원**(+48.6%, 등급 A) · 직전 리포트 대비 ▲1,100원 · 프리미엄 테마+3/뉴스-0/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.6%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **951,400원**(+33.4%, 등급 A) · 직전 리포트 대비 ▲1,200원 · 프리미엄 테마+1/뉴스+1/섹터+5/모멘텀-4% · 📰 원인 뉴스: supply_contract_major(자동) +4.4%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **1,336,800원**(+29.7%, 등급 A) · 직전 리포트 대비 ▲4,600원 · 프리미엄 테마+3/뉴스+9/섹터+4/모멘텀+1% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **463,400원**(+25.8%, 등급 A) · 직전 리포트 대비 ▲500원 · 프리미엄 테마+2/뉴스+3/섹터+6/모멘텀-4% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **211,900원**(+21.7%, 등급 A) · 직전 리포트 대비 ▲700원 · 프리미엄 테마+5/뉴스+7/섹터+6/모멘텀+3% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **206,100원**(+15.7%, 등급 B) · 직전 리포트 대비 ▲800원 · 프리미엄 테마+2/뉴스+7/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **125,800원**(+14.3%, 등급 A) · 직전 리포트 대비 ▲400원 · 프리미엄 테마+5/뉴스+7/섹터+6/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **397,100원**(+12.8%, 등급 A) · 직전 리포트 대비 ▼3,300원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.4%; tech_breakthrough(자동) +3.4%\n- 뉴스 반영 추정 목표 매도가 **785,900원**(+12.4%, 등급 A) · 직전 리포트 대비 ▲2,100원 · 프리미엄 테마+2/뉴스+1/섹터+4/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **1,527,500원**(+11.3%, 등급 B) · 직전 리포트 대비 ▲6,400원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; earnings_report(촉매) +1.0%\n- 뉴스 반영 추정 목표 매도가 **578,000원**(+10.9%, 등급 A) · 직전 대비 변동 없음 · 프리미엄 테마+4/뉴스+12(캡)/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **144,400원**(+8.0%, 등급 A) · 직전 리포트 대비 ▲600원 · 프리미엄 테마+5/뉴스+3/섹터+6/모멘텀+2% · 📰 원인 뉴스: policy_support(자동) +1.7%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **370,800원**(+3.9%, 등급 A) · 직전 리포트 대비 ▲500원 · 프리미엄 테마+2/뉴스-7/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.4%; earnings_report(촉매) -1.0%\n- 뉴스 반영 추정 목표 매도가 **344,500원**(+2.8%, 등급 A) · 직전 리포트 대비 ▲1,000원 · 프리미엄 테마+2/뉴스+2/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; global_order_demand(해외) +1.1%\n- 뉴스 반영 추정 목표 매도가 **248,000원**(+2.1%, 등급 A) · 직전 리포트 대비 ▼4,800원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; supply_contract_major(자동) +3.1%\n- 뉴스 반영 추정 목표 매도가 **20,600원**(+0.7%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+1/뉴스+2/섹터+0/모멘텀-4% · 📰 원인 뉴스: tech_breakthrough(자동) +3.5%; earnings_report(촉매) +3.4%\n- 뉴스 반영 추정 목표 매도가 **204,100원**(-1.4%, 등급 A) · 직전 리포트 대비 ▲500원 · 프리미엄 테마+2/뉴스+5/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; tech_breakthrough(자동) +3.2%\n- 뉴스 반영 추정 목표 매도가 **1,681,500원**(-9.7%, 등급 A) · 직전 리포트 대비 ▲3,400원 · 프리미엄 테마+2/뉴스+1/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.4%; buyback_cancellation(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **250,200원**(-12.7%, 등급 A) · 직전 리포트 대비 ▲4,700원 · 프리미엄 테마+3/뉴스+6/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_surprise_beat(자동) +3.5%; tech_breakthrough(자동) +3.5%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **54,300원**(R/R≥1.0·ATR 2.9%×2≈손절 5.9% 기준) · 현재가 33,800원 🟢진입 가능(현재가가 상한가보다 60.7% 낮음) · 직전 리포트 대비 ▲100원\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **276,000원**(R/R≥1.0·ATR 2.8%×2≈손절 5.5% 기준) · 현재가 196,000원 🟢진입 가능(현재가가 상한가보다 40.8% 낮음) · 직전 리포트 대비 ▲1,100원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **877,400원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 713,000원 🟡진입 가능 구간이나 falling knife(60일 -24%) — 추격 금지(추세 약세)(상한가보다 23.1% 낮음) · 직전 리포트 대비 ▲1,200원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,219,900원**(R/R≥1.0·ATR 4.8%×2≈손절 9.6% 기준) · 현재가 1,031,000원 🟢진입 가능(현재가가 상한가보다 18.3% 낮음) · 직전 리포트 대비 ▲4,200원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **424,300원**(R/R≥1.0·ATR 4.6%×2≈손절 9.2% 기준) · 현재가 368,500원 🟡진입 가능 구간이나 falling knife(60일 -22%) — 추격 금지(추세 약세)(상한가보다 15.1% 낮음) · 직전 리포트 대비 ▲500원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **199,800원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 174,100원 🟢진입 가능(현재가가 상한가보다 14.8% 낮음) · 직전 리포트 대비 ▲600원\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **197,500원**(R/R≥1.0·ATR 2.2%×2≈손절 4.4% 기준) · 현재가 178,100원 🟢진입 가능(현재가가 상한가보다 10.9% 낮음) · 직전 리포트 대비 ▲800원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **117,900원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 110,100원 🟢진입 가능(현재가가 상한가보다 7.1% 낮음) · 직전 리포트 대비 ▲400원\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **366,900원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 352,000원 🟢진입 가능(현재가가 상한가보다 4.2% 낮음) · 직전 리포트 대비 ▼3,000원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **714,600원**(R/R≥1.0·ATR 5.0%×2≈손절 10.0% 기준) · 현재가 699,000원 🟢진입 가능(현재가가 상한가보다 2.2% 낮음) · 직전 리포트 대비 ▲1,900원\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,461,700원**(R/R≥1.0·ATR 2.2%×2≈손절 4.5% 기준) · 현재가 1,373,000원 🟢진입 가능(현재가가 상한가보다 6.5% 낮음) · 직전 리포트 대비 ▲6,100원\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **533,800원**(R/R≥1.0·ATR 4.1%×2≈손절 8.3% 기준) · 현재가 521,000원 🟢진입 가능(현재가가 상한가보다 2.5% 낮음)\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **135,200원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 133,700원 🟢진입 가능(현재가가 상한가보다 1.1% 낮음) · 직전 리포트 대비 ▲600원\n- 현대차(005380) — 뉴스 반영 신규진입 상한가 **350,500원**(R/R≥1.0·ATR 2.9%×2≈손절 5.8% 기준) · 현재가 357,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.8% 상회) · 직전 리포트 대비 ▲400원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **315,800원**(R/R≥1.0·ATR 4.5%×2≈손절 9.1% 기준) · 현재가 335,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.7% 상회) · 직전 리포트 대비 ▲900원\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **224,100원**(R/R≥1.0·ATR 5.3%×2≈손절 10.7% 기준) · 현재가 243,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.8% 상회) · 직전 리포트 대비 ▼4,300원\n- 삼성중공업(010140) — 뉴스 반영 신규진입 상한가 **19,000원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 20,450원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 7.1% 상회) · 직전 리포트 대비 ▲100원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **188,300원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 207,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 9.0% 상회) · 직전 리포트 대비 ▲500원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,536,700원**(R/R≥1.0·ATR 4.7%×2≈손절 9.4% 기준) · 현재가 1,863,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.5% 상회) · 직전 리포트 대비 ▲3,100원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **234,400원**(R/R≥1.0·ATR 3.4%×2≈손절 6.7% 기준) · 현재가 286,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 18.2% 상회) · 직전 리포트 대비 ▲4,400원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
   "disclaimer": "학습·시뮬레이션 목적의 거친 추정 — 투자 권유 아님. watchlist.target_price 를 자동 갱신하지 않으며, routine 이 dynamic_exit_model 목표가 산정 시 참고 레이어로만 쓴다."
 }

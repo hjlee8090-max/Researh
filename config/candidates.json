@@ -1,6 +1,6 @@
 {
  "version": "1.3",
- "last_updated": "2026-09-20T18:45:00+09:00",
+ "last_updated": "2026-09-27T18:40:00+09:00",
  "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
  "candidates": [
   {
@@ -21,24 +21,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-05-28",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 9.83,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 30.03,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": -5.03,
-    "excess_20d_pct_points": -7.37,
-    "screen_score": 0.582,
+    "excess_60d_pct_points": 4.35,
+    "excess_20d_pct_points": 5.55,
+    "screen_score": 0.732,
     "rotate_out_flagged": false,
-    "last_close": 260000.0,
-    "effective_entry_cap": 196800.0,
-    "effective_cap_gap_pct": -24.3,
-    "engine_score": 8.6,
-    "engine_pass_filter": true,
-    "themes_immersed": [
-     "ai_memory_hbm"
-    ],
-    "note": "**절대·상대 두 프레임이 같은 답을 내는 종목.** 60일 절대 모멘텀 -23.64%, 지수 대비 60일 초과수익 -5.03%p·20일 -7.37%p 로 어느 창으로 봐도 음수다. 따라서 '60일 창이 8~9월 폭락을 담고 있어 주도주를 못 본다'는 진단은 이 종목에는 해당하지 않는다. 신규진입 상한가 196,800원 대비 현재가 +24.3% 위로 자리 게이트에서도 막힌다.",
-    "in_buy_zone": false
+    "last_close": 286500.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 234400.0,
+    "entry_cap_gap_pct": -18.2,
+    "in_buy_zone": false,
+    "estimate_expected_return_pct": -12.7,
+    "immersion_met": true
    }
   },
   {
@@ -58,24 +55,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-05-21",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -8.47,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -5.23,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 11.0,
-    "excess_20d_pct_points": -2.17,
-    "screen_score": 0.798,
+    "excess_60d_pct_points": 7.81,
+    "excess_20d_pct_points": -11.08,
+    "screen_score": 0.678,
     "rotate_out_flagged": true,
-    "last_close": 340000.0,
-    "effective_entry_cap": 350900.0,
-    "effective_cap_gap_pct": 3.2,
-    "engine_score": -7.23,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "shipbuilding_supercycle"
-    ],
-    "note": "4중 게이트 **통과 4종 중 하나**이며 비보유다. `shipbuilding_supercycle` 몰입 2/2 충족이고 조선 섹터의 avoid 재진입 몰입 조건도 충족 상태(2/2)이나, **해제에는 출처 URL·게재일이 있는 촉매가 필요**하고 이번 주에 확인된 촉매는 0건이라 avoid 를 유지한다. 신규진입 상한가 대비 +3.2% 로 여유가 가장 얇다. 절대모멘텀 자격 미달.",
-    "in_buy_zone": true
+    "last_close": 335000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 315800.0,
+    "entry_cap_gap_pct": -5.7,
+    "in_buy_zone": false,
+    "estimate_expected_return_pct": 2.8,
+    "immersion_met": false
    }
   },
   {
@@ -95,24 +89,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-05-21",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -16.49,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -16.36,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 4.18,
-    "excess_20d_pct_points": 4.48,
-    "screen_score": 0.646,
+    "excess_60d_pct_points": -0.71,
+    "excess_20d_pct_points": -5.22,
+    "screen_score": 0.496,
     "rotate_out_flagged": true,
-    "last_close": 21050.0,
-    "effective_entry_cap": 20000.0,
-    "effective_cap_gap_pct": -5.0,
-    "engine_score": -15.3,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "shipbuilding_supercycle"
-    ],
-    "note": "",
-    "in_buy_zone": false
+    "last_close": 20450.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 18700.0,
+    "entry_cap_gap_pct": -8.6,
+    "in_buy_zone": false,
+    "estimate_expected_return_pct": -0.7,
+    "immersion_met": false
    }
   },
   {
@@ -140,24 +131,21 @@
    ],
    "first_added": "2026-05-21",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -2.87,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -11.44,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 18.06,
-    "excess_20d_pct_points": 6.09,
-    "screen_score": 0.714,
+    "excess_60d_pct_points": 3.54,
+    "excess_20d_pct_points": -3.73,
+    "screen_score": 0.594,
     "rotate_out_flagged": true,
-    "last_close": 363500.0,
-    "effective_entry_cap": 399700.0,
-    "effective_cap_gap_pct": 10.0,
-    "engine_score": -2.3,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "power_grid_ai"
-    ],
-    "note": "",
-    "in_buy_zone": true
+    "last_close": 352000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 362300.0,
+    "entry_cap_gap_pct": 2.9,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 11.4,
+    "immersion_met": false
    }
   },
   {
@@ -178,24 +166,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-05-29",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 32.81,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 50.87,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": -9.72,
-    "excess_20d_pct_points": 7.15,
-    "screen_score": 0.601,
+    "excess_60d_pct_points": -13.46,
+    "excess_20d_pct_points": 6.36,
+    "screen_score": 0.481,
     "rotate_out_flagged": false,
-    "last_close": 1849000.0,
-    "effective_entry_cap": 1437200.0,
-    "effective_cap_gap_pct": -22.3,
-    "engine_score": 31.96,
-    "engine_pass_filter": true,
-    "themes_immersed": [
-     "ai_memory_hbm"
-    ],
-    "note": "**매수 하한을 넘긴 유일한 종목이면서 살 수 없는 종목.** 엔진 점수 31.96(하한 30) 이지만 1주 1,849,000원이 계좌의 **40.5%** 라 종목당 상한(자체 30% / 정책 35%) 둘 다 초과해 실행 배분에서 제외된다. 1주가 정책 상한 안으로 들어오려면 자기자본이 **5,282,857원**(현재 대비 +15.6%) 이상이어야 한다. **주도축을 막는 것은 게이트가 아니라 계좌 크기**라는 W39 판정의 근거 종목.",
-    "in_buy_zone": false
+    "last_close": 1863000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 1535400.0,
+    "entry_cap_gap_pct": -17.6,
+    "in_buy_zone": false,
+    "estimate_expected_return_pct": -9.8,
+    "immersion_met": true
    }
   },
   {
@@ -229,22 +214,21 @@
     "note": "자동차 섹터는 avoid 유지(몰입 0/2 — rs_inflection·volume_surge·sector_breadth·price_reversal 전부 미점등)라 어차피 진입 대상이 아니다. 이 표시는 진입 차단이 아니라 **다음 주간 재산출에서 -25%p 를 넘으면 candidates 에서 내린다**는 예고이며, 그 판정일은 다음 일요일이다. humanoid_robotics 테마 노출(0.6)은 유효하나 그 테마의 다른 두 종목(레인보우로보틱스 -17.37%p·두산로보틱스 -34.18%p)도 함께 후행 중이라 종목 문제가 아니라 축 문제로 본다."
    },
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -26.2,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -24.02,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": -9.39,
-    "excess_20d_pct_points": -11.42,
-    "screen_score": 0.41,
+    "excess_60d_pct_points": -12.52,
+    "excess_20d_pct_points": -16.51,
+    "screen_score": 0.29,
     "rotate_out_flagged": true,
-    "last_close": 366500.0,
-    "effective_entry_cap": 343100.0,
-    "effective_cap_gap_pct": -6.4,
-    "engine_score": -26.55,
-    "engine_pass_filter": false,
-    "themes_immersed": [],
-    "note": "",
-    "in_buy_zone": false
+    "last_close": 357000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 339700.0,
+    "entry_cap_gap_pct": -4.8,
+    "in_buy_zone": false,
+    "estimate_expected_return_pct": 0.6,
+    "immersion_met": true
    }
   },
   {
@@ -265,24 +249,21 @@
    "first_added": "2026-05-29",
    "note": " **[2026-08-25 09:27 4중 게이트 통과, 진입 보류]** ATR 축소(주당 손절위험 145,000 → 136,714원)로 8/23 의 '0주'가 1주로 산출됐으나 W35 결정룰의 대체종목 우선 조항으로 보류 — 1주 1,126,248원이 equity 의 24.6%이고 주당 손절위험이 단일거래 상한 137,552원의 99.4%·히트 잔여의 52.3%를 혼자 소진하며 부분익절·트레일이 물리적으로 불가능하다. 같은 위험예산으로 복수 주가 확보되는 셀트리온을 우선했다.",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -9.63,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -8.19,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 18.43,
-    "excess_20d_pct_points": 0.92,
+    "excess_60d_pct_points": 16.73,
+    "excess_20d_pct_points": -9.16,
     "screen_score": 0.762,
     "rotate_out_flagged": true,
-    "last_close": 1092000.0,
-    "effective_entry_cap": 1274100.0,
-    "effective_cap_gap_pct": 16.7,
-    "engine_score": -8.03,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "defense_export"
-    ],
-    "note": "4중 게이트(상한·추세필터·사이징·테마 몰입) **통과 4종 중 하나**이며 비보유다. `defense_export` 몰입 2/2 충족, 신규진입 상한가 대비 +16.7% 여유. 다만 절대모멘텀 자격 미달이라 **'산출됐으나 진입 불가'** 로 분류한다 — 산출은 강제, 진입은 엔진 통과가 조건.",
-    "in_buy_zone": true
+    "last_close": 1031000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 1219900.0,
+    "entry_cap_gap_pct": 18.3,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 29.7,
+    "immersion_met": true
    }
   },
   {
@@ -303,24 +284,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-05-29",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -23.33,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -19.1,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": -3.8,
-    "excess_20d_pct_points": 1.52,
+    "excess_60d_pct_points": -8.26,
+    "excess_20d_pct_points": -6.74,
     "screen_score": 0.495,
     "rotate_out_flagged": true,
-    "last_close": 727000.0,
-    "effective_entry_cap": 844700.0,
-    "effective_cap_gap_pct": 16.2,
-    "engine_score": -22.01,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "power_grid_ai"
-    ],
-    "note": "4중 게이트 **통과 4종 중 하나**이며 비보유다. `power_grid_ai` 몰입 2/2 충족, 신규진입 상한가 대비 +16.2% 여유. 절대모멘텀 자격 미달로 '산출됐으나 진입 불가'.",
-    "in_buy_zone": true
+    "last_close": 713000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 877400.0,
+    "entry_cap_gap_pct": 23.1,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 33.4,
+    "immersion_met": true
    }
   },
   {
@@ -345,22 +323,21 @@
     "note": "[2026-08-09] W33 1순위 신규 진입 후보. 8/7 종가 210,000 vs 진입 상한 211,800 🟢(여유 0.9%) · valuation verdict=ok(PER 18.0, 천장 262,508) 로 non_overheat_candidate_mandate 충족 · 인터넷 섹터 몰입 3/2 · score_candidates 랭킹 1위(0.673). **단 screen_universe 모멘텀 절대점수 -5.6 으로 rotate_out 제안에도 동시에 올라 있어 진입은 probe(계획의 50%) 상한**이며, 여유폭 0.9% 는 개장 갭 하나에 뒤집히므로 09시 실측 재판정 필수."
    },
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -3.98,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -3.33,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 17.66,
-    "excess_20d_pct_points": -10.77,
+    "excess_60d_pct_points": 11.73,
+    "excess_20d_pct_points": -14.92,
     "screen_score": 0.51,
     "rotate_out_flagged": true,
-    "last_close": 197500.0,
-    "effective_entry_cap": 273100.0,
-    "effective_cap_gap_pct": 38.3,
-    "engine_score": -4.08,
-    "engine_pass_filter": false,
-    "themes_immersed": [],
-    "note": "",
-    "in_buy_zone": true
+    "last_close": 196000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 282000.0,
+    "entry_cap_gap_pct": 43.9,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 51.8,
+    "immersion_met": true
    }
   },
   {
@@ -385,22 +362,21 @@
     "note": "[2026-08-09] W33 2순위 신규 진입 후보. 8/7 종가 39,900 vs 진입 상한 40,300 🟢(여유 1.0%) · valuation verdict=ok(PER 25.99, 천장 63,503) · 인터넷 섹터 몰입 3/2. **모멘텀 절대점수 -21.0 으로 후보 중 최하위권이라 NAVER 보다 후순위이며 probe 상한**. 09시 실측 재판정 필수."
    },
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -16.31,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -15.96,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 17.43,
-    "excess_20d_pct_points": -5.88,
-    "screen_score": 0.51,
+    "excess_60d_pct_points": 9.93,
+    "excess_20d_pct_points": -11.03,
+    "screen_score": 0.39,
     "rotate_out_flagged": true,
-    "last_close": 33600.0,
-    "effective_entry_cap": 55500.0,
-    "effective_cap_gap_pct": 65.2,
-    "engine_score": -16.52,
-    "engine_pass_filter": false,
-    "themes_immersed": [],
-    "note": "",
-    "in_buy_zone": true
+    "last_close": 33800.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 51300.0,
+    "entry_cap_gap_pct": 51.8,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 60.7,
+    "immersion_met": true
    }
   },
   {
@@ -420,24 +396,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-06-29",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 7.89,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 18.28,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": 11.48,
-    "excess_20d_pct_points": 11.77,
-    "screen_score": 0.75,
+    "excess_60d_pct_points": 8.06,
+    "excess_20d_pct_points": -1.28,
+    "screen_score": 0.63,
     "rotate_out_flagged": false,
-    "last_close": 208500.0,
-    "effective_entry_cap": 191800.0,
-    "effective_cap_gap_pct": -8.0,
-    "engine_score": 12.68,
-    "engine_pass_filter": true,
-    "themes_immersed": [
-     "power_grid_ai"
-    ],
-    "note": "",
-    "in_buy_zone": false
+    "last_close": 207000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 188300.0,
+    "entry_cap_gap_pct": -9.0,
+    "in_buy_zone": false,
+    "estimate_expected_return_pct": -1.4,
+    "immersion_met": true
    }
   },
   {
@@ -484,24 +457,21 @@
     "engine_note": "이 종목은 4중 게이트(진입 상한가·진입 필터·사이징·테마 몰입)를 **전부 통과한다**(8/30 스냅샷 기준 진입 상한가 여유 +0.6%·5일 +5.61%·1주 사이징 가능·defense_export 몰입 2/2). 게이트가 아니라 이 필드가 막는 것이므로 매 09시 후보 계수에서 통과 종목으로 세되 '진입 불가(reentry_block)' 를 함께 적는다."
    },
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -7.59,
-    "mom_pass_filter": false,
-    "excess_60d_pct_points": 8.05,
-    "excess_20d_pct_points": 6.31,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 4.11,
+    "mom_pass_filter": true,
+    "excess_60d_pct_points": 9.48,
+    "excess_20d_pct_points": -5.56,
     "screen_score": 0.614,
-    "rotate_out_flagged": true,
-    "last_close": 737000.0,
-    "effective_entry_cap": 727200.0,
-    "effective_cap_gap_pct": -1.3,
-    "engine_score": -2.32,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "defense_export"
-    ],
-    "note": "",
-    "in_buy_zone": false
+    "rotate_out_flagged": false,
+    "last_close": 699000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 714600.0,
+    "entry_cap_gap_pct": 2.2,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 12.4,
+    "immersion_met": true
    }
   },
   {
@@ -522,24 +492,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-06-29",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -15.86,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -4.5,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 5.65,
-    "excess_20d_pct_points": 10.34,
+    "excess_60d_pct_points": 9.84,
+    "excess_20d_pct_points": 6.7,
     "screen_score": 0.713,
     "rotate_out_flagged": true,
-    "last_close": 235000.0,
-    "effective_entry_cap": 212000.0,
-    "effective_cap_gap_pct": -9.8,
-    "engine_score": -14.31,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "ai_memory_hbm"
-    ],
-    "note": "**만성 후행주 강등 사유가 해소됐다.** 8/9 screen_flag 의 근거였던 지수 대비 60일 초과수익 **-30.95%p** 가 이번 주 **+5.65%p** 로 돌아섰고 20일도 +10.34%p 다(기준 -25.0%p). 현재 rotate_out 에 올라 있는 사유는 상대강도가 아니라 **절대모멘텀 이탈**(32종 중 다수가 해당)이므로 개별 강등 사유가 아니다. **강등·교체 후보 표시를 해제한다.** 다만 신규진입 상한가 212,000원 대비 현재가 235,000원(+9.8%)으로 자리 게이트에는 막혀 있어 진입 가능 재고는 아니다.",
-    "in_buy_zone": false
+    "last_close": 243000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 207200.0,
+    "entry_cap_gap_pct": -14.7,
+    "in_buy_zone": false,
+    "estimate_expected_return_pct": -5.6,
+    "immersion_met": true
    },
    "screen_flag_resolved": {
     "as_of": "2026-09-20",
@@ -579,24 +546,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-06-29",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 0.57,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 11.8,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": -7.97,
-    "excess_20d_pct_points": -10.35,
+    "excess_60d_pct_points": -6.11,
+    "excess_20d_pct_points": -8.91,
     "screen_score": 0.352,
     "rotate_out_flagged": false,
-    "last_close": 353500.0,
-    "effective_entry_cap": 407600.0,
-    "effective_cap_gap_pct": 15.3,
-    "engine_score": -0.24,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "power_grid_ai"
-    ],
-    "note": "**절대모멘텀 보유 자격 이탈** — 엔진 점수가 주말 사이 +0.57 → **-0.24** 로 부호가 뒤집혔다(자격 = 추세 AND 모멘텀 > 0). 칼날 위 값이라 즉시 청산하지 않고 사전 확약으로 처리한다: 점수가 2거래일 연속 0 이하를 유지하고 그 사이 지분 통로 미지불 카운터가 2회차로 올라가면 9/23 마감 동시호가에 1주 축소. 두 조건이 함께 성립할 때만 발동.",
-    "in_buy_zone": true
+    "last_close": 368500.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 427700.0,
+    "entry_cap_gap_pct": 16.1,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 26.8,
+    "immersion_met": true
    }
   },
   {
@@ -624,24 +588,21 @@
    "structural_bear_flags": [],
    "first_added": "2026-06-29",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 23.31,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 14.73,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": 29.45,
-    "excess_20d_pct_points": 13.66,
+    "excess_60d_pct_points": 17.41,
+    "excess_20d_pct_points": -3.04,
     "screen_score": 0.702,
     "rotate_out_flagged": false,
-    "last_close": 542000.0,
-    "effective_entry_cap": 540300.0,
-    "effective_cap_gap_pct": -0.3,
-    "engine_score": 23.17,
-    "engine_pass_filter": true,
-    "themes_immersed": [
-     "power_grid_ai"
-    ],
-    "note": "**이번 주 엔진이 허용한 유일한 매수 이름.** 절대모멘텀 매수 하한(30)을 넘긴 종목은 SK하이닉스뿐인데 1주가 계좌의 40.5%라 종목당 상한에 걸려 제외됐고, 마름 방지 폴백(매수대상 2개 미만이면 하한만 완화)이 그 자리를 이 종목으로 채웠다. 신규진입 상한가 540,300원 대비 현재가 542,000원으로 **+0.31% 위** — 조건 성립까지 0.3%다. 노출 테마 둘 중 `power_grid_ai` 는 몰입 2/2 충족이고 `ev_battery` 는 1/2 미충족으로 갈렸다.",
-    "in_buy_zone": false
+    "last_close": 521000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 533800.0,
+    "entry_cap_gap_pct": 2.5,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 10.9,
+    "immersion_met": false
    }
   },
   {
@@ -663,22 +624,21 @@
    ],
    "note": "2026-07-28 09시 신규 등록 — 당일 체결 없음. 12시 슬롯부터 score_candidates 정식 스코어링 대상. 은행 2종 동시 보유는 섹터 집중이므로 신한지주 부분익절(목표 110,829) 이후에 검토.",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 20.7,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 20.94,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": 35.69,
-    "excess_20d_pct_points": 4.07,
+    "excess_60d_pct_points": 32.11,
+    "excess_20d_pct_points": -3.63,
     "screen_score": 0.74,
     "rotate_out_flagged": false,
     "last_close": 133700.0,
-    "effective_entry_cap": 137900.0,
-    "effective_cap_gap_pct": 3.1,
-    "engine_score": 19.19,
-    "engine_pass_filter": true,
-    "themes_immersed": [],
-    "note": "**보유 유지 · 증액 중단.** 엔진 점수 19.19 로 보유 4종 중 가장 높지만 매수 하한(30)에는 미달. `value_up` 몰입 하락으로 4중 게이트 ④ 탈락. 9/18 등록한 1주 사전 매수주문을 취소한다.",
-    "in_buy_zone": true
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 135200.0,
+    "entry_cap_gap_pct": 1.1,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 8.1,
+    "immersion_met": true
    }
   },
   {
@@ -700,22 +660,21 @@
    ],
    "note": "2026-07-28 09시 신규 등록 — 당일 체결 없음. lessons: 금융주 목표가 설정 시 추가 할인 필요(3회 연속 미달). 12시부터 정식 스코어링.",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 15.79,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 17.98,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": 34.35,
-    "excess_20d_pct_points": 7.21,
-    "screen_score": 0.74,
+    "excess_60d_pct_points": 28.92,
+    "excess_20d_pct_points": 0.49,
+    "screen_score": 0.65,
     "rotate_out_flagged": false,
-    "last_close": 175700.0,
-    "effective_entry_cap": 201100.0,
-    "effective_cap_gap_pct": 14.5,
-    "engine_score": 15.55,
-    "engine_pass_filter": true,
-    "themes_immersed": [],
-    "note": "**보유 유지 · 증액 중단.** 엔진 점수 15.55 로 매수 하한(30) 미달이나 보유 자격은 통과. `value_up` 몰입이 2/2→1/2 로 떨어지며 4중 게이트 ④에서 탈락했다. 9/18 등록한 2주 사전 매수주문을 취소한다.",
-    "in_buy_zone": true
+    "last_close": 174100.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 199800.0,
+    "entry_cap_gap_pct": 14.8,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 21.7,
+    "immersion_met": true
    }
   },
   {
@@ -741,22 +700,21 @@
     "note": "screen_universe promote_suggestions 는 0건이었다(랭킹 상위가 이미 전부 추적 중이라는 판정) — 신한지주만 candidates 밖에 있어 그 판정에서 누락됐다. 수동 승격."
    },
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": 17.31,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": 19.88,
     "mom_pass_filter": true,
-    "excess_60d_pct_points": 34.7,
-    "excess_20d_pct_points": 6.99,
-    "screen_score": 0.74,
+    "excess_60d_pct_points": 29.86,
+    "excess_20d_pct_points": -1.5,
+    "screen_score": 0.65,
     "rotate_out_flagged": false,
-    "last_close": 111100.0,
-    "effective_entry_cap": 115200.0,
-    "effective_cap_gap_pct": 3.7,
-    "engine_score": 18.19,
-    "engine_pass_filter": true,
-    "themes_immersed": [],
-    "note": "**W39 청산 대상.** 진입의 유일한 근거였던 52주 최고 115,900원 종가 돌파가 12회 미성립으로 종목 단위 무효화가 9/18 종가에 성립했다. 엔진 점수 18.19 로 매수 하한(30) 아래지만 보유 자격(추세+모멘텀>0)은 통과 상태 — 즉 **엔진이 아니라 thesis 가 청산 사유**다. 되돌리는 신호는 115,900원 종가 돌파 하나뿐.",
-    "in_buy_zone": true
+    "last_close": 110100.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 119400.0,
+    "entry_cap_gap_pct": 8.4,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 15.7,
+    "immersion_met": true
    }
   },
   {
@@ -778,24 +736,21 @@
    "first_added": "2026-08-23",
    "note": "2026-08-23 일요일 전략 신규 등재. **등재는 '스코어링 대상 편입'이지 게이트 통과 선언이 아니다** — momentum 절대점수 1.29 로 screen_universe 의 engine promote 임계(score_authority.promote_score_min=30.0)를 밑돌아 promote_suggestions 에는 뜨지 않았고, 등재 근거는 상대강도(60일 초과수익 +22.94%p)와 bio_cdmo 몰입 충족(2/2, 20일·60일 초과수익 중앙 +14.66/+20.25%p — 몰입 충족 그룹 중 두 지평 모두 플러스인 유일한 축)이다. 임계 미달 상태에서 진입을 집행하지 않으며, 두 기준이 갈리는 구조 자체는 policy_review 안건이다. 사이징 주의: 1,551,000원/주라 위험예산 내 수량이 **1주**로 떨어져 부분익절 불가·트레일 실효 없음(W34 결정룰 명시 대상).",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -5.84,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -6.94,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 19.62,
-    "excess_20d_pct_points": -9.53,
+    "excess_60d_pct_points": 10.47,
+    "excess_20d_pct_points": -18.14,
     "screen_score": 0.69,
     "rotate_out_flagged": true,
-    "last_close": 1399000.0,
-    "effective_entry_cap": 1557000.0,
-    "effective_cap_gap_pct": 11.3,
-    "engine_score": -5.98,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "bio_cdmo"
-    ],
-    "note": "",
-    "in_buy_zone": true
+    "last_close": 1373000.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 1461700.0,
+    "entry_cap_gap_pct": 6.5,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 11.3,
+    "immersion_met": true
    }
   },
   {
@@ -818,24 +773,21 @@
    "note": "2026-08-23 일요일 전략 신규 등재. momentum 절대점수 -7.78 로 engine promote 임계(30.0) 미달이며 price_reversal=false — **삼성바이오로직스보다 축 안에서 후행하는 쪽**이다. 등재 근거는 상대강도와 축 몰입이고, 진입 판정은 valuation·target_estimate 앵커 산출 후 09시·15시 슬롯이 한다. 축 안에서 수량 확보(부분익절 가능)가 되는 유일한 쪽이라는 점이 삼성바이오로직스와의 차이다. **[2026-08-25 09:32 진입]** probe 2주 체결(진입가 194,918원·손절 181,139원·목표 213,600원·R/R 1.356). 8/23 등재 시 거짓이던 price_reversal 이 참으로 뒤집혔고 bio_cdmo 몰입이 2/2 로 켜졌다. 나머지 슬롯 여력은 8/27 삼중 이벤트(금통위·미 7월 PCE·엔비디아 실적) 통과 후 재계수.",
    "status": "entered",
    "weekly_screen": {
-    "as_of": "2026-09-20T18:45:00+09:00",
-    "week_id": "2026-W39",
-    "mom_score": -1.26,
+    "as_of": "2026-09-27T18:40:00+09:00",
+    "week_id": "2026-W40",
+    "mom_score": -2.93,
     "mom_pass_filter": false,
-    "excess_60d_pct_points": 22.89,
-    "excess_20d_pct_points": -6.07,
+    "excess_60d_pct_points": 15.04,
+    "excess_20d_pct_points": -11.92,
     "screen_score": 0.65,
     "rotate_out_flagged": true,
-    "last_close": 180100.0,
-    "effective_entry_cap": 201900.0,
-    "effective_cap_gap_pct": 12.1,
-    "engine_score": -2.12,
-    "engine_pass_filter": false,
-    "themes_immersed": [
-     "bio_cdmo"
-    ],
-    "note": "4중 게이트 **통과 4종 중 하나**이며 비보유다. `bio_cdmo` 몰입 2/2 충족(거래량 급증·가격 반전), 신규진입 상한가 대비 +12.1% 여유. 다만 이 테마의 20일 중앙 초과수익이 **-7.8%p 로 음수**라 '몰입 수준은 충족이나 자금 흐름은 하락 중'인 형태이고, 이는 8/28 이 종목 진입 실패와 같은 모양이다. 절대모멘텀 자격 미달로 진입 불가.",
-    "in_buy_zone": true
+    "last_close": 178100.0,
+    "data_basis": "9/23 종가(추석 휴장 후 첫 스크린) · 엔진 점수는 momentum_signal 9/23 데이터(주말 봉 중복 버그 수정 후 재산출)",
+    "entry_cap_price": 197300.0,
+    "entry_cap_gap_pct": 10.8,
+    "in_buy_zone": true,
+    "estimate_expected_return_pct": 15.6,
+    "immersion_met": true
    }
   }
  ],
@@ -888,6 +840,11 @@
    "ts": "2026-09-20T18:45:00+09:00",
    "slot": "sunday_strategy",
    "change": "W39 주간 스크린 반영(20종). ①한미반도체 강등·교체 후보 표시 **해제**(지수 대비 60일 초과수익 -30.95%p → +5.65%p) ②승격 제안 0건 — 모집단 32종 중 비후보 주도주가 승격 점수 하한을 넘은 사례 없음 ③회전아웃 제안 12건은 전부 절대모멘텀 이탈에 따른 것으로 20종 중 13종이 해당하므로 개별 강등 사유가 아니며 candidates 변경 없음 ④각 후보에 엔진 점수·자격 통과 여부와 테마 몰입 충족 테마를 함께 기록해 '4중 게이트 통과'와 '엔진 통과'를 구분 가능하게 했다."
+  },
+  {
+   "ts": "2026-09-27T18:40:00+09:00",
+   "slot": "sunday_strategy",
+   "change": "W40 주간 스크린 반영(20종). ①승격 제안 0건(모집단 32종 중 비후보 주도주 없음) ②회전아웃 제안 11건은 전부 엔진 점수 ≤ 0(절대모멘텀 자격 상실)에 따른 것이고 20종 중 11종이 해당해 개별 강등 사유가 아니므로 candidates 변경 없음 ③현대차 demote_watch 는 KOSPI 대비 60일 초과수익이 -25%p 임계를 넘지 않아 유지(강등 보류) ④weekly_screen 에 9/23 기준 엔진 점수 기록 — 삼성전자 30.03(하한 30 교차), SK하이닉스 50.87(사이징 불가)."
   }
  ]
 }

@@ -165,12 +165,20 @@ def fresh_overlay(tickers, history_as_of):
         if st.get("confidence") == "low":  # 저신뢰 출처는 추격 금지(가격 신뢰 게이트 일관)
             meta["skipped_low_conf"].append(tk)
             continue
+        # 봉 날짜는 스냅샷 수집일이 아니라 종목의 실제 마지막 거래일(five_day_history)로 잡는다 —
+        # 주말·휴장일 수집분을 새 봉으로 붙이면 같은 종가가 중복돼 룩백이 하루 밀린다(2026-09-27 발견).
+        fdh = st.get("five_day_history") or []
+        bar10 = _date10(fdh[-1].get("date")) if fdh and isinstance(fdh[-1], dict) else None
+        bar10 = bar10 or s10
+        last10 = _date10(t["dates"][-1])
         # 당일 종가를 새 봉으로 추가(history 마지막 봉은 보존, MA200 은 최신 포함). 같은 날이면 교체.
-        if _date10(t["dates"][-1]) == s10:
+        if last10 == bar10:
             t["closes"][-1] = float(close)
-        else:
-            t["dates"].append(s10)
+        elif bar10 > last10:
+            t["dates"].append(bar10)
             t["closes"].append(float(close))
+        else:
+            continue
         meta["overlaid"].append(tk)
     meta["applied"] = bool(meta["overlaid"])
     return meta

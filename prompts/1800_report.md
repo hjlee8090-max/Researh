@@ -122,6 +122,11 @@
 ## 2-4. thesis 무효화 판정 (thesis-tracker — 보유 종목 의무, `watchlist.stocks[].thesis` 있을 때)
 목표가 오차(±5%) 판정과 **독립적으로**, 각 보유 종목의 `thesis.invalidation[]` 을 오늘 종가·뉴스·공시·`state/fundamentals.json`·`config/catalysts.json`(실적 촉매 통과 시)으로 대조한다(`policy.thesis`):
 1. 조건별 충족 여부 판정 → `thesis.status` 갱신: `hard:true` 충족 = **invalidated**, `hard:false` 충족 = **weakening**, 미충족 = **intact**. `thesis.last_review_ts` 를 종가 시각으로 갱신.
+   - **단일 임계 재무장 최소 마진 룰 (codify 2026-09-27, 근거 lessons 2026-09-16 — 승격, expiry 2026-09-23 도래)**:
+     `index_underperf_3d` 류 "종가 기준 지수 상회/하회 1회"만으로 갈리는 **단일 임계** 재무장·해제 판정에서
+     상회(하회) 폭이 **±0.25%p 이내**면 그날은 **"판정 유보"**로 기록하고 다음 거래일 종가로 확정한다 —
+     스냅샷↔원장 종가 괴리(±0.5% 이내)만으로 부호가 뒤집힐 수 있는 마진이라 단정하지 않는다(9/16 삼성물산
+     사례: 원장 분모 +0.0743%p 상회〈성립〉vs 스냅샷 분모 -0.6528%p 하회〈미성립〉).
 2. **invalidated** → 가격이 🟢green·목표가 미달이어도 **다음 거래일 종가 청산·축소 1순위**로 `next_day_plan` 에 기록(§4). **weakening** → 추가매수 금지·트레일링 강화·목표가 상향 보류 메모.
 3. status 가 `intact` 이외로 바뀐 종목은 **충족된 invalidation 의 type(매크로/섹터/개별/가정오류)** 그대로 §3 lessons 에 1줄 기록(가격 오차가 ±5% 이내여도 기록 — "논리는 깨졌으나 가격은 아직"은 중요한 학습이다).
 4. `linked_catalyst` 가 오늘 통과한 실적 촉매면(`catalysts.json`), 그 invalidation(주로 `가정오류` 유형)을 fundamentals 갱신값으로 우선 판정한다(Part C 결합).

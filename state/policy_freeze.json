@@ -89,6 +89,16 @@
       "expected_effect": "같은 종목에 반복 (b) 처방(무의미한 손절 재상향)을 막고 R/R 하한 미달 구조를 조기에 익절/부분익절로 정리",
       "required_samples": "동결 해제 후 재발 사례 1~2건 추가 관측(현재는 하나금융지주 단일 사례) — 승격 전 재현성 확인",
       "note": "expiry 2026-09-08 도래분 §1-2-b 만료 판정에서 승격 후보로 상정(state/lessons.md 2026-09-01 항목 참조). 동결 중이라 등록만."
+    },
+    {
+      "date": "2026-09-27",
+      "proposer": "sunday_policy_review",
+      "field": "policy.lessons_logging (오차 카운터 산입 시 `진입가 대비 손익`·`목표 진행률` 병기 필드 신설)",
+      "current": "오차 카운터는 괴리 부호(±X%)만 기록 — 진행 궤적(진입가 대비 손익·목표 진행률)은 서술문에만 산발적으로 등장, 정식 필드 없음",
+      "proposed": "lessons 2026-08-06 하나금융지주 사례 승격: 진입 유예 만료 직후 첫 산입 건은 `진입가 대비 손익`·`목표 진행률`을 필드로 함께 기록하고, 진입가 대비 플러스+목표 진행률 상승 중이면 분류 신뢰도를 '낮음'으로 자동 표기해 다음 목표가 설정의 디스카운트 근거로 오용되지 않게 한다",
+      "expected_effect": "측정창 불일치(진입 유예 3거래일 vs 목표 호라이즌 21거래일)로 생기는 아티팩트성 오차 산입을 다음 목표가 산정의 실질 신호와 구분",
+      "required_samples": "동결 해제 후 유사 사례 1~2건 추가 관측 — 현재는 하나금융지주 단일 사례",
+      "note": "check_lessons_applied.py codify_candidates(idx target_estimate/dynamic_bands)에서 발견 — lessons 원문이 '일요일 policy_review 승격 심사 안건'으로 직접 지목. `policy.lessons_logging` 필드 추가라 동결 대상, 등록만 한다."
     }
   ],
   "history": [

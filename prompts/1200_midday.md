@@ -48,6 +48,8 @@
 - "KOSPI 오전 시황" / "외국인 기관 매매 동향 오전"
 - 보유 종목 각각: "[종목명] 뉴스 오늘"
 - 특이 공시: "KIND 공시 오늘 [종목명]"
+- **뉴스 검색 순서 룰 (codify 2026-09-27, 근거 lessons 2026-08-11 09:00, 상세: `0900_pre_market.md §1-2`)**:
+  급등·급락 원인은 웹검색보다 `state/news_feed.json` 해당 티커 배열을 먼저 확인한다.
 
 ## 1-PRE. 매매 직전 재동기화·검증 (의무 — 모든 BUY/SELL booking 전)
 §2 단계경보 청산(orange/red)·신규/추가 매수를 기록하기 **직전** 수행하고, 통과 전에는 booking 하지 않는다 (`policy.price_data_quality.pre_trade_gate`):

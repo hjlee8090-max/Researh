@@ -1,20 +1,20 @@
 {
-  "as_of": "2026-10-01T09:20:48+09:00",
-  "snapshot_as_of": "2026-10-01T09:20:43+09:00",
+  "as_of": "2026-10-01T11:00:06+09:00",
+  "snapshot_as_of": "2026-10-01T11:00:02+09:00",
   "regime": {
     "state": "risk_on",
     "detail": {
       "index": "KOSPI",
-      "last_close": 6802.92,
+      "last_close": 6820.29,
       "ma_window": 200,
-      "ma_long": 6295.63,
-      "ma60": 6794.02,
+      "ma_long": 6309.76,
+      "ma60": 6773.47,
       "above_ma": true,
-      "pct_vs_ma": 8.06,
-      "pct_vs_ma60": 0.13,
-      "ret_60d_pct": -11.05,
-      "ret_20d_pct": -0.25,
-      "ma200_slope_pct": 4.75,
+      "pct_vs_ma": 8.09,
+      "pct_vs_ma60": 0.69,
+      "ret_60d_pct": -15.68,
+      "ret_20d_pct": -0.23,
+      "ma200_slope_pct": 4.74,
       "slope_lookback_days": 20,
       "state": "risk_on",
       "source": "yahoo:^KS11",
@@ -28,7 +28,7 @@
       "tier_narrative": "강세 추세 — 지수 200·60일선 위 + 200일선 상승. 주식 비중 80~95%(현금 5~20%), 기본 진입비중·4종목 풀가동."
     },
     "blocks_new_entry": false,
-    "kospi_ret_60d_pct": -11.05
+    "kospi_ret_60d_pct": -15.68
   },
   "score_blend_weights": {
     "momentum": 0.3,
@@ -49,20 +49,102 @@
   ],
   "ranked": [
     {
+      "ticker": "042700",
+      "name": "한미반도체",
+      "sector": "IT/반도체장비",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "components": {
+        "momentum": 0.753,
+        "momentum_parts": {
+          "ret5": 1.0,
+          "ret60": 0.85,
+          "high52": 0.4
+        },
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 28.26,
+        "thematic": 0.807,
+        "thematic_parts": [
+          {
+            "theme": "ai_memory_hbm",
+            "exposure": 0.85,
+            "strength": 0.95,
+            "contrib": 0.807
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.05,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "strong_growth"
+      },
+      "final_score": 0.777,
+      "data": {
+        "five_day_cumulative_return_pct": 8.84,
+        "ret_60d_pct": 12.58,
+        "pct_of_52w_high": 61.44,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 261750.0,
+          "position_cap_krw": 1564690,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "ai_memory_hbm",
+            "exposure": 0.85,
+            "evidence": "[2026-09-06 갱신] 메모리 공급 타이트 + AI 캐파 완판. 서스퀘하나 DRAM 분기 +50%·NAND +60% 전망, UBS HBM 가격 상승률 연 67%→79% 상향, 마이크론 선단 메모리 2026년 말까지 완판. 9/4 미국장에서 고용 서프라이즈로 3대 지수가 밀린 날 마이크론 +4.09%·SK하이닉스 ADR +3.86%로 업종만 역행. 한국 8월 반도체 수출 466.5억달러(+209.0%) 역대 최대.",
+            "source": "https://blockonomi.com/memory-chip-giants-micron-mu-sandisk-and-sk-hynix-rally-on-supply-tightness-and-ai-demand",
+            "source_date": "2026-09-04"
+          }
+        ],
+        "target_estimate": {
+          "estimate": 269300.0,
+          "expected_return_pct": 3.6,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 251163039356,
+          "operating_profit": 130346798331,
+          "op_margin_pct": 51.9,
+          "op_growth_pop_pct": 51.0,
+          "period_label": "반기",
+          "earnings_signal": "strong_growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 +8.8% — 추세필터 통과(상승)",
+        "60일 모멘텀 +12.6%",
+        "상대강도: KOSPI 대비 +28.3%p (주도주)",
+        "52주 고점의 61% 수준",
+        "미래 테마 노출: ai_memory_hbm(노출 0.85)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)"
+      ],
+      "adopt_summary": "5거래일 누적 +8.8% — 추세필터 통과(상승) · 60일 모멘텀 +12.6% · 상대강도: KOSPI 대비 +28.3%p (주도주) · 52주 고점의 61% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.85) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)",
+      "block_reasons": []
+    },
+    {
       "ticker": "006400",
       "name": "삼성SDI",
       "sector": "2차전지",
       "thesis_id": "momentum_rotation_deploy_w27",
       "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
       "components": {
-        "momentum": 0.466,
+        "momentum": 0.532,
         "momentum_parts": {
           "ret5": 0.4,
           "ret60": 0.6,
-          "high52": 0.4
+          "high52": 0.6
         },
         "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 19.29,
+        "rs_excess_vs_kospi_pct": 25.41,
         "thematic": 0.93,
         "thematic_parts": [
           {
@@ -85,17 +167,17 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.709,
+      "final_score": 0.729,
       "data": {
-        "five_day_cumulative_return_pct": -4.71,
-        "ret_60d_pct": 8.24,
-        "pct_of_52w_high": 69.99,
+        "five_day_cumulative_return_pct": -3.39,
+        "ret_60d_pct": 9.73,
+        "pct_of_52w_high": 70.95,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 506000.0,
-          "position_cap_krw": 1569905,
+          "last_close": 513000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -115,8 +197,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 543900.0,
-          "expected_return_pct": 6.4,
+          "estimate": 536300.0,
+          "expected_return_pct": 6.0,
           "grade": "A",
           "gate_blocked": false
         },
@@ -131,262 +213,16 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -4.7% — 추세필터 통과(방어)",
-        "60일 모멘텀 +8.2%",
-        "상대강도: KOSPI 대비 +19.3%p (주도주)",
-        "52주 고점의 70% 수준",
+        "5거래일 누적 -3.4% — 추세필터 통과(방어)",
+        "60일 모멘텀 +9.7%",
+        "상대강도: KOSPI 대비 +25.4%p (주도주)",
+        "52주 고점의 71% 수준",
         "미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +151%)"
       ],
-      "adopt_summary": "5거래일 누적 -4.7% — 추세필터 통과(방어) · 60일 모멘텀 +8.2% · 상대강도: KOSPI 대비 +19.3%p (주도주) · 52주 고점의 70% 수준 · 미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +151%)",
-      "block_reasons": []
-    },
-    {
-      "ticker": "042700",
-      "name": "한미반도체",
-      "sector": "IT/반도체장비",
-      "thesis_id": "momentum_rotation_deploy_w27",
-      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
-      "components": {
-        "momentum": 0.753,
-        "momentum_parts": {
-          "ret5": 1.0,
-          "ret60": 0.85,
-          "high52": 0.4
-        },
-        "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 22.88,
-        "thematic": 0.807,
-        "thematic_parts": [
-          {
-            "theme": "ai_memory_hbm",
-            "exposure": 0.85,
-            "strength": 0.95,
-            "contrib": 0.807
-          }
-        ],
-        "confidence": 0.5,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.05,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "strong_growth"
-      },
-      "final_score": 0.702,
-      "data": {
-        "five_day_cumulative_return_pct": 8.11,
-        "ret_60d_pct": 11.83,
-        "pct_of_52w_high": 61.03,
-        "confidence": "medium",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 260000.0,
-          "position_cap_krw": 1569905,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "ai_memory_hbm",
-            "exposure": 0.85,
-            "evidence": "[2026-09-06 갱신] 메모리 공급 타이트 + AI 캐파 완판. 서스퀘하나 DRAM 분기 +50%·NAND +60% 전망, UBS HBM 가격 상승률 연 67%→79% 상향, 마이크론 선단 메모리 2026년 말까지 완판. 9/4 미국장에서 고용 서프라이즈로 3대 지수가 밀린 날 마이크론 +4.09%·SK하이닉스 ADR +3.86%로 업종만 역행. 한국 8월 반도체 수출 466.5억달러(+209.0%) 역대 최대.",
-            "source": "https://blockonomi.com/memory-chip-giants-micron-mu-sandisk-and-sk-hynix-rally-on-supply-tightness-and-ai-demand",
-            "source_date": "2026-09-04"
-          }
-        ],
-        "target_estimate": {
-          "estimate": 270800.0,
-          "expected_return_pct": 3.2,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 251163039356,
-          "operating_profit": 130346798331,
-          "op_margin_pct": 51.9,
-          "op_growth_pop_pct": 51.0,
-          "period_label": "반기",
-          "earnings_signal": "strong_growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 +8.1% — 추세필터 통과(상승)",
-        "60일 모멘텀 +11.8%",
-        "상대강도: KOSPI 대비 +22.9%p (주도주)",
-        "52주 고점의 61% 수준",
-        "미래 테마 노출: ai_memory_hbm(노출 0.85)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)"
-      ],
-      "adopt_summary": "5거래일 누적 +8.1% — 추세필터 통과(상승) · 60일 모멘텀 +11.8% · 상대강도: KOSPI 대비 +22.9%p (주도주) · 52주 고점의 61% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.85) · 가격 신뢰도 medium(단일출처) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)",
-      "block_reasons": []
-    },
-    {
-      "ticker": "105560",
-      "name": "KB금융",
-      "sector": "금융/은행",
-      "thesis_id": "bank_valueup_harvest_w31",
-      "rationale": "7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
-      "components": {
-        "momentum": 0.516,
-        "momentum_parts": {
-          "ret5": 0.4,
-          "ret60": 0.35,
-          "high52": 0.8
-        },
-        "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 10.58,
-        "thematic": 0.49,
-        "thematic_parts": [
-          {
-            "theme": "value_up",
-            "exposure": 0.7,
-            "strength": 0.7,
-            "contrib": 0.49
-          }
-        ],
-        "confidence": 1.0,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.05,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "strong_growth"
-      },
-      "final_score": 0.658,
-      "data": {
-        "five_day_cumulative_return_pct": -3.92,
-        "ret_60d_pct": -0.47,
-        "pct_of_52w_high": 87.04,
-        "confidence": "high",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 169300.0,
-          "position_cap_krw": 1569905,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "value_up",
-            "exposure": 0.7,
-            "evidence": "[2026-09-13 갱신] 9/11 16시 회장후보추천위원회가 이재근 부문장을 차기 회장 최종 후보로 확정했고 현 양종희 회장 연임은 무산됐다(11/20 임시주총 선임·11/21 3년 임기 시작). 주말 후속 보도는 '세대교체' 사유와 인물 분석 중심이며 **주주환원·밸류업 기조 후퇴 신호는 0건**이다 — 이 계좌가 은행 축을 산 근거의 절반이 밸류업이므로, 9/14 개장은 주가 부호가 아니라 이 근거의 유지 여부를 확인하는 자리다. 업황 축은 강해졌다: 2026 하반기 전망에서 KB금융 ROE 10% 상회 예상, CET1·총주주환원율로 업종 프리미엄 유지.",
-            "source": "https://www.fnnews.com/news/202609111605417433 | https://finance.thesmileinfo.com/2026/09/bank.html",
-            "source_date": "2026-09-11"
-          }
-        ],
-        "target_estimate": {
-          "estimate": 192500.0,
-          "expected_return_pct": 14.0,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 7352100000000,
-          "operating_profit": 2712548000000,
-          "op_margin_pct": 36.89,
-          "op_growth_pop_pct": 27.2,
-          "period_label": "반기",
-          "earnings_signal": "strong_growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -3.9% — 추세필터 통과(방어)",
-        "60일 모멘텀 -0.5%",
-        "상대강도: KOSPI 대비 +10.6%p (주도주)",
-        "52주 고점의 87% 수준",
-        "미래 테마 노출: value_up(노출 0.7)",
-        "가격 신뢰도 high(2출처 일치)",
-        "근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)"
-      ],
-      "adopt_summary": "5거래일 누적 -3.9% — 추세필터 통과(방어) · 60일 모멘텀 -0.5% · 상대강도: KOSPI 대비 +10.6%p (주도주) · 52주 고점의 87% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)",
-      "block_reasons": []
-    },
-    {
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "sector": "금융/은행",
-      "thesis_id": "bank_valueup_harvest_w31",
-      "rationale": "7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.",
-      "components": {
-        "momentum": 0.598,
-        "momentum_parts": {
-          "ret5": 0.4,
-          "ret60": 0.6,
-          "high52": 0.8
-        },
-        "relative_strength": 0.85,
-        "rs_excess_vs_kospi_pct": 14.55,
-        "thematic": 0.49,
-        "thematic_parts": [
-          {
-            "theme": "value_up",
-            "exposure": 0.7,
-            "strength": 0.7,
-            "contrib": 0.49
-          }
-        ],
-        "confidence": 1.0,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.02,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "growth"
-      },
-      "final_score": 0.653,
-      "data": {
-        "five_day_cumulative_return_pct": -4.27,
-        "ret_60d_pct": 3.5,
-        "pct_of_52w_high": 91.23,
-        "confidence": "high",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 130000.0,
-          "position_cap_krw": 1569905,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "value_up",
-            "exposure": 0.7,
-            "evidence": "[2026-09-13 갱신] 은행 3종 중 절대모멘텀이 가장 높다(14.62). 2026 하반기 전망에서 ROE 9.7%로 10% 가시권이며 저평가 매력이 부각되는 쪽으로 분류된다. 이 축의 판정 변수는 미 10년물이 아니라 한국은행이고 **9월에는 금리 결정 회의가 없다**(다음 10/22) — W38 에 이 축을 확정할 국내 재료가 없다는 뜻이다.",
-            "source": "https://finance.thesmileinfo.com/2026/09/bank.html",
-            "source_date": "2026-09-13"
-          }
-        ],
-        "target_estimate": {
-          "estimate": 147100.0,
-          "expected_return_pct": 13.1,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 5837715000000,
-          "operating_profit": 1594384000000,
-          "op_margin_pct": 27.31,
-          "op_growth_pop_pct": 6.8,
-          "period_label": "반기",
-          "earnings_signal": "growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -4.3% — 추세필터 통과(방어)",
-        "60일 모멘텀 +3.5%",
-        "상대강도: KOSPI 대비 +14.6%p (주도주)",
-        "52주 고점의 91% 수준",
-        "미래 테마 노출: value_up(노출 0.7)",
-        "가격 신뢰도 high(2출처 일치)",
-        "근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.",
-        "실적 모멘텀(growth, 영업이익 전기대비 +7%)"
-      ],
-      "adopt_summary": "5거래일 누적 -4.3% — 추세필터 통과(방어) · 60일 모멘텀 +3.5% · 상대강도: KOSPI 대비 +14.6%p (주도주) · 52주 고점의 91% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +7%)",
+      "adopt_summary": "5거래일 누적 -3.4% — 추세필터 통과(방어) · 60일 모멘텀 +9.7% · 상대강도: KOSPI 대비 +25.4%p (주도주) · 52주 고점의 71% 수준 · 미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +151%)",
       "block_reasons": []
     },
     {
@@ -396,14 +232,14 @@
       "thesis_id": "bio_axis_zero_exposure_w35",
       "rationale": "CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다.",
       "components": {
-        "momentum": 0.653,
+        "momentum": 0.736,
         "momentum_parts": {
           "ret5": 1.0,
-          "ret60": 0.35,
+          "ret60": 0.6,
           "high52": 0.6
         },
-        "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 9.22,
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 16.59,
         "thematic": 0.45,
         "thematic_parts": [
           {
@@ -420,17 +256,17 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.653,
+      "final_score": 0.718,
       "data": {
-        "five_day_cumulative_return_pct": 0.22,
-        "ret_60d_pct": -1.83,
-        "pct_of_52w_high": 70.21,
+        "five_day_cumulative_return_pct": 3.02,
+        "ret_60d_pct": 0.91,
+        "pct_of_52w_high": 72.17,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 1395000.0,
-          "position_cap_krw": 1569905,
+          "last_close": 1434000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -459,40 +295,40 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 +0.2% — 추세필터 통과(상승)",
-        "60일 모멘텀 -1.8%",
-        "상대강도: KOSPI 대비 +9.2%p (동행)",
-        "52주 고점의 70% 수준",
+        "5거래일 누적 +3.0% — 추세필터 통과(상승)",
+        "60일 모멘텀 +0.9%",
+        "상대강도: KOSPI 대비 +16.6%p (주도주)",
+        "52주 고점의 72% 수준",
         "미래 테마 노출: bio_cdmo(노출 0.9)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)"
       ],
-      "adopt_summary": "5거래일 누적 +0.2% — 추세필터 통과(상승) · 60일 모멘텀 -1.8% · 상대강도: KOSPI 대비 +9.2%p (동행) · 52주 고점의 70% 수준 · 미래 테마 노출: bio_cdmo(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
+      "adopt_summary": "5거래일 누적 +3.0% — 추세필터 통과(상승) · 60일 모멘텀 +0.9% · 상대강도: KOSPI 대비 +16.6%p (주도주) · 52주 고점의 72% 수준 · 미래 테마 노출: bio_cdmo(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
       "block_reasons": []
     },
     {
-      "ticker": "055550",
-      "name": "신한지주",
-      "sector": "금융/은행",
-      "thesis_id": null,
-      "rationale": "[2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.**",
+      "ticker": "068270",
+      "name": "셀트리온",
+      "sector": "바이오",
+      "thesis_id": "bio_axis_zero_exposure_w35",
+      "rationale": "바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.",
       "components": {
-        "momentum": 0.413,
+        "momentum": 0.653,
         "momentum_parts": {
-          "ret5": 0.1,
+          "ret5": 1.0,
           "ret60": 0.35,
-          "high52": 0.8
+          "high52": 0.6
         },
-        "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 9.56,
-        "thematic": 0.49,
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 15.41,
+        "thematic": 0.35,
         "thematic_parts": [
           {
-            "theme": "value_up",
+            "theme": "bio_cdmo",
             "exposure": 0.7,
-            "strength": 0.7,
-            "contrib": 0.49
+            "strength": 0.5,
+            "contrib": 0.35
           }
         ],
         "confidence": 1.0,
@@ -502,55 +338,136 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.587,
+      "final_score": 0.678,
       "data": {
-        "five_day_cumulative_return_pct": -6.29,
-        "ret_60d_pct": -1.49,
-        "pct_of_52w_high": 90.73,
+        "five_day_cumulative_return_pct": 2.69,
+        "ret_60d_pct": -0.27,
+        "pct_of_52w_high": 76.53,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 105700.0,
-          "position_cap_krw": 1569905,
+          "last_close": 183100.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
           {
-            "theme": "value_up",
+            "theme": "bio_cdmo",
             "exposure": 0.7,
-            "evidence": "[2026-09-13 갱신] 업종 근거(ROE 10% 상회 전망·밸류업 수혜)는 유지되나 **이 종목 고유 근거는 7회 연속 미성립**이다 — 52주 최고가 115,900원 종가 돌파가 W37 에도 성립하지 않았고(9/11 종가 112,900원, 이격 +2.66%) 장중에는 일곱 번 닿았다. 절대모멘텀은 12.45로 통과군이고 60일 초과수익 +31.56%p 로 모집단 1위 — 즉 테마·모멘텀은 살아 있고 우리가 고른 판정 조건만 서지 않는다. W38 이 8회차 시험이며, 미성립으로 마감하면 다음 일요일이 비중 축소를 판정한다.",
-            "source": "https://finance.thesmileinfo.com/2026/09/bank.html",
-            "source_date": "2026-09-13"
+            "evidence": "바이오시밀러 포트폴리오 확대 — 2026년 제약·바이오 대장주 상위권. 8월 첫째 주 5거래일 연속 상승(182,200원 → 199,300원, +9.4%)으로 바이오 섹터 몰입의 폭(sector_breadth) 축을 삼성바이오로직스와 함께 구성한다. CDMO 직접 노출은 삼성바이오로직스보다 낮아 exposure 는 보수적으로 0.7.",
+            "source": "https://www.joongangenews.com/news/articleView.html?idxno=538709",
+            "source_date": "2026-08-08"
           }
         ],
         "target_estimate": {
-          "estimate": 116500.0,
-          "expected_return_pct": 10.5,
-          "grade": "A",
+          "estimate": 193700.0,
+          "expected_return_pct": 7.0,
+          "grade": "B",
           "gate_blocked": false
         },
         "fundamentals": {
-          "revenue": 7281967000000,
-          "operating_profit": 2476281000000,
-          "op_margin_pct": 34.01,
-          "op_growth_pop_pct": 22.9,
+          "revenue": 1393692794953,
+          "operating_profit": 451791591338,
+          "op_margin_pct": 32.42,
+          "op_growth_pop_pct": 86.3,
           "period_label": "반기",
           "earnings_signal": "strong_growth"
         }
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -6.3% — 추세필터 통과(방어)",
-        "60일 모멘텀 -1.5%",
-        "상대강도: KOSPI 대비 +9.6%p (동행)",
-        "52주 고점의 91% 수준",
-        "미래 테마 노출: value_up(노출 0.7)",
+        "5거래일 누적 +2.7% — 추세필터 통과(상승)",
+        "60일 모멘텀 -0.3%",
+        "상대강도: KOSPI 대비 +15.4%p (주도주)",
+        "52주 고점의 77% 수준",
+        "미래 테마 노출: bio_cdmo(노출 0.7)",
         "가격 신뢰도 high(2출처 일치)",
-        "근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.**",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)"
+        "근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)"
       ],
-      "adopt_summary": "5거래일 누적 -6.3% — 추세필터 통과(방어) · 60일 모멘텀 -1.5% · 상대강도: KOSPI 대비 +9.6%p (동행) · 52주 고점의 91% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.** · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
+      "adopt_summary": "5거래일 누적 +2.7% — 추세필터 통과(상승) · 60일 모멘텀 -0.3% · 상대강도: KOSPI 대비 +15.4%p (주도주) · 52주 고점의 77% 수준 · 미래 테마 노출: bio_cdmo(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)",
+      "block_reasons": []
+    },
+    {
+      "ticker": "079550",
+      "name": "LIG넥스원(LIG D&A)",
+      "sector": "방산",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+      "components": {
+        "momentum": 0.505,
+        "momentum_parts": {
+          "ret5": 1.0,
+          "ret60": 0.1,
+          "high52": 0.4
+        },
+        "relative_strength": 0.65,
+        "rs_excess_vs_kospi_pct": 4.68,
+        "thematic": 0.63,
+        "thematic_parts": [
+          {
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "strength": 0.7,
+            "contrib": 0.63
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.05,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "strong_growth"
+      },
+      "final_score": 0.636,
+      "data": {
+        "five_day_cumulative_return_pct": 0.56,
+        "ret_60d_pct": -11.0,
+        "pct_of_52w_high": 63.69,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 712000.0,
+          "position_cap_krw": 1564690,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "evidence": "정밀유도무기(미사일·요격체계) 수출 확대 — 이란-미 확전 13일째 지속에 따른 지정학 프리미엄 재점화(7/24 지수 -5.7% 급락장에서 +3.5% 역행). 방산 수출 수요는 확전 종식 후에도 유럽 재무장 기조로 구조적 지속 전망.",
+            "source": "https://www.cnn.com/2026/07/24/world/live-news/iran-war-trump"
+          }
+        ],
+        "target_estimate": {
+          "estimate": 723400.0,
+          "expected_return_pct": 5.5,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 1110094315474,
+          "operating_profit": 105657237903,
+          "op_margin_pct": 9.52,
+          "op_growth_pop_pct": 29.5,
+          "period_label": "반기",
+          "earnings_signal": "strong_growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 +0.6% — 추세필터 통과(상승)",
+        "60일 모멘텀 -11.0%",
+        "상대강도: KOSPI 대비 +4.7%p (동행)",
+        "52주 고점의 64% 수준",
+        "미래 테마 노출: defense_export(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)"
+      ],
+      "adopt_summary": "5거래일 누적 +0.6% — 추세필터 통과(상승) · 60일 모멘텀 -11.0% · 상대강도: KOSPI 대비 +4.7%p (동행) · 52주 고점의 64% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)",
       "block_reasons": []
     },
     {
@@ -566,8 +483,8 @@
           "ret60": 0.1,
           "high52": 0.6
         },
-        "relative_strength": 0.4,
-        "rs_excess_vs_kospi_pct": -2.68,
+        "relative_strength": 0.65,
+        "rs_excess_vs_kospi_pct": 2.19,
         "thematic": 0.855,
         "thematic_parts": [
           {
@@ -584,17 +501,17 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.578,
+      "final_score": 0.628,
       "data": {
-        "five_day_cumulative_return_pct": -3.78,
-        "ret_60d_pct": -13.73,
-        "pct_of_52w_high": 71.3,
+        "five_day_cumulative_return_pct": -3.51,
+        "ret_60d_pct": -13.49,
+        "pct_of_52w_high": 71.5,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 267000.0,
-          "position_cap_krw": 1569905,
+          "last_close": 267750.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -607,8 +524,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 221700.0,
-          "expected_return_pct": -16.8,
+          "estimate": 222000.0,
+          "expected_return_pct": -16.9,
           "grade": "A",
           "gate_blocked": false
         },
@@ -623,19 +540,265 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -3.8% — 추세필터 통과(방어)",
-        "60일 모멘텀 -13.7%",
-        "상대강도: KOSPI 대비 -2.7%p (동행)",
-        "52주 고점의 71% 수준",
+        "5거래일 누적 -3.5% — 추세필터 통과(방어)",
+        "60일 모멘텀 -13.5%",
+        "상대강도: KOSPI 대비 +2.2%p (동행)",
+        "52주 고점의 72% 수준",
         "미래 테마 노출: ai_memory_hbm(노출 0.9)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)"
       ],
-      "adopt_summary": "5거래일 누적 -3.8% — 추세필터 통과(방어) · 60일 모멘텀 -13.7% · 상대강도: KOSPI 대비 -2.7%p (동행) · 52주 고점의 71% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)",
+      "adopt_summary": "5거래일 누적 -3.5% — 추세필터 통과(방어) · 60일 모멘텀 -13.5% · 상대강도: KOSPI 대비 +2.2%p (동행) · 52주 고점의 72% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)",
       "block_reasons": [
-        "[어드바이저리] 추정 기대수익 -16.8% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
+        "[어드바이저리] 추정 기대수익 -16.9% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
       ]
+    },
+    {
+      "ticker": "105560",
+      "name": "KB금융",
+      "sector": "금융/은행",
+      "thesis_id": "bank_valueup_harvest_w31",
+      "rationale": "7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
+      "components": {
+        "momentum": 0.413,
+        "momentum_parts": {
+          "ret5": 0.1,
+          "ret60": 0.35,
+          "high52": 0.8
+        },
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 13.33,
+        "thematic": 0.49,
+        "thematic_parts": [
+          {
+            "theme": "value_up",
+            "exposure": 0.7,
+            "strength": 0.7,
+            "contrib": 0.49
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.05,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "strong_growth"
+      },
+      "final_score": 0.627,
+      "data": {
+        "five_day_cumulative_return_pct": -5.73,
+        "ret_60d_pct": -2.35,
+        "pct_of_52w_high": 85.4,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 166100.0,
+          "position_cap_krw": 1564690,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "value_up",
+            "exposure": 0.7,
+            "evidence": "[2026-09-13 갱신] 9/11 16시 회장후보추천위원회가 이재근 부문장을 차기 회장 최종 후보로 확정했고 현 양종희 회장 연임은 무산됐다(11/20 임시주총 선임·11/21 3년 임기 시작). 주말 후속 보도는 '세대교체' 사유와 인물 분석 중심이며 **주주환원·밸류업 기조 후퇴 신호는 0건**이다 — 이 계좌가 은행 축을 산 근거의 절반이 밸류업이므로, 9/14 개장은 주가 부호가 아니라 이 근거의 유지 여부를 확인하는 자리다. 업황 축은 강해졌다: 2026 하반기 전망에서 KB금융 ROE 10% 상회 예상, CET1·총주주환원율로 업종 프리미엄 유지.",
+            "source": "https://www.fnnews.com/news/202609111605417433 | https://finance.thesmileinfo.com/2026/09/bank.html",
+            "source_date": "2026-09-11"
+          }
+        ],
+        "target_estimate": {
+          "estimate": 207100.0,
+          "expected_return_pct": 22.3,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 7352100000000,
+          "operating_profit": 2712548000000,
+          "op_margin_pct": 36.89,
+          "op_growth_pop_pct": 27.2,
+          "period_label": "반기",
+          "earnings_signal": "strong_growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -5.7% — 추세필터 통과(방어)",
+        "60일 모멘텀 -2.4%",
+        "상대강도: KOSPI 대비 +13.3%p (주도주)",
+        "52주 고점의 85% 수준",
+        "미래 테마 노출: value_up(노출 0.7)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)"
+      ],
+      "adopt_summary": "5거래일 누적 -5.7% — 추세필터 통과(방어) · 60일 모멘텀 -2.4% · 상대강도: KOSPI 대비 +13.3%p (주도주) · 52주 고점의 85% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)",
+      "block_reasons": []
+    },
+    {
+      "ticker": "086790",
+      "name": "하나금융지주",
+      "sector": "금융/은행",
+      "thesis_id": "bank_valueup_harvest_w31",
+      "rationale": "7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.",
+      "components": {
+        "momentum": 0.496,
+        "momentum_parts": {
+          "ret5": 0.1,
+          "ret60": 0.6,
+          "high52": 0.8
+        },
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 18.15,
+        "thematic": 0.49,
+        "thematic_parts": [
+          {
+            "theme": "value_up",
+            "exposure": 0.7,
+            "strength": 0.7,
+            "contrib": 0.49
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.02,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "growth"
+      },
+      "final_score": 0.622,
+      "data": {
+        "five_day_cumulative_return_pct": -5.23,
+        "ret_60d_pct": 2.47,
+        "pct_of_52w_high": 90.32,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 128700.0,
+          "position_cap_krw": 1564690,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "value_up",
+            "exposure": 0.7,
+            "evidence": "[2026-09-13 갱신] 은행 3종 중 절대모멘텀이 가장 높다(14.62). 2026 하반기 전망에서 ROE 9.7%로 10% 가시권이며 저평가 매력이 부각되는 쪽으로 분류된다. 이 축의 판정 변수는 미 10년물이 아니라 한국은행이고 **9월에는 금리 결정 회의가 없다**(다음 10/22) — W38 에 이 축을 확정할 국내 재료가 없다는 뜻이다.",
+            "source": "https://finance.thesmileinfo.com/2026/09/bank.html",
+            "source_date": "2026-09-13"
+          }
+        ],
+        "target_estimate": {
+          "estimate": 147100.0,
+          "expected_return_pct": 13.2,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 5837715000000,
+          "operating_profit": 1594384000000,
+          "op_margin_pct": 27.31,
+          "op_growth_pop_pct": 6.8,
+          "period_label": "반기",
+          "earnings_signal": "growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -5.2% — 추세필터 통과(방어)",
+        "60일 모멘텀 +2.5%",
+        "상대강도: KOSPI 대비 +18.1%p (주도주)",
+        "52주 고점의 90% 수준",
+        "미래 테마 노출: value_up(노출 0.7)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.",
+        "실적 모멘텀(growth, 영업이익 전기대비 +7%)"
+      ],
+      "adopt_summary": "5거래일 누적 -5.2% — 추세필터 통과(방어) · 60일 모멘텀 +2.5% · 상대강도: KOSPI 대비 +18.1%p (주도주) · 52주 고점의 90% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +7%)",
+      "block_reasons": []
+    },
+    {
+      "ticker": "055550",
+      "name": "신한지주",
+      "sector": "금융/은행",
+      "thesis_id": null,
+      "rationale": "[2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.**",
+      "components": {
+        "momentum": 0.38,
+        "momentum_parts": {
+          "ret5": 0.0,
+          "ret60": 0.35,
+          "high52": 0.8
+        },
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 13.07,
+        "thematic": 0.49,
+        "thematic_parts": [
+          {
+            "theme": "value_up",
+            "exposure": 0.7,
+            "strength": 0.7,
+            "contrib": 0.49
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.05,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "strong_growth"
+      },
+      "final_score": 0.618,
+      "data": {
+        "five_day_cumulative_return_pct": -7.36,
+        "ret_60d_pct": -2.61,
+        "pct_of_52w_high": 89.7,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 104500.0,
+          "position_cap_krw": 1564690,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "value_up",
+            "exposure": 0.7,
+            "evidence": "[2026-09-13 갱신] 업종 근거(ROE 10% 상회 전망·밸류업 수혜)는 유지되나 **이 종목 고유 근거는 7회 연속 미성립**이다 — 52주 최고가 115,900원 종가 돌파가 W37 에도 성립하지 않았고(9/11 종가 112,900원, 이격 +2.66%) 장중에는 일곱 번 닿았다. 절대모멘텀은 12.45로 통과군이고 60일 초과수익 +31.56%p 로 모집단 1위 — 즉 테마·모멘텀은 살아 있고 우리가 고른 판정 조건만 서지 않는다. W38 이 8회차 시험이며, 미성립으로 마감하면 다음 일요일이 비중 축소를 판정한다.",
+            "source": "https://finance.thesmileinfo.com/2026/09/bank.html",
+            "source_date": "2026-09-13"
+          }
+        ],
+        "target_estimate": {
+          "estimate": 116700.0,
+          "expected_return_pct": 10.4,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 7281967000000,
+          "operating_profit": 2476281000000,
+          "op_margin_pct": 34.01,
+          "op_growth_pop_pct": 22.9,
+          "period_label": "반기",
+          "earnings_signal": "strong_growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -7.4% — 추세필터 통과(방어)",
+        "60일 모멘텀 -2.6%",
+        "상대강도: KOSPI 대비 +13.1%p (주도주)",
+        "52주 고점의 90% 수준",
+        "미래 테마 노출: value_up(노출 0.7)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.**",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)"
+      ],
+      "adopt_summary": "5거래일 누적 -7.4% — 추세필터 통과(방어) · 60일 모멘텀 -2.6% · 상대강도: KOSPI 대비 +13.1%p (주도주) · 52주 고점의 90% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.** · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
+      "block_reasons": []
     },
     {
       "ticker": "035720",
@@ -650,8 +813,8 @@
           "ret60": 0.35,
           "high52": 0.2
         },
-        "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 5.13,
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 10.19,
         "thematic": 0.325,
         "thematic_parts": [
           {
@@ -668,17 +831,17 @@
         "valuation_tilt": 0.03,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.564,
+      "final_score": 0.604,
       "data": {
-        "five_day_cumulative_return_pct": -2.48,
-        "ret_60d_pct": -5.92,
-        "pct_of_52w_high": 47.92,
+        "five_day_cumulative_return_pct": -2.04,
+        "ret_60d_pct": -5.49,
+        "pct_of_52w_high": 48.13,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 33400.0,
-          "position_cap_krw": 1569905,
+          "last_close": 33550.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -706,98 +869,97 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -2.5% — 추세필터 통과(방어)",
-        "60일 모멘텀 -5.9%",
-        "상대강도: KOSPI 대비 +5.1%p (동행)",
+        "5거래일 누적 -2.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -5.5%",
+        "상대강도: KOSPI 대비 +10.2%p (주도주)",
         "52주 고점의 48% 수준",
         "미래 테마 노출: internet_ai_platform(노출 0.5)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +36%)"
       ],
-      "adopt_summary": "5거래일 누적 -2.5% — 추세필터 통과(방어) · 60일 모멘텀 -5.9% · 상대강도: KOSPI 대비 +5.1%p (동행) · 52주 고점의 48% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +36%)",
+      "adopt_summary": "5거래일 누적 -2.0% — 추세필터 통과(방어) · 60일 모멘텀 -5.5% · 상대강도: KOSPI 대비 +10.2%p (주도주) · 52주 고점의 48% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +36%)",
       "block_reasons": []
     },
     {
-      "ticker": "068270",
-      "name": "셀트리온",
-      "sector": "바이오",
-      "thesis_id": "bio_axis_zero_exposure_w35",
-      "rationale": "바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.",
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
+      "sector": "방산",
+      "thesis_id": null,
+      "rationale": "K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
       "components": {
-        "momentum": 0.653,
+        "momentum": 0.301,
         "momentum_parts": {
-          "ret5": 1.0,
-          "ret60": 0.35,
-          "high52": 0.6
+          "ret5": 0.4,
+          "ret60": 0.1,
+          "high52": 0.4
         },
         "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 9.69,
-        "thematic": 0.35,
+        "rs_excess_vs_kospi_pct": 2.57,
+        "thematic": 0.63,
         "thematic_parts": [
           {
-            "theme": "bio_cdmo",
-            "exposure": 0.7,
-            "strength": 0.5,
-            "contrib": 0.35
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "strength": 0.7,
+            "contrib": 0.63
           }
         ],
-        "confidence": 0.5,
+        "confidence": 1.0,
         "thesis": 0.3,
         "bear_penalty": 0.0,
         "fundamental_tilt": 0.05,
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.563,
+      "final_score": 0.575,
       "data": {
-        "five_day_cumulative_return_pct": 1.57,
-        "ret_60d_pct": -1.36,
-        "pct_of_52w_high": 75.7,
-        "confidence": "medium",
+        "five_day_cumulative_return_pct": -3.86,
+        "ret_60d_pct": -13.11,
+        "pct_of_52w_high": 61.69,
+        "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 181100.0,
-          "position_cap_krw": 1569905,
+          "last_close": 1021000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
           {
-            "theme": "bio_cdmo",
-            "exposure": 0.7,
-            "evidence": "바이오시밀러 포트폴리오 확대 — 2026년 제약·바이오 대장주 상위권. 8월 첫째 주 5거래일 연속 상승(182,200원 → 199,300원, +9.4%)으로 바이오 섹터 몰입의 폭(sector_breadth) 축을 삼성바이오로직스와 함께 구성한다. CDMO 직접 노출은 삼성바이오로직스보다 낮아 exposure 는 보수적으로 0.7.",
-            "source": "https://www.joongangenews.com/news/articleView.html?idxno=538709",
-            "source_date": "2026-08-08"
+            "theme": "defense_export",
+            "exposure": 0.9,
+            "evidence": "K-방산 수출 대표주 — 자주포·장갑체계 유럽 수출 확대",
+            "source": null
           }
         ],
         "target_estimate": {
-          "estimate": 193300.0,
-          "expected_return_pct": 7.0,
-          "grade": "B",
+          "estimate": 1129100.0,
+          "expected_return_pct": 11.5,
+          "grade": "A",
           "gate_blocked": false
         },
         "fundamentals": {
-          "revenue": 1393692794953,
-          "operating_profit": 451791591338,
-          "op_margin_pct": 32.42,
-          "op_growth_pop_pct": 86.3,
+          "revenue": 9292863597000,
+          "operating_profit": 1365484214000,
+          "op_margin_pct": 14.69,
+          "op_growth_pop_pct": 58.5,
           "period_label": "반기",
           "earnings_signal": "strong_growth"
         }
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 +1.6% — 추세필터 통과(상승)",
-        "60일 모멘텀 -1.4%",
-        "상대강도: KOSPI 대비 +9.7%p (동행)",
-        "52주 고점의 76% 수준",
-        "미래 테마 노출: bio_cdmo(노출 0.7)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)"
+        "5거래일 누적 -3.9% — 추세필터 통과(방어)",
+        "60일 모멘텀 -13.1%",
+        "상대강도: KOSPI 대비 +2.6%p (동행)",
+        "52주 고점의 62% 수준",
+        "미래 테마 노출: defense_export(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
       ],
-      "adopt_summary": "5거래일 누적 +1.6% — 추세필터 통과(상승) · 60일 모멘텀 -1.4% · 상대강도: KOSPI 대비 +9.7%p (동행) · 52주 고점의 76% 수준 · 미래 테마 노출: bio_cdmo(노출 0.7) · 가격 신뢰도 medium(단일출처) · 근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)",
+      "adopt_summary": "5거래일 누적 -3.9% — 추세필터 통과(방어) · 60일 모멘텀 -13.1% · 상대강도: KOSPI 대비 +2.6%p (동행) · 52주 고점의 62% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
       "block_reasons": []
     },
     {
@@ -813,8 +975,8 @@
           "ret60": 0.35,
           "high52": 0.4
         },
-        "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 9.16,
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 13.74,
         "thematic": 0.52,
         "thematic_parts": [
           {
@@ -831,17 +993,17 @@
         "valuation_tilt": 0.03,
         "earnings_signal": "decline"
       },
-      "final_score": 0.533,
+      "final_score": 0.573,
       "data": {
-        "five_day_cumulative_return_pct": -4.43,
-        "ret_60d_pct": -1.89,
-        "pct_of_52w_high": 63.19,
+        "five_day_cumulative_return_pct": -4.48,
+        "ret_60d_pct": -1.94,
+        "pct_of_52w_high": 63.16,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 192100.0,
-          "position_cap_krw": 1569905,
+          "last_close": 192000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -869,15 +1031,179 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -4.4% — 추세필터 통과(방어)",
+        "5거래일 누적 -4.5% — 추세필터 통과(방어)",
         "60일 모멘텀 -1.9%",
-        "상대강도: KOSPI 대비 +9.2%p (동행)",
+        "상대강도: KOSPI 대비 +13.7%p (주도주)",
         "52주 고점의 63% 수준",
         "미래 테마 노출: internet_ai_platform(노출 0.8)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건."
       ],
-      "adopt_summary": "5거래일 누적 -4.4% — 추세필터 통과(방어) · 60일 모멘텀 -1.9% · 상대강도: KOSPI 대비 +9.2%p (동행) · 52주 고점의 63% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.",
+      "adopt_summary": "5거래일 누적 -4.5% — 추세필터 통과(방어) · 60일 모멘텀 -1.9% · 상대강도: KOSPI 대비 +13.7%p (주도주) · 52주 고점의 63% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.",
+      "block_reasons": []
+    },
+    {
+      "ticker": "010120",
+      "name": "LS ELECTRIC",
+      "sector": "전력기기",
+      "thesis_id": "momentum_rotation_deploy_w27",
+      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)",
+      "components": {
+        "momentum": 0.301,
+        "momentum_parts": {
+          "ret5": 0.4,
+          "ret60": 0.1,
+          "high52": 0.4
+        },
+        "relative_strength": 0.65,
+        "rs_excess_vs_kospi_pct": 3.04,
+        "thematic": 0.6,
+        "thematic_parts": [
+          {
+            "theme": "power_grid_ai",
+            "exposure": 0.8,
+            "strength": 0.75,
+            "contrib": 0.6
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.05,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "strong_growth"
+      },
+      "final_score": 0.57,
+      "data": {
+        "five_day_cumulative_return_pct": -4.98,
+        "ret_60d_pct": -12.64,
+        "pct_of_52w_high": 59.85,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 200500.0,
+          "position_cap_krw": 1564690,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "power_grid_ai",
+            "exposure": 0.8,
+            "evidence": "변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 60일 모멘텀 강세로 momentum_signal 재랭킹 1위(2026-07-26) 재진입.",
+            "source": null
+          }
+        ],
+        "target_estimate": {
+          "estimate": 188200.0,
+          "expected_return_pct": -5.9,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 1576997715527,
+          "operating_profit": 178520071669,
+          "op_margin_pct": 11.32,
+          "op_growth_pop_pct": 64.4,
+          "period_label": "반기",
+          "earnings_signal": "strong_growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -5.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -12.6%",
+        "상대강도: KOSPI 대비 +3.0%p (동행)",
+        "52주 고점의 60% 수준",
+        "미래 테마 노출: power_grid_ai(노출 0.8)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)"
+      ],
+      "adopt_summary": "5거래일 누적 -5.0% — 추세필터 통과(방어) · 60일 모멘텀 -12.6% · 상대강도: KOSPI 대비 +3.0%p (동행) · 52주 고점의 60% 수준 · 미래 테마 노출: power_grid_ai(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.) · 실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)",
+      "block_reasons": [
+        "[어드바이저리] 추정 기대수익 -5.9% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
+      ]
+    },
+    {
+      "ticker": "009540",
+      "name": "HD한국조선해양",
+      "sector": "조선",
+      "thesis_id": "shipbuilding_candidate",
+      "rationale": "LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
+      "components": {
+        "momentum": 0.199,
+        "momentum_parts": {
+          "ret5": 0.1,
+          "ret60": 0.1,
+          "high52": 0.4
+        },
+        "relative_strength": 0.65,
+        "rs_excess_vs_kospi_pct": 5.25,
+        "thematic": 0.72,
+        "thematic_parts": [
+          {
+            "theme": "shipbuilding_supercycle",
+            "exposure": 0.9,
+            "strength": 0.8,
+            "contrib": 0.72
+          }
+        ],
+        "confidence": 1.0,
+        "thesis": 0.3,
+        "bear_penalty": 0.0,
+        "fundamental_tilt": 0.05,
+        "valuation_tilt": 0.0,
+        "earnings_signal": "strong_growth"
+      },
+      "final_score": 0.558,
+      "data": {
+        "five_day_cumulative_return_pct": -5.43,
+        "ret_60d_pct": -10.43,
+        "pct_of_52w_high": 65.12,
+        "confidence": "high",
+        "entry_filter_passes": true,
+        "structural_bear_flags": [],
+        "buyability": {
+          "last_close": 322000.0,
+          "position_cap_krw": 1564690,
+          "size_feasible": true
+        },
+        "theme_exposure": [
+          {
+            "theme": "shipbuilding_supercycle",
+            "exposure": 0.9,
+            "evidence": "LNG선·특수선 수주잔고 슈퍼사이클, 1Q26 영업이익 +57.8% YoY",
+            "source": null
+          }
+        ],
+        "target_estimate": {
+          "estimate": 347700.0,
+          "expected_return_pct": 8.1,
+          "grade": "A",
+          "gate_blocked": false
+        },
+        "fundamentals": {
+          "revenue": 8927046477000,
+          "operating_profit": 1645146382000,
+          "op_margin_pct": 18.43,
+          "op_growth_pop_pct": 72.5,
+          "period_label": "반기",
+          "earnings_signal": "strong_growth"
+        }
+      },
+      "tradable": true,
+      "adopt_reasons": [
+        "5거래일 누적 -5.4% — 추세필터 통과(방어)",
+        "60일 모멘텀 -10.4%",
+        "상대강도: KOSPI 대비 +5.2%p (동행)",
+        "52주 고점의 65% 수준",
+        "미래 테마 노출: shipbuilding_supercycle(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)"
+      ],
+      "adopt_summary": "5거래일 누적 -5.4% — 추세필터 통과(방어) · 60일 모멘텀 -10.4% · 상대강도: KOSPI 대비 +5.2%p (동행) · 52주 고점의 65% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)",
       "block_reasons": []
     },
     {
@@ -894,7 +1220,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -15.88,
+        "rs_excess_vs_kospi_pct": -11.17,
         "thematic": 0.902,
         "thematic_parts": [
           {
@@ -913,15 +1239,15 @@
       },
       "final_score": 0.526,
       "data": {
-        "five_day_cumulative_return_pct": -3.75,
-        "ret_60d_pct": -26.93,
-        "pct_of_52w_high": 59.32,
+        "five_day_cumulative_return_pct": -3.64,
+        "ret_60d_pct": -26.85,
+        "pct_of_52w_high": 59.39,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 1772000.0,
-          "position_cap_krw": 1569905,
+          "last_close": 1774000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": false
         },
         "theme_exposure": [
@@ -934,8 +1260,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 1615600.0,
-          "expected_return_pct": -8.1,
+          "estimate": 1623100.0,
+          "expected_return_pct": -8.4,
           "grade": "A",
           "gate_blocked": false
         },
@@ -952,171 +1278,9 @@
       "adopt_reasons": [],
       "adopt_summary": null,
       "block_reasons": [
-        "[어드바이저리] 추정 기대수익 -8.1% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)",
-        "1주 가격 1,772,000원 > 종목당 비중 상한 1,569,905원(equity 4,485,442×35%) — 현재 자본으로 1주도 매수 불가(고가주 비중캡)"
+        "[어드바이저리] 추정 기대수익 -8.4% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)",
+        "1주 가격 1,774,000원 > 종목당 비중 상한 1,564,690원(equity 4,470,542×35%) — 현재 자본으로 1주도 매수 불가(고가주 비중캡)"
       ]
-    },
-    {
-      "ticker": "079550",
-      "name": "LIG넥스원(LIG D&A)",
-      "sector": "방산",
-      "thesis_id": "momentum_rotation_deploy_w27",
-      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
-      "components": {
-        "momentum": 0.301,
-        "momentum_parts": {
-          "ret5": 0.4,
-          "ret60": 0.1,
-          "high52": 0.4
-        },
-        "relative_strength": 0.4,
-        "rs_excess_vs_kospi_pct": -3.2,
-        "thematic": 0.63,
-        "thematic_parts": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "strength": 0.7,
-            "contrib": 0.63
-          }
-        ],
-        "confidence": 1.0,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.05,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "strong_growth"
-      },
-      "final_score": 0.525,
-      "data": {
-        "five_day_cumulative_return_pct": -3.11,
-        "ret_60d_pct": -14.25,
-        "pct_of_52w_high": 61.36,
-        "confidence": "high",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 686000.0,
-          "position_cap_krw": 1569905,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "evidence": "정밀유도무기(미사일·요격체계) 수출 확대 — 이란-미 확전 13일째 지속에 따른 지정학 프리미엄 재점화(7/24 지수 -5.7% 급락장에서 +3.5% 역행). 방산 수출 수요는 확전 종식 후에도 유럽 재무장 기조로 구조적 지속 전망.",
-            "source": "https://www.cnn.com/2026/07/24/world/live-news/iran-war-trump"
-          }
-        ],
-        "target_estimate": {
-          "estimate": 723800.0,
-          "expected_return_pct": 5.4,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 1110094315474,
-          "operating_profit": 105657237903,
-          "op_margin_pct": 9.52,
-          "op_growth_pop_pct": 29.5,
-          "period_label": "반기",
-          "earnings_signal": "strong_growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -3.1% — 추세필터 통과(방어)",
-        "60일 모멘텀 -14.2%",
-        "상대강도: KOSPI 대비 -3.2%p (동행)",
-        "52주 고점의 61% 수준",
-        "미래 테마 노출: defense_export(노출 0.9)",
-        "가격 신뢰도 high(2출처 일치)",
-        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)"
-      ],
-      "adopt_summary": "5거래일 누적 -3.1% — 추세필터 통과(방어) · 60일 모멘텀 -14.2% · 상대강도: KOSPI 대비 -3.2%p (동행) · 52주 고점의 61% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)",
-      "block_reasons": []
-    },
-    {
-      "ticker": "009540",
-      "name": "HD한국조선해양",
-      "sector": "조선",
-      "thesis_id": "shipbuilding_candidate",
-      "rationale": "LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
-      "components": {
-        "momentum": 0.199,
-        "momentum_parts": {
-          "ret5": 0.1,
-          "ret60": 0.1,
-          "high52": 0.4
-        },
-        "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 0.48,
-        "thematic": 0.72,
-        "thematic_parts": [
-          {
-            "theme": "shipbuilding_supercycle",
-            "exposure": 0.9,
-            "strength": 0.8,
-            "contrib": 0.72
-          }
-        ],
-        "confidence": 0.5,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.05,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "strong_growth"
-      },
-      "final_score": 0.483,
-      "data": {
-        "five_day_cumulative_return_pct": -5.58,
-        "ret_60d_pct": -10.57,
-        "pct_of_52w_high": 65.02,
-        "confidence": "medium",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 321500.0,
-          "position_cap_krw": 1569905,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "shipbuilding_supercycle",
-            "exposure": 0.9,
-            "evidence": "LNG선·특수선 수주잔고 슈퍼사이클, 1Q26 영업이익 +57.8% YoY",
-            "source": null
-          }
-        ],
-        "target_estimate": {
-          "estimate": 350300.0,
-          "expected_return_pct": 7.3,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 8927046477000,
-          "operating_profit": 1645146382000,
-          "op_margin_pct": 18.43,
-          "op_growth_pop_pct": 72.5,
-          "period_label": "반기",
-          "earnings_signal": "strong_growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -5.6% — 추세필터 통과(방어)",
-        "60일 모멘텀 -10.6%",
-        "상대강도: KOSPI 대비 +0.5%p (동행)",
-        "52주 고점의 65% 수준",
-        "미래 테마 노출: shipbuilding_supercycle(노출 0.9)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)"
-      ],
-      "adopt_summary": "5거래일 누적 -5.6% — 추세필터 통과(방어) · 60일 모멘텀 -10.6% · 상대강도: KOSPI 대비 +0.5%p (동행) · 52주 고점의 65% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)",
-      "block_reasons": []
     },
     {
       "ticker": "028260",
@@ -1131,8 +1295,8 @@
           "ret60": 0.1,
           "high52": 0.4
         },
-        "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -10.52,
+        "relative_strength": 0.4,
+        "rs_excess_vs_kospi_pct": -6.12,
         "thematic": 0.795,
         "thematic_parts": [
           {
@@ -1155,17 +1319,17 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.479,
+      "final_score": 0.519,
       "data": {
-        "five_day_cumulative_return_pct": -6.72,
-        "ret_60d_pct": -21.57,
-        "pct_of_52w_high": 60.18,
+        "five_day_cumulative_return_pct": -7.0,
+        "ret_60d_pct": -21.8,
+        "pct_of_52w_high": 60.0,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 340000.0,
-          "position_cap_krw": 1569905,
+          "last_close": 339000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -1185,8 +1349,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 458700.0,
-          "expected_return_pct": 35.5,
+          "estimate": 459600.0,
+          "expected_return_pct": 35.2,
           "grade": "A",
           "gate_blocked": false
         },
@@ -1201,97 +1365,16 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -6.7% — 추세필터 통과(방어)",
-        "60일 모멘텀 -21.6%",
-        "상대강도: KOSPI 대비 -10.5%p (후행주)",
+        "5거래일 누적 -7.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -21.8%",
+        "상대강도: KOSPI 대비 -6.1%p (동행)",
         "52주 고점의 60% 수준",
         "미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)"
       ],
-      "adopt_summary": "5거래일 누적 -6.7% — 추세필터 통과(방어) · 60일 모멘텀 -21.6% · 상대강도: KOSPI 대비 -10.5%p (후행주) · 52주 고점의 60% 수준 · 미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
-      "block_reasons": []
-    },
-    {
-      "ticker": "012450",
-      "name": "한화에어로스페이스",
-      "sector": "방산",
-      "thesis_id": null,
-      "rationale": "K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
-      "components": {
-        "momentum": 0.301,
-        "momentum_parts": {
-          "ret5": 0.4,
-          "ret60": 0.1,
-          "high52": 0.4
-        },
-        "relative_strength": 0.4,
-        "rs_excess_vs_kospi_pct": -2.74,
-        "thematic": 0.63,
-        "thematic_parts": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "strength": 0.7,
-            "contrib": 0.63
-          }
-        ],
-        "confidence": 0.5,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.05,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "strong_growth"
-      },
-      "final_score": 0.45,
-      "data": {
-        "five_day_cumulative_return_pct": -4.61,
-        "ret_60d_pct": -13.79,
-        "pct_of_52w_high": 61.21,
-        "confidence": "medium",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 1013000.0,
-          "position_cap_krw": 1569905,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "defense_export",
-            "exposure": 0.9,
-            "evidence": "K-방산 수출 대표주 — 자주포·장갑체계 유럽 수출 확대",
-            "source": null
-          }
-        ],
-        "target_estimate": {
-          "estimate": 1134100.0,
-          "expected_return_pct": 10.9,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 9292863597000,
-          "operating_profit": 1365484214000,
-          "op_margin_pct": 14.69,
-          "op_growth_pop_pct": 58.5,
-          "period_label": "반기",
-          "earnings_signal": "strong_growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -4.6% — 추세필터 통과(방어)",
-        "60일 모멘텀 -13.8%",
-        "상대강도: KOSPI 대비 -2.7%p (동행)",
-        "52주 고점의 61% 수준",
-        "미래 테마 노출: defense_export(노출 0.9)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
-      ],
-      "adopt_summary": "5거래일 누적 -4.6% — 추세필터 통과(방어) · 60일 모멘텀 -13.8% · 상대강도: KOSPI 대비 -2.7%p (동행) · 52주 고점의 61% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
+      "adopt_summary": "5거래일 누적 -7.0% — 추세필터 통과(방어) · 60일 모멘텀 -21.8% · 상대강도: KOSPI 대비 -6.1%p (동행) · 52주 고점의 60% 수준 · 미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
       "block_reasons": []
     },
     {
@@ -1308,7 +1391,7 @@
           "high52": 0.4
         },
         "relative_strength": 0.4,
-        "rs_excess_vs_kospi_pct": -6.35,
+        "rs_excess_vs_kospi_pct": -1.21,
         "thematic": 0.64,
         "thematic_parts": [
           {
@@ -1318,24 +1401,24 @@
             "contrib": 0.64
           }
         ],
-        "confidence": 0.5,
+        "confidence": 1.0,
         "thesis": 0.3,
         "bear_penalty": 0.0,
         "fundamental_tilt": 0.05,
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.421,
+      "final_score": 0.496,
       "data": {
-        "five_day_cumulative_return_pct": -6.23,
-        "ret_60d_pct": -17.4,
-        "pct_of_52w_high": 54.91,
-        "confidence": "medium",
+        "five_day_cumulative_return_pct": -5.65,
+        "ret_60d_pct": -16.89,
+        "pct_of_52w_high": 55.25,
+        "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 19410.0,
-          "position_cap_krw": 1569905,
+          "last_close": 19530.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -1347,8 +1430,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 20300.0,
-          "expected_return_pct": 3.3,
+          "estimate": 20200.0,
+          "expected_return_pct": 4.1,
           "grade": "A",
           "gate_blocked": false
         },
@@ -1363,16 +1446,16 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -6.2% — 추세필터 통과(방어)",
-        "60일 모멘텀 -17.4%",
-        "상대강도: KOSPI 대비 -6.3%p (동행)",
+        "5거래일 누적 -5.7% — 추세필터 통과(방어)",
+        "60일 모멘텀 -16.9%",
+        "상대강도: KOSPI 대비 -1.2%p (동행)",
         "52주 고점의 55% 수준",
         "미래 테마 노출: shipbuilding_supercycle(노출 0.8)",
-        "가격 신뢰도 medium(단일출처)",
+        "가격 신뢰도 high(2출처 일치)",
         "근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)"
       ],
-      "adopt_summary": "5거래일 누적 -6.2% — 추세필터 통과(방어) · 60일 모멘텀 -17.4% · 상대강도: KOSPI 대비 -6.3%p (동행) · 52주 고점의 55% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.8) · 가격 신뢰도 medium(단일출처) · 근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)",
+      "adopt_summary": "5거래일 누적 -5.7% — 추세필터 통과(방어) · 60일 모멘텀 -16.9% · 상대강도: KOSPI 대비 -1.2%p (동행) · 52주 고점의 55% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)",
       "block_reasons": []
     },
     {
@@ -1388,8 +1471,8 @@
           "ret60": 0.35,
           "high52": 0.4
         },
-        "relative_strength": 0.65,
-        "rs_excess_vs_kospi_pct": 8.84,
+        "relative_strength": 0.85,
+        "rs_excess_vs_kospi_pct": 14.71,
         "thematic": 0.735,
         "thematic_parts": [
           {
@@ -1412,19 +1495,19 @@
         "valuation_tilt": 0.0,
         "earnings_signal": "sharp_decline"
       },
-      "final_score": 0.417,
+      "final_score": 0.457,
       "data": {
-        "five_day_cumulative_return_pct": 0.71,
-        "ret_60d_pct": -2.21,
-        "pct_of_52w_high": 67.27,
+        "five_day_cumulative_return_pct": 1.99,
+        "ret_60d_pct": -0.97,
+        "pct_of_52w_high": 68.12,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [
           "관세"
         ],
         "buyability": {
-          "last_close": 354500.0,
-          "position_cap_krw": 1569905,
+          "last_close": 359000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -1442,8 +1525,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 382300.0,
-          "expected_return_pct": 7.4,
+          "estimate": 381600.0,
+          "expected_return_pct": 7.6,
           "grade": "A",
           "gate_blocked": false
         },
@@ -1464,87 +1547,86 @@
       ]
     },
     {
-      "ticker": "010120",
-      "name": "LS ELECTRIC",
+      "ticker": "267260",
+      "name": "HD현대일렉트릭",
       "sector": "전력기기",
-      "thesis_id": "momentum_rotation_deploy_w27",
-      "rationale": "듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)",
+      "thesis_id": null,
+      "rationale": "변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
       "components": {
-        "momentum": 0.199,
+        "momentum": 0.099,
         "momentum_parts": {
-          "ret5": 0.1,
+          "ret5": 0.0,
           "ret60": 0.1,
-          "high52": 0.4
+          "high52": 0.2
         },
-        "relative_strength": 0.4,
-        "rs_excess_vs_kospi_pct": -1.8,
-        "thematic": 0.6,
+        "relative_strength": 0.2,
+        "rs_excess_vs_kospi_pct": -14.48,
+        "thematic": 0.675,
         "thematic_parts": [
           {
             "theme": "power_grid_ai",
-            "exposure": 0.8,
+            "exposure": 0.9,
             "strength": 0.75,
-            "contrib": 0.6
+            "contrib": 0.675
           }
         ],
-        "confidence": 0.5,
+        "confidence": 1.0,
         "thesis": 0.3,
         "bear_penalty": 0.0,
         "fundamental_tilt": 0.05,
         "valuation_tilt": 0.0,
         "earnings_signal": "strong_growth"
       },
-      "final_score": 0.415,
+      "final_score": 0.431,
       "data": {
-        "five_day_cumulative_return_pct": -5.21,
-        "ret_60d_pct": -12.85,
-        "pct_of_52w_high": 59.7,
-        "confidence": "medium",
+        "five_day_cumulative_return_pct": -7.69,
+        "ret_60d_pct": -30.16,
+        "pct_of_52w_high": 46.15,
+        "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 200000.0,
-          "position_cap_krw": 1569905,
+          "last_close": 660000.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
           {
             "theme": "power_grid_ai",
-            "exposure": 0.8,
-            "evidence": "변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 60일 모멘텀 강세로 momentum_signal 재랭킹 1위(2026-07-26) 재진입.",
-            "source": null
+            "exposure": 0.9,
+            "evidence": "빅테크 A사와 2027~2028 납품 조건 1조1,000억원 규모 데이터센터 전력·배전변압기 장기공급계약 체결, 2029~2030 물량은 그보다 큰 규모로 협의 중이며 B·C·D 사와도 대규모 장기공급계약 논의 중(LS증권). 미 앨라배마 제2공장 증설이 2027년 4월 완료되면 연간 전력변압기 생산능력 약 50% 확대. 8/30 재산출에서 power_grid_ai 몰입 3/2 충족·20일 초과수익 +18.25%p 로 테마 노출 0.85 → 0.9 상향. [2026-09-06 중복 등재 1건 제거] power_grid_ai 가 두 번 적혀 thematic 기여가 0.675×2=1.35 → 상한 1.0 으로 계산되고 있었다. 이 종목은 8/30 에 '실질 후보 1종'으로 지목됐다가 한 주 만에 -12.29% 로 5거래일 급락 필터에 걸린 종목이며, 지목 당시 점수의 일부가 이 중복에서 나왔다.",
+            "source": "https://www.mt.co.kr/stock/2026/07/29/2026072909143766775",
+            "source_date": "2026-07-29"
           }
         ],
         "target_estimate": {
-          "estimate": 188700.0,
-          "expected_return_pct": -6.1,
+          "estimate": 943200.0,
+          "expected_return_pct": 46.2,
           "grade": "A",
           "gate_blocked": false
         },
         "fundamentals": {
-          "revenue": 1576997715527,
-          "operating_profit": 178520071669,
-          "op_margin_pct": 11.32,
-          "op_growth_pop_pct": 64.4,
+          "revenue": 1141812823338,
+          "operating_profit": 287034500364,
+          "op_margin_pct": 25.14,
+          "op_growth_pop_pct": 37.2,
           "period_label": "반기",
           "earnings_signal": "strong_growth"
         }
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -5.2% — 추세필터 통과(방어)",
-        "60일 모멘텀 -12.8%",
-        "상대강도: KOSPI 대비 -1.8%p (동행)",
-        "52주 고점의 60% 수준",
-        "미래 테마 노출: power_grid_ai(노출 0.8)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)"
+        "5거래일 누적 -7.7% — 추세필터 통과(방어)",
+        "60일 모멘텀 -30.2%",
+        "상대강도: KOSPI 대비 -14.5%p (후행주)",
+        "52주 고점의 46% 수준",
+        "미래 테마 노출: power_grid_ai(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)"
       ],
-      "adopt_summary": "5거래일 누적 -5.2% — 추세필터 통과(방어) · 60일 모멘텀 -12.8% · 상대강도: KOSPI 대비 -1.8%p (동행) · 52주 고점의 60% 수준 · 미래 테마 노출: power_grid_ai(노출 0.8) · 가격 신뢰도 medium(단일출처) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.) · 실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)",
-      "block_reasons": [
-        "[어드바이저리] 추정 기대수익 -6.1% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수)"
-      ]
+      "adopt_summary": "5거래일 누적 -7.7% — 추세필터 통과(방어) · 60일 모멘텀 -30.2% · 상대강도: KOSPI 대비 -14.5%p (후행주) · 52주 고점의 46% 수준 · 미래 테마 노출: power_grid_ai(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
+      "block_reasons": []
     },
     {
       "ticker": "005380",
@@ -1560,7 +1642,7 @@
           "high52": 0.2
         },
         "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -18.83,
+        "rs_excess_vs_kospi_pct": -13.89,
         "thematic": 0.79,
         "thematic_parts": [
           {
@@ -1585,15 +1667,15 @@
       },
       "final_score": 0.379,
       "data": {
-        "five_day_cumulative_return_pct": -4.7,
-        "ret_60d_pct": -29.88,
-        "pct_of_52w_high": 44.06,
+        "five_day_cumulative_return_pct": -4.28,
+        "ret_60d_pct": -29.57,
+        "pct_of_52w_high": 44.25,
         "confidence": "high",
         "entry_filter_passes": true,
         "structural_bear_flags": [],
         "buyability": {
-          "last_close": 345000.0,
-          "position_cap_krw": 1569905,
+          "last_close": 346500.0,
+          "position_cap_krw": 1564690,
           "size_feasible": true
         },
         "theme_exposure": [
@@ -1613,8 +1695,8 @@
           }
         ],
         "target_estimate": {
-          "estimate": 377000.0,
-          "expected_return_pct": 8.6,
+          "estimate": 376100.0,
+          "expected_return_pct": 9.0,
           "grade": "A",
           "gate_blocked": false
         },
@@ -1629,111 +1711,45 @@
       },
       "tradable": true,
       "adopt_reasons": [
-        "5거래일 누적 -4.7% — 추세필터 통과(방어)",
-        "60일 모멘텀 -29.9%",
-        "상대강도: KOSPI 대비 -18.8%p (후행주)",
+        "5거래일 누적 -4.3% — 추세필터 통과(방어)",
+        "60일 모멘텀 -29.6%",
+        "상대강도: KOSPI 대비 -13.9%p (후행주)",
         "52주 고점의 44% 수준",
         "미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토."
       ],
-      "adopt_summary": "5거래일 누적 -4.7% — 추세필터 통과(방어) · 60일 모멘텀 -29.9% · 상대강도: KOSPI 대비 -18.8%p (후행주) · 52주 고점의 44% 수준 · 미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4) · 가격 신뢰도 high(2출처 일치) · 근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토.",
-      "block_reasons": []
-    },
-    {
-      "ticker": "267260",
-      "name": "HD현대일렉트릭",
-      "sector": "전력기기",
-      "thesis_id": null,
-      "rationale": "변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
-      "components": {
-        "momentum": 0.099,
-        "momentum_parts": {
-          "ret5": 0.0,
-          "ret60": 0.1,
-          "high52": 0.2
-        },
-        "relative_strength": 0.2,
-        "rs_excess_vs_kospi_pct": -20.7,
-        "thematic": 0.675,
-        "thematic_parts": [
-          {
-            "theme": "power_grid_ai",
-            "exposure": 0.9,
-            "strength": 0.75,
-            "contrib": 0.675
-          }
-        ],
-        "confidence": 0.5,
-        "thesis": 0.3,
-        "bear_penalty": 0.0,
-        "fundamental_tilt": 0.05,
-        "valuation_tilt": 0.0,
-        "earnings_signal": "strong_growth"
-      },
-      "final_score": 0.356,
-      "data": {
-        "five_day_cumulative_return_pct": -9.79,
-        "ret_60d_pct": -31.75,
-        "pct_of_52w_high": 45.1,
-        "confidence": "medium",
-        "entry_filter_passes": true,
-        "structural_bear_flags": [],
-        "buyability": {
-          "last_close": 645000.0,
-          "position_cap_krw": 1569905,
-          "size_feasible": true
-        },
-        "theme_exposure": [
-          {
-            "theme": "power_grid_ai",
-            "exposure": 0.9,
-            "evidence": "빅테크 A사와 2027~2028 납품 조건 1조1,000억원 규모 데이터센터 전력·배전변압기 장기공급계약 체결, 2029~2030 물량은 그보다 큰 규모로 협의 중이며 B·C·D 사와도 대규모 장기공급계약 논의 중(LS증권). 미 앨라배마 제2공장 증설이 2027년 4월 완료되면 연간 전력변압기 생산능력 약 50% 확대. 8/30 재산출에서 power_grid_ai 몰입 3/2 충족·20일 초과수익 +18.25%p 로 테마 노출 0.85 → 0.9 상향. [2026-09-06 중복 등재 1건 제거] power_grid_ai 가 두 번 적혀 thematic 기여가 0.675×2=1.35 → 상한 1.0 으로 계산되고 있었다. 이 종목은 8/30 에 '실질 후보 1종'으로 지목됐다가 한 주 만에 -12.29% 로 5거래일 급락 필터에 걸린 종목이며, 지목 당시 점수의 일부가 이 중복에서 나왔다.",
-            "source": "https://www.mt.co.kr/stock/2026/07/29/2026072909143766775",
-            "source_date": "2026-07-29"
-          }
-        ],
-        "target_estimate": {
-          "estimate": 944300.0,
-          "expected_return_pct": 46.0,
-          "grade": "A",
-          "gate_blocked": false
-        },
-        "fundamentals": {
-          "revenue": 1141812823338,
-          "operating_profit": 287034500364,
-          "op_margin_pct": 25.14,
-          "op_growth_pop_pct": 37.2,
-          "period_label": "반기",
-          "earnings_signal": "strong_growth"
-        }
-      },
-      "tradable": true,
-      "adopt_reasons": [
-        "5거래일 누적 -9.8% — 추세필터 통과(방어)",
-        "60일 모멘텀 -31.8%",
-        "상대강도: KOSPI 대비 -20.7%p (후행주)",
-        "52주 고점의 45% 수준",
-        "미래 테마 노출: power_grid_ai(노출 0.9)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)"
-      ],
-      "adopt_summary": "5거래일 누적 -9.8% — 추세필터 통과(방어) · 60일 모멘텀 -31.8% · 상대강도: KOSPI 대비 -20.7%p (후행주) · 52주 고점의 45% 수준 · 미래 테마 노출: power_grid_ai(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
+      "adopt_summary": "5거래일 누적 -4.3% — 추세필터 통과(방어) · 60일 모멘텀 -29.6% · 상대강도: KOSPI 대비 -13.9%p (후행주) · 52주 고점의 44% 수준 · 미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4) · 가격 신뢰도 high(2출처 일치) · 근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토.",
       "block_reasons": []
     }
   ],
   "adopted": [
     {
+      "ticker": "042700",
+      "name": "한미반도체",
+      "final_score": 0.777,
+      "summary": "5거래일 누적 +8.8% — 추세필터 통과(상승) · 60일 모멘텀 +12.6% · 상대강도: KOSPI 대비 +28.3%p (주도주) · 52주 고점의 61% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.85) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)",
+      "reasons": [
+        "5거래일 누적 +8.8% — 추세필터 통과(상승)",
+        "60일 모멘텀 +12.6%",
+        "상대강도: KOSPI 대비 +28.3%p (주도주)",
+        "52주 고점의 61% 수준",
+        "미래 테마 노출: ai_memory_hbm(노출 0.85)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)"
+      ]
+    },
+    {
       "ticker": "006400",
       "name": "삼성SDI",
-      "final_score": 0.709,
-      "summary": "5거래일 누적 -4.7% — 추세필터 통과(방어) · 60일 모멘텀 +8.2% · 상대강도: KOSPI 대비 +19.3%p (주도주) · 52주 고점의 70% 수준 · 미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +151%)",
+      "final_score": 0.729,
+      "summary": "5거래일 누적 -3.4% — 추세필터 통과(방어) · 60일 모멘텀 +9.7% · 상대강도: KOSPI 대비 +25.4%p (주도주) · 52주 고점의 71% 수준 · 미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +151%)",
       "reasons": [
-        "5거래일 누적 -4.7% — 추세필터 통과(방어)",
-        "60일 모멘텀 +8.2%",
-        "상대강도: KOSPI 대비 +19.3%p (주도주)",
-        "52주 고점의 70% 수준",
+        "5거래일 누적 -3.4% — 추세필터 통과(방어)",
+        "60일 모멘텀 +9.7%",
+        "상대강도: KOSPI 대비 +25.4%p (주도주)",
+        "52주 고점의 71% 수준",
         "미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
@@ -1741,31 +1757,79 @@
       ]
     },
     {
-      "ticker": "042700",
-      "name": "한미반도체",
-      "final_score": 0.702,
-      "summary": "5거래일 누적 +8.1% — 추세필터 통과(상승) · 60일 모멘텀 +11.8% · 상대강도: KOSPI 대비 +22.9%p (주도주) · 52주 고점의 61% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.85) · 가격 신뢰도 medium(단일출처) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)",
+      "ticker": "207940",
+      "name": "삼성바이오로직스",
+      "final_score": 0.718,
+      "summary": "5거래일 누적 +3.0% — 추세필터 통과(상승) · 60일 모멘텀 +0.9% · 상대강도: KOSPI 대비 +16.6%p (주도주) · 52주 고점의 72% 수준 · 미래 테마 노출: bio_cdmo(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
       "reasons": [
-        "5거래일 누적 +8.1% — 추세필터 통과(상승)",
-        "60일 모멘텀 +11.8%",
-        "상대강도: KOSPI 대비 +22.9%p (주도주)",
-        "52주 고점의 61% 수준",
-        "미래 테마 노출: ai_memory_hbm(노출 0.85)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)"
+        "5거래일 누적 +3.0% — 추세필터 통과(상승)",
+        "60일 모멘텀 +0.9%",
+        "상대강도: KOSPI 대비 +16.6%p (주도주)",
+        "52주 고점의 72% 수준",
+        "미래 테마 노출: bio_cdmo(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)"
+      ]
+    },
+    {
+      "ticker": "068270",
+      "name": "셀트리온",
+      "final_score": 0.678,
+      "summary": "5거래일 누적 +2.7% — 추세필터 통과(상승) · 60일 모멘텀 -0.3% · 상대강도: KOSPI 대비 +15.4%p (주도주) · 52주 고점의 77% 수준 · 미래 테마 노출: bio_cdmo(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)",
+      "reasons": [
+        "5거래일 누적 +2.7% — 추세필터 통과(상승)",
+        "60일 모멘텀 -0.3%",
+        "상대강도: KOSPI 대비 +15.4%p (주도주)",
+        "52주 고점의 77% 수준",
+        "미래 테마 노출: bio_cdmo(노출 0.7)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)"
+      ]
+    },
+    {
+      "ticker": "079550",
+      "name": "LIG넥스원(LIG D&A)",
+      "final_score": 0.636,
+      "summary": "5거래일 누적 +0.6% — 추세필터 통과(상승) · 60일 모멘텀 -11.0% · 상대강도: KOSPI 대비 +4.7%p (동행) · 52주 고점의 64% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)",
+      "reasons": [
+        "5거래일 누적 +0.6% — 추세필터 통과(상승)",
+        "60일 모멘텀 -11.0%",
+        "상대강도: KOSPI 대비 +4.7%p (동행)",
+        "52주 고점의 64% 수준",
+        "미래 테마 노출: defense_export(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)"
+      ]
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "final_score": 0.628,
+      "summary": "5거래일 누적 -3.5% — 추세필터 통과(방어) · 60일 모멘텀 -13.5% · 상대강도: KOSPI 대비 +2.2%p (동행) · 52주 고점의 72% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)",
+      "reasons": [
+        "5거래일 누적 -3.5% — 추세필터 통과(방어)",
+        "60일 모멘텀 -13.5%",
+        "상대강도: KOSPI 대비 +2.2%p (동행)",
+        "52주 고점의 72% 수준",
+        "미래 테마 노출: ai_memory_hbm(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)"
       ]
     },
     {
       "ticker": "105560",
       "name": "KB금융",
-      "final_score": 0.658,
-      "summary": "5거래일 누적 -3.9% — 추세필터 통과(방어) · 60일 모멘텀 -0.5% · 상대강도: KOSPI 대비 +10.6%p (주도주) · 52주 고점의 87% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)",
+      "final_score": 0.627,
+      "summary": "5거래일 누적 -5.7% — 추세필터 통과(방어) · 60일 모멘텀 -2.4% · 상대강도: KOSPI 대비 +13.3%p (주도주) · 52주 고점의 85% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)",
       "reasons": [
-        "5거래일 누적 -3.9% — 추세필터 통과(방어)",
-        "60일 모멘텀 -0.5%",
-        "상대강도: KOSPI 대비 +10.6%p (주도주)",
-        "52주 고점의 87% 수준",
+        "5거래일 누적 -5.7% — 추세필터 통과(방어)",
+        "60일 모멘텀 -2.4%",
+        "상대강도: KOSPI 대비 +13.3%p (주도주)",
+        "52주 고점의 85% 수준",
         "미래 테마 노출: value_up(노출 0.7)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.",
@@ -1775,13 +1839,13 @@
     {
       "ticker": "086790",
       "name": "하나금융지주",
-      "final_score": 0.653,
-      "summary": "5거래일 누적 -4.3% — 추세필터 통과(방어) · 60일 모멘텀 +3.5% · 상대강도: KOSPI 대비 +14.6%p (주도주) · 52주 고점의 91% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +7%)",
+      "final_score": 0.622,
+      "summary": "5거래일 누적 -5.2% — 추세필터 통과(방어) · 60일 모멘텀 +2.5% · 상대강도: KOSPI 대비 +18.1%p (주도주) · 52주 고점의 90% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안. · 실적 모멘텀(growth, 영업이익 전기대비 +7%)",
       "reasons": [
-        "5거래일 누적 -4.3% — 추세필터 통과(방어)",
-        "60일 모멘텀 +3.5%",
-        "상대강도: KOSPI 대비 +14.6%p (주도주)",
-        "52주 고점의 91% 수준",
+        "5거래일 누적 -5.2% — 추세필터 통과(방어)",
+        "60일 모멘텀 +2.5%",
+        "상대강도: KOSPI 대비 +18.1%p (주도주)",
+        "52주 고점의 90% 수준",
         "미래 테마 노출: value_up(노출 0.7)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.",
@@ -1789,31 +1853,15 @@
       ]
     },
     {
-      "ticker": "207940",
-      "name": "삼성바이오로직스",
-      "final_score": 0.653,
-      "summary": "5거래일 누적 +0.2% — 추세필터 통과(상승) · 60일 모멘텀 -1.8% · 상대강도: KOSPI 대비 +9.2%p (동행) · 52주 고점의 70% 수준 · 미래 테마 노출: bio_cdmo(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
-      "reasons": [
-        "5거래일 누적 +0.2% — 추세필터 통과(상승)",
-        "60일 모멘텀 -1.8%",
-        "상대강도: KOSPI 대비 +9.2%p (동행)",
-        "52주 고점의 70% 수준",
-        "미래 테마 노출: bio_cdmo(노출 0.9)",
-        "가격 신뢰도 high(2출처 일치)",
-        "근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)"
-      ]
-    },
-    {
       "ticker": "055550",
       "name": "신한지주",
-      "final_score": 0.587,
-      "summary": "5거래일 누적 -6.3% — 추세필터 통과(방어) · 60일 모멘텀 -1.5% · 상대강도: KOSPI 대비 +9.6%p (동행) · 52주 고점의 91% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.** · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
+      "final_score": 0.618,
+      "summary": "5거래일 누적 -7.4% — 추세필터 통과(방어) · 60일 모멘텀 -2.6% · 상대강도: KOSPI 대비 +13.1%p (주도주) · 52주 고점의 90% 수준 · 미래 테마 노출: value_up(노출 0.7) · 가격 신뢰도 high(2출처 일치) · 근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.** · 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)",
       "reasons": [
-        "5거래일 누적 -6.3% — 추세필터 통과(방어)",
-        "60일 모멘텀 -1.5%",
-        "상대강도: KOSPI 대비 +9.6%p (동행)",
-        "52주 고점의 91% 수준",
+        "5거래일 누적 -7.4% — 추세필터 통과(방어)",
+        "60일 모멘텀 -2.6%",
+        "상대강도: KOSPI 대비 +13.1%p (주도주)",
+        "52주 고점의 90% 수준",
         "미래 테마 노출: value_up(노출 0.7)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.**",
@@ -1821,30 +1869,14 @@
       ]
     },
     {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "final_score": 0.578,
-      "summary": "5거래일 누적 -3.8% — 추세필터 통과(방어) · 60일 모멘텀 -13.7% · 상대강도: KOSPI 대비 -2.7%p (동행) · 52주 고점의 71% 수준 · 미래 테마 노출: ai_memory_hbm(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)",
-      "reasons": [
-        "5거래일 누적 -3.8% — 추세필터 통과(방어)",
-        "60일 모멘텀 -13.7%",
-        "상대강도: KOSPI 대비 -2.7%p (동행)",
-        "52주 고점의 71% 수준",
-        "미래 테마 노출: ai_memory_hbm(노출 0.9)",
-        "가격 신뢰도 high(2출처 일치)",
-        "근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)"
-      ]
-    },
-    {
       "ticker": "035720",
       "name": "카카오",
-      "final_score": 0.564,
-      "summary": "5거래일 누적 -2.5% — 추세필터 통과(방어) · 60일 모멘텀 -5.9% · 상대강도: KOSPI 대비 +5.1%p (동행) · 52주 고점의 48% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +36%)",
+      "final_score": 0.604,
+      "summary": "5거래일 누적 -2.0% — 추세필터 통과(방어) · 60일 모멘텀 -5.5% · 상대강도: KOSPI 대비 +10.2%p (주도주) · 52주 고점의 48% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +36%)",
       "reasons": [
-        "5거래일 누적 -2.5% — 추세필터 통과(방어)",
-        "60일 모멘텀 -5.9%",
-        "상대강도: KOSPI 대비 +5.1%p (동행)",
+        "5거래일 누적 -2.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -5.5%",
+        "상대강도: KOSPI 대비 +10.2%p (주도주)",
         "52주 고점의 48% 수준",
         "미래 테마 노출: internet_ai_platform(노출 0.5)",
         "가격 신뢰도 high(2출처 일치)",
@@ -1853,30 +1885,30 @@
       ]
     },
     {
-      "ticker": "068270",
-      "name": "셀트리온",
-      "final_score": 0.563,
-      "summary": "5거래일 누적 +1.6% — 추세필터 통과(상승) · 60일 모멘텀 -1.4% · 상대강도: KOSPI 대비 +9.7%p (동행) · 52주 고점의 76% 수준 · 미래 테마 노출: bio_cdmo(노출 0.7) · 가격 신뢰도 medium(단일출처) · 근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)",
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
+      "final_score": 0.575,
+      "summary": "5거래일 누적 -3.9% — 추세필터 통과(방어) · 60일 모멘텀 -13.1% · 상대강도: KOSPI 대비 +2.6%p (동행) · 52주 고점의 62% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
       "reasons": [
-        "5거래일 누적 +1.6% — 추세필터 통과(상승)",
-        "60일 모멘텀 -1.4%",
-        "상대강도: KOSPI 대비 +9.7%p (동행)",
-        "52주 고점의 76% 수준",
-        "미래 테마 노출: bio_cdmo(노출 0.7)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)"
+        "5거래일 누적 -3.9% — 추세필터 통과(방어)",
+        "60일 모멘텀 -13.1%",
+        "상대강도: KOSPI 대비 +2.6%p (동행)",
+        "52주 고점의 62% 수준",
+        "미래 테마 노출: defense_export(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
       ]
     },
     {
       "ticker": "035420",
       "name": "NAVER",
-      "final_score": 0.533,
-      "summary": "5거래일 누적 -4.4% — 추세필터 통과(방어) · 60일 모멘텀 -1.9% · 상대강도: KOSPI 대비 +9.2%p (동행) · 52주 고점의 63% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.",
+      "final_score": 0.573,
+      "summary": "5거래일 누적 -4.5% — 추세필터 통과(방어) · 60일 모멘텀 -1.9% · 상대강도: KOSPI 대비 +13.7%p (주도주) · 52주 고점의 63% 수준 · 미래 테마 노출: internet_ai_platform(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.",
       "reasons": [
-        "5거래일 누적 -4.4% — 추세필터 통과(방어)",
+        "5거래일 누적 -4.5% — 추세필터 통과(방어)",
         "60일 모멘텀 -1.9%",
-        "상대강도: KOSPI 대비 +9.2%p (동행)",
+        "상대강도: KOSPI 대비 +13.7%p (주도주)",
         "52주 고점의 63% 수준",
         "미래 테마 노출: internet_ai_platform(노출 0.8)",
         "가격 신뢰도 high(2출처 일치)",
@@ -1884,33 +1916,33 @@
       ]
     },
     {
-      "ticker": "079550",
-      "name": "LIG넥스원(LIG D&A)",
-      "final_score": 0.525,
-      "summary": "5거래일 누적 -3.1% — 추세필터 통과(방어) · 60일 모멘텀 -14.2% · 상대강도: KOSPI 대비 -3.2%p (동행) · 52주 고점의 61% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)",
+      "ticker": "010120",
+      "name": "LS ELECTRIC",
+      "final_score": 0.57,
+      "summary": "5거래일 누적 -5.0% — 추세필터 통과(방어) · 60일 모멘텀 -12.6% · 상대강도: KOSPI 대비 +3.0%p (동행) · 52주 고점의 60% 수준 · 미래 테마 노출: power_grid_ai(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.) · 실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)",
       "reasons": [
-        "5거래일 누적 -3.1% — 추세필터 통과(방어)",
-        "60일 모멘텀 -14.2%",
-        "상대강도: KOSPI 대비 -3.2%p (동행)",
-        "52주 고점의 61% 수준",
-        "미래 테마 노출: defense_export(노출 0.9)",
+        "5거래일 누적 -5.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -12.6%",
+        "상대강도: KOSPI 대비 +3.0%p (동행)",
+        "52주 고점의 60% 수준",
+        "미래 테마 노출: power_grid_ai(노출 0.8)",
         "가격 신뢰도 high(2출처 일치)",
-        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)"
+        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)"
       ]
     },
     {
       "ticker": "009540",
       "name": "HD한국조선해양",
-      "final_score": 0.483,
-      "summary": "5거래일 누적 -5.6% — 추세필터 통과(방어) · 60일 모멘텀 -10.6% · 상대강도: KOSPI 대비 +0.5%p (동행) · 52주 고점의 65% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)",
+      "final_score": 0.558,
+      "summary": "5거래일 누적 -5.4% — 추세필터 통과(방어) · 60일 모멘텀 -10.4% · 상대강도: KOSPI 대비 +5.2%p (동행) · 52주 고점의 65% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)",
       "reasons": [
-        "5거래일 누적 -5.6% — 추세필터 통과(방어)",
-        "60일 모멘텀 -10.6%",
-        "상대강도: KOSPI 대비 +0.5%p (동행)",
+        "5거래일 누적 -5.4% — 추세필터 통과(방어)",
+        "60일 모멘텀 -10.4%",
+        "상대강도: KOSPI 대비 +5.2%p (동행)",
         "52주 고점의 65% 수준",
         "미래 테마 노출: shipbuilding_supercycle(노출 0.9)",
-        "가격 신뢰도 medium(단일출처)",
+        "가격 신뢰도 high(2출처 일치)",
         "근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)"
       ]
@@ -1918,12 +1950,12 @@
     {
       "ticker": "028260",
       "name": "삼성물산",
-      "final_score": 0.479,
-      "summary": "5거래일 누적 -6.7% — 추세필터 통과(방어) · 60일 모멘텀 -21.6% · 상대강도: KOSPI 대비 -10.5%p (후행주) · 52주 고점의 60% 수준 · 미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
+      "final_score": 0.519,
+      "summary": "5거래일 누적 -7.0% — 추세필터 통과(방어) · 60일 모멘텀 -21.8% · 상대강도: KOSPI 대비 -6.1%p (동행) · 52주 고점의 60% 수준 · 미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5) · 가격 신뢰도 high(2출처 일치) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
       "reasons": [
-        "5거래일 누적 -6.7% — 추세필터 통과(방어)",
-        "60일 모멘텀 -21.6%",
-        "상대강도: KOSPI 대비 -10.5%p (후행주)",
+        "5거래일 누적 -7.0% — 추세필터 통과(방어)",
+        "60일 모멘텀 -21.8%",
+        "상대강도: KOSPI 대비 -6.1%p (동행)",
         "52주 고점의 60% 수준",
         "미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5)",
         "가격 신뢰도 high(2출처 일치)",
@@ -1932,91 +1964,59 @@
       ]
     },
     {
-      "ticker": "012450",
-      "name": "한화에어로스페이스",
-      "final_score": 0.45,
-      "summary": "5거래일 누적 -4.6% — 추세필터 통과(방어) · 60일 모멘텀 -13.8% · 상대강도: KOSPI 대비 -2.7%p (동행) · 52주 고점의 61% 수준 · 미래 테마 노출: defense_export(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)",
-      "reasons": [
-        "5거래일 누적 -4.6% — 추세필터 통과(방어)",
-        "60일 모멘텀 -13.8%",
-        "상대강도: KOSPI 대비 -2.7%p (동행)",
-        "52주 고점의 61% 수준",
-        "미래 테마 노출: defense_export(노출 0.9)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)"
-      ]
-    },
-    {
       "ticker": "010140",
       "name": "삼성중공업",
-      "final_score": 0.421,
-      "summary": "5거래일 누적 -6.2% — 추세필터 통과(방어) · 60일 모멘텀 -17.4% · 상대강도: KOSPI 대비 -6.3%p (동행) · 52주 고점의 55% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.8) · 가격 신뢰도 medium(단일출처) · 근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)",
+      "final_score": 0.496,
+      "summary": "5거래일 누적 -5.7% — 추세필터 통과(방어) · 60일 모멘텀 -16.9% · 상대강도: KOSPI 대비 -1.2%p (동행) · 52주 고점의 55% 수준 · 미래 테마 노출: shipbuilding_supercycle(노출 0.8) · 가격 신뢰도 high(2출처 일치) · 근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)",
       "reasons": [
-        "5거래일 누적 -6.2% — 추세필터 통과(방어)",
-        "60일 모멘텀 -17.4%",
-        "상대강도: KOSPI 대비 -6.3%p (동행)",
+        "5거래일 누적 -5.7% — 추세필터 통과(방어)",
+        "60일 모멘텀 -16.9%",
+        "상대강도: KOSPI 대비 -1.2%p (동행)",
         "52주 고점의 55% 수준",
         "미래 테마 노출: shipbuilding_supercycle(노출 0.8)",
-        "가격 신뢰도 medium(단일출처)",
+        "가격 신뢰도 high(2출처 일치)",
         "근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요.",
         "실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)"
       ]
     },
     {
-      "ticker": "010120",
-      "name": "LS ELECTRIC",
-      "final_score": 0.415,
-      "summary": "5거래일 누적 -5.2% — 추세필터 통과(방어) · 60일 모멘텀 -12.8% · 상대강도: KOSPI 대비 -1.8%p (동행) · 52주 고점의 60% 수준 · 미래 테마 노출: power_grid_ai(노출 0.8) · 가격 신뢰도 medium(단일출처) · 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.) · 실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)",
+      "ticker": "267260",
+      "name": "HD현대일렉트릭",
+      "final_score": 0.431,
+      "summary": "5거래일 누적 -7.7% — 추세필터 통과(방어) · 60일 모멘텀 -30.2% · 상대강도: KOSPI 대비 -14.5%p (후행주) · 52주 고점의 46% 수준 · 미래 테마 노출: power_grid_ai(노출 0.9) · 가격 신뢰도 high(2출처 일치) · 근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
       "reasons": [
-        "5거래일 누적 -5.2% — 추세필터 통과(방어)",
-        "60일 모멘텀 -12.8%",
-        "상대강도: KOSPI 대비 -1.8%p (동행)",
-        "52주 고점의 60% 수준",
-        "미래 테마 노출: power_grid_ai(노출 0.8)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)"
+        "5거래일 누적 -7.7% — 추세필터 통과(방어)",
+        "60일 모멘텀 -30.2%",
+        "상대강도: KOSPI 대비 -14.5%p (후행주)",
+        "52주 고점의 46% 수준",
+        "미래 테마 노출: power_grid_ai(노출 0.9)",
+        "가격 신뢰도 high(2출처 일치)",
+        "근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
+        "실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)"
       ]
     },
     {
       "ticker": "005380",
       "name": "현대차",
       "final_score": 0.379,
-      "summary": "5거래일 누적 -4.7% — 추세필터 통과(방어) · 60일 모멘텀 -29.9% · 상대강도: KOSPI 대비 -18.8%p (후행주) · 52주 고점의 44% 수준 · 미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4) · 가격 신뢰도 high(2출처 일치) · 근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토.",
+      "summary": "5거래일 누적 -4.3% — 추세필터 통과(방어) · 60일 모멘텀 -29.6% · 상대강도: KOSPI 대비 -13.9%p (후행주) · 52주 고점의 44% 수준 · 미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4) · 가격 신뢰도 high(2출처 일치) · 근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토.",
       "reasons": [
-        "5거래일 누적 -4.7% — 추세필터 통과(방어)",
-        "60일 모멘텀 -29.9%",
-        "상대강도: KOSPI 대비 -18.8%p (후행주)",
+        "5거래일 누적 -4.3% — 추세필터 통과(방어)",
+        "60일 모멘텀 -29.6%",
+        "상대강도: KOSPI 대비 -13.9%p (후행주)",
         "52주 고점의 44% 수준",
         "미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4)",
         "가격 신뢰도 high(2출처 일치)",
         "근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토."
       ]
-    },
-    {
-      "ticker": "267260",
-      "name": "HD현대일렉트릭",
-      "final_score": 0.356,
-      "summary": "5거래일 누적 -9.8% — 추세필터 통과(방어) · 60일 모멘텀 -31.8% · 상대강도: KOSPI 대비 -20.7%p (후행주) · 52주 고점의 45% 수준 · 미래 테마 노출: power_grid_ai(노출 0.9) · 가격 신뢰도 medium(단일출처) · 근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산. · 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)",
-      "reasons": [
-        "5거래일 누적 -9.8% — 추세필터 통과(방어)",
-        "60일 모멘텀 -31.8%",
-        "상대강도: KOSPI 대비 -20.7%p (후행주)",
-        "52주 고점의 45% 수준",
-        "미래 테마 노출: power_grid_ai(노출 0.9)",
-        "가격 신뢰도 medium(단일출처)",
-        "근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.",
-        "실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)"
-      ]
     }
   ],
-  "report_section_md": "### 신규 후보 채택 사유\n\n- 시장 레짐: 🟢 **risk_on** (KOSPI 6802.92 / 200일선 대비 +8.1%)\n\n- **삼성SDI(006400)** — 점수 0.709\n  - 5거래일 누적 -4.7% — 추세필터 통과(방어)\n  - 60일 모멘텀 +8.2%\n  - 상대강도: KOSPI 대비 +19.3%p (주도주)\n  - 52주 고점의 70% 수준\n  - 미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +151%)\n- **한미반도체(042700)** — 점수 0.702\n  - 5거래일 누적 +8.1% — 추세필터 통과(상승)\n  - 60일 모멘텀 +11.8%\n  - 상대강도: KOSPI 대비 +22.9%p (주도주)\n  - 52주 고점의 61% 수준\n  - 미래 테마 노출: ai_memory_hbm(노출 0.85)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)\n- **KB금융(105560)** — 점수 0.658\n  - 5거래일 누적 -3.9% — 추세필터 통과(방어)\n  - 60일 모멘텀 -0.5%\n  - 상대강도: KOSPI 대비 +10.6%p (주도주)\n  - 52주 고점의 87% 수준\n  - 미래 테마 노출: value_up(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)\n- **하나금융지주(086790)** — 점수 0.653\n  - 5거래일 누적 -4.3% — 추세필터 통과(방어)\n  - 60일 모멘텀 +3.5%\n  - 상대강도: KOSPI 대비 +14.6%p (주도주)\n  - 52주 고점의 91% 수준\n  - 미래 테마 노출: value_up(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.\n  - 실적 모멘텀(growth, 영업이익 전기대비 +7%)\n- **삼성바이오로직스(207940)** — 점수 0.653\n  - 5거래일 누적 +0.2% — 추세필터 통과(상승)\n  - 60일 모멘텀 -1.8%\n  - 상대강도: KOSPI 대비 +9.2%p (동행)\n  - 52주 고점의 70% 수준\n  - 미래 테마 노출: bio_cdmo(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)\n- **신한지주(055550)** — 점수 0.587\n  - 5거래일 누적 -6.3% — 추세필터 통과(방어)\n  - 60일 모멘텀 -1.5%\n  - 상대강도: KOSPI 대비 +9.6%p (동행)\n  - 52주 고점의 91% 수준\n  - 미래 테마 노출: value_up(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.**\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)\n- **삼성전자(005930)** — 점수 0.578\n  - 5거래일 누적 -3.8% — 추세필터 통과(방어)\n  - 60일 모멘텀 -13.7%\n  - 상대강도: KOSPI 대비 -2.7%p (동행)\n  - 52주 고점의 71% 수준\n  - 미래 테마 노출: ai_memory_hbm(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)\n- **카카오(035720)** — 점수 0.564\n  - 5거래일 누적 -2.5% — 추세필터 통과(방어)\n  - 60일 모멘텀 -5.9%\n  - 상대강도: KOSPI 대비 +5.1%p (동행)\n  - 52주 고점의 48% 수준\n  - 미래 테마 노출: internet_ai_platform(노출 0.5)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +36%)\n- **셀트리온(068270)** — 점수 0.563\n  - 5거래일 누적 +1.6% — 추세필터 통과(상승)\n  - 60일 모멘텀 -1.4%\n  - 상대강도: KOSPI 대비 +9.7%p (동행)\n  - 52주 고점의 76% 수준\n  - 미래 테마 노출: bio_cdmo(노출 0.7)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)\n- **NAVER(035420)** — 점수 0.533\n  - 5거래일 누적 -4.4% — 추세필터 통과(방어)\n  - 60일 모멘텀 -1.9%\n  - 상대강도: KOSPI 대비 +9.2%p (동행)\n  - 52주 고점의 63% 수준\n  - 미래 테마 노출: internet_ai_platform(노출 0.8)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.\n- **LIG넥스원(LIG D&A)(079550)** — 점수 0.525\n  - 5거래일 누적 -3.1% — 추세필터 통과(방어)\n  - 60일 모멘텀 -14.2%\n  - 상대강도: KOSPI 대비 -3.2%p (동행)\n  - 52주 고점의 61% 수준\n  - 미래 테마 노출: defense_export(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)\n- **HD한국조선해양(009540)** — 점수 0.483\n  - 5거래일 누적 -5.6% — 추세필터 통과(방어)\n  - 60일 모멘텀 -10.6%\n  - 상대강도: KOSPI 대비 +0.5%p (동행)\n  - 52주 고점의 65% 수준\n  - 미래 테마 노출: shipbuilding_supercycle(노출 0.9)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)\n- **삼성물산(028260)** — 점수 0.479\n  - 5거래일 누적 -6.7% — 추세필터 통과(방어)\n  - 60일 모멘텀 -21.6%\n  - 상대강도: KOSPI 대비 -10.5%p (후행주)\n  - 52주 고점의 60% 수준\n  - 미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)\n- **한화에어로스페이스(012450)** — 점수 0.45\n  - 5거래일 누적 -4.6% — 추세필터 통과(방어)\n  - 60일 모멘텀 -13.8%\n  - 상대강도: KOSPI 대비 -2.7%p (동행)\n  - 52주 고점의 61% 수준\n  - 미래 테마 노출: defense_export(노출 0.9)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)\n- **삼성중공업(010140)** — 점수 0.421\n  - 5거래일 누적 -6.2% — 추세필터 통과(방어)\n  - 60일 모멘텀 -17.4%\n  - 상대강도: KOSPI 대비 -6.3%p (동행)\n  - 52주 고점의 55% 수준\n  - 미래 테마 노출: shipbuilding_supercycle(노출 0.8)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)\n- **LS ELECTRIC(010120)** — 점수 0.415\n  - 5거래일 누적 -5.2% — 추세필터 통과(방어)\n  - 60일 모멘텀 -12.8%\n  - 상대강도: KOSPI 대비 -1.8%p (동행)\n  - 52주 고점의 60% 수준\n  - 미래 테마 노출: power_grid_ai(노출 0.8)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)\n- **현대차(005380)** — 점수 0.379\n  - 5거래일 누적 -4.7% — 추세필터 통과(방어)\n  - 60일 모멘텀 -29.9%\n  - 상대강도: KOSPI 대비 -18.8%p (후행주)\n  - 52주 고점의 44% 수준\n  - 미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토.\n- **HD현대일렉트릭(267260)** — 점수 0.356\n  - 5거래일 누적 -9.8% — 추세필터 통과(방어)\n  - 60일 모멘텀 -31.8%\n  - 상대강도: KOSPI 대비 -20.7%p (후행주)\n  - 52주 고점의 45% 수준\n  - 미래 테마 노출: power_grid_ai(노출 0.9)\n  - 가격 신뢰도 medium(단일출처)\n  - 근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)\n\n> 차단된 후보:\n> - SK하이닉스(000660): [어드바이저리] 추정 기대수익 -8.1% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수); 1주 가격 1,772,000원 > 종목당 비중 상한 1,569,905원(equity 4,485,442×35%) — 현재 자본으로 1주도 매수 불가(고가주 비중캡)\n> - LG에너지솔루션(373220): 구조적 악재 매칭: 관세",
+  "report_section_md": "### 신규 후보 채택 사유\n\n- 시장 레짐: 🟢 **risk_on** (KOSPI 6820.29 / 200일선 대비 +8.1%)\n\n- **한미반도체(042700)** — 점수 0.777\n  - 5거래일 누적 +8.8% — 추세필터 통과(상승)\n  - 60일 모멘텀 +12.6%\n  - 상대강도: KOSPI 대비 +28.3%p (주도주)\n  - 52주 고점의 61% 수준\n  - 미래 테마 노출: ai_memory_hbm(노출 0.85)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.88). HBM 본더 장비. 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +51%)\n- **삼성SDI(006400)** — 점수 0.729\n  - 5거래일 누적 -3.4% — 추세필터 통과(방어)\n  - 60일 모멘텀 +9.7%\n  - 상대강도: KOSPI 대비 +25.4%p (주도주)\n  - 52주 고점의 71% 수준\n  - 미래 테마 노출: ev_battery(노출 0.8), power_grid_ai(노출 0.6)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 42.14). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +151%)\n- **삼성바이오로직스(207940)** — 점수 0.718\n  - 5거래일 누적 +3.0% — 추세필터 통과(상승)\n  - 60일 모멘텀 +0.9%\n  - 상대강도: KOSPI 대비 +16.6%p (주도주)\n  - 52주 고점의 72% 수준\n  - 미래 테마 노출: bio_cdmo(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: CDMO 대장주. 2026년 2분기 매출 1조3,209억원(+30.2% YoY)·영업이익 5,864억원(+22.9%)으로 5공장·미국 록빌 초기 가동비용 선반영에도 영업이익률 40%대 유지, 5공장이 시생산을 마치고 인증용 배치 단계에 진입해 하반기 매출 기여 확대. 연간 가이던스(매출 +15~20%) 상단 달성 전망. 60일 KOSPI 대비 초과수익 +22.94%p 로 우리가 노출 0인 두 번째 주도축이다.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)\n- **셀트리온(068270)** — 점수 0.678\n  - 5거래일 누적 +2.7% — 추세필터 통과(상승)\n  - 60일 모멘텀 -0.3%\n  - 상대강도: KOSPI 대비 +15.4%p (주도주)\n  - 52주 고점의 77% 수준\n  - 미래 테마 노출: bio_cdmo(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 바이오시밀러 대장주. bio_cdmo 축의 두 번째 종목으로 60일 KOSPI 대비 초과수익 +17.56%p·20일 +14.26%p. 8월 초 5거래일 연속 상승으로 182,200원(8/3) → 199,300원까지 약 9.4% 올랐다가 되돌린 자리이며, 5거래일 누적 -4.80% 로 추격 진입 구간이 아니다. 192,300원이라 같은 위험예산으로 5주까지 수량 확보가 가능해 부분익절·트레일이 실제로 작동하는 쪽이다.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +86%)\n- **LIG넥스원(LIG D&A)(079550)** — 점수 0.636\n  - 5거래일 누적 +0.6% — 추세필터 통과(상승)\n  - 60일 모멘텀 -11.0%\n  - 상대강도: KOSPI 대비 +4.7%p (동행)\n  - 52주 고점의 64% 수준\n  - 미래 테마 노출: defense_export(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.99). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +30%)\n- **삼성전자(005930)** — 점수 0.628\n  - 5거래일 누적 -3.5% — 추세필터 통과(방어)\n  - 60일 모멘텀 -13.5%\n  - 상대강도: KOSPI 대비 +2.2%p (동행)\n  - 52주 고점의 72% 수준\n  - 미래 테마 노출: ai_memory_hbm(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 찬반투표 73.7% 가결(5/27)로 파업 리스크 해소. TSMC 3nm 가격 인상·HBM4 수요 증가로 반도체 사이클 강화. AI 메모리·파운드리 수요 구조적 성장. 삼성증권 KOSPI 11,000 목표 상향.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +1814%)\n- **KB금융(105560)** — 점수 0.627\n  - 5거래일 누적 -5.7% — 추세필터 통과(방어)\n  - 60일 모멘텀 -2.4%\n  - 상대강도: KOSPI 대비 +13.3%p (주도주)\n  - 52주 고점의 85% 수준\n  - 미래 테마 노출: value_up(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 7/28 지수 -7%대 급락일에 전일 종가와 동일한 172,600원(±0.00%)으로 완전 방어·20일 초과수익 +36.59%·screen_score 0.63(전체 3위, 모멘텀 필터 통과). 다만 5/22·5/26·5/27 목표가 미달 3연속 + 5/28 손절 이력이 있어 목표가는 추가 할인해 설정할 것.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +27%)\n- **하나금융지주(086790)** — 점수 0.622\n  - 5거래일 누적 -5.2% — 추세필터 통과(방어)\n  - 60일 모멘텀 +2.5%\n  - 상대강도: KOSPI 대비 +18.1%p (주도주)\n  - 52주 고점의 90% 수준\n  - 미래 테마 노출: value_up(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 7/28 지수 -7%대 급락일에 -1.76%로 방어하며 20일 초과수익 +36.05%·screen_score 0.51(모멘텀 필터 통과) — 밸류업(자사주 소각·배당) 로테이션의 은행 축에서 신한지주 다음 상대강도. 메모리 쇼크와 상관이 낮은 비반도체 대안.\n  - 실적 모멘텀(growth, 영업이익 전기대비 +7%)\n- **신한지주(055550)** — 점수 0.618\n  - 5거래일 누적 -7.4% — 추세필터 통과(방어)\n  - 60일 모멘텀 -2.6%\n  - 상대강도: KOSPI 대비 +13.1%p (주도주)\n  - 52주 고점의 90% 수준\n  - 미래 테마 노출: value_up(노출 0.7)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: [2026-08-09 재등록] screen_universe 랭킹 3위(screen_score 0.72·KOSPI 대비 60일 초과수익 +31.86%p·20일 +18.93%p)이면서 후보 목록에 없어 평가 자체가 되지 않던 상태를 교정한다. 8/5 목표 익절(103,190원)로 청산한 자리이며, **재진입 시 shinhan_forced_conclusion_w32 를 되살리지 않고 새 thesis 로 작성한다.** 목표가 앵커를 과거 5년 PER 밴드 상단 단독으로 잡지 않는다(그 앵커로 하향한 것이 8/7 기준 34,050원 일실의 원인). 현재 PER 9.0 이 밴드 상단 8.26 초과(overheat_entry) — 재진입은 probe(계획의 50%) 상한. **지난 익절의 일실 회수로 프레이밍하지 않는다.**\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +23%)\n- **카카오(035720)** — 점수 0.604\n  - 5거래일 누적 -2.0% — 추세필터 통과(방어)\n  - 60일 모멘텀 -5.5%\n  - 상대강도: KOSPI 대비 +10.2%p (주도주)\n  - 52주 고점의 48% 수준\n  - 미래 테마 노출: internet_ai_platform(노출 0.5)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 사용자 요청 승격(모니터링). 1Q26 영업이익 +66% YoY(2,113억)·매출 +11%(1.94조)로 수익성 개선되나 AI(카나나) 성과는 베타 초기로 시장 기대 대비 더딤. 유진투자 목표가 74,000원·삼성 59,000원. 에이전틱 커머스·외부 파트너 온보딩 가시화가 반등 필요조건. 단 파이프라인 6/23 분석상 강세장 대비 deep 후행주(60일 -24%·KOSPI 대비 -69.7%p·52주고점의 53%) — 추세 반전 확인 후 진입 검토.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +36%)\n- **한화에어로스페이스(012450)** — 점수 0.575\n  - 5거래일 누적 -3.9% — 추세필터 통과(방어)\n  - 60일 모멘텀 -13.1%\n  - 상대강도: KOSPI 대비 +2.6%p (동행)\n  - 52주 고점의 62% 수준\n  - 미래 테마 노출: defense_export(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: K-방산 수출 핵심 — 유럽 재무장·자주포(K9)·장갑차 수주잔고. 지정학 리스크 장기 수혜. 기존 후보에 없던 방산 섹터로 분산.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +58%)\n- **NAVER(035420)** — 점수 0.573\n  - 5거래일 누적 -4.5% — 추세필터 통과(방어)\n  - 60일 모멘텀 -1.9%\n  - 상대강도: KOSPI 대비 +13.7%p (주도주)\n  - 52주 고점의 63% 수준\n  - 미래 테마 노출: internet_ai_platform(노출 0.8)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 사용자 요청 승격(모니터링). 52주 고가(304,000) 대비 약 -25%(6/10 227,000)로 조정 후 반등 모색. 자체 LLM 하이퍼클로바X 기반 'AI 브리핑' 검색 광고 수익화 + 커머스 GMV 성장이 2H26 핵심 관전 포인트. 하나증권 목표가 350,000원·매수 유지. 외국인 수급 전환·2Q26 가이던스 확인이 본격 진입 선행조건.\n- **LS ELECTRIC(010120)** — 점수 0.57\n  - 5거래일 누적 -5.0% — 추세필터 통과(방어)\n  - 60일 모멘텀 -12.6%\n  - 상대강도: KOSPI 대비 +3.0%p (동행)\n  - 52주 고점의 60% 수준\n  - 미래 테마 노출: power_grid_ai(노출 0.8)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 99.65). 가격 추적용으로 후보 등록 — 6/30 일괄 배치 전 fetch_market_data 가 당일가를 수집하도록 추가. theme_exposure 는 근거 출처 확보 후 routine 이 보강. (2026-07-26 갱신: 모멘텀 엔진 재랭킹 1위로 재부상 — W29 전력기기 로테이션아웃 손절청산 후 반등 추세 재형성.)\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +64%)\n- **HD한국조선해양(009540)** — 점수 0.558\n  - 5거래일 누적 -5.4% — 추세필터 통과(방어)\n  - 60일 모멘텀 -10.4%\n  - 상대강도: KOSPI 대비 +5.2%p (동행)\n  - 52주 고점의 65% 수준\n  - 미래 테마 노출: shipbuilding_supercycle(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: LNG선·특수선 수주잔고 슈퍼사이클. 1Q26 매출 +20.2%·영업이익 +57.8% YoY.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +72%)\n- **삼성물산(028260)** — 점수 0.519\n  - 5거래일 누적 -7.0% — 추세필터 통과(방어)\n  - 60일 모멘텀 -21.8%\n  - 상대강도: KOSPI 대비 -6.1%p (동행)\n  - 52주 고점의 60% 수준\n  - 미래 테마 노출: value_up(노출 0.6), power_grid_ai(노출 0.5)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 듀얼모멘텀 바스켓(W27) 추세 상위 종목(momentum_score 53.49). 가격 추적용 후보 등록 — 6/30 배치 전 당일가 수집 목적. theme_exposure 는 출처 확보 후 보강.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)\n- **삼성중공업(010140)** — 점수 0.496\n  - 5거래일 누적 -5.7% — 추세필터 통과(방어)\n  - 60일 모멘텀 -16.9%\n  - 상대강도: KOSPI 대비 -1.2%p (동행)\n  - 52주 고점의 55% 수준\n  - 미래 테마 노출: shipbuilding_supercycle(노출 0.8)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: FLNG·해양플랜트 회복. 단 5/13~15 -5.6% 하락 이후 추세 재확인 필요.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +59%)\n- **HD현대일렉트릭(267260)** — 점수 0.431\n  - 5거래일 누적 -7.7% — 추세필터 통과(방어)\n  - 60일 모멘텀 -30.2%\n  - 상대강도: KOSPI 대비 -14.5%p (후행주)\n  - 52주 고점의 46% 수준\n  - 미래 테마 노출: power_grid_ai(노출 0.9)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 전력 인프라 섹터로 분산.\n  - 실적 모멘텀(strong_growth, 영업이익 전기대비 +37%)\n- **현대차(005380)** — 점수 0.379\n  - 5거래일 누적 -4.3% — 추세필터 통과(방어)\n  - 60일 모멘텀 -29.6%\n  - 상대강도: KOSPI 대비 -13.9%p (후행주)\n  - 52주 고점의 44% 수준\n  - 미래 테마 노출: humanoid_robotics(노출 0.6), value_up(노출 0.4)\n  - 가격 신뢰도 high(2출처 일치)\n  - 근거: 글로벌 톱5 완성차 + 보스턴다이내믹스(로봇) 지분 보유로 휴머노이드 테마 노출(기아 대비 우위). 밸류업 주주환원·고배당. 자동차 섹터에서 기아보다 테마 노출이 큰 종목으로 교체 검토.\n\n> 차단된 후보:\n> - SK하이닉스(000660): [어드바이저리] 추정 기대수익 -8.4% < 0 이나 섹터 몰입 충족 — sector_rotation_reentry probe 면제(촉매+probe 사이징·타이트 손절 필수); 1주 가격 1,774,000원 > 종목당 비중 상한 1,564,690원(equity 4,470,542×35%) — 현재 자본으로 1주도 매수 불가(고가주 비중캡)\n> - LG에너지솔루션(373220): 구조적 악재 매칭: 관세",
   "summary": {
     "total": 20,
     "tradable_count": 18,
     "blocked_count": 2,
-    "top_tradable_ticker": "006400",
+    "top_tradable_ticker": "042700",
     "regime_state": "risk_on"
   }
 }

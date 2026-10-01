@@ -1,17 +1,17 @@
 {
- "as_of": "2026-10-01T01:25:30+09:00",
+ "as_of": "2026-10-02T02:02:41+09:00",
  "scope": "state/order_intents_log.jsonl 중 valid_until < 오늘 인 의도",
  "counts": {
-  "intents": 6,
-  "executed": 4,
+  "intents": 10,
+  "executed": 7,
   "vetoed": 0,
   "expired": 2,
-  "ignored": 0,
+  "ignored": 1,
   "off_intent_trades": 3,
   "off_intent_without_reason": 1
  },
- "adherence_pct": 66.7,
- "ignored_pct": 0.0,
+ "adherence_pct": 70.0,
+ "ignored_pct": 10.0,
  "veto_effect": {
   "n_scored_t5": 0,
   "sum_krw_t5": null,
@@ -21,7 +21,7 @@
  "cutover_signal": {
   "rule": "docs/plan_stage1.md §3 — adherence ≥ 80% AND ignored 0 AND (veto 표본 ≥ 10 이면 veto 효과 합 > 0) 20거래일 유지 시 execution_owner=code 심사",
   "adherence_ok": false,
-  "ignored_zero": true
+  "ignored_zero": false
  },
  "rows": [
   {
@@ -118,6 +118,70 @@
    "t5_close": 561000.0,
    "t5_date": "2026-09-10",
    "veto_effect_krw_t5": -23000,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20260930-1",
+   "date": "2026-09-30",
+   "action": "SELL",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "shares": 2,
+   "rule": "hard_stop",
+   "ref_price": 338500.0,
+   "verdict": "ignored",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20261001-1",
+   "date": "2026-10-01",
+   "action": "SELL",
+   "ticker": "105560",
+   "name": "KB금융",
+   "shares": 5,
+   "rule": "hard_stop",
+   "ref_price": 166900.0,
+   "verdict": "executed",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20261001-2",
+   "date": "2026-10-01",
+   "action": "SELL",
+   "ticker": "086790",
+   "name": "하나금융지주",
+   "shares": 3,
+   "rule": "hard_stop",
+   "ref_price": 128300.0,
+   "verdict": "executed",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
+   "execution_owner": "llm"
+  },
+  {
+   "id": "oi-20261001-3",
+   "date": "2026-10-01",
+   "action": "SELL",
+   "ticker": "028260",
+   "name": "삼성물산",
+   "shares": 2,
+   "rule": "hard_stop",
+   "ref_price": 339000.0,
+   "verdict": "executed",
+   "veto_reason": null,
+   "t5_close": null,
+   "t5_date": null,
+   "veto_effect_krw_t5": null,
    "execution_owner": "llm"
   }
  ],

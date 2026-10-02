@@ -1,16 +1,39 @@
 {
-  "as_of": "2026-10-01T11:15:43+09:00",
+  "as_of": "2026-10-02T09:21:03+09:00",
   "data_as_of": "2026-10-01T11:15:10+09:00",
-  "effective_as_of": "2026-10-01T11:15:10+09:00",
+  "effective_as_of": "2026-10-02T09:20:55+09:00",
   "price_freshness": {
     "history_as_of": "2026-10-01T11:15:10+09:00",
-    "snapshot_as_of": "2026-10-01T11:00:02+09:00",
-    "stale_history": false,
-    "overlay_applied": false,
-    "overlaid_count": 0,
-    "overlaid_tickers": [],
-    "skipped_low_conf": [],
-    "warning": "price_history 와 snapshot 동일 기준일 — 보정 불필요",
+    "snapshot_as_of": "2026-10-02T09:20:55+09:00",
+    "stale_history": true,
+    "overlay_applied": true,
+    "overlaid_count": 20,
+    "overlaid_tickers": [
+      "005930",
+      "005380",
+      "000660",
+      "042700",
+      "000270",
+      "009540",
+      "010140",
+      "267260",
+      "010120",
+      "012450",
+      "079550",
+      "373220",
+      "105560",
+      "055550",
+      "086790",
+      "028260",
+      "035420",
+      "035720",
+      "207940",
+      "068270"
+    ],
+    "skipped_low_conf": [
+      "006400"
+    ],
+    "warning": null,
     "note": "price_history(주간 Actions) 가 묵으면 fresh snapshot 종가로 최신 봉 보정 — 묵은 현재가로 모멘텀 계산되던 지연 해소. 룩백 공백(누락 거래일)은 못 메움(스냅샷 1점)."
   },
   "regime_circuit_breaker": {
@@ -33,7 +56,7 @@
     "trend_ma": 200
   },
   "executable_allocation": {
-    "equity": 4470542,
+    "equity": 4486299,
     "constraints": {
       "min_cash_pct": 10.0,
       "per_name_cap_pct": 30.0,
@@ -43,31 +66,41 @@
     },
     "orders": [
       {
-        "ticker": "005930",
-        "name": "삼성전자",
+        "ticker": "042700",
+        "name": "한미반도체",
         "shares": 4,
-        "price": 268250.0,
-        "cost": 1073000,
-        "weight_pct": 24.0,
-        "score": 12.79
+        "price": 274000.0,
+        "cost": 1096000,
+        "weight_pct": 24.4,
+        "score": 14.53
       }
     ],
-    "cash_left": 3397542,
-    "cash_left_pct": 76.0,
+    "cash_left": 3390299,
+    "cash_left_pct": 75.6,
     "note": "data_as_of 가격 기준 지시적 수량 — 실제 체결 routine 이 개장 fresh 가격으로 종목당 상한 내 재산정."
   },
   "equal_weight_pct": 16.67,
   "cash_weight_pct": 66.66,
-  "n_eligible": 9,
+  "n_eligible": 10,
   "n_buyable": 2,
   "gate": {
     "min_score": 30.0,
     "tracked_only": true,
     "skipped_below_floor": [
       {
+        "ticker": "042700",
+        "name": "한미반도체",
+        "score": 14.53
+      },
+      {
+        "ticker": "010120",
+        "name": "LS ELECTRIC",
+        "score": 13.04
+      },
+      {
         "ticker": "005930",
         "name": "삼성전자",
-        "score": 12.79
+        "score": 12.7
       },
       {
         "ticker": "006400",
@@ -75,14 +108,9 @@
         "score": 11.64
       },
       {
-        "ticker": "042700",
-        "name": "한미반도체",
-        "score": 8.95
-      },
-      {
         "ticker": "086790",
         "name": "하나금융지주",
-        "score": 8.65
+        "score": 9.52
       },
       {
         "ticker": "011200",
@@ -90,27 +118,27 @@
         "score": 7.78
       },
       {
-        "ticker": "010120",
-        "name": "LS ELECTRIC",
-        "score": 6.68
-      },
-      {
         "ticker": "105560",
         "name": "KB금융",
-        "score": 5.23
+        "score": 6.47
       },
       {
         "ticker": "055550",
         "name": "신한지주",
-        "score": 5.14
+        "score": 5.88
+      },
+      {
+        "ticker": "028260",
+        "name": "삼성물산",
+        "score": 0.6
       }
     ],
     "skipped_untracked": [],
     "floor_relaxed_fallback": [
       {
-        "ticker": "005930",
-        "name": "삼성전자",
-        "score": 12.79
+        "ticker": "042700",
+        "name": "한미반도체",
+        "score": 14.53
       }
     ],
     "note": "skipped_untracked 는 트렌드는 강하나 추적목록(candidates)에 없는 종목 — screen_universe.py 가 candidates 승격을 제안하고 routine 이 thesis 와 함께 승격해야 매수 대상이 된다(바스켓 자기역등록 순환 차단)."
@@ -120,36 +148,40 @@
       "ticker": "000660",
       "name": "SK하이닉스",
       "weight_pct": 16.67,
-      "score": 37.0,
-      "mom60_pct": -26.7,
-      "mom120_pct": 100.7,
-      "close": 1778000.0,
-      "pct_vs_ma200": 25.9
+      "score": 39.32,
+      "mom60_pct": -21.7,
+      "mom120_pct": 100.3,
+      "close": 1835000.0,
+      "pct_vs_ma200": 29.4
     },
     {
-      "ticker": "005930",
-      "name": "삼성전자",
+      "ticker": "042700",
+      "name": "한미반도체",
       "weight_pct": 16.67,
-      "score": 12.79,
-      "mom60_pct": -13.3,
-      "mom120_pct": 38.9,
-      "close": 268250.0,
-      "pct_vs_ma200": 18.8
+      "score": 14.53,
+      "mom60_pct": 21.0,
+      "mom120_pct": 8.1,
+      "close": 274000.0,
+      "pct_vs_ma200": 12.7
     }
   ],
   "rebalance_changes": {
-    "enter": [],
-    "exit": []
+    "enter": [
+      "042700"
+    ],
+    "exit": [
+      "005930"
+    ]
   },
   "full_ranking": [
     {
-      "close": 1778000.0,
-      "ma200": 1411680.0,
-      "mom60_pct": -26.7,
-      "mom120_pct": 100.7,
-      "score": 37.0,
+      "close": 1835000.0,
+      "ma200": 1418135.0,
+      "mom60_pct": -21.7,
+      "mom120_pct": 100.3,
+      "score": 39.32,
       "in_uptrend": true,
-      "pct_vs_ma200": 25.9,
+      "pct_vs_ma200": 29.4,
       "ticker": "000660",
       "name": "SK하이닉스",
       "pass_filter": true,
@@ -158,19 +190,49 @@
       "buyable": true
     },
     {
-      "close": 268250.0,
-      "ma200": 225839.2,
-      "mom60_pct": -13.3,
-      "mom120_pct": 38.9,
-      "score": 12.79,
+      "close": 274000.0,
+      "ma200": 243225.0,
+      "mom60_pct": 21.0,
+      "mom120_pct": 8.1,
+      "score": 14.53,
       "in_uptrend": true,
-      "pct_vs_ma200": 18.8,
+      "pct_vs_ma200": 12.7,
+      "ticker": "042700",
+      "name": "한미반도체",
+      "pass_filter": true,
+      "above_floor": false,
+      "tracked": true,
+      "buyable": true
+    },
+    {
+      "close": 207000.0,
+      "ma200": 181415.5,
+      "mom60_pct": -5.3,
+      "mom120_pct": 31.3,
+      "score": 13.04,
+      "in_uptrend": true,
+      "pct_vs_ma200": 14.1,
+      "ticker": "010120",
+      "name": "LS ELECTRIC",
+      "pass_filter": true,
+      "above_floor": false,
+      "tracked": true,
+      "buyable": false
+    },
+    {
+      "close": 273750.0,
+      "ma200": 226666.0,
+      "mom60_pct": -13.9,
+      "mom120_pct": 39.3,
+      "score": 12.7,
+      "in_uptrend": true,
+      "pct_vs_ma200": 20.8,
       "ticker": "005930",
       "name": "삼성전자",
       "pass_filter": true,
       "above_floor": false,
       "tracked": true,
-      "buyable": true
+      "buyable": false
     },
     {
       "close": 514000.0,
@@ -188,28 +250,13 @@
       "buyable": false
     },
     {
-      "close": 263500.0,
-      "ma200": 242450.5,
-      "mom60_pct": 13.3,
-      "mom120_pct": 4.6,
-      "score": 8.95,
+      "close": 128800.0,
+      "ma200": 118151.0,
+      "mom60_pct": 3.2,
+      "mom120_pct": 15.8,
+      "score": 9.52,
       "in_uptrend": true,
-      "pct_vs_ma200": 8.7,
-      "ticker": "042700",
-      "name": "한미반도체",
-      "pass_filter": true,
-      "above_floor": false,
-      "tracked": true,
-      "buyable": false
-    },
-    {
-      "close": 128900.0,
-      "ma200": 117983.0,
-      "mom60_pct": 2.6,
-      "mom120_pct": 14.7,
-      "score": 8.65,
-      "in_uptrend": true,
-      "pct_vs_ma200": 9.3,
+      "pct_vs_ma200": 9.0,
       "ticker": "086790",
       "name": "하나금융지주",
       "pass_filter": true,
@@ -233,28 +280,13 @@
       "buyable": false
     },
     {
-      "close": 201000.0,
-      "ma200": 180895.5,
-      "mom60_pct": -12.4,
-      "mom120_pct": 25.8,
-      "score": 6.68,
+      "close": 168100.0,
+      "ma200": 155509.5,
+      "mom60_pct": -1.6,
+      "mom120_pct": 14.6,
+      "score": 6.47,
       "in_uptrend": true,
-      "pct_vs_ma200": 11.1,
-      "ticker": "010120",
-      "name": "LS ELECTRIC",
-      "pass_filter": true,
-      "above_floor": false,
-      "tracked": true,
-      "buyable": false
-    },
-    {
-      "close": 166500.0,
-      "ma200": 155322.5,
-      "mom60_pct": -2.1,
-      "mom120_pct": 12.6,
-      "score": 5.23,
-      "in_uptrend": true,
-      "pct_vs_ma200": 7.2,
+      "pct_vs_ma200": 8.1,
       "ticker": "105560",
       "name": "KB금융",
       "pass_filter": true,
@@ -264,12 +296,12 @@
     },
     {
       "close": 104700.0,
-      "ma200": 96461.5,
-      "mom60_pct": -2.4,
-      "mom120_pct": 12.7,
-      "score": 5.14,
+      "ma200": 96584.0,
+      "mom60_pct": -2.8,
+      "mom120_pct": 14.6,
+      "score": 5.88,
       "in_uptrend": true,
-      "pct_vs_ma200": 8.5,
+      "pct_vs_ma200": 8.4,
       "ticker": "055550",
       "name": "신한지주",
       "pass_filter": true,
@@ -278,31 +310,31 @@
       "buyable": false
     },
     {
-      "close": 339000.0,
-      "ma200": 340452.5,
-      "mom60_pct": -21.8,
-      "mom120_pct": 25.8,
-      "score": 1.99,
+      "close": 182900.0,
+      "ma200": 189048.2,
+      "mom60_pct": 4.0,
+      "mom120_pct": -0.9,
+      "score": 1.52,
       "in_uptrend": false,
-      "pct_vs_ma200": -0.4,
-      "ticker": "028260",
-      "name": "삼성물산",
+      "pct_vs_ma200": -3.3,
+      "ticker": "068270",
+      "name": "셀트리온",
       "pass_filter": false,
       "above_floor": false,
       "tracked": true,
       "buyable": false
     },
     {
-      "close": 182600.0,
-      "ma200": 189007.3,
-      "mom60_pct": -0.5,
-      "mom120_pct": -2.2,
-      "score": -1.35,
-      "in_uptrend": false,
-      "pct_vs_ma200": -3.4,
-      "ticker": "068270",
-      "name": "셀트리온",
-      "pass_filter": false,
+      "close": 342500.0,
+      "ma200": 340945.0,
+      "mom60_pct": -23.8,
+      "mom120_pct": 25.0,
+      "score": 0.6,
+      "in_uptrend": true,
+      "pct_vs_ma200": 0.5,
+      "ticker": "028260",
+      "name": "삼성물산",
+      "pass_filter": true,
       "above_floor": false,
       "tracked": true,
       "buyable": false
@@ -323,13 +355,13 @@
       "buyable": false
     },
     {
-      "close": 191800.0,
-      "ma200": 223264.5,
-      "mom60_pct": -2.0,
-      "mom120_pct": -2.5,
-      "score": -2.29,
+      "close": 192100.0,
+      "ma200": 222977.5,
+      "mom60_pct": -2.3,
+      "mom120_pct": -1.9,
+      "score": -2.11,
       "in_uptrend": false,
-      "pct_vs_ma200": -14.1,
+      "pct_vs_ma200": -13.8,
       "ticker": "035420",
       "name": "NAVER",
       "pass_filter": false,
@@ -338,30 +370,30 @@
       "buyable": false
     },
     {
-      "close": 1428000.0,
-      "ma200": 1550665.0,
-      "mom60_pct": 0.5,
-      "mom120_pct": -8.2,
+      "close": 365000.0,
+      "ma200": 387232.5,
+      "mom60_pct": 3.0,
+      "mom120_pct": -10.6,
       "score": -3.84,
       "in_uptrend": false,
-      "pct_vs_ma200": -7.9,
-      "ticker": "207940",
-      "name": "삼성바이오로직스",
+      "pct_vs_ma200": -5.7,
+      "ticker": "373220",
+      "name": "LG에너지솔루션",
       "pass_filter": false,
       "above_floor": false,
       "tracked": true,
       "buyable": false
     },
     {
-      "close": 358500.0,
-      "ma200": 387537.5,
-      "mom60_pct": -1.1,
-      "mom120_pct": -13.1,
-      "score": -7.1,
+      "close": 1415000.0,
+      "ma200": 1549535.0,
+      "mom60_pct": 0.7,
+      "mom120_pct": -10.8,
+      "score": -5.04,
       "in_uptrend": false,
-      "pct_vs_ma200": -7.5,
-      "ticker": "373220",
-      "name": "LG에너지솔루션",
+      "pct_vs_ma200": -8.7,
+      "ticker": "207940",
+      "name": "삼성바이오로직스",
       "pass_filter": false,
       "above_floor": false,
       "tracked": true,
@@ -398,13 +430,13 @@
       "buyable": false
     },
     {
-      "close": 714000.0,
-      "ma200": 692165.0,
+      "close": 727000.0,
+      "ma200": 693937.5,
       "mom60_pct": -10.8,
-      "mom120_pct": -11.9,
-      "score": -11.3,
+      "mom120_pct": -12.1,
+      "score": -11.44,
       "in_uptrend": true,
-      "pct_vs_ma200": 3.2,
+      "pct_vs_ma200": 4.8,
       "ticker": "079550",
       "name": "LIG넥스원",
       "pass_filter": false,
@@ -413,13 +445,13 @@
       "buyable": false
     },
     {
-      "close": 322500.0,
-      "ma200": 396642.5,
-      "mom60_pct": -10.3,
-      "mom120_pct": -13.2,
-      "score": -11.74,
+      "close": 321500.0,
+      "ma200": 396090.0,
+      "mom60_pct": -11.9,
+      "mom120_pct": -14.5,
+      "score": -13.21,
       "in_uptrend": false,
-      "pct_vs_ma200": -18.7,
+      "pct_vs_ma200": -18.8,
       "ticker": "009540",
       "name": "HD한국조선해양",
       "pass_filter": false,
@@ -443,21 +475,6 @@
       "buyable": false
     },
     {
-      "close": 33550.0,
-      "ma200": 46068.2,
-      "mom60_pct": -5.5,
-      "mom120_pct": -25.2,
-      "score": -15.34,
-      "in_uptrend": false,
-      "pct_vs_ma200": -27.2,
-      "ticker": "035720",
-      "name": "카카오",
-      "pass_filter": false,
-      "above_floor": false,
-      "tracked": true,
-      "buyable": false
-    },
-    {
       "close": 69600.0,
       "ma200": 89154.5,
       "mom60_pct": -17.7,
@@ -470,6 +487,21 @@
       "pass_filter": false,
       "above_floor": false,
       "tracked": false,
+      "buyable": false
+    },
+    {
+      "close": 33400.0,
+      "ma200": 45927.8,
+      "mom60_pct": -6.2,
+      "mom120_pct": -28.0,
+      "score": -17.1,
+      "in_uptrend": false,
+      "pct_vs_ma200": -27.3,
+      "ticker": "035720",
+      "name": "카카오",
+      "pass_filter": false,
+      "above_floor": false,
+      "tracked": true,
       "buyable": false
     },
     {
@@ -503,30 +535,30 @@
       "buyable": false
     },
     {
-      "close": 1025000.0,
-      "ma200": 1168290.0,
-      "mom60_pct": -12.8,
-      "mom120_pct": -29.3,
-      "score": -21.04,
+      "close": 19730.0,
+      "ma200": 25925.2,
+      "mom60_pct": -16.8,
+      "mom120_pct": -26.4,
+      "score": -21.57,
       "in_uptrend": false,
-      "pct_vs_ma200": -12.3,
-      "ticker": "012450",
-      "name": "한화에어로스페이스",
+      "pct_vs_ma200": -23.9,
+      "ticker": "010140",
+      "name": "삼성중공업",
       "pass_filter": false,
       "above_floor": false,
       "tracked": true,
       "buyable": false
     },
     {
-      "close": 19540.0,
-      "ma200": 25953.8,
-      "mom60_pct": -16.9,
-      "mom120_pct": -27.6,
-      "score": -22.24,
+      "close": 1032000.0,
+      "ma200": 1168975.0,
+      "mom60_pct": -11.0,
+      "mom120_pct": -32.9,
+      "score": -21.91,
       "in_uptrend": false,
-      "pct_vs_ma200": -24.7,
-      "ticker": "010140",
-      "name": "삼성중공업",
+      "pct_vs_ma200": -11.7,
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
       "pass_filter": false,
       "above_floor": false,
       "tracked": true,
@@ -548,13 +580,28 @@
       "buyable": false
     },
     {
-      "close": 112900.0,
-      "ma200": 146856.5,
-      "mom60_pct": -25.7,
-      "mom120_pct": -25.5,
-      "score": -25.63,
+      "close": 665000.0,
+      "ma200": 914010.0,
+      "mom60_pct": -28.4,
+      "mom120_pct": -25.4,
+      "score": -26.89,
       "in_uptrend": false,
-      "pct_vs_ma200": -23.1,
+      "pct_vs_ma200": -27.2,
+      "ticker": "267260",
+      "name": "HD현대일렉트릭",
+      "pass_filter": false,
+      "above_floor": false,
+      "tracked": true,
+      "buyable": false
+    },
+    {
+      "close": 112300.0,
+      "ma200": 146800.0,
+      "mom60_pct": -30.1,
+      "mom120_pct": -25.5,
+      "score": -27.82,
+      "in_uptrend": false,
+      "pct_vs_ma200": -23.5,
       "ticker": "000270",
       "name": "기아",
       "pass_filter": false,
@@ -563,30 +610,15 @@
       "buyable": false
     },
     {
-      "close": 346500.0,
-      "ma200": 473140.0,
-      "mom60_pct": -29.6,
-      "mom120_pct": -26.1,
-      "score": -27.85,
+      "close": 345500.0,
+      "ma200": 473292.5,
+      "mom60_pct": -31.2,
+      "mom120_pct": -27.0,
+      "score": -29.07,
       "in_uptrend": false,
-      "pct_vs_ma200": -26.8,
+      "pct_vs_ma200": -27.0,
       "ticker": "005380",
       "name": "현대차",
-      "pass_filter": false,
-      "above_floor": false,
-      "tracked": true,
-      "buyable": false
-    },
-    {
-      "close": 662000.0,
-      "ma200": 914845.0,
-      "mom60_pct": -29.9,
-      "mom120_pct": -26.0,
-      "score": -27.95,
-      "in_uptrend": false,
-      "pct_vs_ma200": -27.6,
-      "ticker": "267260",
-      "name": "HD현대일렉트릭",
       "pass_filter": false,
       "above_floor": false,
       "tracked": true,
@@ -624,6 +656,7 @@
     }
   ],
   "caveats": [
+    "price_history(2026-10-01) stale → snapshot(2026-10-02) 종가로 20종목 최신 봉 보정 적용. 룩백 공백 주의.",
     "data_as_of 가 오래됐으면(주말/공휴일/Actions 미실행) stale — 18시·09시 routine 은 fresh 가격 확인 후 적용.",
     "리밸런스 주기는 약 21거래일. 매일 강제 회전 금지(거래비용·휩쏘).",
     "매수 게이트: 점수≥30 AND 추적대상(candidates∪보유). 미통과분은 gate.skipped_* 에 기록.",

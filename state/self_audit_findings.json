@@ -1,314 +1,331 @@
 {
-  "as_of": "2026-09-27",
-  "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
-  "findings": [
+ "as_of": "2026-10-04",
+ "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
+ "findings": [
+  {
+   "id": "whipsaw-high",
+   "title": "스톱 휩쏘율 77.8% — 노이즈 저점 매도 반복",
+   "detail": "손실 스톱 t+5 일실 합계 273209.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
+   "severity": "warn",
+   "first_seen": "2026-07-07",
+   "last_seen": "2026-10-04",
+   "weeks_seen": 13,
+   "status": "open",
+   "disposition": {
+    "action": "defer",
+    "note": "재확인(10-04) — score_ratchet_shadow.py 재실행: breach 확정 5건·noise율 100%·net 보호 -161,800원 전부 09-20과 불변(신규 breach 0건), 승격 기준 기각·완화 후보 판정 유지. 추가 완화(when_gain_atr 상향 또는 breakeven_ratchet 기각)는 policy.json 수정이라 정책 동결(Stage 0)에 걸림 — state/policy_freeze.json.backlog #2 그대로 유효(신규 등록 불요). mode=shadow 유지로 실제 체결 무변화. 다음 재확인 10-11.",
+    "date": "2026-10-04",
+    "by": "sunday_policy_review"
+   },
+   "disposition_history": [
     {
-      "id": "whipsaw-high",
-      "title": "스톱 휩쏘율 77.8% — 노이즈 저점 매도 반복",
-      "detail": "손실 스톱 t+5 일실 합계 273209.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
-      "severity": "warn",
-      "first_seen": "2026-07-07",
-      "last_seen": "2026-09-27",
-      "weeks_seen": 12,
-      "status": "open",
-      "disposition": {
-        "action": "defer",
-        "note": "재확인(09-20) — score_ratchet_shadow.py 재실행 결과 09-13과 수치 불변(breach 확정 5건·noise율 100%·net 보호 -161,800원, 신규 breach 0건). 정책 동결(Stage 0) 지속 중이라 추가 완화(when_gain_atr 2.0 상향 또는 breakeven_ratchet 기각)는 policy.json 수정이 필요해 여전히 동결 게이트에 걸린다 — state/policy_freeze.json.backlog #2(09-06 등록) 그대로 유효, 신규 등록 불요(내용 불변). mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-27.",
-        "date": "2026-09-20",
-        "by": "sunday_policy_review"
-      },
-      "disposition_history": [
-        {
-          "action": "defer",
-          "note": "재확인(09-13) — score_ratchet_shadow.py 재실행 결과 09-06과 수치 불변(breach 확정 5건·noise율 100%·net 보호 -161,800원, 신규 breach 0건). 정책 동결(Stage 0) 지속 중이라 추가 완화(when_gain_atr 2.0 상향 또는 breakeven_ratchet 기각)는 policy.json 수정이 필요해 여전히 동결 게이트에 걸린다 — state/policy_freeze.json.backlog #2(09-06 등록) 그대로 유효, 신규 등록 불요(내용 불변). mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-20.",
-          "date": "2026-09-13",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(08-09): ratchet_shadow breach 확정 2/3건(07-26 1건 대비 +1)·관측 25거래일(최소 10거래일 충족). noise율 100%(2건 전부 t+5 노이즈 익절, net 보호 -50,000원) — 승격돼도 이번 표본까지는 방어 효과가 없었다. 승격 기준(breach 3건)에 근접했으나 여전히 미달이라 액션 없음(체결 변화 금지 유지). 3건째 breach 확정 시 §1-8 규정대로 즉시 심사(noise율>0.5 유지되면 steps.when_gain_atr 상향 또는 기각 상정). 청산 오버레이 백테스트(H) 결론도 이번 주 불변 — 트레일링 추가분이 3/4 설정·구간에서 가치 파괴 중이라 원인은 래칫 미승격이 아니라 트레일링 룰 자체일 가능성이 크다. 다음 재확인 8/16.",
-          "date": "2026-08-09",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "이미 배치된 대응(v2.20 breakeven_ratchet shadow·v2.22 index_shock_stop_deferral)이 아직 검증 미완 — ratchet_shadow promotion_criteria 미달(breach 확정 1/3건·관측 11거래일), backtest_exit_overlay(2026-07-08 as_of) 결론 불변(오버레이 4개 설정 중 3개서 가치 파괴, 예외는 고변동 구간 방어뿐). 2026-07-06 패치(v2.22) 이후 신규 왕복 0건으로 패치 동결 원칙 적용 — 전략 파라미터 변경 대신 관측 지속. 재심 트리거: ratchet breach 확정 3건 도달 또는 whipsaw율이 07-06 감사 대비 추가 악화.",
-          "date": "2026-07-19",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(07-26): ratchet_shadow promotion_criteria 여전히 미달(breach 확정 1/3건·관측 16거래일, 07-19 대비 거래일만 진전·확정 breach 불변). backtest_exit_overlay 결론 불변(4개 설정·구간 중 3개서 오버레이가 가치 파괴 -253.5%p~-39.9%p, 예외는 recent_2026·라이브 설정 +9.3%p뿐). whipsaw율 71.4%(07-19와 동일) — 07-06 감사 대비 추가 악화 아님. policy v2.24(직전 감사 대비 버전 불변)·신규 왕복 0건 지속 — 패치 동결 원칙 유지, 전략 파라미터 변경 대신 관측 지속. 재심 트리거: ratchet breach 확정 3건 도달(현재 1건) 또는 whipsaw율 추가 악화.",
-          "date": "2026-07-26",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(08-03): ratchet_shadow 승격 기준 여전히 미달 — breach 확정 1/3건·관측 20거래일(07-26 16거래일 대비 거래일만 진전, 확정 breach 불변). 이번 채점에서 net 보호 -43,000원·noise율 100%로 그림자 성적이 오히려 악화됐다(표본 1건이라 통계 의미 없음). 승격 심사는 breach 3건 확정 시점까지 보류하고 관측 지속. 다음 재검토 2026-08-16(14일 만료 전).",
-          "date": "2026-08-03",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(08-23, 08-09 이후 첫 리뷰 — 08-16 미발화): ratchet_shadow breach 확정 2/3건(08-09 와 불변)·관측 34거래일(25→34, 거래일만 진전). net 보호 -50,000원·noise율 100%(불변) — 3건째 breach 가 여전히 미도달이라 승격 심사 보류(체결 변화 금지 유지). H 오버레이 백테스트도 불변 재확인(트레일링 추가분이 3/4 설정·구간에서 가치 파괴, 래칫 미승격이 원인이 아니라 트레일링 룰 자체 문제라는 08-09 진단 유지). 이번 리뷰에서 별도로 발견한 실제 버그(compute_dynamic_bands 밸류에이션 캡이 verdict 무관 적용 — lessons 2026-08-14 가 8/16 리뷰 안건으로 이관했으나 미착수 확인, scripts/ 는 이 routine 커밋 범위 밖이라 코드 수정은 보류하고 §6 사용자 액션에 최우선 상정)는 이 finding 과 별개 트랙. 3건째 breach 확정 시 §1-8 규정대로 즉시 심사. 다음 재확인 09-06 전후(다음 정상 발화 리뷰).",
-          "date": "2026-08-23",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "patch",
-          "note": "3건째 breach 확정 도달 — §1-8 규정대로 즉시 심사 실행. score_ratchet_shadow.py 재확인: 가상 breach 확정 4건(관측 38거래일·포지션 13개), t+5 반사실 전건 noise_exit=true(100%, promotion_criteria 상한 0.5 초과) — net 보호 -114,800원(보호 0원, 노이즈 익절 손실만 114,800원). 5건 전부 stage1 breach 후 t+5 가격이 breach 종가 대비 상승(LIG넥스원 +43,000·신한지주 +7,000·하나금융지주 +40,800·NAVER +24,000·삼성물산 진행중 +16,000) — 래칫이 있었다면 전건 조기 청산으로 후속 상승분을 놓쳤을 구간. KB금융(2026-05-28) give-back 선례(상승분 반납→손실 확정)가 이번 5건 중 재현된 사례는 0건 — 오히려 반대 패턴(조기 절단)이 지배적이라 승격 근거 없음. 판정: 기각·완화 후보 채택 — steps[0].when_gain_atr 를 1.0→1.5 로 상향해 stage1 진입 문턱을 높인다(policy v2.36, config/policy.json §risk.breakeven_ratchet.steps). mode=shadow 유지(실제 체결 무변화, 자동 적용 — 안전 조정), 관측 지속. 다음 재확인 09-13(상향 후 breach 재축적 필요, 최소 관측일 10거래일).",
-          "date": "2026-08-30",
-          "by": "sunday_policy_review",
-          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
-        },
-        {
-          "action": "defer",
-          "note": "정책 동결(Stage 0, state/policy_freeze.json) 중 — §1-8 재심 결과 breach 확정 5건(08-30 4건 대비 +1)·noise율 100%(불변) · net 보호 -161,800원(08-30 -114,800원 대비 악화). 08-30 patch(steps[0].when_gain_atr 1.0→1.5, v2.36)로도 노이즈 억제 효과 없음 확인 — 처분 자동 무효화·재상정. 추가 완화안(예: when_gain_atr 추가 상향 또는 breakeven_ratchet 자체 기각)은 config/policy.json 수정이 필요해 동결 게이트에 걸린다. state/policy_freeze.json.backlog 에 등록(field=risk.breakeven_ratchet.steps[0].when_gain_atr, current=1.5, proposed=2.0 또는 기각, required_samples=breach 재축적 10거래일). 해제 전까지 mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-13.",
-          "date": "2026-09-06",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "defer",
-          "note": "정책 동결(Stage 0, state/policy_freeze.json) 중 — §1-8 재심 결과 breach 확정 5건(08-30 4건 대비 +1)·noise율 100%(불변) · net 보호 -161,800원(08-30 -114,800원 대비 악화). 08-30 patch(steps[0].when_gain_atr 1.0→1.5, v2.36)로도 노이즈 억제 효과 없음 확인 — 처분 자동 무효화·재상정. 추가 완화안(예: when_gain_atr 추가 상향 또는 breakeven_ratchet 자체 기각)은 config/policy.json 수정이 필요해 동결 게이트에 걸린다. state/policy_freeze.json.backlog 에 등록(field=risk.breakeven_ratchet.steps[0].when_gain_atr, current=1.5, proposed=2.0 또는 기각, required_samples=breach 재축적 10거래일). 해제 전까지 mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-13.",
-          "date": "2026-09-06",
-          "by": "sunday_policy_review"
-        }
-      ]
+     "action": "defer",
+     "note": "재확인(09-13) — score_ratchet_shadow.py 재실행 결과 09-06과 수치 불변(breach 확정 5건·noise율 100%·net 보호 -161,800원, 신규 breach 0건). 정책 동결(Stage 0) 지속 중이라 추가 완화(when_gain_atr 2.0 상향 또는 breakeven_ratchet 기각)는 policy.json 수정이 필요해 여전히 동결 게이트에 걸린다 — state/policy_freeze.json.backlog #2(09-06 등록) 그대로 유효, 신규 등록 불요(내용 불변). mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-20.",
+     "date": "2026-09-13",
+     "by": "sunday_policy_review"
     },
     {
-      "id": "deployment-below-band",
-      "title": "주식비중 55.0% < 목표 하한 80% — 만성 미배치",
-      "detail": "⚠️ 주식비중 55.0% < 목표 하한 80% — 만성 미배치 계열",
-      "severity": "warn",
-      "first_seen": "2026-07-07",
-      "last_seen": "2026-09-27",
-      "weeks_seen": 12,
-      "status": "open",
-      "disposition": {
-        "action": "observe",
-        "note": "재확인(09-20) — 주식비중 48.3%(09-13 37.3% 대비 회복, 여전히 목표 하한 65% 미달), heat 잔여 259,637원/예산 343,077원(75.7% 여유). allocation.json recommendation.action=deploy 1,106,994원(vacant_slots 2)로 시스템은 배치를 권고 중이나, 실제 집행은 09시 게이트 판정으로만 결정된다(추격 금지 원칙). 정책 동결 중이라 배치 목표·게이트 임계 변경은 상정 범위 밖. 강제 배치 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-27.",
-        "date": "2026-09-20",
-        "by": "sunday_policy_review"
-      },
-      "disposition_history": [
-        {
-          "action": "observe",
-          "note": "재확인(09-13) — 주식비중 37.3%(09-06과 동일) < 목표 하한 65%, heat 잔여 238,717원/예산 347,341원(68.7% 여유 — 09-06 대비 회복). heat 여유는 있으나 게이트 통과 신규 후보가 구조적으로 희소한 국면 지속(9/2 지정학 충격 이후 방어적 caution 연장). 정책 동결 중이라 배치 목표·게이트 임계 변경은 상정 범위 밖. 강제 배치(추격 진입) 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-20.",
-          "date": "2026-09-13",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "히트예산 소진(잔여 4,234원/예산 363,020원)이 만성 미배치의 직접 병목 — 2026-07-04 saturday_review 진단과 동일 구조 재확인. breakeven_ratchet(v2.20 shadow)이 구조적 해법이나 promotion_criteria 미달로 라이브 전환 불가. 2026-07-13 지수쇼크(-8.95%) 이후 방어적 caution 단계 유지도 배치 억제 요인 — 과잉교정(추격 진입) 방지 차원에서 강제 배치 패치는 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유 회복.",
-          "date": "2026-07-19",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(07-26): heat 잔여 87,021원/예산 363,020원(24.0%) — 07-19 4,234원 대비 명목상 회복됐으나 여전히 목표 배치(65~80%)에 필요한 신규 진입 여력에는 부족(주식비중 35.4% 그대로 미달). ratchet_shadow 는 여전히 promotion_criteria 미달(breach 1/3건)로 라이브 전환 불가 — 구조적 해법 미가동 상태 지속. 07-13 지수쇼크 이후 caution 단계 유지가 배치 억제 요인인 것도 불변 — 과잉교정(추격 진입) 방지 위해 강제 배치 패치는 계속 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유가 예산 대비 유의미한 수준(예 30%+)까지 회복.",
-          "date": "2026-07-26",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "patch",
-          "note": "원인 규명 완료 — 만성 미배치의 직접 원인은 히트 예산이 아니라 회복 단계 오적용이었다. 총 누적(-6.47%)을 주간 기준 floor 에 대입해 defensive 를 발동, 신규 진입 가능일 2/2일(100%)을 차단했다. policy v2.25 에서 weekly_recovery_plan.basis 를 weekly_cumulative_return_pct 로 명문화하고 W32 를 caution 으로 재개해 shortlist 진입 경로를 열었다(config/policy.json · config/weekly_plan.json).",
-          "date": "2026-08-03",
-          "by": "sunday_policy_review",
-          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
-        },
-        {
-          "action": "patch",
-          "note": "재상정 후 근본 원인 재진단 — 8/9 sunday_strategy 루틴이 커밋 1122c9e 에서 실제 버그를 찾아 교정했다: 인터넷 2종(NAVER·카카오)·바이오 2종의 universe theme 필드가 null 이라 themes.json 테마 가점을 받지 못하고 상대강도로만 랭킹되던 것을 바로잡고 bio_cdmo 테마를 신규 등재(config/universe.json). 8/3 v2.25 패치(회복단계 기준 명문화)는 배치 억제 원인이 아니었음이 드러났다 — 그건 정의 문제였고 이건 랭킹 입력 데이터 버그였다. 교정 후 8/7 종가 기준 전 게이트 통과 신규 후보 3종 확인(신한지주·NAVER·카카오, 여유폭 1.1~3.1%). 정책 파라미터 변경이 아닌 데이터 버그 수정이라 이번 주 패치 동결 규칙과 무관하게 적용 가능했다. 실효성은 아직 미검증 — 배치는 게이트 판정으로만 결정되고(추격 금지), 다음 주 실제 배치 비중 변화로 검증한다. 재발 시(다음 감사에서도 미배치 지속) 이 처분은 자동 무효화·재상정된다.",
-          "date": "2026-08-09",
-          "by": "sunday_policy_review",
-          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
-        },
-        {
-          "action": "observe",
-          "note": "진단 재점검(08-23) — 병목이 이전 두 라운드(히트예산 소진 8/3, universe theme 결측 8/9)와 다르다. 오늘 state/allocation.json 기준: heat 잔여 163,012원/예산 351,844원(46.3%, 8/9 이후 명목상 여유 회복)·recommendation.action=\"deploy\" 1,111,828원(vacant_slots=1). 즉 시스템이 능동적으로 배치를 막고 있지 않다 — max_positions(6) 중 5종목 보유·1슬롯 공석에 대해 이미 신규 배치 권고가 켜져 있고, 다음 영업일(08/24 09시) 게이트 통과 시 집행되는 정상 사이클로 보인다. 08/9 패치(universe theme 버그 수정)가 재발을 완전히 못 막은 것은 사실이나, 그 재발 원인이 같은 버그인지 아니면 단순히 슬롯 회전(max_positions=6, 현재 5보유) 지연인지는 이번 스냅샷만으론 구분 불가 — 강제 배치 패치(추격 금지 원칙 위반 위험)는 보류하고 08/24 09시~08/28 사이 실제 체결 여부로 재검증한다. 재검증 결과 08/24 슬롯이 열렸는데도 미체결이면 게이트 로직 재조사로 재상정.",
-          "date": "2026-08-23",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(08-30 일요일 전략) — **이번 라운드에서 병목이 처음 세 개의 고유명사로 분해됐다.** 4중 게이트 통과 3종(HD한국조선해양 3주·LIG넥스원 1주·HD현대일렉트릭 1주) 중 ①조선 avoid(안전핀 몰입 2/2 통과·방아쇠 촉매가 max_age_days=3 창에서 미확보) ②LIG넥스원 티커 단위 금지(구속기소·방사청 입찰 제한 검토로 근거 강화, 오늘 candidates.json.reentry_block 에 등재) 둘이 자체 금지이고, ③넷째 한화에어로스페이스는 금지가 아니라 주가 1,157,000원이 목표비중 상한 1,102,600원을 0.09%p 초과해 사이징 0주다(지난 라운드의 '위험예산 초과'와 원인이 바뀌었다). 실질 후보는 HD현대일렉트릭 1종·1주(계좌 17.35%·부분익절 불가)이며 진입 시 주식비중 66.3% 로 밴드에 들어간다. **이번 라운드에서 임의 완화한 것은 없다** — 금지 둘은 재검증 후 유지했고, 목표비중 상한도 올리지 않았다(주가 -4.7% 또는 equity 증가로 자동 해제되는 벽이므로). 대신 부분 반증 하나를 기록한다: 8/23 진단이던 '게이트 교차 배제(상한가가 주도주를 배제 ↔ 상한가 통과 종목은 몰입이 죽은 후행주)'는 구조가 아니라 국면 의존이었다 — 오늘 통과 3종은 전부 몰입이 살아 있다(조선 2/2·방산 2/2·전력망 3/2). 다만 같은 테마 안에서는 여전히 작동한다(power_grid_ai 2종 중 20일 +42.71% 인 LS ELECTRIC 은 상한가를 11.4% 초과해 배제되고 덜 오른 HD현대일렉트릭만 통과). 다음 재확인 09-06.",
-          "date": "2026-08-30",
-          "by": "sunday_strategy"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(09-06) — 08-30 진단(게이트 3종 정당 작동, 국면 의존) 이후 배치가 8.5%로 오히려 더 악화(08-30 시점 대비, 09-01 self-audit 43.5%→ 09-02 지정학 매크로 충격 이후 급락). 09-06 self-audit 기준 heat 잔여 339,090원 — 여유는 있으나 게이트 통과 신규 후보가 구조적으로 희소한 약세 국면(9/2 지정학 충격 이후 방어적 caution) 지속. 정책 동결 중이라 배치 목표·게이트 임계 변경은 애초에 상정 범위 밖(설사 완화가 정당해도 동결 게이트가 우선). 강제 배치(추격 진입) 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-13.",
-          "date": "2026-09-06",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "observe",
-          "note": "재확인(09-06) — 08-30 진단(게이트 3종 정당 작동, 국면 의존) 이후 배치가 8.5%로 오히려 더 악화(08-30 시점 대비, 09-01 self-audit 43.5%→ 09-02 지정학 매크로 충격 이후 급락). 09-06 self-audit 기준 heat 잔여 339,090원 — 여유는 있으나 게이트 통과 신규 후보가 구조적으로 희소한 약세 국면(9/2 지정학 충격 이후 방어적 caution) 지속. 정책 동결 중이라 배치 목표·게이트 임계 변경은 애초에 상정 범위 밖(설사 완화가 정당해도 동결 게이트가 우선). 강제 배치(추격 진입) 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-13.",
-          "date": "2026-09-06",
-          "by": "sunday_policy_review"
-        }
-      ]
+     "action": "observe",
+     "note": "재확인(08-09): ratchet_shadow breach 확정 2/3건(07-26 1건 대비 +1)·관측 25거래일(최소 10거래일 충족). noise율 100%(2건 전부 t+5 노이즈 익절, net 보호 -50,000원) — 승격돼도 이번 표본까지는 방어 효과가 없었다. 승격 기준(breach 3건)에 근접했으나 여전히 미달이라 액션 없음(체결 변화 금지 유지). 3건째 breach 확정 시 §1-8 규정대로 즉시 심사(noise율>0.5 유지되면 steps.when_gain_atr 상향 또는 기각 상정). 청산 오버레이 백테스트(H) 결론도 이번 주 불변 — 트레일링 추가분이 3/4 설정·구간에서 가치 파괴 중이라 원인은 래칫 미승격이 아니라 트레일링 룰 자체일 가능성이 크다. 다음 재확인 8/16.",
+     "date": "2026-08-09",
+     "by": "sunday_policy_review"
     },
     {
-      "id": "benchmark-gap-widening",
-      "title": "vs KOSPI 격차 악화 -4.64%p → -7.01%p",
-      "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
-      "severity": "warn",
-      "first_seen": "2026-09-22",
-      "last_seen": "2026-09-22",
-      "weeks_seen": 1,
-      "status": "resolved",
-      "disposition": null,
-      "disposition_history": [
-        {
-          "action": "patch",
-          "note": "detail 이 물은 '미배치/휩쏘/추격 중 어느 경로인가'의 답은 **미배치**다. 7/31 KOSPI +17.91% 반등일에 계좌는 +1.25%에 그쳤다 — 현금 74.3%가 방어에서 벌어둔 우위를 반등 하루에 반납한 구조. 휩쏘·추격 경로는 이번 주 해당 없음(신규 진입 0건·체결 1건은 룰 청산). 처방은 deployment-below-band 와 동일 패치(policy v2.25 단계 기준 확정)이며, 배치 재개 후 다음 감사에서 격차 방향이 뒤집히는지로 검증한다.",
-          "date": "2026-08-03",
-          "by": "sunday_policy_review"
-        }
-      ],
-      "resolved_date": "2026-09-22"
+     "action": "observe",
+     "note": "이미 배치된 대응(v2.20 breakeven_ratchet shadow·v2.22 index_shock_stop_deferral)이 아직 검증 미완 — ratchet_shadow promotion_criteria 미달(breach 확정 1/3건·관측 11거래일), backtest_exit_overlay(2026-07-08 as_of) 결론 불변(오버레이 4개 설정 중 3개서 가치 파괴, 예외는 고변동 구간 방어뿐). 2026-07-06 패치(v2.22) 이후 신규 왕복 0건으로 패치 동결 원칙 적용 — 전략 파라미터 변경 대신 관측 지속. 재심 트리거: ratchet breach 확정 3건 도달 또는 whipsaw율이 07-06 감사 대비 추가 악화.",
+     "date": "2026-07-19",
+     "by": "sunday_policy_review"
     },
     {
-      "id": "patch-without-validation",
-      "title": "검증 표본 없는 정책 패치 — 패치 동결 규칙 발동",
-      "detail": "⚠️ 직전 감사 이후 정책 버전이 올라갔는데 신규 검증 표본(왕복)이 0건 — 패치 동결 검토(검증 없는 패치 누적).",
-      "severity": "warn",
-      "first_seen": "2026-08-30",
-      "last_seen": "2026-08-30",
-      "weeks_seen": 1,
-      "status": "resolved",
-      "disposition": null,
-      "disposition_history": [
-        {
-          "action": "observe",
-          "note": "패치 동결 규칙(감사 처방⑤) 발동 확인 — 직전 감사 대비 policy v2.27→v2.28 버전 증가 + 신규 왕복 0건(누적 왕복은 13→14건이나 이는 v2.28 patch 이전 체결 1건 반영분, v2.28 이후 신규 체결은 0건). 이번 리뷰의 정책 패치는 버그 수정·게이트 강화(deployment-below-band 의 universe theme 교정 등)만 반영했고 전략 파라미터(사이징·임계·목표) 변경은 없음 — 동결 규칙 준수. 신규 왕복 표본이 쌓일 때까지(권장 3건+) 동결 유지, 다음 감사에서 재확인.",
-          "date": "2026-08-09",
-          "by": "sunday_policy_review"
-        }
-      ],
-      "resolved_date": "2026-09-01"
+     "action": "observe",
+     "note": "재확인(07-26): ratchet_shadow promotion_criteria 여전히 미달(breach 확정 1/3건·관측 16거래일, 07-19 대비 거래일만 진전·확정 breach 불변). backtest_exit_overlay 결론 불변(4개 설정·구간 중 3개서 오버레이가 가치 파괴 -253.5%p~-39.9%p, 예외는 recent_2026·라이브 설정 +9.3%p뿐). whipsaw율 71.4%(07-19와 동일) — 07-06 감사 대비 추가 악화 아님. policy v2.24(직전 감사 대비 버전 불변)·신규 왕복 0건 지속 — 패치 동결 원칙 유지, 전략 파라미터 변경 대신 관측 지속. 재심 트리거: ratchet breach 확정 3건 도달(현재 1건) 또는 whipsaw율 추가 악화.",
+     "date": "2026-07-26",
+     "by": "sunday_policy_review"
     },
     {
-      "id": "policy-dead-config-disclaimers",
-      "title": "policy dead config: disclaimers — 어느 prompt/script/workflow 도 참조하지 않음",
-      "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
-      "severity": "warn",
-      "first_seen": "2026-08-14",
-      "last_seen": "2026-08-23",
-      "weeks_seen": 2,
-      "status": "resolved",
-      "disposition": {
-        "action": "patch",
-        "note": "삭제. 값(교육·학습 목적/시세 지연 가능/용어 설명) 은 이미 11개 prompt 파일에 리터럴 텍스트로 하드코딩돼 있어 이 config 를 읽는 코드가 애초에 없었다 — wiring 없는 그랜드파더 필드. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules 에 3건 일괄 근거 기록. check_policy_hygiene.py 재실행으로 dead_configs=[] 확인 완료.",
-        "date": "2026-08-23",
-        "by": "sunday_policy_review"
-      },
-      "disposition_history": [],
-      "resolved_date": "2026-08-25"
+     "action": "observe",
+     "note": "재확인(08-03): ratchet_shadow 승격 기준 여전히 미달 — breach 확정 1/3건·관측 20거래일(07-26 16거래일 대비 거래일만 진전, 확정 breach 불변). 이번 채점에서 net 보호 -43,000원·noise율 100%로 그림자 성적이 오히려 악화됐다(표본 1건이라 통계 의미 없음). 승격 심사는 breach 3건 확정 시점까지 보류하고 관측 지속. 다음 재검토 2026-08-16(14일 만료 전).",
+     "date": "2026-08-03",
+     "by": "sunday_policy_review"
     },
     {
-      "id": "policy-dead-config-rebalance_rules",
-      "title": "policy dead config: rebalance_rules — 어느 prompt/script/workflow 도 참조하지 않음",
-      "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
-      "severity": "warn",
-      "first_seen": "2026-08-14",
-      "last_seen": "2026-08-23",
-      "weeks_seen": 2,
-      "status": "resolved",
-      "disposition": {
-        "action": "patch",
-        "note": "`_doc_rebalance_rules` 로 개명(문서 전용). 실제 스왑 판정은 이미 risk 손절(-10%/tier ATR)·momentum_signal·lessons_rule_sunset 로 구현돼 있어 배선 활성화는 로직 이중화 위험 — 3택 중 삭제 대신 개명을 택한 이유는 '손실/모멘텀둔화/반복패턴' 3원칙이 사람이 읽는 요약으로 유용해서다. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules. check_policy_hygiene.py 재실행으로 dead_configs=[]·unregistered_new=0 확인 완료(자식 키도 _doc_swap_when/_doc_no_swap_when 로 개명해 등록 메타 요구 회피).",
-        "date": "2026-08-23",
-        "by": "sunday_policy_review"
-      },
-      "disposition_history": [],
-      "resolved_date": "2026-08-25"
+     "action": "observe",
+     "note": "재확인(08-23, 08-09 이후 첫 리뷰 — 08-16 미발화): ratchet_shadow breach 확정 2/3건(08-09 와 불변)·관측 34거래일(25→34, 거래일만 진전). net 보호 -50,000원·noise율 100%(불변) — 3건째 breach 가 여전히 미도달이라 승격 심사 보류(체결 변화 금지 유지). H 오버레이 백테스트도 불변 재확인(트레일링 추가분이 3/4 설정·구간에서 가치 파괴, 래칫 미승격이 원인이 아니라 트레일링 룰 자체 문제라는 08-09 진단 유지). 이번 리뷰에서 별도로 발견한 실제 버그(compute_dynamic_bands 밸류에이션 캡이 verdict 무관 적용 — lessons 2026-08-14 가 8/16 리뷰 안건으로 이관했으나 미착수 확인, scripts/ 는 이 routine 커밋 범위 밖이라 코드 수정은 보류하고 §6 사용자 액션에 최우선 상정)는 이 finding 과 별개 트랙. 3건째 breach 확정 시 §1-8 규정대로 즉시 심사. 다음 재확인 09-06 전후(다음 정상 발화 리뷰).",
+     "date": "2026-08-23",
+     "by": "sunday_policy_review"
     },
     {
-      "id": "policy-dead-config-weekly_cycle",
-      "title": "policy dead config: weekly_cycle — 어느 prompt/script/workflow 도 참조하지 않음",
-      "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
-      "severity": "warn",
-      "first_seen": "2026-08-14",
-      "last_seen": "2026-08-23",
-      "weeks_seen": 2,
-      "status": "resolved",
-      "disposition": {
-        "action": "patch",
-        "note": "삭제. weekend_report_output(reports/YYYY-MM-DD-weekend.md) 이 현재 실제 산출물 명명(saturday-review/sunday-strategy/policy-review/archive)과 불일치하는 구식 스킴이라 보존하면 오히려 오도 — 로직(주간 연동)은 이미 weekly_plan.json·각 prompt 0단계로 구현됨. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules 에 3건 일괄 근거. check_policy_hygiene.py 재실행으로 dead_configs=[] 확인 완료.",
-        "date": "2026-08-23",
-        "by": "sunday_policy_review"
-      },
-      "disposition_history": [],
-      "resolved_date": "2026-08-25"
+     "action": "patch",
+     "note": "3건째 breach 확정 도달 — §1-8 규정대로 즉시 심사 실행. score_ratchet_shadow.py 재확인: 가상 breach 확정 4건(관측 38거래일·포지션 13개), t+5 반사실 전건 noise_exit=true(100%, promotion_criteria 상한 0.5 초과) — net 보호 -114,800원(보호 0원, 노이즈 익절 손실만 114,800원). 5건 전부 stage1 breach 후 t+5 가격이 breach 종가 대비 상승(LIG넥스원 +43,000·신한지주 +7,000·하나금융지주 +40,800·NAVER +24,000·삼성물산 진행중 +16,000) — 래칫이 있었다면 전건 조기 청산으로 후속 상승분을 놓쳤을 구간. KB금융(2026-05-28) give-back 선례(상승분 반납→손실 확정)가 이번 5건 중 재현된 사례는 0건 — 오히려 반대 패턴(조기 절단)이 지배적이라 승격 근거 없음. 판정: 기각·완화 후보 채택 — steps[0].when_gain_atr 를 1.0→1.5 로 상향해 stage1 진입 문턱을 높인다(policy v2.36, config/policy.json §risk.breakeven_ratchet.steps). mode=shadow 유지(실제 체결 무변화, 자동 적용 — 안전 조정), 관측 지속. 다음 재확인 09-13(상향 후 breach 재축적 필요, 최소 관측일 10거래일).",
+     "date": "2026-08-30",
+     "by": "sunday_policy_review",
+     "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
     },
     {
-      "id": "lessons-balance",
-      "title": "lessons.md 774,204B > 예산 60,000B — 이관 처리량 부족",
-      "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. 이관 대상 1순위는 lessons_index.archive_candidates.",
-      "severity": "warn",
-      "first_seen": "2026-08-14",
-      "last_seen": "2026-09-27",
-      "weeks_seen": 7,
-      "status": "open",
-      "disposition": null,
-      "disposition_history": [
-        {
-          "action": "defer",
-          "note": "구조적 원인 확인 — lessons_index.archive_candidates 가 이번에도 0건이다(build_lessons_index.py 조건: 본문에 ✅+'codify' 마커 AND 30일+ 경과). 근본 문제는 이관 후보가 적어서가 아니라 codify 마커를 남기는 상류 단계가 아예 없다는 것 — 어떤 평일 routine 도 '이 lessons 항목이 policy/prompt 에 반영 완료됐다'는 태그를 붙이지 않는다. 이번 리뷰에서 check_lessons_applied.json resolved_items 중 유일한 구체 후보(2026-08-13 하나금융지주·KB금융 target_gap 종결)를 직접 코드 대조로 검증했으나 실제로는 미해결(compute_dynamic_bands 캡 버그가 아직 살아있음 — whipsaw-high 처분 참고)이라 codify 확정할 수 없었다. 따라서 이번 주 이관 0건 — 두 충족 조건(이관≥36건 신규유입 / lessons.md≤60KB) 모두 미충족이며 침묵 이월이 아니라 원인 진단으로 답한다. 근본 해법(어느 routine 이 언제 ✅codify 를 남길지 프로세스 설계)은 여러 prompt 에 걸친 절차 변경이라 이번 리뷰의 '안전 자동 적용' 범위를 벗어남 — 다음 리뷰에 사용자 승인 필요 안건으로 상정 권고. 참고로 lessons.md 는 이번 리뷰에서 2줄 편집(rule_sunset 등록/만료 처분)만 있었고 순바이트는 사실상 불변.",
-          "date": "2026-08-23",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "patch",
-          "note": "08-30 처분이 요구한 '최소 임시 조치 시범'을 이번 리뷰에서 실행 — codify 확정된 lessons 항목 1건(2026-08-13 가정오류(운영) — compute_dynamic_bands target_gap 결함 종결)을 §1-6 절차대로 state/lessons_archive.md 로 전문 이관하고 lessons.md 본문을 4줄(분류·요약·✅codify 반영 위치·전문 이관 표기)로 교체했다. 근거: 이 항목이 제기한 결함(캡이 verdict=cap_target 무관하게 적용됨)을 오늘 scripts/compute_dynamic_bands.py 에서 실제로 수정(verdict 게이팅 추가, selftest 통과)해 '반영 위치 확인' 조건을 충족한 첫 사례. 결과: lessons.md 582,624B → 581,374B(-1,250B), entries 267건 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 불변 보존 확인). 규모는 미미(주간 유입 37건 대비 1건 이관 — §1-6 수지 균형 의무 여전히 미충족)하나, 08-14 항목에도 별도로 ✅codify 마커를 추가 기입(같은 결함의 원 제안 항목, 완전 이관은 다음 주로 미룸). 구조적 해법(어느 평일 routine 이 codify 마커를 남길지)은 여전히 미정 — 다음 리뷰(09-13)에 사용자 승인 필요 안건으로 재상정하고, 이번 시범 결과(이관 절차 자체는 무리없이 작동함)를 근거로 첨부한다.",
-          "date": "2026-09-06",
-          "by": "sunday_policy_review"
-        },
-        {
-          "action": "patch",
-          "note": "08-30 처분이 요구한 '최소 임시 조치 시범'을 이번 리뷰에서 실행 — codify 확정된 lessons 항목 1건(2026-08-13 가정오류(운영) — compute_dynamic_bands target_gap 결함 종결)을 §1-6 절차대로 state/lessons_archive.md 로 전문 이관하고 lessons.md 본문을 4줄(분류·요약·✅codify 반영 위치·전문 이관 표기)로 교체했다. 근거: 이 항목이 제기한 결함(캡이 verdict=cap_target 무관하게 적용됨)을 오늘 scripts/compute_dynamic_bands.py 에서 실제로 수정(verdict 게이팅 추가, selftest 통과)해 '반영 위치 확인' 조건을 충족한 첫 사례. 결과: lessons.md 582,624B → 581,374B(-1,250B), entries 267건 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 불변 보존 확인). 규모는 미미(주간 유입 37건 대비 1건 이관 — §1-6 수지 균형 의무 여전히 미충족)하나, 08-14 항목에도 별도로 ✅codify 마커를 추가 기입(같은 결함의 원 제안 항목, 완전 이관은 다음 주로 미룸). 구조적 해법(어느 평일 routine 이 codify 마커를 남길지)은 여전히 미정 — 다음 리뷰(09-13)에 사용자 승인 필요 안건으로 재상정하고, 이번 시범 결과(이관 절차 자체는 무리없이 작동함)를 근거로 첨부한다.",
-          "date": "2026-09-06",
-          "by": "sunday_policy_review",
-          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
-        },
-        {
-          "action": "patch",
-          "note": "구조적 원인 해소 착수 — archive_candidates 가 계속 0건이었던 진짜 원인(✅codify 마커를 붙이는 상류 단계 부재)을 build_lessons_index.py 에 codify_candidates 함수(v2.37)로 신설해 해소했다: ✅codify 마커 없는 30일+ 경과 섹션 중 '다음 적용 룰'의 강신호(따옴표·백틱)가 policy/docs/prompts haystack 에 이미 등장하는 항목을 자동 표면화(오탐 방지 위해 자동 마킹은 안 하고 사람이 확인 후 마킹, grep 매치일 뿐 의미 검증 아님이라 명시). 이번 실행에서 35건 후보 산출, 직접 대조 검증한 4건 중 2건 확정(①08-03 09시 index_snapshot_confirmation — prompts/0900_pre_market.md 명문화 확인 ②08-11 하나금융지주 target_gap — compute_dynamic_bands verdict 게이팅 수정으로 해소 확인)해 §1-6 절차대로 전문 이관+4줄 응축, 2건은 grep 오탐으로 판명(sync_pending_orders 트레일 SELL 매칭·portfolio EOD 연속성 체크는 실제로는 미해결 — 오탐 방지 설계가 의도대로 작동). 결과: lessons.md 619,749B → 617,599B(-2,150B), entries 294건 불변(build_lessons_index.py 재확인). 5건의 만료 도래 rule_sunset 항목도 §1-2-b 절차대로 전건 만료/승격 판정 기입(4건 실효, 1건 승격 후보로 backlog #4 등록). 규모는 여전히 미충족(이관 2건 ≪ 신규 유입 28건, 잔여 617,599B ≫ 예산 60,000B)이나, 이전 2회(08-30·09-06) 처분이 '재발·효과 없음'으로 무효화된 것과 달리 이번은 재사용 가능한 탐지 파이프라인을 남겼다 — 다음 리뷰부터 codify_candidates(이번 회차 잔여 33건)를 매주 우선순위 목록으로 소진한다. 처분이 다시 무효화되는지는 다음 주 재발 여부로 검증된다.",
-          "date": "2026-09-13",
-          "by": "sunday_policy_review",
-          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
-        },
-        {
-          "action": "patch",
-          "note": "이번 리뷰에서 09-13 신설 codify_candidates 파이프라인으로 4건을 신규 검증·확정 이관했다: ①2026-06-08 삼성전자 RED(Broadcom guidance 15%캡 — policy.lessons_rule_sunset 이 이 사례를 도입 근거로 흡수) ②2026-07-11 compact_state 미실행(scripts/compact_state.py v2.32 daily 실행으로 해소 확인) ③2026-07-27 트레일링 임계 전일고정값 인용(exit_levels.json 재계산본 인용 규칙이 全슬롯 이미 적용 중임을 확인) ④2026-08-01 실현변동성 밴드 미연동(policy.proactive_inference.band_width_rule 수치 일치 확인, v2.29 기존 codify). 같은 회차에 check_lessons_applied 의 hard 미반영 발견분(2026-09-11 '갭 구간 전이 배수' 룰)도 prompts/0630_us_close.md §2-1·0000_global.md §2-1 에 신규 codify 했고, 반복 7회 루틴 오차(09시/18시 선제추론 채점 백로그)에도 '잔여 미채점 건수' 의무 표기를 prompts/0900_pre_market.md·1800_report.md 에 신설해 구조적으로 대응했다. 결과: lessons.md 715,775B → 720,412B(순증 — 이번 주 신규 유입 28건이 이관 4건보다 많아 총량은 늘었으나, 이관 자체는 재발·무효화 없이 실행됨 — 08-30/09-06/09-13 처분이 반복 '재발·효과 없음'으로 무효화된 패턴과 다르다). entries=321 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 보존 확인). **수지 균형 의무는 여전히 미충족**(이관 4건 ≪ 신규 유입 28건, 잔여 720,412B ≫ 예산 60,000B) — codify_candidates 잔여 43건을 다음 리뷰들이 우선순위로 계속 소진한다. 재발(다음 주 재검증 결과 이관분이 실제로 반영 해제되거나 처분이 무효화되는지) 여부로 이번 처분의 실효성이 검증된다.",
-          "date": "2026-09-20",
-          "by": "sunday_policy_review",
-          "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
-        }
-      ]
+     "action": "defer",
+     "note": "정책 동결(Stage 0, state/policy_freeze.json) 중 — §1-8 재심 결과 breach 확정 5건(08-30 4건 대비 +1)·noise율 100%(불변) · net 보호 -161,800원(08-30 -114,800원 대비 악화). 08-30 patch(steps[0].when_gain_atr 1.0→1.5, v2.36)로도 노이즈 억제 효과 없음 확인 — 처분 자동 무효화·재상정. 추가 완화안(예: when_gain_atr 추가 상향 또는 breakeven_ratchet 자체 기각)은 config/policy.json 수정이 필요해 동결 게이트에 걸린다. state/policy_freeze.json.backlog 에 등록(field=risk.breakeven_ratchet.steps[0].when_gain_atr, current=1.5, proposed=2.0 또는 기각, required_samples=breach 재축적 10거래일). 해제 전까지 mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-13.",
+     "date": "2026-09-06",
+     "by": "sunday_policy_review"
     },
     {
-      "id": "ledger-mismatch",
-      "title": "원장 불일치 — 다른 모든 지표가 오염되므로 최우선 수정",
-      "detail": "trade_count 불일치: trade_log 기준 49 vs portfolio.trade_count 48",
-      "severity": "hard",
-      "first_seen": "2026-09-08",
-      "last_seen": "2026-09-08",
-      "weeks_seen": 1,
-      "status": "resolved",
-      "disposition": null,
-      "disposition_history": [],
-      "resolved_date": "2026-09-08"
+     "action": "defer",
+     "note": "정책 동결(Stage 0, state/policy_freeze.json) 중 — §1-8 재심 결과 breach 확정 5건(08-30 4건 대비 +1)·noise율 100%(불변) · net 보호 -161,800원(08-30 -114,800원 대비 악화). 08-30 patch(steps[0].when_gain_atr 1.0→1.5, v2.36)로도 노이즈 억제 효과 없음 확인 — 처분 자동 무효화·재상정. 추가 완화안(예: when_gain_atr 추가 상향 또는 breakeven_ratchet 자체 기각)은 config/policy.json 수정이 필요해 동결 게이트에 걸린다. state/policy_freeze.json.backlog 에 등록(field=risk.breakeven_ratchet.steps[0].when_gain_atr, current=1.5, proposed=2.0 또는 기각, required_samples=breach 재축적 10거래일). 해제 전까지 mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-13.",
+     "date": "2026-09-06",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "defer",
+     "note": "재확인(09-20) — score_ratchet_shadow.py 재실행 결과 09-13과 수치 불변(breach 확정 5건·noise율 100%·net 보호 -161,800원, 신규 breach 0건). 정책 동결(Stage 0) 지속 중이라 추가 완화(when_gain_atr 2.0 상향 또는 breakeven_ratchet 기각)는 policy.json 수정이 필요해 여전히 동결 게이트에 걸린다 — state/policy_freeze.json.backlog #2(09-06 등록) 그대로 유효, 신규 등록 불요(내용 불변). mode=shadow 유지(실제 체결 무변화 — 사용자 손실 확대 없음). 다음 재확인 09-27.",
+     "date": "2026-09-20",
+     "by": "sunday_policy_review"
     }
-  ],
-  "open": [
-    "whipsaw-high",
-    "deployment-below-band",
-    "lessons-balance"
-  ],
-  "overdue": [
-    "lessons-balance"
-  ]
+   ]
+  },
+  {
+   "id": "deployment-below-band",
+   "title": "주식비중 11.8% < 목표 하한 80% — 만성 미배치",
+   "detail": "⚠️ 주식비중 11.8% < 목표 하한 80% — 만성 미배치 계열",
+   "severity": "warn",
+   "first_seen": "2026-07-07",
+   "last_seen": "2026-10-04",
+   "weeks_seen": 13,
+   "status": "open",
+   "disposition": {
+    "action": "observe",
+    "note": "재확인(10-04) — 주식비중 11.8%(보유 1종 삼성SDI 529,000원, 현금 88.2%; 09-20 48.3% 대비 크게 하락 — 직전 2주 스톱·손절 청산 누적), heat 잔여 359,812원/예산 404,397원(89% 여유), legacy_state=risk_on·MA200 +10.7%. allocation 은 배치 여력을 보이나 집행은 09시 게이트 판정으로만 결정(추격 금지·강제 배치 금지). 정책 동결 중이라 배치 목표·게이트 임계 변경은 범위 밖. gate_cost 는 '게이트 유효'(alpha_block_alert=False)라 완화 근거 없음. 다음 재확인 10-11.",
+    "date": "2026-10-04",
+    "by": "sunday_policy_review"
+   },
+   "disposition_history": [
+    {
+     "action": "observe",
+     "note": "재확인(09-13) — 주식비중 37.3%(09-06과 동일) < 목표 하한 65%, heat 잔여 238,717원/예산 347,341원(68.7% 여유 — 09-06 대비 회복). heat 여유는 있으나 게이트 통과 신규 후보가 구조적으로 희소한 국면 지속(9/2 지정학 충격 이후 방어적 caution 연장). 정책 동결 중이라 배치 목표·게이트 임계 변경은 상정 범위 밖. 강제 배치(추격 진입) 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-20.",
+     "date": "2026-09-13",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "observe",
+     "note": "히트예산 소진(잔여 4,234원/예산 363,020원)이 만성 미배치의 직접 병목 — 2026-07-04 saturday_review 진단과 동일 구조 재확인. breakeven_ratchet(v2.20 shadow)이 구조적 해법이나 promotion_criteria 미달로 라이브 전환 불가. 2026-07-13 지수쇼크(-8.95%) 이후 방어적 caution 단계 유지도 배치 억제 요인 — 과잉교정(추격 진입) 방지 차원에서 강제 배치 패치는 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유 회복.",
+     "date": "2026-07-19",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "observe",
+     "note": "재확인(07-26): heat 잔여 87,021원/예산 363,020원(24.0%) — 07-19 4,234원 대비 명목상 회복됐으나 여전히 목표 배치(65~80%)에 필요한 신규 진입 여력에는 부족(주식비중 35.4% 그대로 미달). ratchet_shadow 는 여전히 promotion_criteria 미달(breach 1/3건)로 라이브 전환 불가 — 구조적 해법 미가동 상태 지속. 07-13 지수쇼크 이후 caution 단계 유지가 배치 억제 요인인 것도 불변 — 과잉교정(추격 진입) 방지 위해 강제 배치 패치는 계속 보류. 재심 트리거: ratchet shadow 승격(§1-8) 또는 heat 여유가 예산 대비 유의미한 수준(예 30%+)까지 회복.",
+     "date": "2026-07-26",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "patch",
+     "note": "원인 규명 완료 — 만성 미배치의 직접 원인은 히트 예산이 아니라 회복 단계 오적용이었다. 총 누적(-6.47%)을 주간 기준 floor 에 대입해 defensive 를 발동, 신규 진입 가능일 2/2일(100%)을 차단했다. policy v2.25 에서 weekly_recovery_plan.basis 를 weekly_cumulative_return_pct 로 명문화하고 W32 를 caution 으로 재개해 shortlist 진입 경로를 열었다(config/policy.json · config/weekly_plan.json).",
+     "date": "2026-08-03",
+     "by": "sunday_policy_review",
+     "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+    },
+    {
+     "action": "patch",
+     "note": "재상정 후 근본 원인 재진단 — 8/9 sunday_strategy 루틴이 커밋 1122c9e 에서 실제 버그를 찾아 교정했다: 인터넷 2종(NAVER·카카오)·바이오 2종의 universe theme 필드가 null 이라 themes.json 테마 가점을 받지 못하고 상대강도로만 랭킹되던 것을 바로잡고 bio_cdmo 테마를 신규 등재(config/universe.json). 8/3 v2.25 패치(회복단계 기준 명문화)는 배치 억제 원인이 아니었음이 드러났다 — 그건 정의 문제였고 이건 랭킹 입력 데이터 버그였다. 교정 후 8/7 종가 기준 전 게이트 통과 신규 후보 3종 확인(신한지주·NAVER·카카오, 여유폭 1.1~3.1%). 정책 파라미터 변경이 아닌 데이터 버그 수정이라 이번 주 패치 동결 규칙과 무관하게 적용 가능했다. 실효성은 아직 미검증 — 배치는 게이트 판정으로만 결정되고(추격 금지), 다음 주 실제 배치 비중 변화로 검증한다. 재발 시(다음 감사에서도 미배치 지속) 이 처분은 자동 무효화·재상정된다.",
+     "date": "2026-08-09",
+     "by": "sunday_policy_review",
+     "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+    },
+    {
+     "action": "observe",
+     "note": "진단 재점검(08-23) — 병목이 이전 두 라운드(히트예산 소진 8/3, universe theme 결측 8/9)와 다르다. 오늘 state/allocation.json 기준: heat 잔여 163,012원/예산 351,844원(46.3%, 8/9 이후 명목상 여유 회복)·recommendation.action=\"deploy\" 1,111,828원(vacant_slots=1). 즉 시스템이 능동적으로 배치를 막고 있지 않다 — max_positions(6) 중 5종목 보유·1슬롯 공석에 대해 이미 신규 배치 권고가 켜져 있고, 다음 영업일(08/24 09시) 게이트 통과 시 집행되는 정상 사이클로 보인다. 08/9 패치(universe theme 버그 수정)가 재발을 완전히 못 막은 것은 사실이나, 그 재발 원인이 같은 버그인지 아니면 단순히 슬롯 회전(max_positions=6, 현재 5보유) 지연인지는 이번 스냅샷만으론 구분 불가 — 강제 배치 패치(추격 금지 원칙 위반 위험)는 보류하고 08/24 09시~08/28 사이 실제 체결 여부로 재검증한다. 재검증 결과 08/24 슬롯이 열렸는데도 미체결이면 게이트 로직 재조사로 재상정.",
+     "date": "2026-08-23",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "observe",
+     "note": "재확인(08-30 일요일 전략) — **이번 라운드에서 병목이 처음 세 개의 고유명사로 분해됐다.** 4중 게이트 통과 3종(HD한국조선해양 3주·LIG넥스원 1주·HD현대일렉트릭 1주) 중 ①조선 avoid(안전핀 몰입 2/2 통과·방아쇠 촉매가 max_age_days=3 창에서 미확보) ②LIG넥스원 티커 단위 금지(구속기소·방사청 입찰 제한 검토로 근거 강화, 오늘 candidates.json.reentry_block 에 등재) 둘이 자체 금지이고, ③넷째 한화에어로스페이스는 금지가 아니라 주가 1,157,000원이 목표비중 상한 1,102,600원을 0.09%p 초과해 사이징 0주다(지난 라운드의 '위험예산 초과'와 원인이 바뀌었다). 실질 후보는 HD현대일렉트릭 1종·1주(계좌 17.35%·부분익절 불가)이며 진입 시 주식비중 66.3% 로 밴드에 들어간다. **이번 라운드에서 임의 완화한 것은 없다** — 금지 둘은 재검증 후 유지했고, 목표비중 상한도 올리지 않았다(주가 -4.7% 또는 equity 증가로 자동 해제되는 벽이므로). 대신 부분 반증 하나를 기록한다: 8/23 진단이던 '게이트 교차 배제(상한가가 주도주를 배제 ↔ 상한가 통과 종목은 몰입이 죽은 후행주)'는 구조가 아니라 국면 의존이었다 — 오늘 통과 3종은 전부 몰입이 살아 있다(조선 2/2·방산 2/2·전력망 3/2). 다만 같은 테마 안에서는 여전히 작동한다(power_grid_ai 2종 중 20일 +42.71% 인 LS ELECTRIC 은 상한가를 11.4% 초과해 배제되고 덜 오른 HD현대일렉트릭만 통과). 다음 재확인 09-06.",
+     "date": "2026-08-30",
+     "by": "sunday_strategy"
+    },
+    {
+     "action": "observe",
+     "note": "재확인(09-06) — 08-30 진단(게이트 3종 정당 작동, 국면 의존) 이후 배치가 8.5%로 오히려 더 악화(08-30 시점 대비, 09-01 self-audit 43.5%→ 09-02 지정학 매크로 충격 이후 급락). 09-06 self-audit 기준 heat 잔여 339,090원 — 여유는 있으나 게이트 통과 신규 후보가 구조적으로 희소한 약세 국면(9/2 지정학 충격 이후 방어적 caution) 지속. 정책 동결 중이라 배치 목표·게이트 임계 변경은 애초에 상정 범위 밖(설사 완화가 정당해도 동결 게이트가 우선). 강제 배치(추격 진입) 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-13.",
+     "date": "2026-09-06",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "observe",
+     "note": "재확인(09-06) — 08-30 진단(게이트 3종 정당 작동, 국면 의존) 이후 배치가 8.5%로 오히려 더 악화(08-30 시점 대비, 09-01 self-audit 43.5%→ 09-02 지정학 매크로 충격 이후 급락). 09-06 self-audit 기준 heat 잔여 339,090원 — 여유는 있으나 게이트 통과 신규 후보가 구조적으로 희소한 약세 국면(9/2 지정학 충격 이후 방어적 caution) 지속. 정책 동결 중이라 배치 목표·게이트 임계 변경은 애초에 상정 범위 밖(설사 완화가 정당해도 동결 게이트가 우선). 강제 배치(추격 진입) 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-13.",
+     "date": "2026-09-06",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "observe",
+     "note": "재확인(09-20) — 주식비중 48.3%(09-13 37.3% 대비 회복, 여전히 목표 하한 65% 미달), heat 잔여 259,637원/예산 343,077원(75.7% 여유). allocation.json recommendation.action=deploy 1,106,994원(vacant_slots 2)로 시스템은 배치를 권고 중이나, 실제 집행은 09시 게이트 판정으로만 결정된다(추격 금지 원칙). 정책 동결 중이라 배치 목표·게이트 임계 변경은 상정 범위 밖. 강제 배치 금지 원칙 유지 — 자동 조정 없음. 다음 재확인 09-27.",
+     "date": "2026-09-20",
+     "by": "sunday_policy_review"
+    }
+   ]
+  },
+  {
+   "id": "benchmark-gap-widening",
+   "title": "vs KOSPI 격차 악화 -4.64%p → -7.01%p",
+   "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
+   "severity": "warn",
+   "first_seen": "2026-09-22",
+   "last_seen": "2026-09-22",
+   "weeks_seen": 1,
+   "status": "resolved",
+   "disposition": null,
+   "disposition_history": [
+    {
+     "action": "patch",
+     "note": "detail 이 물은 '미배치/휩쏘/추격 중 어느 경로인가'의 답은 **미배치**다. 7/31 KOSPI +17.91% 반등일에 계좌는 +1.25%에 그쳤다 — 현금 74.3%가 방어에서 벌어둔 우위를 반등 하루에 반납한 구조. 휩쏘·추격 경로는 이번 주 해당 없음(신규 진입 0건·체결 1건은 룰 청산). 처방은 deployment-below-band 와 동일 패치(policy v2.25 단계 기준 확정)이며, 배치 재개 후 다음 감사에서 격차 방향이 뒤집히는지로 검증한다.",
+     "date": "2026-08-03",
+     "by": "sunday_policy_review"
+    }
+   ],
+   "resolved_date": "2026-09-22"
+  },
+  {
+   "id": "patch-without-validation",
+   "title": "검증 표본 없는 정책 패치 — 패치 동결 규칙 발동",
+   "detail": "⚠️ 직전 감사 이후 정책 버전이 올라갔는데 신규 검증 표본(왕복)이 0건 — 패치 동결 검토(검증 없는 패치 누적).",
+   "severity": "warn",
+   "first_seen": "2026-08-30",
+   "last_seen": "2026-08-30",
+   "weeks_seen": 1,
+   "status": "resolved",
+   "disposition": null,
+   "disposition_history": [
+    {
+     "action": "observe",
+     "note": "패치 동결 규칙(감사 처방⑤) 발동 확인 — 직전 감사 대비 policy v2.27→v2.28 버전 증가 + 신규 왕복 0건(누적 왕복은 13→14건이나 이는 v2.28 patch 이전 체결 1건 반영분, v2.28 이후 신규 체결은 0건). 이번 리뷰의 정책 패치는 버그 수정·게이트 강화(deployment-below-band 의 universe theme 교정 등)만 반영했고 전략 파라미터(사이징·임계·목표) 변경은 없음 — 동결 규칙 준수. 신규 왕복 표본이 쌓일 때까지(권장 3건+) 동결 유지, 다음 감사에서 재확인.",
+     "date": "2026-08-09",
+     "by": "sunday_policy_review"
+    }
+   ],
+   "resolved_date": "2026-09-01"
+  },
+  {
+   "id": "policy-dead-config-disclaimers",
+   "title": "policy dead config: disclaimers — 어느 prompt/script/workflow 도 참조하지 않음",
+   "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
+   "severity": "warn",
+   "first_seen": "2026-08-14",
+   "last_seen": "2026-08-23",
+   "weeks_seen": 2,
+   "status": "resolved",
+   "disposition": {
+    "action": "patch",
+    "note": "삭제. 값(교육·학습 목적/시세 지연 가능/용어 설명) 은 이미 11개 prompt 파일에 리터럴 텍스트로 하드코딩돼 있어 이 config 를 읽는 코드가 애초에 없었다 — wiring 없는 그랜드파더 필드. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules 에 3건 일괄 근거 기록. check_policy_hygiene.py 재실행으로 dead_configs=[] 확인 완료.",
+    "date": "2026-08-23",
+    "by": "sunday_policy_review"
+   },
+   "disposition_history": [],
+   "resolved_date": "2026-08-25"
+  },
+  {
+   "id": "policy-dead-config-rebalance_rules",
+   "title": "policy dead config: rebalance_rules — 어느 prompt/script/workflow 도 참조하지 않음",
+   "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
+   "severity": "warn",
+   "first_seen": "2026-08-14",
+   "last_seen": "2026-08-23",
+   "weeks_seen": 2,
+   "status": "resolved",
+   "disposition": {
+    "action": "patch",
+    "note": "`_doc_rebalance_rules` 로 개명(문서 전용). 실제 스왑 판정은 이미 risk 손절(-10%/tier ATR)·momentum_signal·lessons_rule_sunset 로 구현돼 있어 배선 활성화는 로직 이중화 위험 — 3택 중 삭제 대신 개명을 택한 이유는 '손실/모멘텀둔화/반복패턴' 3원칙이 사람이 읽는 요약으로 유용해서다. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules. check_policy_hygiene.py 재실행으로 dead_configs=[]·unregistered_new=0 확인 완료(자식 키도 _doc_swap_when/_doc_no_swap_when 로 개명해 등록 메타 요구 회피).",
+    "date": "2026-08-23",
+    "by": "sunday_policy_review"
+   },
+   "disposition_history": [],
+   "resolved_date": "2026-08-25"
+  },
+  {
+   "id": "policy-dead-config-weekly_cycle",
+   "title": "policy dead config: weekly_cycle — 어느 prompt/script/workflow 도 참조하지 않음",
+   "detail": "처분 3택: 삭제 / `_doc` 접두 개명(문서 전용 선언) / 참조 배선(활성화). 근거: state/policy_hygiene.json (check_policy_hygiene.py)",
+   "severity": "warn",
+   "first_seen": "2026-08-14",
+   "last_seen": "2026-08-23",
+   "weeks_seen": 2,
+   "status": "resolved",
+   "disposition": {
+    "action": "patch",
+    "note": "삭제. weekend_report_output(reports/YYYY-MM-DD-weekend.md) 이 현재 실제 산출물 명명(saturday-review/sunday-strategy/policy-review/archive)과 불일치하는 구식 스킴이라 보존하면 오히려 오도 — 로직(주간 연동)은 이미 weekly_plan.json·각 prompt 0단계로 구현됨. config/policy.json v2.35(2026-08-23), docs/policy_rationale.md §_doc_rebalance_rules 에 3건 일괄 근거. check_policy_hygiene.py 재실행으로 dead_configs=[] 확인 완료.",
+    "date": "2026-08-23",
+    "by": "sunday_policy_review"
+   },
+   "disposition_history": [],
+   "resolved_date": "2026-08-25"
+  },
+  {
+   "id": "lessons-balance",
+   "title": "lessons.md 811,996B > 예산 60,000B — 이관 처리량 부족",
+   "detail": "§1-6 수지 균형 의무: 이번 리뷰의 archive 이관 건수 ≥ 주간 신규 유입(lessons_index.throughput.new_entries_7d) 또는 예산 내 진입. 이관 대상 1순위는 lessons_index.archive_candidates.",
+   "severity": "warn",
+   "first_seen": "2026-08-14",
+   "last_seen": "2026-10-04",
+   "weeks_seen": 8,
+   "status": "open",
+   "disposition": {
+    "action": "defer",
+    "note": "10-04 리뷰에서 lessons.md 812KB(예산 60KB 대비 13.5×)·주간 유입 25건 대비 이관 0건 — 사유: codify_candidates 30건이 신호매칭 기반이라 건별 policy/prompt 반영 위치 검증이 선행돼야 하고(미검증 이관은 '미반영 룰 유실' 위험), 이번 실행에서 검증을 완료하지 못했다. archive_candidates(30일+ 미응축)는 0건. 다음 리뷰(10-11) 최우선: codify_candidates 건별 grep 검증 후 ≥25건 이관. 14일 내 재처분 필요.",
+    "date": "2026-10-04",
+    "by": "sunday_policy_review"
+   },
+   "disposition_history": [
+    {
+     "action": "defer",
+     "note": "구조적 원인 확인 — lessons_index.archive_candidates 가 이번에도 0건이다(build_lessons_index.py 조건: 본문에 ✅+'codify' 마커 AND 30일+ 경과). 근본 문제는 이관 후보가 적어서가 아니라 codify 마커를 남기는 상류 단계가 아예 없다는 것 — 어떤 평일 routine 도 '이 lessons 항목이 policy/prompt 에 반영 완료됐다'는 태그를 붙이지 않는다. 이번 리뷰에서 check_lessons_applied.json resolved_items 중 유일한 구체 후보(2026-08-13 하나금융지주·KB금융 target_gap 종결)를 직접 코드 대조로 검증했으나 실제로는 미해결(compute_dynamic_bands 캡 버그가 아직 살아있음 — whipsaw-high 처분 참고)이라 codify 확정할 수 없었다. 따라서 이번 주 이관 0건 — 두 충족 조건(이관≥36건 신규유입 / lessons.md≤60KB) 모두 미충족이며 침묵 이월이 아니라 원인 진단으로 답한다. 근본 해법(어느 routine 이 언제 ✅codify 를 남길지 프로세스 설계)은 여러 prompt 에 걸친 절차 변경이라 이번 리뷰의 '안전 자동 적용' 범위를 벗어남 — 다음 리뷰에 사용자 승인 필요 안건으로 상정 권고. 참고로 lessons.md 는 이번 리뷰에서 2줄 편집(rule_sunset 등록/만료 처분)만 있었고 순바이트는 사실상 불변.",
+     "date": "2026-08-23",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "patch",
+     "note": "08-30 처분이 요구한 '최소 임시 조치 시범'을 이번 리뷰에서 실행 — codify 확정된 lessons 항목 1건(2026-08-13 가정오류(운영) — compute_dynamic_bands target_gap 결함 종결)을 §1-6 절차대로 state/lessons_archive.md 로 전문 이관하고 lessons.md 본문을 4줄(분류·요약·✅codify 반영 위치·전문 이관 표기)로 교체했다. 근거: 이 항목이 제기한 결함(캡이 verdict=cap_target 무관하게 적용됨)을 오늘 scripts/compute_dynamic_bands.py 에서 실제로 수정(verdict 게이팅 추가, selftest 통과)해 '반영 위치 확인' 조건을 충족한 첫 사례. 결과: lessons.md 582,624B → 581,374B(-1,250B), entries 267건 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 불변 보존 확인). 규모는 미미(주간 유입 37건 대비 1건 이관 — §1-6 수지 균형 의무 여전히 미충족)하나, 08-14 항목에도 별도로 ✅codify 마커를 추가 기입(같은 결함의 원 제안 항목, 완전 이관은 다음 주로 미룸). 구조적 해법(어느 평일 routine 이 codify 마커를 남길지)은 여전히 미정 — 다음 리뷰(09-13)에 사용자 승인 필요 안건으로 재상정하고, 이번 시범 결과(이관 절차 자체는 무리없이 작동함)를 근거로 첨부한다.",
+     "date": "2026-09-06",
+     "by": "sunday_policy_review"
+    },
+    {
+     "action": "patch",
+     "note": "08-30 처분이 요구한 '최소 임시 조치 시범'을 이번 리뷰에서 실행 — codify 확정된 lessons 항목 1건(2026-08-13 가정오류(운영) — compute_dynamic_bands target_gap 결함 종결)을 §1-6 절차대로 state/lessons_archive.md 로 전문 이관하고 lessons.md 본문을 4줄(분류·요약·✅codify 반영 위치·전문 이관 표기)로 교체했다. 근거: 이 항목이 제기한 결함(캡이 verdict=cap_target 무관하게 적용됨)을 오늘 scripts/compute_dynamic_bands.py 에서 실제로 수정(verdict 게이팅 추가, selftest 통과)해 '반영 위치 확인' 조건을 충족한 첫 사례. 결과: lessons.md 582,624B → 581,374B(-1,250B), entries 267건 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 불변 보존 확인). 규모는 미미(주간 유입 37건 대비 1건 이관 — §1-6 수지 균형 의무 여전히 미충족)하나, 08-14 항목에도 별도로 ✅codify 마커를 추가 기입(같은 결함의 원 제안 항목, 완전 이관은 다음 주로 미룸). 구조적 해법(어느 평일 routine 이 codify 마커를 남길지)은 여전히 미정 — 다음 리뷰(09-13)에 사용자 승인 필요 안건으로 재상정하고, 이번 시범 결과(이관 절차 자체는 무리없이 작동함)를 근거로 첨부한다.",
+     "date": "2026-09-06",
+     "by": "sunday_policy_review",
+     "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+    },
+    {
+     "action": "patch",
+     "note": "구조적 원인 해소 착수 — archive_candidates 가 계속 0건이었던 진짜 원인(✅codify 마커를 붙이는 상류 단계 부재)을 build_lessons_index.py 에 codify_candidates 함수(v2.37)로 신설해 해소했다: ✅codify 마커 없는 30일+ 경과 섹션 중 '다음 적용 룰'의 강신호(따옴표·백틱)가 policy/docs/prompts haystack 에 이미 등장하는 항목을 자동 표면화(오탐 방지 위해 자동 마킹은 안 하고 사람이 확인 후 마킹, grep 매치일 뿐 의미 검증 아님이라 명시). 이번 실행에서 35건 후보 산출, 직접 대조 검증한 4건 중 2건 확정(①08-03 09시 index_snapshot_confirmation — prompts/0900_pre_market.md 명문화 확인 ②08-11 하나금융지주 target_gap — compute_dynamic_bands verdict 게이팅 수정으로 해소 확인)해 §1-6 절차대로 전문 이관+4줄 응축, 2건은 grep 오탐으로 판명(sync_pending_orders 트레일 SELL 매칭·portfolio EOD 연속성 체크는 실제로는 미해결 — 오탐 방지 설계가 의도대로 작동). 결과: lessons.md 619,749B → 617,599B(-2,150B), entries 294건 불변(build_lessons_index.py 재확인). 5건의 만료 도래 rule_sunset 항목도 §1-2-b 절차대로 전건 만료/승격 판정 기입(4건 실효, 1건 승격 후보로 backlog #4 등록). 규모는 여전히 미충족(이관 2건 ≪ 신규 유입 28건, 잔여 617,599B ≫ 예산 60,000B)이나, 이전 2회(08-30·09-06) 처분이 '재발·효과 없음'으로 무효화된 것과 달리 이번은 재사용 가능한 탐지 파이프라인을 남겼다 — 다음 리뷰부터 codify_candidates(이번 회차 잔여 33건)를 매주 우선순위 목록으로 소진한다. 처분이 다시 무효화되는지는 다음 주 재발 여부로 검증된다.",
+     "date": "2026-09-13",
+     "by": "sunday_policy_review",
+     "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+    },
+    {
+     "action": "patch",
+     "note": "이번 리뷰에서 09-13 신설 codify_candidates 파이프라인으로 4건을 신규 검증·확정 이관했다: ①2026-06-08 삼성전자 RED(Broadcom guidance 15%캡 — policy.lessons_rule_sunset 이 이 사례를 도입 근거로 흡수) ②2026-07-11 compact_state 미실행(scripts/compact_state.py v2.32 daily 실행으로 해소 확인) ③2026-07-27 트레일링 임계 전일고정값 인용(exit_levels.json 재계산본 인용 규칙이 全슬롯 이미 적용 중임을 확인) ④2026-08-01 실현변동성 밴드 미연동(policy.proactive_inference.band_width_rule 수치 일치 확인, v2.29 기존 codify). 같은 회차에 check_lessons_applied 의 hard 미반영 발견분(2026-09-11 '갭 구간 전이 배수' 룰)도 prompts/0630_us_close.md §2-1·0000_global.md §2-1 에 신규 codify 했고, 반복 7회 루틴 오차(09시/18시 선제추론 채점 백로그)에도 '잔여 미채점 건수' 의무 표기를 prompts/0900_pre_market.md·1800_report.md 에 신설해 구조적으로 대응했다. 결과: lessons.md 715,775B → 720,412B(순증 — 이번 주 신규 유입 28건이 이관 4건보다 많아 총량은 늘었으나, 이관 자체는 재발·무효화 없이 실행됨 — 08-30/09-06/09-13 처분이 반복 '재발·효과 없음'으로 무효화된 패턴과 다르다). entries=321 불변(build_lessons_index.py 재확인, 카운터·미반영 항목 원문 보존 확인). **수지 균형 의무는 여전히 미충족**(이관 4건 ≪ 신규 유입 28건, 잔여 720,412B ≫ 예산 60,000B) — codify_candidates 잔여 43건을 다음 리뷰들이 우선순위로 계속 소진한다. 재발(다음 주 재검증 결과 이관분이 실제로 반영 해제되거나 처분이 무효화되는지) 여부로 이번 처분의 실효성이 검증된다.",
+     "date": "2026-09-20",
+     "by": "sunday_policy_review",
+     "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
+    }
+   ]
+  },
+  {
+   "id": "ledger-mismatch",
+   "title": "원장 불일치 — 다른 모든 지표가 오염되므로 최우선 수정",
+   "detail": "trade_count 불일치: trade_log 기준 49 vs portfolio.trade_count 48",
+   "severity": "hard",
+   "first_seen": "2026-09-08",
+   "last_seen": "2026-09-08",
+   "weeks_seen": 1,
+   "status": "resolved",
+   "disposition": null,
+   "disposition_history": [],
+   "resolved_date": "2026-09-08"
+  }
+ ],
+ "open": [
+  "whipsaw-high",
+  "deployment-below-band",
+  "lessons-balance"
+ ],
+ "overdue": [
+  "lessons-balance"
+ ]
 }

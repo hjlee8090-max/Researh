@@ -1,5 +1,5 @@
 {
- "as_of": "2026-09-20T20:08:21+09:00",
+ "as_of": "2026-10-04T20:10:02+09:00",
  "params": {
   "min_shadow_trading_days": 10,
   "min_breach_events": 3,
@@ -10,8 +10,8 @@
   ]
  },
  "sample": {
-  "positions": 17,
-  "shadow_trading_days": 53,
+  "positions": 18,
+  "shadow_trading_days": 61,
   "breach_events": 5,
   "breach_completed": 5
  },
@@ -20,8 +20,8 @@
   "forgone_krw_t5": 161800.0,
   "net_protection_krw": -161800.0,
   "noise_exit_rate": 1.0,
-  "protected_vs_real_exits_krw": 62792.0,
-  "avg_freed_heat_krw": 105617.0
+  "protected_vs_real_exits_krw": 123002.0,
+  "avg_freed_heat_krw": 91766.0
  },
  "events_scored": [
   {
@@ -129,8 +129,24 @@
    "real_exit_price": 371526,
    "ratchet_level_before": 373057.86,
    "protection_krw": 3052.0
+  },
+  {
+   "position": "086790:2026-08-03",
+   "exit_date": "2026-10-01",
+   "action": "SELL_STOP",
+   "real_exit_price": 127793,
+   "ratchet_level_before": 129656.76,
+   "protection_krw": 5569.0
+  },
+  {
+   "position": "028260:2026-08-20",
+   "exit_date": "2026-10-01",
+   "action": "SELL_THESIS_INVALIDATION",
+   "real_exit_price": 345629,
+   "ratchet_level_before": 373057.86,
+   "protection_krw": 54641.0
   }
  ],
  "verdict": "기각·완화 후보 — 본전 노이즈 체결 과다 (steps.when_gain_atr 상향 또는 기각 상정)",
- "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 53거래일 · 추적 17포지션 · 가상 breach 5건(확정 5)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 161,800원 / **net -161,800원** / noise율 100%\n- 실제 청산 대비 보호액: 62,792원 (3건)\n- 해방가능 heat 일평균: 105,617원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 기각·완화 후보 — 본전 노이즈 체결 과다 (steps.when_gain_atr 상향 또는 기각 상정)**"
+ "report_section_md": "### 본전 래칫 스톱 그림자 채점 (breakeven_ratchet — mode=shadow)\n- 관측: 61거래일 · 추적 18포지션 · 가상 breach 5건(확정 5)\n- 반사실 t+5: 보호 0원 / 노이즈 익절(forgone) 161,800원 / **net -161,800원** / noise율 100%\n- 실제 청산 대비 보호액: 123,002원 (5건)\n- 해방가능 heat 일평균: 91,766원 (배치 여력 실익 — 히트 잠금 해소분)\n- **판정: 기각·완화 후보 — 본전 노이즈 체결 과다 (steps.when_gain_atr 상향 또는 기각 상정)**"
 }

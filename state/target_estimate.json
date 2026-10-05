@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-10-05T09:07:31+09:00",
-  "snapshot_as_of": "2026-10-05T09:07:27+09:00",
+  "as_of": "2026-10-05T10:47:55+09:00",
+  "snapshot_as_of": "2026-10-05T10:47:51+09:00",
   "horizon_months": 12,
   "formula": "추정목표가 = 기준가(밸류밴드·컨센 평균, 결측 시 현재가) × (1 + 추세게이트×(테마P(호라이즌할인) + 양뉴스P(시간감쇠·확률·기반영차감)) + 음뉴스P + 섹터활발성P + 모멘텀틸트(초과수익+52주고점)) → min(컨센×1.15, 밸류천장) 캡 [v1.1 백테스트 보정]",
   "kospi_ret_60d_pct": -13.01,
@@ -15,10 +15,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.3,
-        "news": 3.36,
+        "news": 1.3,
         "sector": 0.0,
         "momentum": -2.5,
-        "total": 2.16
+        "total": 0.1
       },
       "trend_gate": {
         "factor": 0.6,
@@ -26,14 +26,14 @@
         "pct_of_52w_high": 47.92,
         "ungated": {
           "theme": 2.16,
-          "news": 6.72
+          "news": 3.13
         }
       },
-      "raw_estimate": 53000.0,
+      "raw_estimate": 51900.0,
       "cap_applied": null,
-      "estimate": 53000.0,
-      "expected_return_pct": 58.7,
-      "entry_cap_price": 50200.0,
+      "estimate": 51900.0,
+      "expected_return_pct": 55.4,
+      "entry_cap_price": 49200.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -42,7 +42,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 50.3,
+      "entry_cap_gap_pct": 47.3,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+40) 전후 재평가 · 섹터값 0.00(집중도 평소 0.78배·heat 0.0)",
@@ -103,50 +103,6 @@
         ],
         "news_parts": [
           {
-            "kind": "news_auto",
-            "type": "labor_dispute",
-            "date": "2026-10-01",
-            "impact_pct": -3.0,
-            "decay": 0.96,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -1.48,
-            "contrib_pct": -0.24,
-            "note": "노사 갈등 못 푼 네이버·카카오… 국감 부담까지 - IT조선",
-            "source_url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5EQnFReDRmQmNNU042S3AzSEtfbXZNcGM0dVpjR1MyVXpDenozMVJYc1lsMU5kTkNDNG5IbFlRREhkWWRyMGtRVjhQb0ZndldKYVJJZ25QQWtVQ3VMSEZyVl9sR2NiRmxqRkdsX1dTenYtelpX0gF0QVVfeXFMTkRCcVF4NGZCY01TTjZLcDNIS19tdk1wYzR1WmNHUzJVekN6ejMxUlhzWWwxTmROQ0M0bkhsWVFESGRZZHIwa1FWOFBvRmd2V0phUklnblBBa1VDdUxIRnJWX2xHY2JGbGpGR2xfV1N6di16Wlc?oc=5",
-            "matched_keywords": [
-              "노사갈등"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "tech_breakthrough",
-            "date": "2026-09-30",
-            "impact_pct": 6.0,
-            "decay": 0.94,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -3.43,
-            "contrib_pct": 3.4,
-            "note": "[N2 포커스] 카카오, AI를 일상으로…'카나나' 상용화·안전성 동시 강화 - 뉴스투데이",
-            "source_url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE9obVNMUEVHVWQzMUF5a3NhajJHTVRwb20xR2RwRGZKYkxRMmtFYUpXOVBTMS1tR0xVSWJxMUdTZGY1SlhSbDRHZTJJdkRSSnByR05Ka3ZCTWE?oc=5",
-            "matched_keywords": [
-              "상용화"
-            ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
             "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
@@ -157,8 +113,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -218,43 +174,19 @@
         "prev_estimate": 55200.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -2200.0,
-        "entry_cap_delta_krw": -2100.0,
-        "news_pct_delta": -0.27,
-        "expected_return_delta_pct": -6.6
+        "estimate_delta_krw": -3300.0,
+        "entry_cap_delta_krw": -3100.0,
+        "news_pct_delta": -2.33,
+        "expected_return_delta_pct": -9.9
       },
       "new_news_since_prev": [
-        {
-          "kind": "news_auto",
-          "type": "labor_dispute",
-          "date": "2026-10-01",
-          "contrib_pct": -0.24,
-          "note": "노사 갈등 못 푼 네이버·카카오… 국감 부담까지 - IT조선",
-          "source_url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5EQnFReDRmQmNNU042S3AzSEtfbXZNcGM0dVpjR1MyVXpDenozMVJYc1lsMU5kTkNDNG5IbFlRREhkWWRyMGtRVjhQb0ZndldKYVJJZ25QQWtVQ3VMSEZyVl9sR2NiRmxqRkdsX1dTenYtelpX0gF0QVVfeXFMTkRCcVF4NGZCY01TTjZLcDNIS19tdk1wYzR1WmNHUzJVekN6ejMxUlhzWWwxTmROQ0M0bkhsWVFESGRZZHIwa1FWOFBvRmd2V0phUklnblBBa1VDdUxIRnJWX2xHY2JGbGpGR2xfV1N6di16Wlc?oc=5"
-        },
-        {
-          "kind": "news_auto",
-          "type": "tech_breakthrough",
-          "date": "2026-09-30",
-          "contrib_pct": 3.4,
-          "note": "[N2 포커스] 카카오, AI를 일상으로…'카나나' 상용화·안전성 동시 강화 - 뉴스투데이",
-          "source_url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE9obVNMUEVHVWQzMUF5a3NhajJHTVRwb20xR2RwRGZKYkxRMmtFYUpXOVBTMS1tR0xVSWJxMUdTZGY1SlhSbDRHZTJJdkRSSnByR05Ka3ZCTWE?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -281,8 +213,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **53,000원**(+58.7%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼2,200원 · 프리미엄 테마+1/뉴스+3/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.4%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **50,200원**(R/R≥1.0·ATR 2.7%×2≈손절 5.5% 기준) · 현재가 33,400원 🟢진입 가능(현재가가 상한가보다 50.3% 낮음) · 직전 리포트 대비 ▼2,100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **51,900원**(+55.4%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼3,300원 · 프리미엄 테마+1/뉴스+1/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **49,200원**(R/R≥1.0·ATR 2.7%×2≈손절 5.5% 기준) · 현재가 33,400원 🟢진입 가능(현재가가 상한가보다 47.3% 낮음) · 직전 리포트 대비 ▼3,100원"
     },
     {
       "ticker": "035420",
@@ -294,10 +226,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.46,
-        "news": -3.77,
+        "news": -4.2,
         "sector": 0.0,
         "momentum": 1.0,
-        "total": 0.69
+        "total": 0.26
       },
       "trend_gate": {
         "factor": 1.0,
@@ -305,14 +237,14 @@
         "pct_of_52w_high": 63.22,
         "ungated": {
           "theme": 3.46,
-          "news": -3.77
+          "news": -4.2
         }
       },
-      "raw_estimate": 268600.0,
+      "raw_estimate": 267500.0,
       "cap_applied": null,
-      "estimate": 268600.0,
-      "expected_return_pct": 39.8,
-      "entry_cap_price": 256300.0,
+      "estimate": 267500.0,
+      "expected_return_pct": 39.2,
+      "entry_cap_price": 255200.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -321,7 +253,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 33.4,
+      "entry_cap_gap_pct": 32.8,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+40) 전후 재평가 · 섹터값 0.00(집중도 평소 0.78배·heat 0.0)",
@@ -383,20 +315,6 @@
         "news_parts": [
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -406,8 +324,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -467,27 +385,19 @@
         "prev_estimate": 298400.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -29800.0,
-        "entry_cap_delta_krw": -28400.0,
-        "news_pct_delta": -7.19,
-        "expected_return_delta_pct": -15.5
+        "estimate_delta_krw": -30900.0,
+        "entry_cap_delta_krw": -29500.0,
+        "news_pct_delta": -7.62,
+        "expected_return_delta_pct": -16.1
       },
       "new_news_since_prev": [
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -514,8 +424,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **268,600원**(+39.8%, 등급 A) · 직전 리포트 대비 ▼29,800원 · 프리미엄 테마+3/뉴스-4/섹터+0/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.1%; global_rate_shock(해외) -0.9%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **256,300원**(R/R≥1.0·ATR 2.4%×2≈손절 4.8% 기준) · 현재가 192,200원 🟢진입 가능(현재가가 상한가보다 33.4% 낮음) · 직전 리포트 대비 ▼28,400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **267,500원**(+39.2%, 등급 A) · 직전 리포트 대비 ▼30,900원 · 프리미엄 테마+3/뉴스-4/섹터+0/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.1%; global_rate_shock(해외) -0.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **255,200원**(R/R≥1.0·ATR 2.4%×2≈손절 4.8% 기준) · 현재가 192,200원 🟢진입 가능(현재가가 상한가보다 32.8% 낮음) · 직전 리포트 대비 ▼29,500원"
     },
     {
       "ticker": "267260",
@@ -527,10 +437,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.9,
-        "news": 1.4,
+        "news": 1.3,
         "sector": 0.73,
         "momentum": -1.5,
-        "total": 1.53
+        "total": 1.43
       },
       "trend_gate": {
         "factor": 0.3,
@@ -538,14 +448,14 @@
         "pct_of_52w_high": 47.41,
         "ungated": {
           "theme": 3.0,
-          "news": 8.06
+          "news": 7.71
         }
       },
-      "raw_estimate": 917900.0,
+      "raw_estimate": 917000.0,
       "cap_applied": null,
-      "estimate": 917900.0,
-      "expected_return_pct": 35.4,
-      "entry_cap_price": 852300.0,
+      "estimate": 917000.0,
+      "expected_return_pct": 35.3,
+      "entry_cap_price": 851400.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -554,7 +464,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 25.7,
+      "entry_cap_gap_pct": 25.6,
       "entry_cap_note": null,
       "entry_cap_caution": "falling knife(60일 -27%) — 추격 금지(추세 약세)",
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+40) 전후 재평가 · 섹터값 0.18(집중도 평소 0.91배·heat 0.133)",
@@ -619,16 +529,16 @@
           {
             "kind": "news_auto",
             "type": "capex_expansion",
-            "date": "2026-09-30",
+            "date": "2026-10-04",
             "impact_pct": 3.0,
-            "decay": 0.94,
+            "decay": 0.99,
             "auto_factor": 0.6,
-            "realized_since_event_pct": -0.74,
-            "contrib_pct": 1.7,
-            "note": "현대차증권 \"HD현대일렉트릭 북미 고수익성 매출 확대, 증설 효과 내년부터\" - 비즈니스포스트",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9ZWEVwTjNZTWFDM21nWmZ1ZkVHQVdkbHN0SzRYci1rTlVpUWQ0WHZZS1FZWkw5QmZ1Q0o3R3JyM0ktcXFuMUhtLUM2YjA3SWFROVJ6WTVIUVlZSGRJQVkxTGMtc2swcEdZYlhIc3p1SFJudUE?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 1.78,
+            "note": "효성중공업-HD현대일렉트릭 미국 초고압변압기 시장 격돌, 우태희-김영기 현지 설비투자로 경쟁 - 비즈니스포스트",
+            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1XUi11UUNYTlpQNjlYWFppUC14a3kybTBwN2lDbVBGclFyNFJYbnRiUUVBQnVxSzBLaEZaS1Z6SEgySXh5dzBtVGhQOHNGR2hJLVl2S2QtQWNxaFl4SGxkZWtiV05uVEY3MzFmQ2RKRzhoRTA?oc=5",
             "matched_keywords": [
-              "증설"
+              "설비투자"
             ]
           },
           {
@@ -648,20 +558,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -671,8 +567,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -732,19 +628,19 @@
         "prev_estimate": 961400.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -43500.0,
-        "entry_cap_delta_krw": -40400.0,
-        "news_pct_delta": -1.67,
-        "expected_return_delta_pct": -6.6
+        "estimate_delta_krw": -44400.0,
+        "entry_cap_delta_krw": -41300.0,
+        "news_pct_delta": -1.77,
+        "expected_return_delta_pct": -6.7
       },
       "new_news_since_prev": [
         {
           "kind": "news_auto",
           "type": "capex_expansion",
-          "date": "2026-09-30",
-          "contrib_pct": 1.7,
-          "note": "현대차증권 \"HD현대일렉트릭 북미 고수익성 매출 확대, 증설 효과 내년부터\" - 비즈니스포스트",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9ZWEVwTjNZTWFDM21nWmZ1ZkVHQVdkbHN0SzRYci1rTlVpUWQ0WHZZS1FZWkw5QmZ1Q0o3R3JyM0ktcXFuMUhtLUM2YjA3SWFROVJ6WTVIUVlZSGRJQVkxTGMtc2swcEdZYlhIc3p1SFJudUE?oc=5"
+          "date": "2026-10-04",
+          "contrib_pct": 1.78,
+          "note": "효성중공업-HD현대일렉트릭 미국 초고압변압기 시장 격돌, 우태희-김영기 현지 설비투자로 경쟁 - 비즈니스포스트",
+          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1XUi11UUNYTlpQNjlYWFppUC14a3kybTBwN2lDbVBGclFyNFJYbnRiUUVBQnVxSzBLaEZaS1Z6SEgySXh5dzBtVGhQOHNGR2hJLVl2S2QtQWNxaFl4SGxkZWtiV05uVEY3MzFmQ2RKRzhoRTA?oc=5"
         },
         {
           "kind": "news_auto",
@@ -756,19 +652,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -795,8 +683,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **917,900원**(+35.4%, 등급 A) · 직전 리포트 대비 ▼43,500원 · 프리미엄 테마+1/뉴스+1/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.8%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **852,300원**(R/R≥1.0·ATR 3.9%×2≈손절 7.7% 기준) · 현재가 678,000원 🟡진입 가능 구간이나 falling knife(60일 -27%) — 추격 금지(추세 약세)(상한가보다 25.7% 낮음) · 직전 리포트 대비 ▼40,400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **917,000원**(+35.3%, 등급 A) · 직전 리포트 대비 ▼44,400원 · 프리미엄 테마+1/뉴스+1/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.8%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **851,400원**(R/R≥1.0·ATR 3.9%×2≈손절 7.7% 기준) · 현재가 678,000원 🟡진입 가능 구간이나 falling knife(60일 -27%) — 추격 금지(추세 약세)(상한가보다 25.6% 낮음) · 직전 리포트 대비 ▼41,300원"
     },
     {
       "ticker": "028260",
@@ -808,10 +696,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.76,
-        "news": 3.18,
+        "news": 3.05,
         "sector": 5.16,
         "momentum": -3.5,
-        "total": 6.6
+        "total": 6.47
       },
       "trend_gate": {
         "factor": 0.3,
@@ -822,11 +710,11 @@
           "news": 12.0
         }
       },
-      "raw_estimate": 452000.0,
+      "raw_estimate": 451500.0,
       "cap_applied": null,
-      "estimate": 452000.0,
-      "expected_return_pct": 30.3,
-      "entry_cap_price": 415600.0,
+      "estimate": 451500.0,
+      "expected_return_pct": 30.1,
+      "entry_cap_price": 415100.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -835,7 +723,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 19.8,
+      "entry_cap_gap_pct": 19.6,
       "entry_cap_note": null,
       "entry_cap_caution": "falling knife(60일 -23%) — 추격 금지(추세 약세)",
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +11%p) · 섹터값 0.29(집중도 평소 1.13배·heat 0.413)",
@@ -915,10 +803,11 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -0.14,
             "contrib_pct": 2.29,
-            "note": "삼성물산, 데이터센터 수주 '훈풍'…본업 성장에 배당 확대까지 - 프라임경제",
-            "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTE10cksxWTNGODF2ODJMWmRhTnV5SVBLTjR6Mno0NHh1UDJDOVl6NGp2cG16SzZfbnFUWllLYWVmWjk4R29aNXhiVTF6cENYV28teFl4R0hqVXhZVTJWV2NvNXBmd0JlWW45R29VeDYwaU5adw?oc=5",
+            "note": "\"삼성물산, AI 인프라 수주·주주환원 확대 기대\"-다올 - 머니투데이 - 머니투데이",
+            "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE42THdUR1k0QnpuV2ZhWEN6QjJKczZ1UXZrZGRrSkpfckZOUXktczlJUGx5N0VqemFXSUEtLU0tTXpXMHM0bXlSREwwVmdnSjVuRXlFNFplWFIwVlUzTU1ORmV3VXdPYk9w0gFuQVVfeXFMT25MVGN4TURwQ0w1bUtRQlM3UWR3Y3hEdWJycnlQZWxXM3NRSHJESVU5TmRtZFRTTW1vWHNpemVueUFYRE54OXd1WDlFSjh5a2JhNTBwRkwtaG4zMVVjc3l5TUQtU0xwTWxtNDJxb3c?oc=5",
             "matched_keywords": [
-              "배당확대"
+              "주주환원확대",
+              "주주환원"
             ]
           },
           {
@@ -968,20 +857,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -991,8 +866,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -1052,10 +927,10 @@
         "prev_estimate": 461800.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -9800.0,
-        "entry_cap_delta_krw": -8800.0,
-        "news_pct_delta": -0.49,
-        "expected_return_delta_pct": -3.4
+        "estimate_delta_krw": -10300.0,
+        "entry_cap_delta_krw": -9300.0,
+        "news_pct_delta": -0.62,
+        "expected_return_delta_pct": -3.6
       },
       "new_news_since_prev": [
         {
@@ -1063,8 +938,8 @@
           "type": "buyback_cancellation",
           "date": "2026-10-01",
           "contrib_pct": 2.29,
-          "note": "삼성물산, 데이터센터 수주 '훈풍'…본업 성장에 배당 확대까지 - 프라임경제",
-          "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTE10cksxWTNGODF2ODJMWmRhTnV5SVBLTjR6Mno0NHh1UDJDOVl6NGp2cG16SzZfbnFUWllLYWVmWjk4R29aNXhiVTF6cENYV28teFl4R0hqVXhZVTJWV2NvNXBmd0JlWW45R29VeDYwaU5adw?oc=5"
+          "note": "\"삼성물산, AI 인프라 수주·주주환원 확대 기대\"-다올 - 머니투데이 - 머니투데이",
+          "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE42THdUR1k0QnpuV2ZhWEN6QjJKczZ1UXZrZGRrSkpfckZOUXktczlJUGx5N0VqemFXSUEtLU0tTXpXMHM0bXlSREwwVmdnSjVuRXlFNFplWFIwVlUzTU1ORmV3VXdPYk9w0gFuQVVfeXFMT25MVGN4TURwQ0w1bUtRQlM3UWR3Y3hEdWJycnlQZWxXM3NRSHJESVU5TmRtZFRTTW1vWHNpemVueUFYRE54OXd1WDlFSjh5a2JhNTBwRkwtaG4zMVVjc3l5TUQtU0xwTWxtNDJxb3c?oc=5"
         },
         {
           "kind": "news_auto",
@@ -1092,19 +967,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -1131,8 +998,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **452,000원**(+30.3%, 등급 A) · 직전 리포트 대비 ▼9,800원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **415,600원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 347,000원 🟡진입 가능 구간이나 falling knife(60일 -23%) — 추격 금지(추세 약세)(상한가보다 19.8% 낮음) · 직전 리포트 대비 ▼8,800원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **451,500원**(+30.1%, 등급 A) · 직전 리포트 대비 ▼10,300원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **415,100원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 347,000원 🟡진입 가능 구간이나 falling knife(60일 -23%) — 추격 금지(추세 약세)(상한가보다 19.6% 낮음) · 직전 리포트 대비 ▼9,300원"
     },
     {
       "ticker": "105560",
@@ -1144,10 +1011,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 5.88,
+        "news": 5.45,
         "sector": 5.16,
         "momentum": 3.0,
-        "total": 18.94
+        "total": 18.51
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1155,14 +1022,14 @@
         "pct_of_52w_high": 86.58,
         "ungated": {
           "theme": 4.9,
-          "news": 5.88
+          "news": 5.45
         }
       },
-      "raw_estimate": 206000.0,
+      "raw_estimate": 205300.0,
       "cap_applied": null,
-      "estimate": 206000.0,
-      "expected_return_pct": 22.3,
-      "entry_cap_price": 194300.0,
+      "estimate": 205300.0,
+      "expected_return_pct": 21.9,
+      "entry_cap_price": 193600.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1171,7 +1038,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 15.4,
+      "entry_cap_gap_pct": 15.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +11%p) · 섹터값 0.29(집중도 평소 1.13배·heat 0.413)",
@@ -1244,24 +1111,10 @@
             "realized_since_event_pct": 0.0,
             "contrib_pct": 2.32,
             "note": "KB금융, 올해 최대 실적 전망…\"내년 주주환원율 60% 육박\"[애널리스트의 시각] - v.daum.net",
-            "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFByTUtyMThzREpNQmphclNhQWlZd2x0WUdIVGtPQU9qM0VLVWZEdlMyM01scGpmdkZDbERWNS1oUnhtSEJYX2ZFX1RGVkw0aGc?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFA5TWVOYlh0ZzE4Q21fZDFnWXZkbEt5eloza0NWQXJOSEhJd3FFZW9jUUphZElNZ0s4Y3J3R1NKa2JVQ25DYTU4OEdDZXpxN1FXazJxag?oc=5",
             "matched_keywords": [
               "주주환원"
             ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -1274,8 +1127,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -1347,10 +1200,10 @@
         "prev_estimate": 205900.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 100.0,
-        "entry_cap_delta_krw": 100.0,
-        "news_pct_delta": -0.1,
-        "expected_return_delta_pct": -0.3
+        "estimate_delta_krw": -600.0,
+        "entry_cap_delta_krw": -600.0,
+        "news_pct_delta": -0.53,
+        "expected_return_delta_pct": -0.7
       },
       "new_news_since_prev": [
         {
@@ -1359,23 +1212,15 @@
           "date": "2026-10-02",
           "contrib_pct": 2.32,
           "note": "KB금융, 올해 최대 실적 전망…\"내년 주주환원율 60% 육박\"[애널리스트의 시각] - v.daum.net",
-          "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFByTUtyMThzREpNQmphclNhQWlZd2x0WUdIVGtPQU9qM0VLVWZEdlMyM01scGpmdkZDbERWNS1oUnhtSEJYX2ZFX1RGVkw0aGc?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFA5TWVOYlh0ZzE4Q21fZDFnWXZkbEt5eloza0NWQXJOSEhJd3FFZW9jUUphZElNZ0s4Y3J3R1NKa2JVQ25DYTU4OEdDZXpxN1FXazJxag?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -1402,8 +1247,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **206,000원**(+22.3%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+5/뉴스+6/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **194,300원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 168,400원 🟢진입 가능(현재가가 상한가보다 15.4% 낮음) · 직전 리포트 대비 ▲100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **205,300원**(+21.9%, 등급 A) · 직전 리포트 대비 ▼600원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **193,600원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 168,400원 🟢진입 가능(현재가가 상한가보다 15.0% 낮음) · 직전 리포트 대비 ▼600원"
     },
     {
       "ticker": "373220",
@@ -1415,10 +1260,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.04,
-        "news": 5.16,
+        "news": 3.61,
         "sector": 4.7,
         "momentum": 2.0,
-        "total": 14.9
+        "total": 13.35
       },
       "trend_gate": {
         "factor": 1.0,
@@ -1426,14 +1271,14 @@
         "pct_of_52w_high": 70.02,
         "ungated": {
           "theme": 3.04,
-          "news": 5.16
+          "news": 3.61
         }
       },
-      "raw_estimate": 442400.0,
+      "raw_estimate": 436400.0,
       "cap_applied": null,
-      "estimate": 442400.0,
-      "expected_return_pct": 19.9,
-      "entry_cap_price": 414400.0,
+      "estimate": 436400.0,
+      "expected_return_pct": 18.3,
+      "entry_cap_price": 408800.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -1442,7 +1287,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 12.3,
+      "entry_cap_gap_pct": 10.8,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +24%p) · 섹터값 0.17(집중도 평소 0.92배·heat 0.144)",
@@ -1514,21 +1359,6 @@
         "news_parts": [
           {
             "kind": "news_auto",
-            "type": "capex_expansion",
-            "date": "2026-09-30",
-            "impact_pct": 3.0,
-            "decay": 0.94,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.58,
-            "contrib_pct": 1.12,
-            "note": "LG엔솔, 美 배터리 생산 거점 재편 속도…\"ESS 이어 LMR까지\" - 뉴시스",
-            "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1KSkswemNrYXUxSHF6RERnbEVXYmtUcjUteUNMbFowSENwRHNSX3V2V3VDX0pnNENOZVFRVWpsX0wwZWVDckpSeVJEcEZRcGdaSkwwbGVDUXdxLUFuMVVVNHg5Sjhsd3RjYUI0VGRONW9zOFVYY012U9IBeEFVX3lxTE1KSkswemNrYXUxSHF6RERnbEVXYmtUcjUteUNMbFowSENwRHNSX3V2V3VDX0pnNENOZVFRVWpsX0wwZWVDckpSeVJEcEZRcGdaSkwwbGVDUXdxLUFuMVVVNHg5Sjhsd3RjYUI0VGRONW9zOFVYY012Uw?oc=5",
-            "matched_keywords": [
-              "생산거점"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "earnings_surprise_beat",
             "date": "2026-10-02",
             "impact_pct": 6.0,
@@ -1567,25 +1397,11 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.58,
             "contrib_pct": 2.82,
-            "note": "LG엔솔, 2028년까지 美서 LMR 각형 양산체계 구축…상용화 속도 - 뉴스1",
-            "source_url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1LSWYxOGd3OWxwLUlkLW1mQzFxZ2VtSk45SnphRWlkSjZISmpKSFlRYlREcHlxWi1manVmSlAwMUZvNGVvSVZJNWNOekdOQkd0VHkzNlRvV0RTMDdEQUVsNTZuRzJraHZUUVHSAWpBVV95cUxNS0lmMThndzlscC1JZC1tZkMxcWdlbUpOOUp6YUVpZEo2SEpqSkhZUWJURHB5cVotZmp1ZkpQMDFGbzRlb0lWSTVjTnpHTkJHdFR5MzZUb1dEUzA3REFFbDU2bkcya2h2VFFR?oc=5",
+            "note": "LG엔솔, 2028년까지 美서 LMR 각형 양산체계 구축…상용화 속도 - v.daum.net",
+            "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBTcVJmOGt2b0hkYktINjAwRURielNrT2tQMXFQcjc3VzVSc3FYM0ZvYjBqQXNFOC1YZFRnMDVVMGJOaWY2VHBzNll6YlgzU2M?oc=5",
             "matched_keywords": [
               "상용화"
             ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -1598,8 +1414,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -1659,20 +1475,12 @@
         "prev_estimate": 416200.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 26200.0,
-        "entry_cap_delta_krw": 24500.0,
-        "news_pct_delta": 2.86,
-        "expected_return_delta_pct": 7.3
+        "estimate_delta_krw": 20200.0,
+        "entry_cap_delta_krw": 18900.0,
+        "news_pct_delta": 1.31,
+        "expected_return_delta_pct": 5.7
       },
       "new_news_since_prev": [
-        {
-          "kind": "news_auto",
-          "type": "capex_expansion",
-          "date": "2026-09-30",
-          "contrib_pct": 1.12,
-          "note": "LG엔솔, 美 배터리 생산 거점 재편 속도…\"ESS 이어 LMR까지\" - 뉴시스",
-          "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1KSkswemNrYXUxSHF6RERnbEVXYmtUcjUteUNMbFowSENwRHNSX3V2V3VDX0pnNENOZVFRVWpsX0wwZWVDckpSeVJEcEZRcGdaSkwwbGVDUXdxLUFuMVVVNHg5Sjhsd3RjYUI0VGRONW9zOFVYY012U9IBeEFVX3lxTE1KSkswemNrYXUxSHF6RERnbEVXYmtUcjUteUNMbFowSENwRHNSX3V2V3VDX0pnNENOZVFRVWpsX0wwZWVDckpSeVJEcEZRcGdaSkwwbGVDUXdxLUFuMVVVNHg5Sjhsd3RjYUI0VGRONW9zOFVYY012Uw?oc=5"
-        },
         {
           "kind": "news_auto",
           "type": "earnings_surprise_beat",
@@ -1694,24 +1502,16 @@
           "type": "tech_breakthrough",
           "date": "2026-09-30",
           "contrib_pct": 2.82,
-          "note": "LG엔솔, 2028년까지 美서 LMR 각형 양산체계 구축…상용화 속도 - 뉴스1",
-          "source_url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1LSWYxOGd3OWxwLUlkLW1mQzFxZ2VtSk45SnphRWlkSjZISmpKSFlRYlREcHlxWi1manVmSlAwMUZvNGVvSVZJNWNOekdOQkd0VHkzNlRvV0RTMDdEQUVsNTZuRzJraHZUUVHSAWpBVV95cUxNS0lmMThndzlscC1JZC1tZkMxcWdlbUpOOUp6YUVpZEo2SEpqSkhZUWJURHB5cVotZmp1ZkpQMDFGbzRlb0lWSTVjTnpHTkJHdFR5MzZUb1dEUzA3REFFbDU2bkcya2h2VFFR?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
+          "note": "LG엔솔, 2028년까지 美서 LMR 각형 양산체계 구축…상용화 속도 - v.daum.net",
+          "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBTcVJmOGt2b0hkYktINjAwRURielNrT2tQMXFQcjc3VzVSc3FYM0ZvYjBqQXNFOC1YZFRnMDVVMGJOaWY2VHBzNll6YlgzU2M?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -1738,321 +1538,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **442,400원**(+19.9%, 등급 A) · 직전 리포트 대비 ▲26,200원 · 프리미엄 테마+3/뉴스+5/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; earnings_surprise_beat(자동) +3.5%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **414,400원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 369,000원 🟢진입 가능(현재가가 상한가보다 12.3% 낮음) · 직전 리포트 대비 ▲24,500원"
-    },
-    {
-      "ticker": "207940",
-      "name": "삼성바이오로직스",
-      "sector": "바이오",
-      "current_price": 1366000.0,
-      "anchor_price": 1366000.0,
-      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
-      "consensus_rejected": null,
-      "premium_pct": {
-        "theme": 2.0,
-        "news": 9.16,
-        "sector": 4.73,
-        "momentum": 1.0,
-        "total": 16.89
-      },
-      "trend_gate": {
-        "factor": 1.0,
-        "excess60_vs_kospi_pct": 10.99,
-        "pct_of_52w_high": 69.28,
-        "ungated": {
-          "theme": 2.0,
-          "news": 9.16
-        }
-      },
-      "raw_estimate": 1596700.0,
-      "cap_applied": null,
-      "estimate": 1596700.0,
-      "expected_return_pct": 16.9,
-      "entry_cap_price": 1517800.0,
-      "entry_cap_basis": {
-        "min_rr": 1.0,
-        "min_rr_tier": "strong_bull",
-        "stop_frac_pct": 5.2,
-        "stop_basis": "ATR 2.6%×2≈손절 5.2%",
-        "formula": "목표가 / (1 + min_rr × 손절%)"
-      },
-      "in_buy_zone": true,
-      "entry_cap_gap_pct": 11.1,
-      "entry_cap_note": null,
-      "entry_cap_caution": null,
-      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +14%p) · 섹터값 0.18(집중도 평소 1.01배·heat 0.261)",
-      "sector_signals": {
-        "group": "bio_cdmo",
-        "median_excess_60d": 13.905000000000001,
-        "signals_met": 2,
-        "min_signals": 1,
-        "immersion_met": true,
-        "sector_value": {
-          "sector_value": 0.183,
-          "heat": 0.261,
-          "rs": 0.0,
-          "conc_ratio": 1.01,
-          "median_excess_20d": -8.52,
-          "members": [
-            "207940",
-            "068270"
-          ],
-          "as_of": "2026-10-02",
-          "group": "bio_cdmo"
-        }
-      },
-      "grade": "B",
-      "grade_capped_by_band": false,
-      "band_freshness": null,
-      "data_layers": {
-        "valuation_band": false,
-        "consensus_target": false,
-        "price_snapshot": true,
-        "theme_exposure": true,
-        "sector_group": true,
-        "earnings_signal": true
-      },
-      "detail": {
-        "theme_parts": [
-          {
-            "theme": "bio_cdmo",
-            "exposure": 0.9,
-            "strength": 0.5,
-            "horizon": "3-6y",
-            "horizon_discount": 0.222,
-            "contrib_pct": 2.0
-          }
-        ],
-        "news_parts": [
-          {
-            "kind": "news_auto",
-            "type": "labor_dispute",
-            "date": "2026-10-02",
-            "impact_pct": -3.0,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -1.74,
-            "note": "삼성바이오로직스 노조, 26일부터 3주간 총파업 돌입 - 아시아경제",
-            "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1FTUJDUDFhRHpCWkJrOWw3M0ZESVUwLVBFX1JrbjJkb1BzMlBKZnU0LVNma2QxRm43aHpTU1dzb0NFbzFGblpjV3oyWkRLd2J4S21OYmUybld3TDJicUdhNA?oc=5",
-            "matched_keywords": [
-              "총파업",
-              "파업돌입"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "labor_or_litigation_resolved",
-            "date": "2026-10-01",
-            "impact_pct": 2.0,
-            "decay": 0.96,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -3.1,
-            "contrib_pct": 1.15,
-            "note": "“적법한 조합 활동”…삼성바이오로직스 조합원 업무방해 ‘무혐의’ - 경기일보",
-            "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1pUmJpaXlhdEpTWURJRy1lTHVyMTNlQ3lsSzRvbmVWeDBBM282Nk9FRVVJTTlqRzFkQUVJOWZKcXhUSGlSb016SUExMnBiMVltLU85TEN1d3I2MDQ?oc=5",
-            "matched_keywords": [
-              "무혐의"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "order_backlog_surprise",
-            "date": "2026-10-01",
-            "impact_pct": 5.0,
-            "decay": 0.96,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -3.1,
-            "contrib_pct": 2.87,
-            "note": "삼성바이오로직스, 10월 글로벌 행사 잇단 참가…수주 확대 모색 - 뉴스웍스",
-            "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBJT2p5Q291UzJHQlhJdk5pZFI4a1QzLTJUbVlvX3pFM1BNMzI3Qmwyb1N3azNqblMwc3FuQ0lqSG1SV3pXXzJOM012MFFTRXNBS2tFMENabEgwZHBGNG5haXF3eGVxQ3NCM3NzUmRqONIBc0FVX3lxTE5ZaG9UcUxyb1BiWmV3TE1PSnpvbTEzajYxRzd2dG5ERFVFRlhzTkJyOTJ1UXVPbTNNWGZ5RnVHWkYxZmJQUkVBY3JEdnF4eHJld2R2MzNGR09Ca1RzQmx1X204bGNGVHREc2I2cnFVanpTeTA?oc=5",
-            "matched_keywords": [
-              "수주확대"
-            ]
-          },
-          {
-            "kind": "news_auto",
-            "type": "tech_breakthrough",
-            "date": "2026-09-28",
-            "impact_pct": 6.0,
-            "decay": 0.92,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -1.64,
-            "contrib_pct": 3.32,
-            "note": "삼성바이오로직스, 미국 바이오행사에서 바이오의약품 제조 공정 혁신 기술 공개 - 비즈니스포스트",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBUTzFoclRxZG5zbmxmdGxFX1hFcm1xcFVCaV9XSWxqVzhhbUVvMW5FV016WVY0Wng4blZGYVhoX2xaaGpuRDZ6UnRKX0E0YVBVTWZJVGtKXzVTZzlLaVJPd3UxQ0NnVnRuRjVCRi1qMWp2NWc?oc=5",
-            "matched_keywords": [
-              "신기술"
-            ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_shock",
-            "date": "2026-10-02",
-            "impact_pct": -6.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
-          },
-          {
-            "kind": "news_global",
-            "type": "global_risk_off",
-            "date": "2026-10-02",
-            "impact_pct": -4.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": -0.58,
-            "note": "Long-term bond yields in US, UK, France hit multi-decade highs as global selloff deepens - 헤럴드경제",
-            "source_url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE9jOUVlYVRzREdPYTNXOTA1bGlCXzNSUTdqZE9uZk1NQUhLY2pCQzdPQVRoaDl2WlVXSVA5RHhVV3dPRjUyZWU3elpJR1VRNk85NVc0S3BIWQ?oc=5"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2026-11-14",
-            "d_day": 40,
-            "impact_pct": 6.0,
-            "direction": 1.0,
-            "time_weight": 0.97,
-            "probability": 0.6,
-            "contrib_pct": 3.5,
-            "id": "207940-20263Q-earnings"
-          },
-          {
-            "kind": "catalyst",
-            "type": "earnings_report",
-            "date": "2027-03-31",
-            "d_day": 177,
-            "impact_pct": 3.0,
-            "direction": 1.0,
-            "time_weight": 0.6,
-            "probability": 0.6,
-            "contrib_pct": 1.08,
-            "id": "207940-2026FY-earnings"
-          }
-        ],
-        "earnings_signal": "strong_growth",
-        "ret_60d_pct": -2.02,
-        "next_catalyst": {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "d_day": 40,
-          "impact_pct": 6.0,
-          "direction": 1.0,
-          "time_weight": 0.97,
-          "probability": 0.6,
-          "contrib_pct": 3.5,
-          "id": "207940-20263Q-earnings"
-        }
-      },
-      "delta_vs_prev": {
-        "prev_estimate": 1623800.0,
-        "prev_as_of": "2026-10-02T18:13:29+09:00",
-        "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -27100.0,
-        "entry_cap_delta_krw": -25700.0,
-        "news_pct_delta": -2.07,
-        "expected_return_delta_pct": -2.1
-      },
-      "new_news_since_prev": [
-        {
-          "kind": "news_auto",
-          "type": "labor_dispute",
-          "date": "2026-10-02",
-          "contrib_pct": -1.74,
-          "note": "삼성바이오로직스 노조, 26일부터 3주간 총파업 돌입 - 아시아경제",
-          "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1FTUJDUDFhRHpCWkJrOWw3M0ZESVUwLVBFX1JrbjJkb1BzMlBKZnU0LVNma2QxRm43aHpTU1dzb0NFbzFGblpjV3oyWkRLd2J4S21OYmUybld3TDJicUdhNA?oc=5"
-        },
-        {
-          "kind": "news_auto",
-          "type": "labor_or_litigation_resolved",
-          "date": "2026-10-01",
-          "contrib_pct": 1.15,
-          "note": "“적법한 조합 활동”…삼성바이오로직스 조합원 업무방해 ‘무혐의’ - 경기일보",
-          "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1pUmJpaXlhdEpTWURJRy1lTHVyMTNlQ3lsSzRvbmVWeDBBM282Nk9FRVVJTTlqRzFkQUVJOWZKcXhUSGlSb016SUExMnBiMVltLU85TEN1d3I2MDQ?oc=5"
-        },
-        {
-          "kind": "news_auto",
-          "type": "order_backlog_surprise",
-          "date": "2026-10-01",
-          "contrib_pct": 2.87,
-          "note": "삼성바이오로직스, 10월 글로벌 행사 잇단 참가…수주 확대 모색 - 뉴스웍스",
-          "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBJT2p5Q291UzJHQlhJdk5pZFI4a1QzLTJUbVlvX3pFM1BNMzI3Qmwyb1N3azNqblMwc3FuQ0lqSG1SV3pXXzJOM012MFFTRXNBS2tFMENabEgwZHBGNG5haXF3eGVxQ3NCM3NzUmRqONIBc0FVX3lxTE5ZaG9UcUxyb1BiWmV3TE1PSnpvbTEzajYxRzd2dG5ERFVFRlhzTkJyOTJ1UXVPbTNNWGZ5RnVHWkYxZmJQUkVBY3JEdnF4eHJld2R2MzNGR09Ca1RzQmx1X204bGNGVHREc2I2cnFVanpTeTA?oc=5"
-        },
-        {
-          "kind": "news_auto",
-          "type": "tech_breakthrough",
-          "date": "2026-09-28",
-          "contrib_pct": 3.32,
-          "note": "삼성바이오로직스, 미국 바이오행사에서 바이오의약품 제조 공정 혁신 기술 공개 - 비즈니스포스트",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBUTzFoclRxZG5zbmxmdGxFX1hFcm1xcFVCaV9XSWxqVzhhbUVvMW5FV016WVY0Wng4blZGYVhoX2xaaGpuRDZ6UnRKX0E0YVBVTWZJVGtKXzVTZzlLaVJPd3UxQ0NnVnRuRjVCRi1qMWp2NWc?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_shock",
-          "date": "2026-10-02",
-          "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_risk_off",
-          "date": "2026-10-02",
-          "contrib_pct": -0.58,
-          "note": "Long-term bond yields in US, UK, France hit multi-decade highs as global selloff deepens - 헤럴드경제",
-          "source_url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE9jOUVlYVRzREdPYTNXOTA1bGlCXzNSUTdqZE9uZk1NQUhLY2pCQzdPQVRoaDl2WlVXSVA5RHhVV3dPRjUyZWU3elpJR1VRNk85NVc0S3BIWQ?oc=5"
-        },
-        {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2026-11-14",
-          "contrib_pct": 3.5,
-          "note": null,
-          "source_url": null
-        },
-        {
-          "kind": "catalyst",
-          "type": "earnings_report",
-          "date": "2027-03-31",
-          "contrib_pct": 1.08,
-          "note": null,
-          "source_url": null
-        }
-      ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,596,700원**(+16.9%, 등급 B) · 직전 리포트 대비 ▼27,100원 · 프리미엄 테마+2/뉴스+9/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,517,800원**(R/R≥1.0·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 1,366,000원 🟢진입 가능(현재가가 상한가보다 11.1% 낮음) · 직전 리포트 대비 ▼25,700원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **436,400원**(+18.3%, 등급 A) · 직전 리포트 대비 ▲20,200원 · 프리미엄 테마+3/뉴스+4/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; earnings_surprise_beat(자동) +3.5%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **408,800원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 369,000원 🟢진입 가능(현재가가 상한가보다 10.8% 낮음) · 직전 리포트 대비 ▲18,900원"
     },
     {
       "ticker": "068270",
@@ -2064,10 +1551,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.55,
-        "news": 7.9,
+        "news": 7.51,
         "sector": 4.73,
         "momentum": 2.0,
-        "total": 16.18
+        "total": 15.79
       },
       "trend_gate": {
         "factor": 1.0,
@@ -2075,14 +1562,14 @@
         "pct_of_52w_high": 76.32,
         "ungated": {
           "theme": 1.55,
-          "news": 7.9
+          "news": 7.51
         }
       },
-      "raw_estimate": 212100.0,
+      "raw_estimate": 211400.0,
       "cap_applied": null,
-      "estimate": 212100.0,
-      "expected_return_pct": 16.2,
-      "entry_cap_price": 203500.0,
+      "estimate": 211400.0,
+      "expected_return_pct": 15.8,
+      "entry_cap_price": 202800.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2091,7 +1578,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 11.4,
+      "entry_cap_gap_pct": 11.1,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +14%p) · 섹터값 0.18(집중도 평소 1.01배·heat 0.261)",
@@ -2156,16 +1643,16 @@
           {
             "kind": "news_auto",
             "type": "capex_expansion",
-            "date": "2026-10-02",
+            "date": "2026-10-04",
             "impact_pct": 3.0,
-            "decay": 0.97,
+            "decay": 0.99,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": 1.74,
-            "note": "셀트리온, 청주 오송에 2조 투자…신규 고용 700명 예상 - 연합뉴스",
-            "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE95RVVFalFueTNPcUFSTkdaOW8xU3BVVDVqb1QtaW05aXJoM2I5NWpXNG8zeDVsZkNidnpzMmhGQnBlREFGRnBwaDgtczVnSlBmTWQzTU04UTFsSDUtOEl0cNIBYEFVX3lxTE95RVVFalFueTNPcUFSTkdaOW8xU3BVVDVqb1QtaW05aXJoM2I5NWpXNG8zeDVsZkNidnpzMmhGQnBlREFGRnBwaDgtczVnSlBmTWQzTU04UTFsSDUtOEl0cA?oc=5",
+            "contrib_pct": 1.78,
+            "note": "셀트리온그룹, 청주 오송에 2조원 투자…700명 신규 고용 - 충청타임즈",
+            "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9PMTd3ZmZJS25tMUpFVUVpdG1LMk1pTHF0ZW5qdDhMVVFlR254alN6ZHZZYlNwNmNuQktHWUE3d3AwMTJnSlZkZ05EblZnY2FFTDBzM2drWVZUQlZuLV9xelQ4RERNbHR0?oc=5",
             "matched_keywords": [
-              "조투자"
+              "조원투자"
             ]
           },
           {
@@ -2177,8 +1664,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": -0.68,
             "contrib_pct": 2.87,
-            "note": "셀트리온, 앱토즈마 등 고수익 제품군 유럽서 입찰 수주 확대...'실적 성장 기대' - 팍스경제TV",
-            "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE91TEpfdWpBRkJGQmdKYlJvQ2hNQjVMVzBDenBzWXRTUk5LUV8wbnpPRUpRSHZYdzJJMkRZYlh1TGJ0a1BGbVlSWEw0eElsY3JtNy1ibnpJRjJrb0w0LW92WHhsMTNwalV2?oc=5",
+            "note": "셀트리온, 북유럽·네덜란드서 신규 제품 입찰 수주 확대 - medifonews.com",
+            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE90b0ZnM2NxRUF3RXIxNXQzR0Q3U1M1THplcXc3eDZBVExsc05rZzBJZlNTSEJmNXRieDRScFdDWXlha281V0hBekxRX19WMkplcWxnVEdpOEpJbGV1dkRsYXBobHA?oc=5",
             "matched_keywords": [
               "수주확대"
             ]
@@ -2200,20 +1687,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -2223,8 +1696,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -2284,10 +1757,10 @@
         "prev_estimate": 217300.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -5200.0,
-        "entry_cap_delta_krw": -5000.0,
-        "news_pct_delta": -2.83,
-        "expected_return_delta_pct": -2.8
+        "estimate_delta_krw": -5900.0,
+        "entry_cap_delta_krw": -5700.0,
+        "news_pct_delta": -3.22,
+        "expected_return_delta_pct": -3.2
       },
       "new_news_since_prev": [
         {
@@ -2301,18 +1774,18 @@
         {
           "kind": "news_auto",
           "type": "capex_expansion",
-          "date": "2026-10-02",
-          "contrib_pct": 1.74,
-          "note": "셀트리온, 청주 오송에 2조 투자…신규 고용 700명 예상 - 연합뉴스",
-          "source_url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE95RVVFalFueTNPcUFSTkdaOW8xU3BVVDVqb1QtaW05aXJoM2I5NWpXNG8zeDVsZkNidnpzMmhGQnBlREFGRnBwaDgtczVnSlBmTWQzTU04UTFsSDUtOEl0cNIBYEFVX3lxTE95RVVFalFueTNPcUFSTkdaOW8xU3BVVDVqb1QtaW05aXJoM2I5NWpXNG8zeDVsZkNidnpzMmhGQnBlREFGRnBwaDgtczVnSlBmTWQzTU04UTFsSDUtOEl0cA?oc=5"
+          "date": "2026-10-04",
+          "contrib_pct": 1.78,
+          "note": "셀트리온그룹, 청주 오송에 2조원 투자…700명 신규 고용 - 충청타임즈",
+          "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9PMTd3ZmZJS25tMUpFVUVpdG1LMk1pTHF0ZW5qdDhMVVFlR254alN6ZHZZYlNwNmNuQktHWUE3d3AwMTJnSlZkZ05EblZnY2FFTDBzM2drWVZUQlZuLV9xelQ4RERNbHR0?oc=5"
         },
         {
           "kind": "news_auto",
           "type": "order_backlog_surprise",
           "date": "2026-10-01",
           "contrib_pct": 2.87,
-          "note": "셀트리온, 앱토즈마 등 고수익 제품군 유럽서 입찰 수주 확대...'실적 성장 기대' - 팍스경제TV",
-          "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE91TEpfdWpBRkJGQmdKYlJvQ2hNQjVMVzBDenBzWXRTUk5LUV8wbnpPRUpRSHZYdzJJMkRZYlh1TGJ0a1BGbVlSWEw0eElsY3JtNy1ibnpJRjJrb0w0LW92WHhsMTNwalV2?oc=5"
+          "note": "셀트리온, 북유럽·네덜란드서 신규 제품 입찰 수주 확대 - medifonews.com",
+          "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE90b0ZnM2NxRUF3RXIxNXQzR0Q3U1M1THplcXc3eDZBVExsc05rZzBJZlNTSEJmNXRieDRScFdDWXlha281V0hBekxRX19WMkplcWxnVEdpOEpJbGV1dkRsYXBobHA?oc=5"
         },
         {
           "kind": "news_auto",
@@ -2324,19 +1797,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -2363,8 +1828,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **212,100원**(+16.2%, 등급 B) · 직전 리포트 대비 ▼5,200원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.9%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **203,500원**(R/R≥1.0·ATR 2.1%×2≈손절 4.2% 기준) · 현재가 182,600원 🟢진입 가능(현재가가 상한가보다 11.4% 낮음) · 직전 리포트 대비 ▼5,000원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **211,400원**(+15.8%, 등급 B) · 직전 리포트 대비 ▼5,900원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.9%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **202,800원**(R/R≥1.0·ATR 2.1%×2≈손절 4.2% 기준) · 현재가 182,600원 🟢진입 가능(현재가가 상한가보다 11.1% 낮음) · 직전 리포트 대비 ▼5,700원"
     },
     {
       "ticker": "055550",
@@ -2376,10 +1841,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 5.24,
+        "news": 4.81,
         "sector": 5.16,
         "momentum": 3.0,
-        "total": 18.3
+        "total": 17.87
       },
       "trend_gate": {
         "factor": 1.0,
@@ -2387,14 +1852,14 @@
         "pct_of_52w_high": 90.9,
         "ungated": {
           "theme": 4.9,
-          "news": 5.24
+          "news": 4.81
         }
       },
-      "raw_estimate": 122300.0,
+      "raw_estimate": 121900.0,
       "cap_applied": null,
-      "estimate": 122300.0,
-      "expected_return_pct": 15.5,
-      "entry_cap_price": 114800.0,
+      "estimate": 121900.0,
+      "expected_return_pct": 15.1,
+      "entry_cap_price": 114400.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2403,7 +1868,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 8.4,
+      "entry_cap_gap_pct": 8.0,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +11%p) · 섹터값 0.29(집중도 평소 1.13배·heat 0.413)",
@@ -2468,32 +1933,18 @@
         "news_parts": [
           {
             "kind": "news_auto",
-            "type": "analyst_target_upgrade",
+            "type": "policy_support",
             "date": "2026-09-29",
             "impact_pct": 3.0,
             "decay": 0.93,
             "auto_factor": 0.6,
             "realized_since_event_pct": -6.95,
             "contrib_pct": 1.68,
-            "note": "\"신한지주, 올해 최대 실적·해외자회사 경쟁력 강화 '긍정적'...목표가↑\"-BNK證 - 베타뉴스",
-            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9SU3p2dE9IMS1SR1RucXFvZ21zRXVhRFc2WmRXcmVFU2J3aGxqRlZ2eVRCZlhYRWdnZ1htNWtpamRxLURvVHFyUE0wSmt2WmFtRXVWU29YNHV0dEtldjFYNktKMWY?oc=5",
+            "note": "[현장] 신한금융 ’밸류업 2.0’ 가동…주당배당금 매년 10% 이상 늘린다 By EBN - Investing.com 한국어",
+            "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5QbkRHQ045WXd6V2J1ZTN3djhBQW5IV2ZpVHpNZ1QyQUFwQkFWUUFzZlMwQ2JSMmY5SWMtQ0NVOW5zQjNuWHIxMWdRaUtmMk9ISWJaaVd2UmFyWG5HclNvdS04RjhwU0E3d0loZDZtZm0?oc=5",
             "matched_keywords": [
-              "목표가↑"
+              "밸류업"
             ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -2506,8 +1957,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -2567,35 +2018,27 @@
         "prev_estimate": 125900.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -3600.0,
-        "entry_cap_delta_krw": -3400.0,
-        "news_pct_delta": -3.9,
-        "expected_return_delta_pct": -4.2
+        "estimate_delta_krw": -4000.0,
+        "entry_cap_delta_krw": -3800.0,
+        "news_pct_delta": -4.33,
+        "expected_return_delta_pct": -4.6
       },
       "new_news_since_prev": [
         {
           "kind": "news_auto",
-          "type": "analyst_target_upgrade",
+          "type": "policy_support",
           "date": "2026-09-29",
           "contrib_pct": 1.68,
-          "note": "\"신한지주, 올해 최대 실적·해외자회사 경쟁력 강화 '긍정적'...목표가↑\"-BNK證 - 베타뉴스",
-          "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9SU3p2dE9IMS1SR1RucXFvZ21zRXVhRFc2WmRXcmVFU2J3aGxqRlZ2eVRCZlhYRWdnZ1htNWtpamRxLURvVHFyUE0wSmt2WmFtRXVWU29YNHV0dEtldjFYNktKMWY?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
+          "note": "[현장] 신한금융 ’밸류업 2.0’ 가동…주당배당금 매년 10% 이상 늘린다 By EBN - Investing.com 한국어",
+          "source_url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5QbkRHQ045WXd6V2J1ZTN3djhBQW5IV2ZpVHpNZ1QyQUFwQkFWUUFzZlMwQ2JSMmY5SWMtQ0NVOW5zQjNuWHIxMWdRaUtmMk9ISWJaaVd2UmFyWG5HclNvdS04RjhwU0E3d0loZDZtZm0?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -2622,8 +2065,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **122,300원**(+15.5%, 등급 A) · 직전 리포트 대비 ▼3,600원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; analyst_target_upgrade(자동) +1.7%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **114,800원**(R/R≥1.0·ATR 3.3%×2≈손절 6.5% 기준) · 현재가 105,900원 🟢진입 가능(현재가가 상한가보다 8.4% 낮음) · 직전 리포트 대비 ▼3,400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **121,900원**(+15.1%, 등급 A) · 직전 리포트 대비 ▼4,000원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; policy_support(자동) +1.7%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **114,400원**(R/R≥1.0·ATR 3.3%×2≈손절 6.5% 기준) · 현재가 105,900원 🟢진입 가능(현재가가 상한가보다 8.0% 낮음) · 직전 리포트 대비 ▼3,800원"
     },
     {
       "ticker": "012450",
@@ -2635,10 +2078,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.89,
-        "news": 2.11,
+        "news": 1.86,
         "sector": 3.32,
         "momentum": -2.5,
-        "total": 4.82
+        "total": 4.57
       },
       "trend_gate": {
         "factor": 0.6,
@@ -2646,14 +2089,14 @@
         "pct_of_52w_high": 64.59,
         "ungated": {
           "theme": 3.15,
-          "news": 4.49
+          "news": 4.06
         }
       },
-      "raw_estimate": 1219800.0,
+      "raw_estimate": 1216900.0,
       "cap_applied": null,
-      "estimate": 1219800.0,
-      "expected_return_pct": 14.1,
-      "entry_cap_price": 1117600.0,
+      "estimate": 1216900.0,
+      "expected_return_pct": 13.8,
+      "entry_cap_price": 1115000.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2662,7 +2105,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 4.5,
+      "entry_cap_gap_pct": 4.3,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.03(집중도 평소 0.62배·heat 0.0)",
@@ -2725,21 +2168,6 @@
         "news_parts": [
           {
             "kind": "news_auto",
-            "type": "capex_expansion",
-            "date": "2026-09-30",
-            "impact_pct": 3.0,
-            "decay": 0.94,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 2.47,
-            "contrib_pct": 0.0,
-            "note": "한화에어로 AI 전투 플랫폼…2040년까지 55조 투입 - 자본시장뉴스",
-            "source_url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBzUkNNVTUwXzNqczlxbXJQR2J6MlQ4MHlQMUhiVmdqdmN2eHRTbkhSazZPLXNnSHVvMHBrV3BHTno2RTY2N2M0dlpockFFSVg5ekIxeXFjUUdya1R3RWxVcWd1NEM0NEU?oc=5",
-            "matched_keywords": [
-              "조투입"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "tech_breakthrough",
             "date": "2026-09-30",
             "impact_pct": 6.0,
@@ -2755,20 +2183,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -2778,8 +2192,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -2839,10 +2253,10 @@
         "prev_estimate": 1186500.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 33300.0,
-        "entry_cap_delta_krw": 30500.0,
-        "news_pct_delta": -0.34,
-        "expected_return_delta_pct": 3.1
+        "estimate_delta_krw": 30400.0,
+        "entry_cap_delta_krw": 27900.0,
+        "news_pct_delta": -0.59,
+        "expected_return_delta_pct": 2.8
       },
       "new_news_since_prev": [
         {
@@ -2855,19 +2269,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -2894,8 +2300,277 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,219,800원**(+14.1%, 등급 A) · 직전 리포트 대비 ▲33,300원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,117,600원**(R/R≥1.0·ATR 4.6%×2≈손절 9.1% 기준) · 현재가 1,069,000원 🟢진입 가능(현재가가 상한가보다 4.5% 낮음) · 직전 리포트 대비 ▲30,500원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,216,900원**(+13.8%, 등급 A) · 직전 리포트 대비 ▲30,400원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,115,000원**(R/R≥1.0·ATR 4.6%×2≈손절 9.1% 기준) · 현재가 1,069,000원 🟢진입 가능(현재가가 상한가보다 4.3% 낮음) · 직전 리포트 대비 ▲27,900원"
+    },
+    {
+      "ticker": "207940",
+      "name": "삼성바이오로직스",
+      "sector": "바이오",
+      "current_price": 1366000.0,
+      "anchor_price": 1366000.0,
+      "anchor_basis": "현재가 폴백(밸류 밴드·컨센서스 미시드 — sunday_strategy 주간 시드 필요)",
+      "consensus_rejected": null,
+      "premium_pct": {
+        "theme": 2.0,
+        "news": 5.86,
+        "sector": 4.73,
+        "momentum": 1.0,
+        "total": 13.59
+      },
+      "trend_gate": {
+        "factor": 1.0,
+        "excess60_vs_kospi_pct": 10.99,
+        "pct_of_52w_high": 69.28,
+        "ungated": {
+          "theme": 2.0,
+          "news": 5.86
+        }
+      },
+      "raw_estimate": 1551600.0,
+      "cap_applied": null,
+      "estimate": 1551600.0,
+      "expected_return_pct": 13.6,
+      "entry_cap_price": 1474900.0,
+      "entry_cap_basis": {
+        "min_rr": 1.0,
+        "min_rr_tier": "strong_bull",
+        "stop_frac_pct": 5.2,
+        "stop_basis": "ATR 2.6%×2≈손절 5.2%",
+        "formula": "목표가 / (1 + min_rr × 손절%)"
+      },
+      "in_buy_zone": true,
+      "entry_cap_gap_pct": 8.0,
+      "entry_cap_note": null,
+      "entry_cap_caution": null,
+      "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +14%p) · 섹터값 0.18(집중도 평소 1.01배·heat 0.261)",
+      "sector_signals": {
+        "group": "bio_cdmo",
+        "median_excess_60d": 13.905000000000001,
+        "signals_met": 2,
+        "min_signals": 1,
+        "immersion_met": true,
+        "sector_value": {
+          "sector_value": 0.183,
+          "heat": 0.261,
+          "rs": 0.0,
+          "conc_ratio": 1.01,
+          "median_excess_20d": -8.52,
+          "members": [
+            "207940",
+            "068270"
+          ],
+          "as_of": "2026-10-02",
+          "group": "bio_cdmo"
+        }
+      },
+      "grade": "B",
+      "grade_capped_by_band": false,
+      "band_freshness": null,
+      "data_layers": {
+        "valuation_band": false,
+        "consensus_target": false,
+        "price_snapshot": true,
+        "theme_exposure": true,
+        "sector_group": true,
+        "earnings_signal": true
+      },
+      "detail": {
+        "theme_parts": [
+          {
+            "theme": "bio_cdmo",
+            "exposure": 0.9,
+            "strength": 0.5,
+            "horizon": "3-6y",
+            "horizon_discount": 0.222,
+            "contrib_pct": 2.0
+          }
+        ],
+        "news_parts": [
+          {
+            "kind": "news_auto",
+            "type": "labor_dispute",
+            "date": "2026-10-02",
+            "impact_pct": -3.0,
+            "decay": 0.97,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -1.74,
+            "note": "[단독] 삼성바이오로직스 노사 갈등 격화…노조, 26일부터 총파업 돌입 - 데일리한국",
+            "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9YZDZsNHd6SFFaaDNNT1pVTXpkYnlHOEMzS1NzTFJyUWZTNkxmdnM3UzNuTDVpODBhWE92dWd2ZDdpRk1uMlpuUWNtdUJYaW12aUdUT0tCQk16ZG1aZ3NHekVGdHVDMWZkSGVKTHdiY9IBc0FVX3lxTE82Rm44dHVYMVBWZTMtXzhtZ0kxRU5vTDhlcE01ME16Q0xobFFfR0g3YXR0V1piNm5iemdYV25JXzVyaEpvMDloYzVWU3o0Vjk0Q1NXaUNITzl4V2Q4OWpGUVlQVUVGZ1ZGS0x2MjFISnVxZFk?oc=5",
+            "matched_keywords": [
+              "총파업",
+              "파업돌입",
+              "노사갈등"
+            ]
+          },
+          {
+            "kind": "news_auto",
+            "type": "labor_or_litigation_resolved",
+            "date": "2026-10-01",
+            "impact_pct": 2.0,
+            "decay": 0.96,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -3.1,
+            "contrib_pct": 1.15,
+            "note": "“적법한 조합 활동”…삼성바이오로직스 조합원 업무방해 ‘무혐의’ - 경기일보",
+            "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1pUmJpaXlhdEpTWURJRy1lTHVyMTNlQ3lsSzRvbmVWeDBBM282Nk9FRVVJTTlqRzFkQUVJOWZKcXhUSGlSb016SUExMnBiMVltLU85TEN1d3I2MDQ?oc=5",
+            "matched_keywords": [
+              "무혐의"
+            ]
+          },
+          {
+            "kind": "news_auto",
+            "type": "tech_breakthrough",
+            "date": "2026-09-28",
+            "impact_pct": 6.0,
+            "decay": 0.92,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": -1.64,
+            "contrib_pct": 3.32,
+            "note": "삼성바이오로직스, 미국 바이오행사에서 바이오의약품 제조 공정 혁신 기술 공개 - 비즈니스포스트",
+            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBUTzFoclRxZG5zbmxmdGxFX1hFcm1xcFVCaV9XSWxqVzhhbUVvMW5FV016WVY0Wng4blZGYVhoX2xaaGpuRDZ6UnRKX0E0YVBVTWZJVGtKXzVTZzlLaVJPd3UxQ0NnVnRuRjVCRi1qMWp2NWc?oc=5",
+            "matched_keywords": [
+              "신기술"
+            ]
+          },
+          {
+            "kind": "news_global",
+            "type": "global_rate_shock",
+            "date": "2026-10-02",
+            "impact_pct": -6.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.97,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.87,
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
+          },
+          {
+            "kind": "news_global",
+            "type": "global_risk_off",
+            "date": "2026-10-02",
+            "impact_pct": -4.0,
+            "channel": "macro",
+            "transmission": 0.25,
+            "decay": 0.97,
+            "auto_factor": 0.6,
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": -0.58,
+            "note": "Long-term bond yields in US, UK, France hit multi-decade highs as global selloff deepens - 헤럴드경제",
+            "source_url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE9jOUVlYVRzREdPYTNXOTA1bGlCXzNSUTdqZE9uZk1NQUhLY2pCQzdPQVRoaDl2WlVXSVA5RHhVV3dPRjUyZWU3elpJR1VRNk85NVc0S3BIWQ?oc=5"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2026-11-14",
+            "d_day": 40,
+            "impact_pct": 6.0,
+            "direction": 1.0,
+            "time_weight": 0.97,
+            "probability": 0.6,
+            "contrib_pct": 3.5,
+            "id": "207940-20263Q-earnings"
+          },
+          {
+            "kind": "catalyst",
+            "type": "earnings_report",
+            "date": "2027-03-31",
+            "d_day": 177,
+            "impact_pct": 3.0,
+            "direction": 1.0,
+            "time_weight": 0.6,
+            "probability": 0.6,
+            "contrib_pct": 1.08,
+            "id": "207940-2026FY-earnings"
+          }
+        ],
+        "earnings_signal": "strong_growth",
+        "ret_60d_pct": -2.02,
+        "next_catalyst": {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "d_day": 40,
+          "impact_pct": 6.0,
+          "direction": 1.0,
+          "time_weight": 0.97,
+          "probability": 0.6,
+          "contrib_pct": 3.5,
+          "id": "207940-20263Q-earnings"
+        }
+      },
+      "delta_vs_prev": {
+        "prev_estimate": 1623800.0,
+        "prev_as_of": "2026-10-02T18:13:29+09:00",
+        "prev_slot": "2026-10-02-18",
+        "estimate_delta_krw": -72200.0,
+        "entry_cap_delta_krw": -68600.0,
+        "news_pct_delta": -5.37,
+        "expected_return_delta_pct": -5.4
+      },
+      "new_news_since_prev": [
+        {
+          "kind": "news_auto",
+          "type": "labor_dispute",
+          "date": "2026-10-02",
+          "contrib_pct": -1.74,
+          "note": "[단독] 삼성바이오로직스 노사 갈등 격화…노조, 26일부터 총파업 돌입 - 데일리한국",
+          "source_url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9YZDZsNHd6SFFaaDNNT1pVTXpkYnlHOEMzS1NzTFJyUWZTNkxmdnM3UzNuTDVpODBhWE92dWd2ZDdpRk1uMlpuUWNtdUJYaW12aUdUT0tCQk16ZG1aZ3NHekVGdHVDMWZkSGVKTHdiY9IBc0FVX3lxTE82Rm44dHVYMVBWZTMtXzhtZ0kxRU5vTDhlcE01ME16Q0xobFFfR0g3YXR0V1piNm5iemdYV25JXzVyaEpvMDloYzVWU3o0Vjk0Q1NXaUNITzl4V2Q4OWpGUVlQVUVGZ1ZGS0x2MjFISnVxZFk?oc=5"
+        },
+        {
+          "kind": "news_auto",
+          "type": "labor_or_litigation_resolved",
+          "date": "2026-10-01",
+          "contrib_pct": 1.15,
+          "note": "“적법한 조합 활동”…삼성바이오로직스 조합원 업무방해 ‘무혐의’ - 경기일보",
+          "source_url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1pUmJpaXlhdEpTWURJRy1lTHVyMTNlQ3lsSzRvbmVWeDBBM282Nk9FRVVJTTlqRzFkQUVJOWZKcXhUSGlSb016SUExMnBiMVltLU85TEN1d3I2MDQ?oc=5"
+        },
+        {
+          "kind": "news_auto",
+          "type": "tech_breakthrough",
+          "date": "2026-09-28",
+          "contrib_pct": 3.32,
+          "note": "삼성바이오로직스, 미국 바이오행사에서 바이오의약품 제조 공정 혁신 기술 공개 - 비즈니스포스트",
+          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBUTzFoclRxZG5zbmxmdGxFX1hFcm1xcFVCaV9XSWxqVzhhbUVvMW5FV016WVY0Wng4blZGYVhoX2xaaGpuRDZ6UnRKX0E0YVBVTWZJVGtKXzVTZzlLaVJPd3UxQ0NnVnRuRjVCRi1qMWp2NWc?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_rate_shock",
+          "date": "2026-10-02",
+          "contrib_pct": -0.87,
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
+        },
+        {
+          "kind": "news_global",
+          "type": "global_risk_off",
+          "date": "2026-10-02",
+          "contrib_pct": -0.58,
+          "note": "Long-term bond yields in US, UK, France hit multi-decade highs as global selloff deepens - 헤럴드경제",
+          "source_url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE9jOUVlYVRzREdPYTNXOTA1bGlCXzNSUTdqZE9uZk1NQUhLY2pCQzdPQVRoaDl2WlVXSVA5RHhVV3dPRjUyZWU3elpJR1VRNk85NVc0S3BIWQ?oc=5"
+        },
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2026-11-14",
+          "contrib_pct": 3.5,
+          "note": null,
+          "source_url": null
+        },
+        {
+          "kind": "catalyst",
+          "type": "earnings_report",
+          "date": "2027-03-31",
+          "contrib_pct": 1.08,
+          "note": null,
+          "source_url": null
+        }
+      ],
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,551,600원**(+13.6%, 등급 B) · 직전 리포트 대비 ▼72,200원 · 프리미엄 테마+2/뉴스+6/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,474,900원**(R/R≥1.0·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 1,366,000원 🟢진입 가능(현재가가 상한가보다 8.0% 낮음) · 직전 리포트 대비 ▼68,600원"
     },
     {
       "ticker": "086790",
@@ -2907,10 +2582,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 4.9,
-        "news": 4.05,
+        "news": 3.62,
         "sector": 5.16,
         "momentum": 3.0,
-        "total": 17.11
+        "total": 16.68
       },
       "trend_gate": {
         "factor": 1.0,
@@ -2918,14 +2593,14 @@
         "pct_of_52w_high": 90.95,
         "ungated": {
           "theme": 4.9,
-          "news": 4.05
+          "news": 3.62
         }
       },
-      "raw_estimate": 144200.0,
+      "raw_estimate": 143700.0,
       "cap_applied": null,
-      "estimate": 144200.0,
-      "expected_return_pct": 11.3,
-      "entry_cap_price": 135500.0,
+      "estimate": 143700.0,
+      "expected_return_pct": 10.9,
+      "entry_cap_price": 135100.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -2934,7 +2609,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": true,
-      "entry_cap_gap_pct": 4.6,
+      "entry_cap_gap_pct": 4.2,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "현재 활발 — 주도 섹터(KOSPI 대비 60일 +11%p) · 섹터값 0.29(집중도 평소 1.13배·heat 0.413)",
@@ -3007,25 +2682,11 @@
             "realized_since_event_pct": 0.0,
             "contrib_pct": 2.32,
             "note": "“하나금융지주, 원화 강세로 실적 개선… 주주환원 확대될 것” - 주간동아",
-            "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE43N3FiaXVUSnlvQXZpX3BzaFBBS1hKeHkxdGczMkd3TWlpajlpX2ViWGlIal9vazkxMW9TNGZqcEl3MUZIZWFrQTVZWlVBRmRTbTh0T1hXenhKblAzeUtaVngyeHc?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBHQ1JPYmxIaExucVNNUGQwUEgxa1VDd3cybWlRNUh0c01BZ0FYTm5JYVVNSDktNHVrS2k2SlF6UmVSQVBhWl85ek5lM2dzVENXdFZ3M0VaRmNncHRyNUtrSU5URUxFdFRP?oc=5",
             "matched_keywords": [
               "주주환원확대",
               "주주환원"
             ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3038,8 +2699,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3099,10 +2760,10 @@
         "prev_estimate": 146500.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -2300.0,
-        "entry_cap_delta_krw": -2200.0,
-        "news_pct_delta": -1.93,
-        "expected_return_delta_pct": -1.9
+        "estimate_delta_krw": -2800.0,
+        "entry_cap_delta_krw": -2600.0,
+        "news_pct_delta": -2.36,
+        "expected_return_delta_pct": -2.3
       },
       "new_news_since_prev": [
         {
@@ -3111,23 +2772,15 @@
           "date": "2026-10-02",
           "contrib_pct": 2.32,
           "note": "“하나금융지주, 원화 강세로 실적 개선… 주주환원 확대될 것” - 주간동아",
-          "source_url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE43N3FiaXVUSnlvQXZpX3BzaFBBS1hKeHkxdGczMkd3TWlpajlpX2ViWGlIal9vazkxMW9TNGZqcEl3MUZIZWFrQTVZWlVBRmRTbTh0T1hXenhKblAzeUtaVngyeHc?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBHQ1JPYmxIaExucVNNUGQwUEgxa1VDd3cybWlRNUh0c01BZ0FYTm5JYVVNSDktNHVrS2k2SlF6UmVSQVBhWl85ek5lM2dzVENXdFZ3M0VaRmNncHRyNUtrSU5URUxFdFRP?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -3154,8 +2807,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **144,200원**(+11.3%, 등급 A) · 직전 리포트 대비 ▼2,300원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀+3% · 📰 원인 뉴스: buyback_cancellation(자동) +2.3%; earnings_report(촉매) +2.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **135,500원**(R/R≥1.0·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 129,600원 🟢진입 가능(현재가가 상한가보다 4.6% 낮음) · 직전 리포트 대비 ▼2,200원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **143,700원**(+10.9%, 등급 A) · 직전 리포트 대비 ▼2,800원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀+3% · 📰 원인 뉴스: buyback_cancellation(자동) +2.3%; earnings_report(촉매) +2.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **135,100원**(R/R≥1.0·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 129,600원 🟢진입 가능(현재가가 상한가보다 4.2% 낮음) · 직전 리포트 대비 ▼2,600원"
     },
     {
       "ticker": "009540",
@@ -3167,10 +2820,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.73,
-        "news": 2.9,
+        "news": 2.74,
         "sector": 3.2,
         "momentum": -2.5,
-        "total": 5.33
+        "total": 5.17
       },
       "trend_gate": {
         "factor": 0.6,
@@ -3178,14 +2831,14 @@
         "pct_of_52w_high": 66.03,
         "ungated": {
           "theme": 2.88,
-          "news": 5.8
+          "news": 5.53
         }
       },
-      "raw_estimate": 353700.0,
+      "raw_estimate": 353100.0,
       "cap_applied": null,
-      "estimate": 353700.0,
-      "expected_return_pct": 8.3,
-      "entry_cap_price": 325800.0,
+      "estimate": 353100.0,
+      "expected_return_pct": 8.1,
+      "entry_cap_price": 325200.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3194,7 +2847,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -0.2,
+      "entry_cap_gap_pct": -0.4,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.78배·heat 0.0)",
@@ -3259,31 +2912,18 @@
           {
             "kind": "news_auto",
             "type": "buyback_cancellation",
-            "date": "2026-09-29",
+            "date": "2026-10-05",
             "impact_pct": 4.0,
-            "decay": 0.93,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -0.99,
-            "contrib_pct": 2.24,
-            "note": "HD한국조선해양, 기업가치 제고 목표 '매출·ROE·주주환원' 트리플 조기 달성 - 소비자가 만드는 신문",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5mc3BGVlVtdUpfMk1WN09fRHpObWpoWDNyc0RLdTk2d0pieDQxTTE5RVZGVEpRNlFadzJlU3RDNHJwdjJQRU1nSDFxd2RoWFRfM0pMME9abm9adV9BaER4SGJTZGFQcjJ2TTMwYkdieWJjaFU?oc=5",
-            "matched_keywords": [
-              "주주환원"
-            ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
+            "contrib_pct": 2.4,
+            "note": "HD한국조선해양, 배당 확대 기대감 커지나…“주주환원 매력 주목” - 핀포인트뉴스",
+            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFA2c1B5eFhSWUlYdVY1Y01odldvN3lxZlF0a3ZIZjJ5Z1ZWbG44d2dXbE9mVm4ya2U1NUpTbjBlTXBLS3RGZGFFN0RZRkFZeUFNUVJZeVJJUnZLMExUZ3p3UVdUMUtSQlEtcE5oT3M3eG43NDjSAXdBVV95cUxQOFczdzR0enJqTlR2c3plcWlwS2dUWVdhYjkyYmlXcllIV2diMmVUYkh2eDZsdV9lOW9hSi1nQWpDU29QYlFPXzl5ZXdHRnF0amluaFpQYUhrbDh0bUtybmNIclQ2eGQtTWx3MTRja05QWEhfMGI2SQ?oc=5",
+            "matched_keywords": [
+              "배당확대",
+              "주주환원"
+            ]
           },
           {
             "kind": "news_global",
@@ -3296,8 +2936,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3357,35 +2997,27 @@
         "prev_estimate": 354500.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -800.0,
-        "entry_cap_delta_krw": -600.0,
-        "news_pct_delta": -0.31,
-        "expected_return_delta_pct": -0.4
+        "estimate_delta_krw": -1400.0,
+        "entry_cap_delta_krw": -1200.0,
+        "news_pct_delta": -0.47,
+        "expected_return_delta_pct": -0.6
       },
       "new_news_since_prev": [
         {
           "kind": "news_auto",
           "type": "buyback_cancellation",
-          "date": "2026-09-29",
-          "contrib_pct": 2.24,
-          "note": "HD한국조선해양, 기업가치 제고 목표 '매출·ROE·주주환원' 트리플 조기 달성 - 소비자가 만드는 신문",
-          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5mc3BGVlVtdUpfMk1WN09fRHpObWpoWDNyc0RLdTk2d0pieDQxTTE5RVZGVEpRNlFadzJlU3RDNHJwdjJQRU1nSDFxd2RoWFRfM0pMME9abm9adV9BaER4SGJTZGFQcjJ2TTMwYkdieWJjaFU?oc=5"
-        },
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
+          "date": "2026-10-05",
+          "contrib_pct": 2.4,
+          "note": "HD한국조선해양, 배당 확대 기대감 커지나…“주주환원 매력 주목” - 핀포인트뉴스",
+          "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFA2c1B5eFhSWUlYdVY1Y01odldvN3lxZlF0a3ZIZjJ5Z1ZWbG44d2dXbE9mVm4ya2U1NUpTbjBlTXBLS3RGZGFFN0RZRkFZeUFNUVJZeVJJUnZLMExUZ3p3UVdUMUtSQlEtcE5oT3M3eG43NDjSAXdBVV95cUxQOFczdzR0enJqTlR2c3plcWlwS2dUWVdhYjkyYmlXcllIV2diMmVUYkh2eDZsdV9lOW9hSi1nQWpDU29QYlFPXzl5ZXdHRnF0amluaFpQYUhrbDh0bUtybmNIclQ2eGQtTWx3MTRja05QWEhfMGI2SQ?oc=5"
         },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -3412,8 +3044,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **353,700원**(+8.3%, 등급 A) · 직전 리포트 대비 ▼800원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.2%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **325,800원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 326,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.2% 상회) · 직전 리포트 대비 ▼600원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **353,100원**(+8.1%, 등급 A) · 직전 리포트 대비 ▼1,400원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.4%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **325,200원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 326,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.4% 상회) · 직전 리포트 대비 ▼1,200원"
     },
     {
       "ticker": "079550",
@@ -3425,10 +3057,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.89,
-        "news": 1.56,
+        "news": 1.3,
         "sector": 3.32,
         "momentum": -2.5,
-        "total": 4.27
+        "total": 4.01
       },
       "trend_gate": {
         "factor": 0.6,
@@ -3436,14 +3068,14 @@
         "pct_of_52w_high": 67.89,
         "ungated": {
           "theme": 3.15,
-          "news": 3.56
+          "news": 3.13
         }
       },
-      "raw_estimate": 813100.0,
+      "raw_estimate": 811000.0,
       "cap_applied": null,
-      "estimate": 813100.0,
-      "expected_return_pct": 7.1,
-      "entry_cap_price": 740800.0,
+      "estimate": 811000.0,
+      "expected_return_pct": 6.9,
+      "entry_cap_price": 738900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3452,7 +3084,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -2.4,
+      "entry_cap_gap_pct": -2.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.03(집중도 평소 0.62배·heat 0.0)",
@@ -3523,24 +3155,10 @@
             "realized_since_event_pct": 3.87,
             "contrib_pct": 0.0,
             "note": "LIG넥스원 6.16% 강세, 72만원대…수주잔고 24조5700억원 - 잡포스트",
-            "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5NV1dXWm9iT0pGcVBQaG5zT2xmdWMtbWJKelE0UlFFZFRNdEIyWUZpemJvYUhmVkZVTkVNQkFOTG85dnQwNzhWWHRQX2hybG51cW9FUV9tU0dsTGFpanIzelBpa3hBTHJwY3VQdGNIYnZYUdIBckFVX3lxTE5NV1dXWm9iT0pGcVBQaG5zT2xmdWMtbWJKelE0UlFFZFRNdEIyWUZpemJvYUhmVkZVTkVNQkFOTG85dnQwNzhWWHRQX2hybG51cW9FUV9tU0dsTGFpanIzelBpa3hBTHJwY3VQdGNIYnZYUQ?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5IMVcyWDdsRjk3MXhpMXFRQWQ3ZjRHZ1NvT2dYTXlHQW55eV8zcFVrTW1ZZ3dBbUYtNTRqNjFtZnZNcmRmOUh3TEJZTlNXUS1ZbUtFWG52aVNFbTdTTjNRbENqM04wRzdmekFEeTZ30gFyQVVfeXFMTk1XV1dab2JPSkZxUFBobnNPbGZ1Yy1tYkp6UTRSUUVkVE10QjJZRml6Ym9hSGZWRlVORU1CQU5Mbzl2dDA3OFZYdFBfaHJsbnVxb0VRX21TR2xMYWlqcjN6UGlreEFMcnBjdVB0Y0hidlhR?oc=5",
             "matched_keywords": [
               "수주잔고"
             ]
-          },
-          {
-            "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3553,8 +3171,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3614,27 +3232,19 @@
         "prev_estimate": 789100.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 24000.0,
-        "entry_cap_delta_krw": 22000.0,
-        "news_pct_delta": -0.26,
-        "expected_return_delta_pct": 2.9
+        "estimate_delta_krw": 21900.0,
+        "entry_cap_delta_krw": 20100.0,
+        "news_pct_delta": -0.52,
+        "expected_return_delta_pct": 2.7
       },
       "new_news_since_prev": [
-        {
-          "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
         {
           "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -3661,8 +3271,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **813,100원**(+7.1%, 등급 A) · 직전 리포트 대비 ▲24,000원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **740,800원**(R/R≥1.0·ATR 4.9%×2≈손절 9.8% 기준) · 현재가 759,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.4% 상회) · 직전 리포트 대비 ▲22,000원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **811,000원**(+6.9%, 등급 A) · 직전 리포트 대비 ▲21,900원 · 프리미엄 테마+2/뉴스+1/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **738,900원**(R/R≥1.0·ATR 4.9%×2≈손절 9.8% 기준) · 현재가 759,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.6% 상회) · 직전 리포트 대비 ▲20,100원"
     },
     {
       "ticker": "006400",
@@ -3674,10 +3284,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 3.92,
-        "news": 9.29,
+        "news": 9.17,
         "sector": 4.7,
         "momentum": 0.5,
-        "total": 18.41
+        "total": 18.29
       },
       "trend_gate": {
         "factor": 1.0,
@@ -3685,14 +3295,14 @@
         "pct_of_52w_high": 73.17,
         "ungated": {
           "theme": 3.92,
-          "news": 9.29
+          "news": 9.17
         }
       },
-      "raw_estimate": 560800.0,
+      "raw_estimate": 560200.0,
       "cap_applied": null,
-      "estimate": 560800.0,
-      "expected_return_pct": 6.0,
-      "entry_cap_price": 522900.0,
+      "estimate": 560200.0,
+      "expected_return_pct": 5.9,
+      "entry_cap_price": 522400.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -3789,16 +3399,16 @@
           {
             "kind": "news_auto",
             "type": "capex_expansion",
-            "date": "2026-09-23",
+            "date": "2026-10-01",
             "impact_pct": 3.0,
-            "decay": 0.87,
+            "decay": 0.96,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 2.18,
-            "contrib_pct": 0.0,
-            "note": "[리포트 브리핑]삼성SDI, '북미 ESS 증설 가시화와 북미 정책 효과 기대' 목표가 640,000원 - 삼성증권 - 뉴스핌",
-            "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBtdW9VNXUxOF90NGZreFhPRmw5RHZvSXpmTk1tZGNhT05uZFdhbjVlal9pUEkyR3ZKRjVZM1MxV1NBaVBIX1VXMXoxVHNQcGZ1WnFsWW5FOGxsMTVN?oc=5",
+            "realized_since_event_pct": 1.41,
+            "contrib_pct": 0.31,
+            "note": "AI ESS 수주에 한국판 IRA까지…삼성SDI, 국내 25조 투자 ‘탄력’ - 쿠키뉴스",
+            "source_url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1YLWl4eWUtcG5qdkFyQlg5UVpPQ0swMWdtcG94ajltRUxtdEV5RkRDY21DeWVWelp0M2VUZ2poZXEtT044OHhHNzE0WEUxMmYxS0V0ejRpcml4d1JtSW9Jbmp1OA?oc=5",
             "matched_keywords": [
-              "증설"
+              "조투자"
             ]
           },
           {
@@ -3811,7 +3421,7 @@
             "realized_since_event_pct": 0.25,
             "contrib_pct": 3.15,
             "note": "[서치 e종목] 한중엔시에스, 연말 삼성SDI SBB 2.0 양산으로 내년 흑자 전환? - 데일리인베스트",
-            "source_url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBTRE82T2RoMFRmY3MwaWhNMWw5cWVwcXVjRFM1THFEeGVIalduUHVveUFRQWJ5MVQ5Vzg3SGJ5cVRmMTRxbWh1bEh3NHNNaFlfdG0wQld5UUdyUm5VeHEtYnFaQThJUktmU1FDedIBb0FVX3lxTE0xZG5qaGdMWVE5dWVZeFJnR2lvRkd1WFFjcWxkY3o1U3VTd2JUd3pOZll4NXdzQmFKZ2tBbzZpLVVtSEl1cFhMWWlGV2RuSzlyXzdHR2I3ejd4TXc1d3NoQkRmamRBTGVXMHlIVlk3RQ?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBDR21Yc2N1MU5iNVVZVEF3MXNudnlud1VQamZxNS1BcV96R1NkUWs1Q0x1T29WX1BPXzVTdFN0ZnhaUThrR1ZSa0kyVVQwOWt2aks5bTVHRFJrak1LY0ZILWZ6ellYM21ab3ln0gFvQVVfeXFMTTFkbmpoZ0xZUTl1ZVl4UmdHaW9GR3VYUWNxbGRjejVTdVN3YlR3ek5mWXg1d3NCYUpna0FvNmktVW1ISXVwWExZaUZXZG5LOXJfN0dHYjd6N3hNdzV3c2hCRGZqZEFMZVcweUhWWTdF?oc=5",
             "matched_keywords": [
               "흑자전환"
             ]
@@ -3833,20 +3443,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -3856,8 +3452,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -3917,10 +3513,10 @@
         "prev_estimate": 543600.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 17200.0,
-        "entry_cap_delta_krw": 16000.0,
-        "news_pct_delta": -0.37,
-        "expected_return_delta_pct": 3.2
+        "estimate_delta_krw": 16600.0,
+        "entry_cap_delta_krw": 15500.0,
+        "news_pct_delta": -0.49,
+        "expected_return_delta_pct": 3.1
       },
       "new_news_since_prev": [
         {
@@ -3933,11 +3529,19 @@
         },
         {
           "kind": "news_auto",
+          "type": "capex_expansion",
+          "date": "2026-10-01",
+          "contrib_pct": 0.31,
+          "note": "AI ESS 수주에 한국판 IRA까지…삼성SDI, 국내 25조 투자 ‘탄력’ - 쿠키뉴스",
+          "source_url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1YLWl4eWUtcG5qdkFyQlg5UVpPQ0swMWdtcG94ajltRUxtdEV5RkRDY21DeWVWelp0M2VUZ2poZXEtT044OHhHNzE0WEUxMmYxS0V0ejRpcml4d1JtSW9Jbmp1OA?oc=5"
+        },
+        {
+          "kind": "news_auto",
           "type": "earnings_surprise_beat",
           "date": "2026-09-30",
           "contrib_pct": 3.15,
           "note": "[서치 e종목] 한중엔시에스, 연말 삼성SDI SBB 2.0 양산으로 내년 흑자 전환? - 데일리인베스트",
-          "source_url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBTRE82T2RoMFRmY3MwaWhNMWw5cWVwcXVjRFM1THFEeGVIalduUHVveUFRQWJ5MVQ5Vzg3SGJ5cVRmMTRxbWh1bEh3NHNNaFlfdG0wQld5UUdyUm5VeHEtYnFaQThJUktmU1FDedIBb0FVX3lxTE0xZG5qaGdMWVE5dWVZeFJnR2lvRkd1WFFjcWxkY3o1U3VTd2JUd3pOZll4NXdzQmFKZ2tBbzZpLVVtSEl1cFhMWWlGV2RuSzlyXzdHR2I3ejd4TXc1d3NoQkRmamRBTGVXMHlIVlk3RQ?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBDR21Yc2N1MU5iNVVZVEF3MXNudnlud1VQamZxNS1BcV96R1NkUWs1Q0x1T29WX1BPXzVTdFN0ZnhaUThrR1ZSa0kyVVQwOWt2aks5bTVHRFJrak1LY0ZILWZ6ellYM21ab3ln0gFvQVVfeXFMTTFkbmpoZ0xZUTl1ZVl4UmdHaW9GR3VYUWNxbGRjejVTdVN3YlR3ek5mWXg1d3NCYUpna0FvNmktVW1ISXVwWExZaUZXZG5LOXJfN0dHYjd6N3hNdzV3c2hCRGZqZEFMZVcweUhWWTdF?oc=5"
         },
         {
           "kind": "news_auto",
@@ -3949,19 +3553,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -3988,8 +3584,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **560,800원**(+6.0%, 등급 A) · 직전 리포트 대비 ▲17,200원 · 프리미엄 테마+4/뉴스+9/섹터+5/모멘텀+0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +3.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **522,900원**(R/R≥1.0·ATR 3.6%×2≈손절 7.2% 기준) · 현재가 529,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.2% 상회) · 직전 리포트 대비 ▲16,000원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **560,200원**(+5.9%, 등급 A) · 직전 리포트 대비 ▲16,600원 · 프리미엄 테마+4/뉴스+9/섹터+5/모멘텀+0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +3.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **522,400원**(R/R≥1.0·ATR 3.6%×2≈손절 7.2% 기준) · 현재가 529,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.2% 상회) · 직전 리포트 대비 ▲15,500원"
     },
     {
       "ticker": "005380",
@@ -4001,10 +3597,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.6,
-        "news": -8.11,
+        "news": -8.24,
         "sector": 3.34,
         "momentum": -1.5,
-        "total": -4.67
+        "total": -4.8
       },
       "trend_gate": {
         "factor": 0.3,
@@ -4012,14 +3608,14 @@
         "pct_of_52w_high": 44.32,
         "ungated": {
           "theme": 5.35,
-          "news": -5.37
+          "news": -5.8
         }
       },
-      "raw_estimate": 361400.0,
+      "raw_estimate": 360900.0,
       "cap_applied": null,
-      "estimate": 361400.0,
-      "expected_return_pct": 4.1,
-      "entry_cap_price": 343100.0,
+      "estimate": 360900.0,
+      "expected_return_pct": 4.0,
+      "entry_cap_price": 342700.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4028,7 +3624,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -1.1,
+      "entry_cap_gap_pct": -1.2,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.03(집중도 평소 0.54배·heat 0.0)",
@@ -4130,20 +3726,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -4153,8 +3735,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -4228,10 +3810,10 @@
         "prev_estimate": 377600.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -16200.0,
-        "entry_cap_delta_krw": -15400.0,
-        "news_pct_delta": -4.28,
-        "expected_return_delta_pct": -4.7
+        "estimate_delta_krw": -16700.0,
+        "entry_cap_delta_krw": -15800.0,
+        "news_pct_delta": -4.41,
+        "expected_return_delta_pct": -4.8
       },
       "new_news_since_prev": [
         {
@@ -4252,19 +3834,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -4299,8 +3873,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **361,400원**(+4.1%, 등급 A) · 직전 리포트 대비 ▼16,200원 · 프리미엄 테마+2/뉴스-8/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; tech_breakthrough(자동) +3.5%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **343,100원**(R/R≥1.0·ATR 2.7%×2≈손절 5.3% 기준) · 현재가 347,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.1% 상회) · 직전 리포트 대비 ▼15,400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **360,900원**(+4.0%, 등급 A) · 직전 리포트 대비 ▼16,700원 · 프리미엄 테마+2/뉴스-8/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; tech_breakthrough(자동) +3.5%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **342,700원**(R/R≥1.0·ATR 2.7%×2≈손절 5.3% 기준) · 현재가 347,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.2% 상회) · 직전 리포트 대비 ▼15,800원"
     },
     {
       "ticker": "010140",
@@ -4312,10 +3886,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 0.77,
-        "news": 0.12,
+        "news": -0.01,
         "sector": 3.2,
         "momentum": -3.5,
-        "total": 0.59
+        "total": 0.46
       },
       "trend_gate": {
         "factor": 0.3,
@@ -4323,14 +3897,14 @@
         "pct_of_52w_high": 56.35,
         "ungated": {
           "theme": 2.56,
-          "news": 3.79
+          "news": 3.36
         }
       },
-      "raw_estimate": 20500.0,
+      "raw_estimate": 20400.0,
       "cap_applied": null,
-      "estimate": 20500.0,
-      "expected_return_pct": 2.9,
-      "entry_cap_price": 18900.0,
+      "estimate": 20400.0,
+      "expected_return_pct": 2.4,
+      "entry_cap_price": 18800.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4339,7 +3913,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -5.1,
+      "entry_cap_gap_pct": -5.6,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.00(집중도 평소 0.78배·heat 0.0)",
@@ -4418,20 +3992,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -4441,8 +4001,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -4502,10 +4062,10 @@
         "prev_estimate": 20600.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -100.0,
-        "entry_cap_delta_krw": -100.0,
-        "news_pct_delta": -0.42,
-        "expected_return_delta_pct": -0.4
+        "estimate_delta_krw": -200.0,
+        "entry_cap_delta_krw": -200.0,
+        "news_pct_delta": -0.55,
+        "expected_return_delta_pct": -0.9
       },
       "new_news_since_prev": [
         {
@@ -4518,19 +4078,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -4557,8 +4109,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **20,500원**(+2.9%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **18,900원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 19,920원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.1% 상회) · 직전 리포트 대비 ▼100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **20,400원**(+2.4%, 등급 A) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스-0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **18,800원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 19,920원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.6% 상회) · 직전 리포트 대비 ▼200원"
     },
     {
       "ticker": "042700",
@@ -4570,10 +4122,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 5.38,
-        "news": 3.97,
+        "news": 3.54,
         "sector": 5.12,
         "momentum": -0.5,
-        "total": 13.97
+        "total": 13.54
       },
       "trend_gate": {
         "factor": 1.0,
@@ -4581,14 +4133,14 @@
         "pct_of_52w_high": 63.85,
         "ungated": {
           "theme": 5.38,
-          "news": 3.97
+          "news": 3.54
         }
       },
-      "raw_estimate": 261900.0,
+      "raw_estimate": 260900.0,
       "cap_applied": null,
-      "estimate": 261900.0,
-      "expected_return_pct": -3.7,
-      "entry_cap_price": 240800.0,
+      "estimate": 260900.0,
+      "expected_return_pct": -4.1,
+      "entry_cap_price": 239900.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4597,7 +4149,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -11.5,
+      "entry_cap_gap_pct": -11.8,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.48(집중도 평소 1.06배·heat 0.321)",
@@ -4667,10 +4219,10 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 8.12,
             "contrib_pct": 0.0,
-            "note": "한미반도체 주가 장중 4%대 상승, 후공정 장비 공급계약 체결 영향 - 비즈니스포스트",
-            "source_url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE56ZG1vajdnRENQX3N0bjFtd0VkdlRSSUJxODdKT2UzRU5IRnJ5X21NZy0zVjYzVmJvYzhmZlpudjJiOTA4QWJKbTJvdWZwY2xEZ3JSWUtCWWpTczZyQ1pCNGhnNVo5eVZyd1dHM3J2MzRiVnM?oc=5",
+            "note": "[공시모음] 한미반도체, 79억 규모 반도체 제조장비 수주 계약 外 - 딜사이트",
+            "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5sUURiY2hTX1R2Z2wzUnBjN2FjeTJvOVJDa2xWcUtQZnJiNnVaQ3Vlc3dJUjRybmRMek5xRDFLUlQtaXlYODExY3R6em1zbDQ?oc=5",
             "matched_keywords": [
-              "공급계약"
+              "수주계약"
             ]
           },
           {
@@ -4690,20 +4242,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -4713,8 +4251,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -4774,10 +4312,10 @@
         "prev_estimate": 257600.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 4300.0,
-        "entry_cap_delta_krw": 3900.0,
-        "news_pct_delta": 1.84,
-        "expected_return_delta_pct": 1.6
+        "estimate_delta_krw": 3300.0,
+        "entry_cap_delta_krw": 3000.0,
+        "news_pct_delta": 1.41,
+        "expected_return_delta_pct": 1.2
       },
       "new_news_since_prev": [
         {
@@ -4790,19 +4328,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -4829,8 +4359,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **261,900원**(-3.7%, 등급 A) · 직전 리포트 대비 ▲4,300원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀-0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **240,800원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 272,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 11.5% 상회) · 직전 리포트 대비 ▲3,900원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **260,900원**(-4.1%, 등급 A) · 직전 리포트 대비 ▲3,300원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀-0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **239,900원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 272,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 11.8% 상회) · 직전 리포트 대비 ▲3,000원"
     },
     {
       "ticker": "010120",
@@ -4842,10 +4372,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.6,
-        "news": 6.04,
+        "news": 4.86,
         "sector": 0.73,
         "momentum": -2.5,
-        "total": 5.87
+        "total": 4.69
       },
       "trend_gate": {
         "factor": 0.6,
@@ -4853,14 +4383,14 @@
         "pct_of_52w_high": 62.39,
         "ungated": {
           "theme": 2.66,
-          "news": 11.03
+          "news": 9.06
         }
       },
-      "raw_estimate": 199700.0,
+      "raw_estimate": 197500.0,
       "cap_applied": null,
-      "estimate": 199700.0,
-      "expected_return_pct": -4.4,
-      "entry_cap_price": 186500.0,
+      "estimate": 197500.0,
+      "expected_return_pct": -5.5,
+      "entry_cap_price": 184500.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -4869,7 +4399,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -10.8,
+      "entry_cap_gap_pct": -11.7,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "휴면 — 자금 발자국 없음 — 다음 촉매 2026-11-14(earnings_report, D+40) 전후 재평가 · 섹터값 0.18(집중도 평소 0.91배·heat 0.133)",
@@ -4933,21 +4463,6 @@
         "news_parts": [
           {
             "kind": "news_auto",
-            "type": "capex_expansion",
-            "date": "2026-09-22",
-            "impact_pct": 3.0,
-            "decay": 0.86,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": -0.19,
-            "contrib_pct": 1.54,
-            "note": "LS일렉트릭, 美유타 증설 본격화…761억원 투입 - 블로터",
-            "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1UN1c0TnVzVkFoWlppa2FaMDdmQ2hRRURjOFdmclFRREx4U3BTWVAxM0lxWXJFUUN3aUlISGwxVjkwTGRrNFVRZU9rX04zXzRJXzdUS0lXZEhaNGVvVUFoeU1TeUc3bTRU0gFsQVVfeXFMUGdIT1lWbWlMckpCNGxwbmZYRTY1Sk1rUm80Y1N3MWlfekMtMXNXLU40dE9KWmFHN2VEdnN6aEhfSlBiLVJkUndrT1VCb0s2OGhjQnpMRjQxWGhyOW5aZUdLeHNaaFNpYlhPMmFL?oc=5",
-            "matched_keywords": [
-              "증설"
-            ]
-          },
-          {
-            "kind": "news_auto",
             "type": "order_backlog_surprise",
             "date": "2026-10-02",
             "impact_pct": 5.0,
@@ -4956,7 +4471,7 @@
             "realized_since_event_pct": 0.0,
             "contrib_pct": 2.9,
             "note": "LS ELECTRIC 20만원대 상승…수주잔고 7조원 뒷받침 - 잡포스트",
-            "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTFBsTHgwS3RobUdsa2YtMUZYQzJ0dGkzOUhMQjlHTjQ5c3BNdndwa2I2cTlmQl8zMm9wUUhkMUI2NDV0VlpfdndPZnRZbnoxR09uR3RseEM2TDhhdzdvQVZaN1VnQTJCZkF3Y3ZQNzdiamJPd9IBckFVX3lxTFBsTHgwS3RobUdsa2YtMUZYQzJ0dGkzOUhMQjlHTjQ5c3BNdndwa2I2cTlmQl8zMm9wUUhkMUI2NDV0VlpfdndPZnRZbnoxR09uR3RseEM2TDhhdzdvQVZaN1VnQTJCZkF3Y3ZQNzdiamJPdw?oc=5",
+            "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1hLUxPaHpSV3VQMVZFR2lDZzZnYm5UYm8taVo3UU5ZeWdFRmdTTm5iQm0zWlVuZF96NWNBR3NnYktWcjRkUks0NkN1bGZLb1phaGRSdmJiZVdvTVUtXzFjWmRTTlZ2SFVuUWlKS2Vn0gFyQVVfeXFMUGxMeDBLdGhtR2xrZi0xRlhDMnR0aTM5SExCOUdONDlzcE12d3BrYjZxOWZCXzMyb3BRSGQxQjY0NXRWWl92d09mdFluejFHT25HdGx4QzZMOGF3N29BVlo3VWdBMkJmQXdjdlA3N2JqYk93?oc=5",
             "matched_keywords": [
               "수주잔고"
             ]
@@ -4978,20 +4493,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -5001,8 +4502,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -5062,27 +4563,19 @@
         "prev_estimate": 204800.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": -5100.0,
-        "entry_cap_delta_krw": -4800.0,
-        "news_pct_delta": 0.5,
-        "expected_return_delta_pct": -2.4
+        "estimate_delta_krw": -7300.0,
+        "entry_cap_delta_krw": -6800.0,
+        "news_pct_delta": -0.68,
+        "expected_return_delta_pct": -3.5
       },
       "new_news_since_prev": [
-        {
-          "kind": "news_auto",
-          "type": "capex_expansion",
-          "date": "2026-09-22",
-          "contrib_pct": 1.54,
-          "note": "LS일렉트릭, 美유타 증설 본격화…761억원 투입 - 블로터",
-          "source_url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1UN1c0TnVzVkFoWlppa2FaMDdmQ2hRRURjOFdmclFRREx4U3BTWVAxM0lxWXJFUUN3aUlISGwxVjkwTGRrNFVRZU9rX04zXzRJXzdUS0lXZEhaNGVvVUFoeU1TeUc3bTRU0gFsQVVfeXFMUGdIT1lWbWlMckpCNGxwbmZYRTY1Sk1rUm80Y1N3MWlfekMtMXNXLU40dE9KWmFHN2VEdnN6aEhfSlBiLVJkUndrT1VCb0s2OGhjQnpMRjQxWGhyOW5aZUdLeHNaaFNpYlhPMmFL?oc=5"
-        },
         {
           "kind": "news_auto",
           "type": "order_backlog_surprise",
           "date": "2026-10-02",
           "contrib_pct": 2.9,
           "note": "LS ELECTRIC 20만원대 상승…수주잔고 7조원 뒷받침 - 잡포스트",
-          "source_url": "https://news.google.com/rss/articles/CBMickFVX3lxTFBsTHgwS3RobUdsa2YtMUZYQzJ0dGkzOUhMQjlHTjQ5c3BNdndwa2I2cTlmQl8zMm9wUUhkMUI2NDV0VlpfdndPZnRZbnoxR09uR3RseEM2TDhhdzdvQVZaN1VnQTJCZkF3Y3ZQNzdiamJPd9IBckFVX3lxTFBsTHgwS3RobUdsa2YtMUZYQzJ0dGkzOUhMQjlHTjQ5c3BNdndwa2I2cTlmQl8zMm9wUUhkMUI2NDV0VlpfdndPZnRZbnoxR09uR3RseEM2TDhhdzdvQVZaN1VnQTJCZkF3Y3ZQNzdiamJPdw?oc=5"
+          "source_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1hLUxPaHpSV3VQMVZFR2lDZzZnYm5UYm8taVo3UU5ZeWdFRmdTTm5iQm0zWlVuZF96NWNBR3NnYktWcjRkUks0NkN1bGZLb1phaGRSdmJiZVdvTVUtXzFjWmRTTlZ2SFVuUWlKS2Vn0gFyQVVfeXFMUGxMeDBLdGhtR2xrZi0xRlhDMnR0aTM5SExCOUdONDlzcE12d3BrYjZxOWZCXzMyb3BRSGQxQjY0NXRWWl92d09mdFluejFHT25HdGx4QzZMOGF3N29BVlo3VWdBMkJmQXdjdlA3N2JqYk93?oc=5"
         },
         {
           "kind": "news_auto",
@@ -5094,19 +4587,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -5133,8 +4618,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **199,700원**(-4.4%, 등급 A) · 직전 리포트 대비 ▼5,100원 · 프리미엄 테마+2/뉴스+6/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; supply_contract_major(자동) +3.0%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **186,500원**(R/R≥1.0·ATR 3.5%×2≈손절 7.1% 기준) · 현재가 209,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 10.8% 상회) · 직전 리포트 대비 ▼4,800원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **197,500원**(-5.5%, 등급 A) · 직전 리포트 대비 ▼7,300원 · 프리미엄 테마+2/뉴스+5/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; supply_contract_major(자동) +3.0%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **184,500원**(R/R≥1.0·ATR 3.5%×2≈손절 7.1% 기준) · 현재가 209,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 11.7% 상회) · 직전 리포트 대비 ▼6,800원"
     },
     {
       "ticker": "000660",
@@ -5146,10 +4631,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.8,
-        "news": 1.87,
+        "news": 1.94,
         "sector": 5.12,
         "momentum": -3.5,
-        "total": 5.29
+        "total": 5.36
       },
       "trend_gate": {
         "factor": 0.3,
@@ -5157,14 +4642,14 @@
         "pct_of_52w_high": 61.67,
         "ungated": {
           "theme": 6.01,
-          "news": 9.61
+          "news": 9.85
         }
       },
-      "raw_estimate": 1648700.0,
+      "raw_estimate": 1649800.0,
       "cap_applied": null,
-      "estimate": 1648700.0,
-      "expected_return_pct": -10.5,
-      "entry_cap_price": 1524300.0,
+      "estimate": 1649800.0,
+      "expected_return_pct": -10.4,
+      "entry_cap_price": 1525300.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -5252,16 +4737,16 @@
           {
             "kind": "news_auto",
             "type": "earnings_surprise_beat",
-            "date": "2026-10-01",
+            "date": "2026-10-02",
             "impact_pct": 6.0,
-            "decay": 0.96,
+            "decay": 0.97,
             "auto_factor": 0.6,
-            "realized_since_event_pct": 0.63,
-            "contrib_pct": 2.81,
-            "note": "[특징주] 삼성전자·SK하이닉스, 마이크론 호실적에도 영향 미미 - 글로벌이코노믹",
-            "source_url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNamFDM1NBcGpFb2ptelVqVjFhRG5rQWl0azJtcl9yd1g1R0pxN2hGLTJCLTEtQnJDX28wRmsyMk0tZnYyUDdaZWJJdnlLYjRSakFKR1ZvM0hiRGNXbzctY1VneUNheUFyVGRLdUZNQWhCUE1IOU1ia051djFQXzAyYk9uZndzMlk?oc=5",
+            "realized_since_event_pct": 0.0,
+            "contrib_pct": 3.48,
+            "note": "마이크론, 사상 최대 실적…SK하이닉스와 D램 점유율 1%포인트 차 - 뉴스핌",
+            "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE56TVpvaXFWcGdnWllVeVlaWlBuZWZsX1h6RW1MZnpUeS11WGR5R2lXSlRoMTdSc0w2Ym5GeTJVNGFUYW1reFJIdy04czZUUVcwd3l1ZkRtVWNid1U4?oc=5",
             "matched_keywords": [
-              "호실적"
+              "사상최대실적"
             ]
           },
           {
@@ -5280,20 +4765,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -5303,8 +4774,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -5364,10 +4835,10 @@
         "prev_estimate": 1600700.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 48000.0,
-        "entry_cap_delta_krw": 44100.0,
-        "news_pct_delta": 3.2,
-        "expected_return_delta_pct": 2.8
+        "estimate_delta_krw": 49100.0,
+        "entry_cap_delta_krw": 45100.0,
+        "news_pct_delta": 3.27,
+        "expected_return_delta_pct": 2.9
       },
       "new_news_since_prev": [
         {
@@ -5381,10 +4852,10 @@
         {
           "kind": "news_auto",
           "type": "earnings_surprise_beat",
-          "date": "2026-10-01",
-          "contrib_pct": 2.81,
-          "note": "[특징주] 삼성전자·SK하이닉스, 마이크론 호실적에도 영향 미미 - 글로벌이코노믹",
-          "source_url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNamFDM1NBcGpFb2ptelVqVjFhRG5rQWl0azJtcl9yd1g1R0pxN2hGLTJCLTEtQnJDX28wRmsyMk0tZnYyUDdaZWJJdnlLYjRSakFKR1ZvM0hiRGNXbzctY1VneUNheUFyVGRLdUZNQWhCUE1IOU1ia051djFQXzAyYk9uZndzMlk?oc=5"
+          "date": "2026-10-02",
+          "contrib_pct": 3.48,
+          "note": "마이크론, 사상 최대 실적…SK하이닉스와 D램 점유율 1%포인트 차 - 뉴스핌",
+          "source_url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE56TVpvaXFWcGdnWllVeVlaWlBuZWZsX1h6RW1MZnpUeS11WGR5R2lXSlRoMTdSc0w2Ym5GeTJVNGFUYW1reFJIdy04czZUUVcwd3l1ZkRtVWNid1U4?oc=5"
         },
         {
           "kind": "news_global",
@@ -5396,19 +4867,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -5435,8 +4898,8 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,648,700원**(-10.5%, 등급 A) · 직전 리포트 대비 ▲48,000원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +2.8%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,524,300원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 1,842,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.2% 상회) · 직전 리포트 대비 ▲44,100원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **1,649,800원**(-10.4%, 등급 A) · 직전 리포트 대비 ▲49,100원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +3.5%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **1,525,300원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 1,842,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.2% 상회) · 직전 리포트 대비 ▲45,100원"
     },
     {
       "ticker": "005930",
@@ -5448,10 +4911,10 @@
       "consensus_rejected": null,
       "premium_pct": {
         "theme": 1.71,
-        "news": 2.76,
+        "news": 2.66,
         "sector": 5.12,
         "momentum": -2.5,
-        "total": 7.09
+        "total": 6.99
       },
       "trend_gate": {
         "factor": 0.3,
@@ -5462,11 +4925,11 @@
           "news": 12.0
         }
       },
-      "raw_estimate": 231500.0,
+      "raw_estimate": 231300.0,
       "cap_applied": null,
-      "estimate": 231500.0,
-      "expected_return_pct": -16.1,
-      "entry_cap_price": 215800.0,
+      "estimate": 231300.0,
+      "expected_return_pct": -16.2,
+      "entry_cap_price": 215600.0,
       "entry_cap_basis": {
         "min_rr": 1.0,
         "min_rr_tier": "strong_bull",
@@ -5475,7 +4938,7 @@
         "formula": "목표가 / (1 + min_rr × 손절%)"
       },
       "in_buy_zone": false,
-      "entry_cap_gap_pct": -21.8,
+      "entry_cap_gap_pct": -21.9,
       "entry_cap_note": null,
       "entry_cap_caution": null,
       "sector_activation": "몰입 신호 충족 — 약 1~2개월 내 본격화 추정 · 섹터값 0.48(집중도 평소 1.06배·heat 0.321)",
@@ -5569,14 +5032,14 @@
           {
             "kind": "news_auto",
             "type": "buyback_cancellation",
-            "date": "2026-10-02",
+            "date": "2026-10-05",
             "impact_pct": 4.0,
-            "decay": 0.97,
+            "decay": 1.0,
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
-            "contrib_pct": 2.32,
-            "note": "삼성전자 자사주 매입 100% 돌파…계획 물량 이미 채웠다 - v.daum.net",
-            "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1fRXZ1LTRJakZuRTB3dFBrSl9kMzJ5anBLVXdORXNuMXZzY05GdjQwY0xtdnItdm9iUVlEOHNjZW1wdVJDQ1E?oc=5",
+            "contrib_pct": 2.4,
+            "note": "삼성전자 자사주 매입 막바지…내주 '수급 공백' 첫 시험대 | - 연합인포맥스",
+            "source_url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9RaHdVSGpDa3RfWm1ueVo5bm1EZmVOaFlCUDF3M1NVaFNGd2UzMm1ZZExDV3lSWkoxblhLLTBGR09lZXYzdDR1RmlFcFA5c2w4dE94ajYzbXVpOGRYckphLUZrZlMxMmRhS0I1OE5TS2lqbjFu?oc=5",
             "matched_keywords": [
               "자사주매입"
             ]
@@ -5612,20 +5075,6 @@
           },
           {
             "kind": "news_global",
-            "type": "global_rate_relief",
-            "date": "2026-10-02",
-            "impact_pct": 3.0,
-            "channel": "macro",
-            "transmission": 0.25,
-            "decay": 0.97,
-            "auto_factor": 0.6,
-            "realized_since_event_pct": 0.0,
-            "contrib_pct": 0.43,
-            "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-            "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-          },
-          {
-            "kind": "news_global",
             "type": "global_rate_shock",
             "date": "2026-10-02",
             "impact_pct": -6.0,
@@ -5635,8 +5084,8 @@
             "auto_factor": 0.6,
             "realized_since_event_pct": 0.0,
             "contrib_pct": -0.87,
-            "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-            "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+            "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+            "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
           },
           {
             "kind": "news_global",
@@ -5708,10 +5157,10 @@
         "prev_estimate": 227900.0,
         "prev_as_of": "2026-10-02T18:13:29+09:00",
         "prev_slot": "2026-10-02-18",
-        "estimate_delta_krw": 3600.0,
-        "entry_cap_delta_krw": 3400.0,
-        "news_pct_delta": 1.68,
-        "expected_return_delta_pct": 1.3
+        "estimate_delta_krw": 3400.0,
+        "entry_cap_delta_krw": 3200.0,
+        "news_pct_delta": 1.58,
+        "expected_return_delta_pct": 1.2
       },
       "new_news_since_prev": [
         {
@@ -5725,10 +5174,10 @@
         {
           "kind": "news_auto",
           "type": "buyback_cancellation",
-          "date": "2026-10-02",
-          "contrib_pct": 2.32,
-          "note": "삼성전자 자사주 매입 100% 돌파…계획 물량 이미 채웠다 - v.daum.net",
-          "source_url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1fRXZ1LTRJakZuRTB3dFBrSl9kMzJ5anBLVXdORXNuMXZzY05GdjQwY0xtdnItdm9iUVlEOHNjZW1wdVJDQ1E?oc=5"
+          "date": "2026-10-05",
+          "contrib_pct": 2.4,
+          "note": "삼성전자 자사주 매입 막바지…내주 '수급 공백' 첫 시험대 | - 연합인포맥스",
+          "source_url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9RaHdVSGpDa3RfWm1ueVo5bm1EZmVOaFlCUDF3M1NVaFNGd2UzMm1ZZExDV3lSWkoxblhLLTBGR09lZXYzdDR1RmlFcFA5c2w4dE94ajYzbXVpOGRYckphLUZrZlMxMmRhS0I1OE5TS2lqbjFu?oc=5"
         },
         {
           "kind": "news_auto",
@@ -5748,19 +5197,11 @@
         },
         {
           "kind": "news_global",
-          "type": "global_rate_relief",
-          "date": "2026-10-02",
-          "contrib_pct": 0.43,
-          "note": "London Shares Recover as Bond Yields Ease and Oil Prices Fall - Global Banking & Finance Review",
-          "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQR0VmZ1Q1a1JUeUNJbHMxNTFkOHJBTmJyUEZRaWNlbFhlLXFlQVR2b0xfTk5ET2pEaGFFRU9OYmhYam9WcmtOc3VfT0tueDVTbDhnSm44dGlOSFRHbjVaU3pxRVJ2WUl1cS1QWGc4WkZ1c1NUMXdCOWlMWVJxdGthZzVRMVFNYnNMcG1lMGxKNEpnZDRXLTg2ZjJXT0lQTjQ?oc=5"
-        },
-        {
-          "kind": "news_global",
           "type": "global_rate_shock",
           "date": "2026-10-02",
           "contrib_pct": -0.87,
-          "note": "Global Bond Selloff Deepens as UK 30-Year Yield Tops 6% - Coinpaper",
-          "source_url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPdmhYQW1EQVIwdWVPWXJOeUtyV3owZE83WTVnNmxDdnZ5elNmTTJnV0ttSHU0WExpTUdIR3R4aFdBWHNNMi1sNWxxU0VhZU5SejI1bHdPRmZQT0tWazNNV0MtMmhsZkJMN25KSXdNdWpyYjdwdEczVFAya2tIUG9WeFpRZHlLWUllUEE?oc=5"
+          "note": "Eurozone borrowing costs surge in global bond rout - Financial Times",
+          "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNUGlVUkdYU191anlHVmJYMmFhZ05DVXRkbmtOUGVMSE9CcVNUeDJGemROM01tQjhUeVZ3TUNBOWlIRXczQkJoQUh4UHBCaEVCc3dvd0g1Q1k5elVwbHQ3WVhzLTF4cm5RWDVZUHJGUU1RM052NkhBR29vdG84VkpCZGlwUkQ?oc=5"
         },
         {
           "kind": "news_global",
@@ -5795,10 +5236,10 @@
           "source_url": null
         }
       ],
-      "news_target_line": "뉴스 반영 추정 목표 매도가 **231,500원**(-16.1%, 등급 A) · 직전 리포트 대비 ▲3,600원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +5.4%; earnings_report(촉매) +3.5%",
-      "entry_cap_line": "뉴스 반영 신규진입 상한가 **215,800원**(R/R≥1.0·ATR 3.6%×2≈손절 7.3% 기준) · 현재가 276,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.8% 상회) · 직전 리포트 대비 ▲3,400원"
+      "news_target_line": "뉴스 반영 추정 목표 매도가 **231,300원**(-16.2%, 등급 A) · 직전 리포트 대비 ▲3,400원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +5.4%; earnings_report(촉매) +3.5%",
+      "entry_cap_line": "뉴스 반영 신규진입 상한가 **215,600원**(R/R≥1.0·ATR 3.6%×2≈손절 7.3% 기준) · 현재가 276,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.9% 상회) · 직전 리포트 대비 ▲3,200원"
     }
   ],
-  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-10-05T09:07:31+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 33,400 | 50,200 | 53,000 | +58.7% | ▼2,200 | 🟢진입가능 | B |\n| NAVER(035420) | 192,200 | 256,300 | 268,600 | +39.8% | ▼29,800 | 🟢진입가능 | A |\n| HD현대일렉트릭(267260) | 678,000 | 852,300 | 917,900 | +35.4% | ▼43,500 | 🟡진입주의 | A |\n| 삼성물산(028260) | 347,000 | 415,600 | 452,000 | +30.3% | ▼9,800 | 🟡진입주의 | A |\n| KB금융(105560) | 168,400 | 194,300 | 206,000 | +22.3% | ▲100 | 🟢진입가능 | A |\n| LG에너지솔루션(373220) | 369,000 | 414,400 | 442,400 | +19.9% | ▲26,200 | 🟢진입가능 | A |\n| 삼성바이오로직스(207940) | 1,366,000 | 1,517,800 | 1,596,700 | +16.9% | ▼27,100 | 🟢진입가능 | B |\n| 셀트리온(068270) | 182,600 | 203,500 | 212,100 | +16.2% | ▼5,200 | 🟢진입가능 | B |\n| 신한지주(055550) | 105,900 | 114,800 | 122,300 | +15.5% | ▼3,600 | 🟢진입가능 | A |\n| 한화에어로스페이스(012450) | 1,069,000 | 1,117,600 | 1,219,800 | +14.1% | ▲33,300 | 🟢진입가능 | A |\n| 하나금융지주(086790) | 129,600 | 135,500 | 144,200 | +11.3% | ▼2,300 | 🟢진입가능 | A |\n| HD한국조선해양(009540) | 326,500 | 325,800 | 353,700 | +8.3% | ▼800 | 🔴+0% 상회 | A |\n| LIG넥스원(LIG D&A)(079550) | 759,000 | 740,800 | 813,100 | +7.1% | ▲24,000 | 🔴+2% 상회 | A |\n| 삼성SDI(006400) | 529,000 | 522,900 | 560,800 | +6.0% | ▲17,200 | 🔴+1% 상회 | A |\n| 현대차(005380) | 347,000 | 343,100 | 361,400 | +4.1% | ▼16,200 | 🔴+1% 상회 | A |\n| 삼성중공업(010140) | 19,920 | 18,900 | 20,500 | +2.9% | ▼100 | 🔴+5% 상회 | A |\n| 한미반도체(042700) | 272,000 | 240,800 | 261,900 | -3.7% | ▲4,300 | 🔴+13% 상회 | A |\n| LS ELECTRIC(010120) | 209,000 | 186,500 | 199,700 | -4.4% | ▼5,100 | 🔴+12% 상회 | A |\n| SK하이닉스(000660) | 1,842,000 | 1,524,300 | 1,648,700 | -10.5% | ▲48,000 | 🔴+21% 상회 | A |\n| 삼성전자(005930) | 276,000 | 215,800 | 231,500 | -16.1% | ▲3,600 | 🔴+28% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **53,000원**(+58.7%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼2,200원 · 프리미엄 테마+1/뉴스+3/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.4%\n- 뉴스 반영 추정 목표 매도가 **268,600원**(+39.8%, 등급 A) · 직전 리포트 대비 ▼29,800원 · 프리미엄 테마+3/뉴스-4/섹터+0/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.1%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **917,900원**(+35.4%, 등급 A) · 직전 리포트 대비 ▼43,500원 · 프리미엄 테마+1/뉴스+1/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.8%\n- 뉴스 반영 추정 목표 매도가 **452,000원**(+30.3%, 등급 A) · 직전 리포트 대비 ▼9,800원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%\n- 뉴스 반영 추정 목표 매도가 **206,000원**(+22.3%, 등급 A) · 직전 리포트 대비 ▲100원 · 프리미엄 테마+5/뉴스+6/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **442,400원**(+19.9%, 등급 A) · 직전 리포트 대비 ▲26,200원 · 프리미엄 테마+3/뉴스+5/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; earnings_surprise_beat(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **1,596,700원**(+16.9%, 등급 B) · 직전 리포트 대비 ▼27,100원 · 프리미엄 테마+2/뉴스+9/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%\n- 뉴스 반영 추정 목표 매도가 **212,100원**(+16.2%, 등급 B) · 직전 리포트 대비 ▼5,200원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.9%\n- 뉴스 반영 추정 목표 매도가 **122,300원**(+15.5%, 등급 A) · 직전 리포트 대비 ▼3,600원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; analyst_target_upgrade(자동) +1.7%\n- 뉴스 반영 추정 목표 매도가 **1,219,800원**(+14.1%, 등급 A) · 직전 리포트 대비 ▲33,300원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **144,200원**(+11.3%, 등급 A) · 직전 리포트 대비 ▼2,300원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀+3% · 📰 원인 뉴스: buyback_cancellation(자동) +2.3%; earnings_report(촉매) +2.1%\n- 뉴스 반영 추정 목표 매도가 **353,700원**(+8.3%, 등급 A) · 직전 리포트 대비 ▼800원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.2%\n- 뉴스 반영 추정 목표 매도가 **813,100원**(+7.1%, 등급 A) · 직전 리포트 대비 ▲24,000원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **560,800원**(+6.0%, 등급 A) · 직전 리포트 대비 ▲17,200원 · 프리미엄 테마+4/뉴스+9/섹터+5/모멘텀+0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +3.1%\n- 뉴스 반영 추정 목표 매도가 **361,400원**(+4.1%, 등급 A) · 직전 리포트 대비 ▼16,200원 · 프리미엄 테마+2/뉴스-8/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; tech_breakthrough(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **20,500원**(+2.9%, 등급 A) · 직전 리포트 대비 ▼100원 · 프리미엄 테마+1/뉴스+0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **261,900원**(-3.7%, 등급 A) · 직전 리포트 대비 ▲4,300원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀-0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **199,700원**(-4.4%, 등급 A) · 직전 리포트 대비 ▼5,100원 · 프리미엄 테마+2/뉴스+6/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; supply_contract_major(자동) +3.0%\n- 뉴스 반영 추정 목표 매도가 **1,648,700원**(-10.5%, 등급 A) · 직전 리포트 대비 ▲48,000원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +2.8%\n- 뉴스 반영 추정 목표 매도가 **231,500원**(-16.1%, 등급 A) · 직전 리포트 대비 ▲3,600원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +5.4%; earnings_report(촉매) +3.5%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **50,200원**(R/R≥1.0·ATR 2.7%×2≈손절 5.5% 기준) · 현재가 33,400원 🟢진입 가능(현재가가 상한가보다 50.3% 낮음) · 직전 리포트 대비 ▼2,100원\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **256,300원**(R/R≥1.0·ATR 2.4%×2≈손절 4.8% 기준) · 현재가 192,200원 🟢진입 가능(현재가가 상한가보다 33.4% 낮음) · 직전 리포트 대비 ▼28,400원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **852,300원**(R/R≥1.0·ATR 3.9%×2≈손절 7.7% 기준) · 현재가 678,000원 🟡진입 가능 구간이나 falling knife(60일 -27%) — 추격 금지(추세 약세)(상한가보다 25.7% 낮음) · 직전 리포트 대비 ▼40,400원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **415,600원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 347,000원 🟡진입 가능 구간이나 falling knife(60일 -23%) — 추격 금지(추세 약세)(상한가보다 19.8% 낮음) · 직전 리포트 대비 ▼8,800원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **194,300원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 168,400원 🟢진입 가능(현재가가 상한가보다 15.4% 낮음) · 직전 리포트 대비 ▲100원\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **414,400원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 369,000원 🟢진입 가능(현재가가 상한가보다 12.3% 낮음) · 직전 리포트 대비 ▲24,500원\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,517,800원**(R/R≥1.0·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 1,366,000원 🟢진입 가능(현재가가 상한가보다 11.1% 낮음) · 직전 리포트 대비 ▼25,700원\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **203,500원**(R/R≥1.0·ATR 2.1%×2≈손절 4.2% 기준) · 현재가 182,600원 🟢진입 가능(현재가가 상한가보다 11.4% 낮음) · 직전 리포트 대비 ▼5,000원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **114,800원**(R/R≥1.0·ATR 3.3%×2≈손절 6.5% 기준) · 현재가 105,900원 🟢진입 가능(현재가가 상한가보다 8.4% 낮음) · 직전 리포트 대비 ▼3,400원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,117,600원**(R/R≥1.0·ATR 4.6%×2≈손절 9.1% 기준) · 현재가 1,069,000원 🟢진입 가능(현재가가 상한가보다 4.5% 낮음) · 직전 리포트 대비 ▲30,500원\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **135,500원**(R/R≥1.0·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 129,600원 🟢진입 가능(현재가가 상한가보다 4.6% 낮음) · 직전 리포트 대비 ▼2,200원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **325,800원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 326,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.2% 상회) · 직전 리포트 대비 ▼600원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **740,800원**(R/R≥1.0·ATR 4.9%×2≈손절 9.8% 기준) · 현재가 759,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.4% 상회) · 직전 리포트 대비 ▲22,000원\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **522,900원**(R/R≥1.0·ATR 3.6%×2≈손절 7.2% 기준) · 현재가 529,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.2% 상회) · 직전 리포트 대비 ▲16,000원\n- 현대차(005380) — 뉴스 반영 신규진입 상한가 **343,100원**(R/R≥1.0·ATR 2.7%×2≈손절 5.3% 기준) · 현재가 347,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.1% 상회) · 직전 리포트 대비 ▼15,400원\n- 삼성중공업(010140) — 뉴스 반영 신규진입 상한가 **18,900원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 19,920원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.1% 상회) · 직전 리포트 대비 ▼100원\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **240,800원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 272,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 11.5% 상회) · 직전 리포트 대비 ▲3,900원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **186,500원**(R/R≥1.0·ATR 3.5%×2≈손절 7.1% 기준) · 현재가 209,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 10.8% 상회) · 직전 리포트 대비 ▼4,800원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,524,300원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 1,842,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.2% 상회) · 직전 리포트 대비 ▲44,100원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **215,800원**(R/R≥1.0·ATR 3.6%×2≈손절 7.3% 기준) · 현재가 276,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.8% 상회) · 직전 리포트 대비 ▲3,400원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
+  "report_section_md": "### 📰 뉴스 반영 매매가(목표 매도가·신규진입 상한가) 추정 (직전 리포트 대비 변동)\n\n- 기준 시각: 2026-10-05T10:47:55+09:00 · 추정 호라이즌 12개월 · 학습·시뮬레이션 목적(투자 권유 아님)\n- 식: 목표 매도가 = 기준가(밸류밴드·컨센) × (1 + 테마+뉴스/촉매+섹터+모멘텀) → 천장 캡. 신규진입 상한가 = 목표가 / (1 + 레짐 R/R하한 × 손절%).\n- ※ **참고 레이어**다 — watchlist 의 실제 목표가·매도/매수 트리거를 자동 대체하지 않는다(이중출처 혼란 방지). 신규진입 상한가는 신규 진입 기준(보유분 평단은 고정)이며 적정가치가 아니라 R/R 진입 상한이다.\n\n| 종목 | 현재가 | 신규진입 상한가 | 추정 목표 매도가 | 상승여력 | Δ목표(직전) | 위치 | 등급 |\n|---|---|---|---|---|---|---|---|\n| 카카오(035720) | 33,400 | 49,200 | 51,900 | +55.4% | ▼3,300 | 🟢진입가능 | B |\n| NAVER(035420) | 192,200 | 255,200 | 267,500 | +39.2% | ▼30,900 | 🟢진입가능 | A |\n| HD현대일렉트릭(267260) | 678,000 | 851,400 | 917,000 | +35.3% | ▼44,400 | 🟡진입주의 | A |\n| 삼성물산(028260) | 347,000 | 415,100 | 451,500 | +30.1% | ▼10,300 | 🟡진입주의 | A |\n| KB금융(105560) | 168,400 | 193,600 | 205,300 | +21.9% | ▼600 | 🟢진입가능 | A |\n| LG에너지솔루션(373220) | 369,000 | 408,800 | 436,400 | +18.3% | ▲20,200 | 🟢진입가능 | A |\n| 셀트리온(068270) | 182,600 | 202,800 | 211,400 | +15.8% | ▼5,900 | 🟢진입가능 | B |\n| 신한지주(055550) | 105,900 | 114,400 | 121,900 | +15.1% | ▼4,000 | 🟢진입가능 | A |\n| 한화에어로스페이스(012450) | 1,069,000 | 1,115,000 | 1,216,900 | +13.8% | ▲30,400 | 🟢진입가능 | A |\n| 삼성바이오로직스(207940) | 1,366,000 | 1,474,900 | 1,551,600 | +13.6% | ▼72,200 | 🟢진입가능 | B |\n| 하나금융지주(086790) | 129,600 | 135,100 | 143,700 | +10.9% | ▼2,800 | 🟢진입가능 | A |\n| HD한국조선해양(009540) | 326,500 | 325,200 | 353,100 | +8.1% | ▼1,400 | 🔴+0% 상회 | A |\n| LIG넥스원(LIG D&A)(079550) | 759,000 | 738,900 | 811,000 | +6.9% | ▲21,900 | 🔴+3% 상회 | A |\n| 삼성SDI(006400) | 529,000 | 522,400 | 560,200 | +5.9% | ▲16,600 | 🔴+1% 상회 | A |\n| 현대차(005380) | 347,000 | 342,700 | 360,900 | +4.0% | ▼16,700 | 🔴+1% 상회 | A |\n| 삼성중공업(010140) | 19,920 | 18,800 | 20,400 | +2.4% | ▼200 | 🔴+6% 상회 | A |\n| 한미반도체(042700) | 272,000 | 239,900 | 260,900 | -4.1% | ▲3,300 | 🔴+13% 상회 | A |\n| LS ELECTRIC(010120) | 209,000 | 184,500 | 197,500 | -5.5% | ▼7,300 | 🔴+13% 상회 | A |\n| SK하이닉스(000660) | 1,842,000 | 1,525,300 | 1,649,800 | -10.4% | ▲49,100 | 🔴+21% 상회 | A |\n| 삼성전자(005930) | 276,000 | 215,600 | 231,300 | -16.2% | ▲3,400 | 🔴+28% 상회 | A |\n\n**뉴스에 따른 목표 매도가 변동(직전 리포트 대비):**\n- 뉴스 반영 추정 목표 매도가 **51,900원**(+55.4%, 등급 B · ⚠밴드이탈) · 직전 리포트 대비 ▼3,300원 · 프리미엄 테마+1/뉴스+1/섹터+0/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **267,500원**(+39.2%, 등급 A) · 직전 리포트 대비 ▼30,900원 · 프리미엄 테마+3/뉴스-4/섹터+0/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) -2.1%; global_rate_shock(해외) -0.9%\n- 뉴스 반영 추정 목표 매도가 **917,000원**(+35.3%, 등급 A) · 직전 리포트 대비 ▼44,400원 · 프리미엄 테마+1/뉴스+1/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.8%\n- 뉴스 반영 추정 목표 매도가 **451,500원**(+30.1%, 등급 A) · 직전 리포트 대비 ▼10,300원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%\n- 뉴스 반영 추정 목표 매도가 **205,300원**(+21.9%, 등급 A) · 직전 리포트 대비 ▼600원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.3%\n- 뉴스 반영 추정 목표 매도가 **436,400원**(+18.3%, 등급 A) · 직전 리포트 대비 ▲20,200원 · 프리미엄 테마+3/뉴스+4/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; earnings_surprise_beat(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **211,400원**(+15.8%, 등급 B) · 직전 리포트 대비 ▼5,900원 · 프리미엄 테마+2/뉴스+8/섹터+5/모멘텀+2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; order_backlog_surprise(자동) +2.9%\n- 뉴스 반영 추정 목표 매도가 **121,900원**(+15.1%, 등급 A) · 직전 리포트 대비 ▼4,000원 · 프리미엄 테마+5/뉴스+5/섹터+5/모멘텀+3% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; policy_support(자동) +1.7%\n- 뉴스 반영 추정 목표 매도가 **1,216,900원**(+13.8%, 등급 A) · 직전 리포트 대비 ▲30,400원 · 프리미엄 테마+2/뉴스+2/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **1,551,600원**(+13.6%, 등급 B) · 직전 리포트 대비 ▼72,200원 · 프리미엄 테마+2/뉴스+6/섹터+5/모멘텀+1% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; tech_breakthrough(자동) +3.3%\n- 뉴스 반영 추정 목표 매도가 **143,700원**(+10.9%, 등급 A) · 직전 리포트 대비 ▼2,800원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀+3% · 📰 원인 뉴스: buyback_cancellation(자동) +2.3%; earnings_report(촉매) +2.1%\n- 뉴스 반영 추정 목표 매도가 **353,100원**(+8.1%, 등급 A) · 직전 리포트 대비 ▼1,400원 · 프리미엄 테마+2/뉴스+3/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; buyback_cancellation(자동) +2.4%\n- 뉴스 반영 추정 목표 매도가 **811,000원**(+6.9%, 등급 A) · 직전 리포트 대비 ▲21,900원 · 프리미엄 테마+2/뉴스+1/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **560,200원**(+5.9%, 등급 A) · 직전 리포트 대비 ▲16,600원 · 프리미엄 테마+4/뉴스+9/섹터+5/모멘텀+0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +3.1%\n- 뉴스 반영 추정 목표 매도가 **360,900원**(+4.0%, 등급 A) · 직전 리포트 대비 ▼16,700원 · 프리미엄 테마+2/뉴스-8/섹터+3/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) -3.5%; tech_breakthrough(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **20,400원**(+2.4%, 등급 A) · 직전 리포트 대비 ▼200원 · 프리미엄 테마+1/뉴스-0/섹터+3/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **260,900원**(-4.1%, 등급 A) · 직전 리포트 대비 ▲3,300원 · 프리미엄 테마+5/뉴스+4/섹터+5/모멘텀-0% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_report(촉매) +1.1%\n- 뉴스 반영 추정 목표 매도가 **197,500원**(-5.5%, 등급 A) · 직전 리포트 대비 ▼7,300원 · 프리미엄 테마+2/뉴스+5/섹터+1/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; supply_contract_major(자동) +3.0%\n- 뉴스 반영 추정 목표 매도가 **1,649,800원**(-10.4%, 등급 A) · 직전 리포트 대비 ▲49,100원 · 프리미엄 테마+2/뉴스+2/섹터+5/모멘텀-4% · 📰 원인 뉴스: earnings_report(촉매) +3.5%; earnings_surprise_beat(자동) +3.5%\n- 뉴스 반영 추정 목표 매도가 **231,300원**(-16.2%, 등급 A) · 직전 리포트 대비 ▲3,400원 · 프리미엄 테마+2/뉴스+3/섹터+5/모멘텀-2% · 📰 원인 뉴스: earnings_report(촉매) +5.4%; earnings_report(촉매) +3.5%\n\n**신규진입 상한가(현재가 위치):**\n- 카카오(035720) — 뉴스 반영 신규진입 상한가 **49,200원**(R/R≥1.0·ATR 2.7%×2≈손절 5.5% 기준) · 현재가 33,400원 🟢진입 가능(현재가가 상한가보다 47.3% 낮음) · 직전 리포트 대비 ▼3,100원\n- NAVER(035420) — 뉴스 반영 신규진입 상한가 **255,200원**(R/R≥1.0·ATR 2.4%×2≈손절 4.8% 기준) · 현재가 192,200원 🟢진입 가능(현재가가 상한가보다 32.8% 낮음) · 직전 리포트 대비 ▼29,500원\n- HD현대일렉트릭(267260) — 뉴스 반영 신규진입 상한가 **851,400원**(R/R≥1.0·ATR 3.9%×2≈손절 7.7% 기준) · 현재가 678,000원 🟡진입 가능 구간이나 falling knife(60일 -27%) — 추격 금지(추세 약세)(상한가보다 25.6% 낮음) · 직전 리포트 대비 ▼41,300원\n- 삼성물산(028260) — 뉴스 반영 신규진입 상한가 **415,100원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 347,000원 🟡진입 가능 구간이나 falling knife(60일 -23%) — 추격 금지(추세 약세)(상한가보다 19.6% 낮음) · 직전 리포트 대비 ▼9,300원\n- KB금융(105560) — 뉴스 반영 신규진입 상한가 **193,600원**(R/R≥1.0·ATR 3.0%×2≈손절 6.0% 기준) · 현재가 168,400원 🟢진입 가능(현재가가 상한가보다 15.0% 낮음) · 직전 리포트 대비 ▼600원\n- LG에너지솔루션(373220) — 뉴스 반영 신규진입 상한가 **408,800원**(R/R≥1.0·ATR 3.4%×2≈손절 6.8% 기준) · 현재가 369,000원 🟢진입 가능(현재가가 상한가보다 10.8% 낮음) · 직전 리포트 대비 ▲18,900원\n- 셀트리온(068270) — 뉴스 반영 신규진입 상한가 **202,800원**(R/R≥1.0·ATR 2.1%×2≈손절 4.2% 기준) · 현재가 182,600원 🟢진입 가능(현재가가 상한가보다 11.1% 낮음) · 직전 리포트 대비 ▼5,700원\n- 신한지주(055550) — 뉴스 반영 신규진입 상한가 **114,400원**(R/R≥1.0·ATR 3.3%×2≈손절 6.5% 기준) · 현재가 105,900원 🟢진입 가능(현재가가 상한가보다 8.0% 낮음) · 직전 리포트 대비 ▼3,800원\n- 한화에어로스페이스(012450) — 뉴스 반영 신규진입 상한가 **1,115,000원**(R/R≥1.0·ATR 4.6%×2≈손절 9.1% 기준) · 현재가 1,069,000원 🟢진입 가능(현재가가 상한가보다 4.3% 낮음) · 직전 리포트 대비 ▲27,900원\n- 삼성바이오로직스(207940) — 뉴스 반영 신규진입 상한가 **1,474,900원**(R/R≥1.0·ATR 2.6%×2≈손절 5.2% 기준) · 현재가 1,366,000원 🟢진입 가능(현재가가 상한가보다 8.0% 낮음) · 직전 리포트 대비 ▼68,600원\n- 하나금융지주(086790) — 뉴스 반영 신규진입 상한가 **135,100원**(R/R≥1.0·ATR 3.2%×2≈손절 6.4% 기준) · 현재가 129,600원 🟢진입 가능(현재가가 상한가보다 4.2% 낮음) · 직전 리포트 대비 ▼2,600원\n- HD한국조선해양(009540) — 뉴스 반영 신규진입 상한가 **325,200원**(R/R≥1.0·ATR 4.3%×2≈손절 8.6% 기준) · 현재가 326,500원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 0.4% 상회) · 직전 리포트 대비 ▼1,200원\n- LIG넥스원(LIG D&A)(079550) — 뉴스 반영 신규진입 상한가 **738,900원**(R/R≥1.0·ATR 4.9%×2≈손절 9.8% 기준) · 현재가 759,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 2.6% 상회) · 직전 리포트 대비 ▲20,100원\n- 삼성SDI(006400) — 뉴스 반영 신규진입 상한가 **522,400원**(R/R≥1.0·ATR 3.6%×2≈손절 7.2% 기준) · 현재가 529,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.2% 상회) · 직전 리포트 대비 ▲15,500원\n- 현대차(005380) — 뉴스 반영 신규진입 상한가 **342,700원**(R/R≥1.0·ATR 2.7%×2≈손절 5.3% 기준) · 현재가 347,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 1.2% 상회) · 직전 리포트 대비 ▼15,800원\n- 삼성중공업(010140) — 뉴스 반영 신규진입 상한가 **18,800원**(R/R≥1.0·ATR 4.2%×2≈손절 8.4% 기준) · 현재가 19,920원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 5.6% 상회) · 직전 리포트 대비 ▼200원\n- 한미반도체(042700) — 뉴스 반영 신규진입 상한가 **239,900원**(R/R≥1.0·ATR 4.4%×2≈손절 8.8% 기준) · 현재가 272,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 11.8% 상회) · 직전 리포트 대비 ▲3,000원\n- LS ELECTRIC(010120) — 뉴스 반영 신규진입 상한가 **184,500원**(R/R≥1.0·ATR 3.5%×2≈손절 7.1% 기준) · 현재가 209,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 11.7% 상회) · 직전 리포트 대비 ▼6,800원\n- SK하이닉스(000660) — 뉴스 반영 신규진입 상한가 **1,525,300원**(R/R≥1.0·ATR 4.1%×2≈손절 8.2% 기준) · 현재가 1,842,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 17.2% 상회) · 직전 리포트 대비 ▲45,100원\n- 삼성전자(005930) — 뉴스 반영 신규진입 상한가 **215,600원**(R/R≥1.0·ATR 3.6%×2≈손절 7.3% 기준) · 현재가 276,000원 🔴신규 진입 매력 낮음(상승여력<R/R×손절 — 상한가 21.9% 상회) · 직전 리포트 대비 ▲3,200원\n\n> 등급: 가용 데이터 레이어 수 기준 A(5+)/B(3~4)/C(2-). C 등급은 기준가가 현재가 폴백이라 거친 추정.\n> ⚠밴드이탈 = 현재 멀티플이 밸류밴드 밖이라 기준가의 밸류 성분이 이 종목의 현재 레짐을 설명하지 못하는 상태(등급 1단계 강등). 밴드는 과거 약 2.5년 실측 멀티플의 5~95% 구간이라 레짐이 바뀌면 창 안에 끝난 구간이 남는다 — 목표가 수치는 그대로 두고 주간 루틴 재시드로 넘긴다.\n> 뉴스 프리미엄이 ±12%(캡)에 걸리면 추가 호재가 목표가에 더 실리지 않는다. 자동분류(자동) 뉴스는 0.6 할인·미검증.\n> 신규진입 상한가 = 목표가/(1+R/R하한×손절%) — 적정가치가 아니라 R/R 진입 상한(차단 게이트 아님, 진입 타이밍 참고)이다. 현재가보다 낮으면 '신규 진입엔 업사이드가 얇다'는 신호(R/R 부족·변동성 큰 종목일수록 손절폭이 넓어 더 낮게 나옴)이지 고평가 판정이 아니다. 🟡진입주의 = 진입 가능 구간이나 60일 급락(falling knife)이라 추격 금지. 폴백 앵커는 프리미엄이 약하면(기대수익<임계) 상한가를 보류(—)한다. 목표가가 뉴스로 오르면 상한가도 같이 오른다(신규 진입 기준, 보유 평단은 불변).",
   "disclaimer": "학습·시뮬레이션 목적의 거친 추정 — 투자 권유 아님. watchlist.target_price 를 자동 갱신하지 않으며, routine 이 dynamic_exit_model 목표가 산정 시 참고 레이어로만 쓴다."
 }

@@ -30,10 +30,24 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--date", help="판정 일자(기본 오늘 KST)")
     args = ap.parse_args()
-    today = args.date or datetime.now(KST).date().isoformat()
+    now = datetime.now(KST)
+    today = args.date or now.date().isoformat()
 
     # 영업일 가드
     sys.path.insert(0, str(ROOT / "scripts"))
+    if not args.date and now.hour * 60 + now.minute < 15 * 60 + 30:
+        # 15:30 전(새벽 지연 실행 등)에는 오늘 장이 끝나지 않았다 — 판정 일자는 '마지막으로 끝난 거래일'.
+        # (미래 일자 EOD 백스톱 6회 재발 — lessons 2026-09-29/30)
+        try:
+            import check_market_open as cmo
+            d = now.date() - timedelta(days=1)
+            for _ in range(10):
+                if cmo.evaluate(d)[0]:
+                    break
+                d -= timedelta(days=1)
+            today = d.isoformat()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[WARN] 직전 거래일 판정 실패({exc}) — 기본 일자 유지")
     try:
         import check_market_open as cmo
         is_open, why, _code = cmo.evaluate(datetime.strptime(today, "%Y-%m-%d").date())

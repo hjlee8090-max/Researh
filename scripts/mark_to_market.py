@@ -23,6 +23,13 @@
 불변 원칙: cash·shares·entry_price·realized_pnl·trade_count·history 등 원장 사실은
 절대 건드리지 않는다(그건 trade_log 와 reconcile_portfolio 의 영역). 스냅샷에 없는
 종목은 기존 평가값을 보존한다(결측이 평가를 0 으로 무너뜨리는 래칫 방지).
+
+확정 평가 보존(CLI): 보유 종목에 적용될 스냅샷 시세가 trade_log 의 최신 18시 정본
+EOD_MARK(백스톱·무효화 줄 제외) 일자보다 새롭지 않으면 쓰지 않는다. 18시가 다중 출처로
+확정한 평가를 지연 실행된 fetch_prices(22시대)·eod_backstop(자정 이후·휴장일)이 단일 출처
+스냅샷으로 다시 덮던 결함(saturday-review 2026-09-26·10-10 '확정 후 재평가' 7회) 방지.
+18시 routine 은 EOD_MARK 를 쓰기 전에 이 CLI 를 호출하므로 영향이 없고, 다음 영업일
+장중 시세가 들어오면 다시 갱신된다.
 검증: --selftest 가 합성 포트폴리오로 equity/괴리 계산을 재현한다. --dry-run 지원.
 """
 from __future__ import annotations
@@ -38,6 +45,7 @@ KST = timezone(timedelta(hours=9))
 
 PORTFOLIO_PATH = ROOT / "config" / "portfolio.json"
 SNAPSHOT_PATH = ROOT / "state" / "market_snapshot.json"
+TRADE_LOG_PATH = ROOT / "state" / "trade_log.jsonl"
 
 
 def _num(v) -> float | None:
@@ -140,6 +148,42 @@ def overlay_snapshot(portfolio: dict, snapshot: dict) -> dict:
         "total": len(positions_out),
         "positions": positions_out,
     }
+
+
+def newest_price_date(portfolio: dict, snapshot: dict) -> str | None:
+    """보유 종목에 적용될 스냅샷 시세의 최신 가격 일자(YYYY-MM-DD) — 없으면 None."""
+    snap_tickers = snapshot.get("tickers", {}) if isinstance(snapshot, dict) else {}
+    if not isinstance(snap_tickers, dict):
+        return None
+    dates = []
+    for p in portfolio.get("positions", []):
+        if isinstance(p, dict) and (_num(p.get("shares")) or 0) > 0:
+            _price, d = snap_price(snap_tickers.get(str(p.get("ticker", "")), {}))
+            if d:
+                dates.append(d[:10])
+    return max(dates) if dates else None
+
+
+def latest_confirmed_eod(path: Path = TRADE_LOG_PATH) -> str | None:
+    """trade_log 의 18시 정본 EOD_MARK(backstop·voided 줄 제외) 중 최신 일자 — 없으면 None."""
+    latest = None
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None
+    for line in lines:
+        if '"EOD_MARK"' not in line:
+            continue
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if e.get("action") != "EOD_MARK" or e.get("backstop") or e.get("voided"):
+            continue
+        d = str(e.get("date") or e.get("ts", ""))[:10]
+        if len(d) == 10 and (latest is None or d > latest):
+            latest = d
+    return latest
 
 
 def load_marked(root: Path = ROOT) -> dict | None:
@@ -261,6 +305,19 @@ def main() -> int:
         snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         snapshot = {}
+
+    newest = newest_price_date(portfolio, snapshot)
+    confirmed = latest_confirmed_eod()
+    if newest and confirmed and newest <= confirmed:
+        print(json.dumps({
+            "price_date": newest,
+            "confirmed_eod": confirmed,
+            "equity": portfolio.get("equity"),
+            "changed": False,
+            "written": False,
+            "skipped": f"스냅샷 시세({newest})가 18시 정본 EOD({confirmed}) 이후 것이 아니다 — 확정 평가 보존",
+        }, ensure_ascii=False))
+        return 0
 
     marked = overlay_snapshot(portfolio, snapshot)
     before_equity = portfolio.get("equity")

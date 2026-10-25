@@ -147,17 +147,16 @@ def signal_in_haystack(signal: str, haystack: str) -> bool:
     return signal.lower() in haystack
 
 
-def main() -> int:
-    if not LESSONS_PATH.exists():
-        print(json.dumps({"error": f"{LESSONS_PATH} 없음"}, ensure_ascii=False))
-        return 1
-    text = LESSONS_PATH.read_text(encoding="utf-8")
+def build_haystack() -> tuple[str, list[str]]:
+    """반영 판정용 haystack(소문자)과 그 구성 파일 목록.
 
-    # haystack = policy.json + changelog·rationale 전문(docs 분리분) + 모든 prompts/*.md (소문자).
-    # compact_state.py 가 policy.changelog 를 docs/policy_changelog.md 로 이관하고,
-    # P1 D(v2.32, docs/plan_removal_exclusion.md §5-D)가 policy 의 이력 산문을
-    # docs/policy_rationale.md 로 이관하므로, 이관분에만 남은 반영 신호가
-    # '미반영' 오탐이 되지 않도록 함께 grep 한다(2026-06-12 changelog 분리와 동일 조건).
+    haystack = policy.json + changelog·rationale 전문(docs 분리분) + 모든 prompts/*.md.
+    compact_state.py 가 policy.changelog 를 docs/policy_changelog.md 로 이관하고,
+    P1 D(v2.32, docs/plan_removal_exclusion.md §5-D)가 policy 의 이력 산문을
+    docs/policy_rationale.md 로 이관하므로, 이관분에만 남은 반영 신호가
+    '미반영' 오탐이 되지 않도록 함께 grep 한다(2026-06-12 changelog 분리와 동일 조건).
+    compact_state.compact_lessons_sections 도 같은 함수로 미해결 줄을 판정한다(단일 계약).
+    """
     parts: list[str] = []
     haystack_files: list[str] = []
     for rel in ("config/policy.json", "docs/policy_changelog.md", "docs/policy_rationale.md"):
@@ -168,7 +167,16 @@ def main() -> int:
     for p in sorted((ROOT / "prompts").glob("*.md")):
         parts.append(p.read_text(encoding="utf-8"))
         haystack_files.append(f"prompts/{p.name}")
-    haystack = "\n".join(parts).lower()
+    return "\n".join(parts).lower(), haystack_files
+
+
+def main() -> int:
+    if not LESSONS_PATH.exists():
+        print(json.dumps({"error": f"{LESSONS_PATH} 없음"}, ensure_ascii=False))
+        return 1
+    text = LESSONS_PATH.read_text(encoding="utf-8")
+
+    haystack, haystack_files = build_haystack()
 
     sections = split_sections(text)
     counter = parse_counter(text)

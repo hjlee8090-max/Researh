@@ -30,8 +30,8 @@ config/
   news_keywords.json       뉴스 자동 분류 키워드 레지스트리(12개 유형과 1:1, 종목 별칭 포함) — fetch_news.py 입력. 키워드 보강=분류 보강
   news_history.json        백테스트용 라벨드 뉴스 타임라인(레포 운용 기록 추출) — backtest_target_model.py 입력
 state/
-  lessons.md               자기보완 학습 노트 (오차 사유 누적 — ✅codify 완료 항목 본문은 lessons_archive.md 로 이관)
-  lessons_archive.md       응축된 lessons 항목의 전문 보존 (routine 은 읽지 않음 — 복기용)
+  lessons.md               자기보완 학습 노트 (최근 7일 항목 + 누적 카운터 + 이관 스텁 — 나머지는 compact_state.py 가 매일 lessons_archive.md 로 이관)
+  lessons_archive.md       이관된 lessons 항목·카운터 이전 기록의 원문 보존 (routine 은 통째로 읽지 않음 — 필요 시 검색)
   inference_log.jsonl      (선제적 추론 루프 Phase 1) 예측 원장 — 라인당 1예측(상황추론·예측·확신·선제액션·사후 채점결과). 핫패스 아님
   inference_scorecard.json score_inferences.py 채점 산출 — 슬롯·subject·확신구간별 적중률 + 결합 실현손익/PF + 미배치 forgone
   inference_checklist.md   추론 직전 먼저 읽는 응축 체크리스트(핫패스, 상한 40줄) — build_inference_checklist.py 가 lessons+scorecard 에서 파생
@@ -100,6 +100,7 @@ scripts/
   score_target_estimates.py 추정 vs 실현 주간 채점 + 뉴스 키워드 보강 점검 → state/estimate_scorecard.json (sunday_policy_review 0-C)
   fetch_history.py         백테스트용 장기 일봉(~2.5년) 수집 → state/price_history.json (fetch_history.yml 수동/push 트리거)
   backtest_target_model.py 목표주가 추정식 백테스트 — 충격-감쇠·이벤트 스터디·워크포워드 검증, v1.0 vs v1.1 비교 → state/backtest_target_model.json
+  backtest_bear_realdata.py (2026-10-25) 실제 2026 약세장에서 7/1 사전 등록 레짐 필터(index_ma·breadth) 표본외 검증 → state/backtest_bear_realdata.json
   screen_universe.py       (v2.7/2.8) 모집단(universe.json) 상대강도+테마 랭킹 → 승격/회전아웃 제안 + 섹터별 몰입(sector_rotation·avoid_reentry) → state/universe_screen.json
   reconcile_portfolio.py   trade_log ↔ portfolio.json cash·positions·realized_pnl 정합성 검증
   sync_watchlist.py        (2026-07-08 신설) watchlist 보유 종목 필드(shares_held·stop/target)를 portfolio·exit_levels 정본과 동기화 (18시 EOD·수동, 멱등·--dry-run)
@@ -201,7 +202,7 @@ scripts/
   - policy.changelog 최근 5건 (전문은 `docs/policy_changelog.md`)
   - (v2.32 P0 — `docs/plan_removal_exclusion.md`) pending_orders 종결 7일+·catalysts manual 과거 7일+·inference_log 채점완료 90일+ 이관, 체크리스트 바이트 캡 집행. **누적이 자동이면 제거도 자동** — 압축 담체를 주 1회에서 매일로 승격
 - **감시**: `audit_pipeline.audit_context_budget` 가 크기 임계 초과를 매일 WARN (매매 룰 래칫 감시와 동형의 크기 래칫 감시)
-- lessons.md 는 ✅codify 확정 항목만 본문을 `state/lessons_archive.md` 로 이관 (sunday_policy_review §1-6 — 카운터·미반영 항목 불변)
+- lessons.md 는 7일 보존 창 밖 항목·카운터 `[이전 기록]` 체인을 `state/lessons_archive.md` 로 자동 이관(예산 85% 초과 시 추가 이관), 미해결 마커·미만료 룰 줄만 '이관 스텁'으로 잔류 — sunday_policy_review §1-6 이 스텁을 처분 (2026-10-25 개편: codify 마커 게이트가 이관을 막아 880KB 까지 누적됐던 구조 해소)
 
 ## 목표주가 추정 레이어 (estimate_target_price.py, v1.1)
 파이프라인의 흩어진 신호를 하나의 식으로 결합해 **12개월 내 도달 가능한 대략적 목표가(원)** 를 산출한다:

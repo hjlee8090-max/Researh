@@ -136,19 +136,17 @@ lessons.md 의 각 항목에서 "**다음 적용 룰**" 또는 "**다음 진입/
   (기준 사후 변경 금지). verdict=wire 계열일 때만 score_candidates 배선을 패치 후보로 상정.
 - 보강·승격 내역은 lessons.md 에 '루틴' 분류로 1줄 기록한다(키워드 레지스트리 변경 이력 추적).
 
-### 1-6. lessons.md 응축 (콘텍스트 예산 — `policy.context_budget`, v2.32 E 수지 균형 의무)
-이번 리뷰에서 **codify 확정**(policy/prompts/CI 반영 완료 + 반영 위치 확인)된 lessons 항목은:
-- 전문(원문 그대로)을 `state/lessons_archive.md` 에 append 하고,
-- lessons.md 본문을 "분류·요약 1~2줄·✅ codify 반영 위치·전문 이관 표기" 4줄로 교체한다.
-- **불변 보존**: `### ` 헤딩 원문, `- 분류:`/`- 원인 분류:` 라인, 누적 패턴 카운터, 미반영·진행 중(in-progress) 항목 전체. 응축 후 `python scripts/build_lessons_index.py` 를 재실행해 entries 수·카운터가 변하지 않았는지 확인한다.
-- **(v2.32 E) 수지 균형 의무 — 응축은 재량이 아니라 의무다**: 매 리뷰는
-  ①이번 이관 건수 ≥ `lessons_index.throughput.new_entries_7d`(주간 유입) 또는
-  ②lessons.md ≤ `context_budget.audit_thresholds.lessons_max_bytes`(60KB) — 둘 중 하나를 충족한다.
-  이관 대상 1순위는 `lessons_index.archive_candidates`(codify 30일+ 미응축, 오래된 순 정렬).
-  둘 다 미충족이면 산출물 1 §6 사용자 액션에 사유를 1줄로 명시한다(침묵 이월 금지 —
-  17시 self-audit 의 `lessons-balance` finding 이 open 인 동안 §0-0 처분 의무가 반복 적용된다).
-  근거: 유입은 자동·매일, 이관은 주 1회 재량이던 대역폭 비대칭이 279KB(예산 4.7×)를 만들었다
-  (docs/plan_removal_exclusion.md §3-1).
+### 1-6. lessons.md 응축 점검 (콘텍스트 예산 — `policy.context_budget`, 2026-10-25 자동화)
+이관은 더 이상 이 리뷰의 수작업이 아니다. `scripts/compact_state.py`(매일 19:00 KST, weekly_compact.yml)가
+7일 보존 창 밖 항목 원문·카운터 `[이전 기록]` 체인을 `state/lessons_archive.md` 로 옮기고, 그래도
+`lessons_max_bytes` × 0.85 를 넘으면 오래된 항목부터 추가 이관한다(오늘·어제 항목 제외). 이 리뷰는:
+- **크기 확인**: lessons.md ≤ `context_budget.audit_thresholds.lessons_max_bytes`(60KB). 넘었으면 압축 워크플로
+  실행 여부부터 확인하고, 원인을 산출물 1 §6 사용자 액션에 1줄로 남긴다(침묵 이월 금지).
+- **이관 스텁 처분**: '이관 스텁' 표기가 붙은 항목은 원문이 archive 로 갔지만 미해결 마커·미만료 룰이 남은
+  것이다. 각 스텁을 ①반영(policy/prompts/scripts 에 강제 → 다음 압축에서 스텁 자동 소멸) ②기각(스텁 줄 삭제 +
+  사유 1줄) ③보류(판정 기한 명기) 중 하나로 처분한다. 스텁을 '관찰 계속'으로 무기한 두지 않는다.
+- 근거: 이관을 ✅codify 마커에 묶었던 이전 설계는 마커를 다는 단계가 재량이라 유입(자동·매일)을 못 따라가
+  880KB(예산 14.7×)·73일 연속 초과를 만들었다. 오래된 사례가 필요하면 archive 를 검색한다(핫패스 아님).
 
 ### 1-7. 선제 추론 루프 채점·자격 심사 (inference_scorecard — Phase 1→2)
 `state/inference_scorecard.json`(0-D 생성)을 점검한다(자기보완 루프의 estimate 채점 §1-5 와 대칭):

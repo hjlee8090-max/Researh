@@ -174,7 +174,7 @@ def main() -> int:
     # 빈도·최신성 하위부터). 통째 절단만 하고 문장 중간은 자르지 않는다(의미 훼손 방지).
     def notice(n_cut: int) -> str:
         return (f"- … (상한 {cap}줄/{cap_bytes:,}B 도달 — 빈도·최신성 하위 {n_cut}건 생략. "
-                "전량은 state/inference_scorecard.json miss_factors_detail·state/lessons.md 참조)")
+                "전량은 state/inference_scorecard.json miss_factors_detail·state/lessons_archive.md 참조)")
 
     def render(keep_n: int) -> str:
         kept = body[:keep_n]

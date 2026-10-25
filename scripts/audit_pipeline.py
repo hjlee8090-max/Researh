@@ -1171,8 +1171,8 @@ def audit_context_budget(data: dict[str, object], messages: list[str]) -> None:
         (fail_labels if days >= CONTEXT_ESCALATE_DAYS else warn_labels).append(label)
 
     prescription = (
-        " — 처방: watchlist/watch_items/history/lessons 갱신체인은 compact_state.py, "
-        "lessons 본문은 ✅codify 이관(sunday_policy_review §1-6 수지 균형 의무), policy.json 은 "
+        " — 처방: watchlist/watch_items/history/lessons(항목 7일 창·카운터 체인)는 compact_state.py "
+        "자동 이관(lessons 가 남으면 weekly_compact.yml 실행 여부 확인), policy.json 은 "
         "유래·사례 산문의 docs/policy_rationale.md 이관(v2.33 관례 — 신규 룰은 본문에 "
         "룰·파라미터·ref 만)"
     )

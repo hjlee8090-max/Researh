@@ -321,7 +321,7 @@
 ## 7. 규칙
 - **검색 시세는 근사값** — 리포트 머리말 각주 1줄로만 명시하고 본문 수치마다 반복하지 않는다
 - 종가 데이터가 출처별로 다르면 가장 보수적 값 채택
-- lessons.md 압축 체계(`policy.context_budget`): ✅codify 완료(policy/prompts/CI 반영) 항목의 본문은 `state/lessons_archive.md` 로 이관하고 lessons.md 에는 헤딩·분류·요약·codify 참조만 남긴다 — 미반영·진행 중 교훈과 누적 패턴 카운터는 절대 건드리지 않는다. 18시는 신규 항목 추가만, 이관은 sunday_policy_review 가 codify 확정 시 수행
+- lessons.md 압축 체계(`policy.context_budget`, 2026-10-25 개편): 이관은 `scripts/compact_state.py` 가 매일 19:00 KST 자동 수행한다 — 7일 보존 창 밖 항목 원문과 카운터 줄의 `[이전 기록]` 체인을 `state/lessons_archive.md` 로 옮기고, 미해결 마커·미만료 `(expiry: …)` 룰 줄만 '이관 스텁'으로 남긴다(카운터 건수·최신 기록은 유지). 18시는 신규 항목 추가와 카운터 갱신만 하고 직접 이관·삭제하지 않는다. 7일보다 오래된 사례가 필요하면 lessons_archive.md 를 검색해서 읽는다(핫패스 아님 — 통째로 적재 금지)
 - 모든 의사결정은 trade_log.jsonl에 라인으로 남기 (감사 추적성)
 
 ## 8. 상태 영속화 (git commit & push) — 가장 중요

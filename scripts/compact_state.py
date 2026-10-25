@@ -33,6 +33,11 @@ P0 커버리지 확장 (2026-08-13, docs/plan_removal_exclusion.md §5-A — 매
    예측·결과 라인 이관. target_estimate_log 90일 보존창과 동일 관례(스코어카드는 롤링창).
    미채점·형식 위반 라인은 보존(채점·보정 표면 유지).
 
+lessons.md 자동 이관 (2026-10-25 — 880KB·예산 14.7× 해소, 이전엔 ✅codify 마커가 있어야만 이관):
+10. 누적 패턴 카운터 줄의 '[이전 기록]' 체인 → lessons_archive.md (건수·최신 기록 유지).
+11. 날짜 헤딩(`## `·`### `) 항목 중 LESSONS_KEEP_DAYS 창 밖 + 예산 초과분 → lessons_archive.md 원문 이관.
+    미해결 마커(check_lessons_applied 와 같은 판정)·미만료 (expiry) 룰 줄은 '이관 스텁'으로 남는다.
+
 실행: 매일 19:00 KST weekly_compact.yml(일간 승격) + 일요일 21시 sunday_archive routine §0-B + 수동.
 `--dry-run` 으로 변경량만 미리 본다. 표준 라이브러리만 사용.
 """
@@ -40,11 +45,23 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_lessons_applied import (  # noqa: E402  — 미해결 판정은 감사와 같은 계약을 쓴다
+    EXPIRY_RE,
+    REPEAT_MARKERS,
+    UNRESOLVED_MARKERS,
+    build_haystack,
+    extract_signals,
+    signal_in_haystack,
+)
 
 KEEP_COMMENTS = 12        # 보유 종목당 최근 코멘트 (≈ 2~3일 × 4~5슬롯)
 KEEP_WATCH_ITEMS = 15     # "내일 이어받을 트리거"로서 유효한 분량 (≈ 1주)
@@ -68,6 +85,17 @@ LESSONS_ARCHIVE = ROOT / "state" / "lessons_archive.md"
 # lessons.md "최종 갱신" 라인의 "이전 갱신:" 체인 보존 개수 — 무압축 시 한 줄이 ~10KB 까지
 # 자라던 무한 누적원 (2026-07-08 진단). 초과분은 lessons_archive.md 전문 보존.
 KEEP_UPDATE_CHAIN = 2
+# lessons.md 항목 본문 보존 창(캘린더일) — 토 사후분석·일 리뷰가 보는 한 주.
+# (2026-10-25 진단) 이관을 '✅codify 마커'에 묶은 §1-6 설계는 마커를 다는 단계가 재량이라
+# 유입(자동·매일)을 못 따라가 880KB(예산 14.7×)·73일 연속 초과를 만들었다 → codify 무관 자동 이관.
+LESSONS_KEEP_DAYS = 7
+# 일일 유입이 3~10KB 로 출렁여(2026-08~10 실측) 날짜 창만으론 예산을 못 지킨다 — 창 안이라도
+# lessons_max_bytes × 이 비율을 넘으면 오래된 항목부터 추가 이관(다음 압축까지의 유입 여유).
+LESSONS_TARGET_RATIO = 0.85
+# 오늘·어제 항목은 예산 초과여도 이관하지 않는다 — inference_checklist 의 최신 룰 입력 보존.
+LESSONS_FLOOR_DAYS = 1
+# 이관 항목 중 미해결 마커(반영 안 됨)·미만료 (expiry) 룰 줄만 남긴 스텁의 식별 태그.
+LESSONS_STUB_TAG = "이관 스텁"
 
 # --- P0 커버리지 확장 (2026-08-13, docs/plan_removal_exclusion.md §5-A) ---
 PENDING_ORDERS = ROOT / "state" / "pending_orders.json"
@@ -343,6 +371,212 @@ def compact_lessons_update_chain(dry: bool) -> dict:
     }
 
 
+COUNTER_PREV_RE = re.compile(r"\s*\*{0,2}\[이전 기록\]\*{0,2}")
+
+
+def _trim_counter_chains(lines: list[str]) -> tuple[list[str], list[str], int, int] | None:
+    """(새 줄 목록, archive 로 옮길 체인 줄, 원래 바이트, 압축 후 바이트). 카운터 섹션 없으면 None."""
+    start = next((i for i, l in enumerate(lines) if l.startswith("## 누적 패턴 카운터")), None)
+    if start is None:
+        return None
+    lines = list(lines)
+    moved: list[str] = []
+    before = after = 0
+    for i in range(start + 1, len(lines)):
+        line = lines[i]
+        if line.startswith("#"):
+            break
+        if not line.startswith("- "):
+            continue
+        m = COUNTER_PREV_RE.search(line)
+        if not m:
+            continue
+        head, chain = line[: m.start()].rstrip(), line[m.start():].strip()
+        name = head[2:].split(":", 1)[0].strip().strip("*").strip()
+        new_line = head + " — 이전 기록은 lessons_archive.md 이관)"
+        moved.append(f"- {name}: {chain}")
+        before += len(line.encode("utf-8"))
+        after += len(new_line.encode("utf-8"))
+        lines[i] = new_line
+    return lines, moved, before, after
+
+
+def compact_lessons_counter_chains(dry: bool) -> dict:
+    """누적 패턴 카운터 각 줄의 '[이전 기록]' 체인을 압축한다.
+
+    18시가 카운터를 갱신할 때 직전 기록 앞에 '[이전 기록]' 을 붙여 줄 뒤로 밀어내므로 줄당
+    5~14KB 까지 자랐다(2026-10-25 실측 6줄 51KB). 건수(`- 이름: **N건**`)와 최신 기록은 남기고
+    첫 '[이전 기록]' 이후 체인 전문만 lessons_archive.md 로 옮긴다 — 카운터 파서 계약 무변경.
+    """
+    if not LESSONS.exists():
+        return {"skipped": "lessons.md 부재"}
+    text = LESSONS.read_text(encoding="utf-8")
+    trimmed = _trim_counter_chains(text.splitlines())
+    if trimmed is None:
+        return {"skipped": "누적 패턴 카운터 섹션 없음"}
+    lines, moved, before, after = trimmed
+    if moved and not dry:
+        block = [f"\n## 누적 패턴 카운터 이전 기록 이관 ({now_kst()})\n"] + moved
+        with LESSONS_ARCHIVE.open("a", encoding="utf-8") as fh:
+            fh.write("\n".join(block) + "\n")
+        LESSONS.write_text("\n".join(lines) + ("\n" if text.endswith("\n") else ""), encoding="utf-8")
+    return {"counters_compacted": len(moved), "bytes_before": before, "bytes_after": after}
+
+
+LESSON_HEAD_RE = re.compile(r"^(#{2,3})\s+(.+)$")
+LESSON_DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+
+
+def _split_lesson_units(lines: list[str]) -> list[dict]:
+    """lessons.md 를 순서 보존 단위로 나눈다.
+
+    kind — pre: 첫 헤딩 앞(제목·설명) / struct: 날짜 없는 `## `(분류 체계·카운터 등)과 여러 줄
+    HTML 주석(작성 템플릿 — 안의 `###` 는 헤딩이 아니다) / entry: 날짜가 든 `## `·`### ` 헤딩.
+    09시·사후분석이 하단에 `## 날짜` 로 붙인 항목도 entry 다(파서들이 `###` 만 보던 사각).
+    """
+    units: list[dict] = [{"kind": "pre", "date": None, "lines": []}]
+    in_comment = False
+    for raw in lines:
+        if in_comment:
+            units[-1]["lines"].append(raw)
+            in_comment = "-->" not in raw
+            continue
+        if raw.lstrip().startswith("<!--") and "-->" not in raw:
+            units.append({"kind": "struct", "date": None, "lines": [raw]})
+            in_comment = True
+            continue
+        m = LESSON_HEAD_RE.match(raw)
+        if m:
+            dm = LESSON_DATE_RE.search(m.group(2))
+            if dm or m.group(1) == "###":
+                units.append({"kind": "entry", "date": dm.group(1) if dm else None, "lines": [raw]})
+            else:
+                units.append({"kind": "struct", "date": None, "lines": [raw]})
+            continue
+        units[-1]["lines"].append(raw)
+    return units
+
+
+def _lesson_stub(unit: dict, haystack: str, today: str, stamp_date: str) -> list[str] | None:
+    """이관 항목에서 핫패스에 남겨야 할 줄만 추린 스텁. 남길 줄이 없으면 None.
+
+    남기는 줄: ①미해결 마커 줄 중 반영 신호(strong)가 policy/prompts 에 아직 없는 것
+    (check_lessons_applied 와 같은 판정 — 반영되면 다음 압축에서 스텁이 자동 소멸)
+    ②만료일이 오늘 이후인 (expiry: …) 룰 줄(일몰 전 임시 룰은 아직 유효).
+    """
+    head, body = unit["lines"][0], unit["lines"][1:]
+    keep: list[str] = []
+    for line in body:
+        if LESSONS_STUB_TAG in line:
+            continue
+        if any(mk in line for mk in UNRESOLVED_MARKERS):
+            strong, _ = extract_signals(line)
+            if not any(signal_in_haystack(s, haystack) for s in strong):
+                keep.append(line)
+                continue
+        em = EXPIRY_RE.search(line)
+        if em and em.group(1) >= today:
+            keep.append(line)
+    if not keep:
+        return None
+    if any(LESSONS_STUB_TAG in l for l in body):
+        return unit["lines"]  # 이미 스텁 — 원문은 앞선 이관에서 archive 에 있다
+    stub = [head]
+    cat = next((l for l in body if re.match(r"^\s*[-*]?\s*\*{0,2}(?:원인\s*)?분류\*{0,2}\s*[:：]", l)), None)
+    if cat and cat not in keep:
+        stub.append(cat)
+    stub += keep
+    # 원 섹션의 반복/재발 여부를 보존해 감사의 hard/soft 분류가 이관으로 바뀌지 않게 한다.
+    if any(rm in "\n".join(body) for rm in REPEAT_MARKERS) and not any(
+            rm in "\n".join(stub) for rm in REPEAT_MARKERS):
+        stub.append("- (원 섹션에 반복·재발 마커 있음)")
+    stub.append(f"- {LESSONS_STUB_TAG}: 전문은 state/lessons_archive.md ({stamp_date} 이관) "
+                "— 미해결 마커·미만료 룰 줄만 남김")
+    stub.append("")
+    return stub
+
+
+def compact_lessons_sections(dry: bool) -> dict:
+    """lessons.md 항목 본문을 보존 창 밖이면 lessons_archive.md 로 원문 이관한다.
+
+    ①날짜가 오늘-LESSONS_KEEP_DAYS 보다 이전인 항목 이관 ②그래도 lessons_max_bytes ×
+    LESSONS_TARGET_RATIO 를 넘으면 창 안 항목도 오래된 순으로 추가 이관(오늘·어제 제외)
+    ③이관 항목의 미해결·미만료 줄은 스텁으로 제자리에 남긴다. 날짜 없는 항목·구조 블록·카운터는
+    건드리지 않는다. archive 를 먼저 쓰고 lessons.md 를 쓴다(중단 시 중복은 있어도 유실은 없다).
+    """
+    if not LESSONS.exists():
+        return {"skipped": "lessons.md 부재"}
+    text = LESSONS.read_text(encoding="utf-8")
+    units = _split_lesson_units(text.splitlines())
+    today_d = datetime.now(KST).date()
+    today = today_d.isoformat()
+    cutoff = (today_d - timedelta(days=LESSONS_KEEP_DAYS)).isoformat()
+    floor = (today_d - timedelta(days=LESSONS_FLOOR_DAYS)).isoformat()
+    max_bytes = int(((read_json(POLICY).get("context_budget") or {}).get("audit_thresholds") or {})
+                    .get("lessons_max_bytes", 60000))
+    target = int(max_bytes * LESSONS_TARGET_RATIO)
+    haystack, _ = build_haystack()
+    # 아직 안 깎인 카운터 체인 바이트 — 실제 실행에선 앞 단계가 이미 깎아 0, --dry-run 에서만
+    # 남는다. 크기 추정에서 빼 dry-run 이 이관량을 과대 보고하지 않게 한다(출력엔 반영 안 함).
+    trimmed = _trim_counter_chains(text.splitlines())
+    pending_counter_bytes = (trimmed[2] - trimmed[3]) if trimmed else 0
+
+    stubs: dict[int, list[str] | None] = {}
+
+    def archive(i: int) -> None:
+        stubs[i] = _lesson_stub(units[i], haystack, today, today)
+
+    def render() -> list[str]:
+        out: list[str] = []
+        for i, u in enumerate(units):
+            if i in stubs:
+                out += stubs[i] or []
+            else:
+                out += u["lines"]
+        return out
+
+    def size(lines: list[str]) -> int:
+        return len(("\n".join(lines) + "\n").encode("utf-8")) - pending_counter_bytes
+
+    for i, u in enumerate(units):
+        if u["kind"] == "entry" and u["date"] and u["date"] < cutoff:
+            archive(i)
+    window_moved = sum(1 for i in stubs if not any(LESSONS_STUB_TAG in l for l in units[i]["lines"]))
+    window_count = len(stubs)
+    # 예산 초과분 — 남은 항목을 오래된 날짜부터(동일 날짜는 파일 뒤쪽부터) 추가 이관.
+    extra = sorted((u["date"], -i, i) for i, u in enumerate(units)
+                   if i not in stubs and u["kind"] == "entry" and u["date"] and u["date"] < floor)
+    for _, _, i in extra:
+        if size(render()) <= target:
+            break
+        archive(i)
+
+    moved = [i for i in stubs if not any(LESSONS_STUB_TAG in l for l in units[i]["lines"])]
+    new_lines = render()
+    result = {
+        "entries": sum(u["kind"] == "entry" for u in units),
+        "moved": len(moved),
+        "moved_by_window": window_moved,
+        "moved_by_budget": len(stubs) - window_count,
+        "stubs_kept": sum(1 for i in stubs if stubs[i]),
+        "cutoff": cutoff,
+        "bytes_before": len(text.encode("utf-8")),
+        "bytes_after": size(new_lines),
+        "target_bytes": target,
+    }
+    if dry or new_lines == text.splitlines():
+        return result
+    if moved:
+        block = [f"\n## 항목 이관 ({now_kst()}, compact_state 자동 — 보존 창 {LESSONS_KEEP_DAYS}일·"
+                 f"목표 {target:,}B)\n"]
+        for i in sorted(moved):
+            block += units[i]["lines"]
+        with LESSONS_ARCHIVE.open("a", encoding="utf-8") as fh:
+            fh.write("\n".join(block).rstrip("\n") + "\n")
+    LESSONS.write_text("\n".join(new_lines) + ("\n" if text.endswith("\n") else ""), encoding="utf-8")
+    return result
+
+
 def parse_ymd(value) -> str:
     """값에서 YYYY-MM-DD 를 뽑는다. 실패 시 '' (보수적 — 날짜 불명은 이관하지 않는 쪽으로)."""
     s = str(value or "")[:10]
@@ -570,6 +804,8 @@ def main() -> int:
         "policy_changelog": compact_policy_changelog(args.dry_run),
         "target_estimate_log": compact_target_estimate_log(args.dry_run),
         "lessons_update_chain": compact_lessons_update_chain(args.dry_run),
+        "lessons_counter_chains": compact_lessons_counter_chains(args.dry_run),
+        "lessons_sections": compact_lessons_sections(args.dry_run),
         # P0 커버리지 확장 (2026-08-13, docs/plan_removal_exclusion.md §5-A)
         "pending_orders": compact_pending_orders(args.dry_run),
         "catalysts_manual": compact_catalysts_manual(args.dry_run),

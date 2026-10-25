@@ -22,8 +22,8 @@
 
 | id | 항목 | 경과 | 처분 상태 |
 |---|---|---|---|
-| `whipsaw-high` | 스톱 휩쏘율 63.6% — 노이즈 저점 매도 반복 | 16주째 🔴overdue | **무처분** (처분 21일 경과에도 지속 — 재처분 요구) |
-| `lessons-balance` | lessons.md 880,658B > 예산 60,000B — 이관 처리량 부족 | 11주째 🔴overdue | **무처분** (패치 처분 후에도 재발 — 보완 효과 없음, 재상정) |
+| `whipsaw-high` | 스톱 휩쏘율 63.6% — 노이즈 저점 매도 반복 | 16주째 | defer — 재심(10-25, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noi |
+| `lessons-balance` | lessons.md 880,658B > 예산 60,000B — 이관 처리량 부족 | 11주째 | defer — 재심(10-25): lessons.md 880,658B(예산 60KB의 14.7×)·entries 407·주 |
 
 ## H. 청산 오버레이 백테스트 판정 (요약 인용)
 

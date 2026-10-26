@@ -156,7 +156,7 @@ scripts/
 - **정책 동결**: `state/policy_freeze.json`(baseline v2.36 해시) + `scripts/check_policy_freeze.py`. 동결 중 `config/policy.json` 변경 커밋은
   `auto_merge_routines.yml`·`pipeline_audit.yml` 게이트가 main 도달을 차단한다(changelog·last_updated 제외). 패치 후보는 `backlog` 에 등록만.
   해제·재설정은 사람이 `python scripts/check_policy_freeze.py --init --reason "..."` 로만.
-- **그림자 계좌**: `scripts/shadow_account.py` → `state/shadow_account.json`·`.md`. 명세 그대로의 전략(검증 명세 Top10·42일 / 라이브 선언 명세 Top6·21일·점수≥30)을
+- **그림자 계좌**: `scripts/shadow_account.py` → `state/shadow_account.json`·`.md`. 명세 그대로의 전략(검증 명세 Top10·42일 / 라이브 선언 명세 Top6·21일·점수≥30 / (2026-10-26) 7/1 사전 등록 breadth 레짐 Top6·42일 — 측정 전용, Stage 1 cutover 기준 6번의 입력)을
   **오버레이 없이** 정수주·거래비용 포함으로 페이퍼 체결해 라이브와 같은 출발점(동결일 라이브 equity)에서 나란히 기록. `fetch_history.yml` 이 평일 매일 재계산·커밋(멱등).
   판정 질문은 하나 — "LLM+게이트 레이어가 검증 전략에 더하는가, 빼는가". 단계 이동 기준은 진단 리포트 §6-2.
 - 어떤 프롬프트도 이 파일들을 의무 적재하지 않는다(핫패스 아님). 일일 감사가 동결 상태·그림자 신선도를 표면화한다.

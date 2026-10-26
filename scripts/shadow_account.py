@@ -7,11 +7,15 @@
 더하는가, 빼는가"는 같은 날짜·같은 출발 자본으로 나란히 기록해야만 답할 수 있다.
 
 무엇: price_history.json(레포 커밋본) 만으로 매 실행 시 출발일부터 **전체 경로를 재계산**한다
-(상태 파일 누적 없음 → 드리프트·오염 없음, 멱등). 변형(variant) 2종:
+(상태 파일 누적 없음 → 드리프트·오염 없음, 멱등). 변형(variant) 3종:
   - spec_backtest : backtest_strategy.json.recommended_config (Top10·42거래일 리밸·MA200·60/120) — 검증된 명세
   - spec_live     : policy.momentum_strategy.config (Top6·21거래일·min_score 30) — 라이브가 따른다고 선언한 명세.
                     tracked_only 는 과거 시점의 candidates 를 복원할 수 없어 적용하지 않는다(명시).
-두 변형 모두 **오버레이 없음**(하드스톱·트레일링·orange/red·R/R 룰·thesis 무효화 전부 없음).
+  - spec_breadth  : (2026-10-26 추가, 측정 전용) 2026-07-01 사전 등록 breadth 레짐
+                    (state/backtest_bear.json regime_configs.breadth, Top6·42거래일). 리밸런스일에 방어면 전량 현금.
+                    실제 약세장 표본외 검증(reports/2026-10-25-loss-response-research.md §4)의 전진 기록 —
+                    코드 엔진의 하락장 방어 수단을 Stage 1 cutover 전에 라이브와 나란히 재기 위함.
+모든 변형은 **오버레이 없음**(하드스톱·트레일링·orange/red·R/R 룰·thesis 무효화 전부 없음).
 리밸런스일에만 회전: 자격 이탈 종목 매도, 신규 편입 종목 매수. 유지 종목은 손대지 않는다.
 
 계좌 제약(백테스트와 다른 점 — 이 계좌 크기에서 재현 가능한지 보기 위해 넣는다):
@@ -37,6 +41,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 KST = timezone(timedelta(hours=9))
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from backtest_strategy import compute_breadth, compute_regime_breadth  # noqa: E402 — 등록 당시와 같은 판정식
+
 OUT_JSON = ROOT / "state" / "shadow_account.json"
 OUT_MD = ROOT / "state" / "shadow_account.md"
 LIVE_START = "2026-05-20"
@@ -78,13 +86,13 @@ def load_costs(policy):
     return {"buy": slip + comm, "sell": slip + tax + comm}
 
 
-def variants(policy, backtest):
+def variants(policy, backtest, bear=None):
     ps = (policy or {}).get("position_sizing") or {}
     cap_pct = float(ps.get("max_position_weight_pct", 35.0))
     min_cash_pct = float(ps.get("min_cash_weight_pct", 5.0))
     rc = (backtest or {}).get("recommended_config") or {}
     live = ((policy or {}).get("momentum_strategy") or {}).get("config") or {}
-    return {
+    out = {
         "spec_backtest": {
             "label": "검증 명세(backtest_strategy recommended_config)",
             "top_n": int(rc.get("top_n", 10)), "rebal_days": int(rc.get("rebal_days", 42)),
@@ -102,6 +110,22 @@ def variants(policy, backtest):
             "note": "오버레이 없음. tracked_only 는 과거 candidates 복원 불가로 미적용(30종목 풀 전체).",
         },
     }
+    # 사전 등록 레짐(backtest_bear.json, 2026-07-01) 이 있을 때만 — 설정을 여기서 바꾸면 표본외 성격이 사라진다.
+    br = ((bear or {}).get("regime_configs") or {}).get("breadth")
+    base = (bear or {}).get("config") or {}
+    if br:
+        out["spec_breadth"] = {
+            "label": "breadth 레짐(2026-07-01 사전 등록, backtest_bear.json)",
+            "top_n": int(base.get("top_n", 6)), "rebal_days": int(base.get("rebal_days", 42)),
+            "trend_ma": int(base.get("trend_ma", 200)), "mom_fast": int(base.get("mom_fast", 60)),
+            "mom_slow": int(base.get("mom_slow", 120)), "min_score": 0.0,
+            "cap_pct": cap_pct, "min_cash_pct": min_cash_pct,
+            "regime": {"kind": "breadth", "low": float(br.get("low", 0.40)), "high": float(br.get("high", 0.55)),
+                       "enter_days": int(br.get("enter_days", 3)), "exit_days": int(br.get("exit_days", 5)),
+                       "ma": int(br.get("ma", 200))},
+            "note": "측정 전용(정책 아님). 리밸런스일에 레짐이 방어면 자격 종목 0 → 전량 현금. 오버레이 없음.",
+        }
+    return out
 
 
 # ── 신호 ─────────────────────────────────────────────────────────────────────
@@ -143,8 +167,11 @@ def target_basket(tickers, dates, i, cfg):
 
 
 # ── 시뮬레이션 ────────────────────────────────────────────────────────────────
-def simulate(tickers, index_series, dates, cfg, costs, start_date, capital):
-    """start_date(포함) 종가에 capital 현금으로 출발, 마지막 거래일까지 일별 평가."""
+def simulate(tickers, index_series, dates, cfg, costs, start_date, capital, defensive=None):
+    """start_date(포함) 종가에 capital 현금으로 출발, 마지막 거래일까지 일별 평가.
+
+    defensive: dates 정렬 list[bool] (True=방어). 주면 리밸런스일에 방어일 때 자격 종목을 비운다.
+    """
     if start_date not in index_series:
         # 출발일이 휴장이면 그 이하 마지막 거래일
         cands = [d for d in dates if d <= start_date]
@@ -174,7 +201,7 @@ def simulate(tickers, index_series, dates, cfg, costs, start_date, capital):
         d = dates[i]
         # 리밸런스 판정(출발일 포함, 이후 rebal_days 마다) — 종가 체결
         if (i - i0) % cfg["rebal_days"] == 0:
-            eligible = target_basket(tickers, dates, i, cfg)
+            eligible = [] if defensive and defensive[i] else target_basket(tickers, dates, i, cfg)
             elig_set = {r["ticker"] for r in eligible[:cfg["top_n"]]}
             # 1) 자격 이탈 매도
             for tk in list(pos):
@@ -376,7 +403,14 @@ def main() -> int:
     tickers, index_series, dates, data_as_of = load_history()
     costs = load_costs(policy)
     live = live_equity_by_date()
-    cfgs = variants(policy, backtest)
+    cfgs = variants(policy, backtest, load_json("state/backtest_bear.json"))
+    regime_flags = {}
+    for key, cfg in cfgs.items():
+        rg = cfg.get("regime")
+        if rg and rg["kind"] == "breadth":
+            breadth = compute_breadth(tickers, dates, rg["ma"])
+            regime_flags[key] = compute_regime_breadth(breadth, dates, low=rg["low"], high=rg["high"],
+                                                       enter_days=rg["enter_days"], exit_days=rg["exit_days"])
 
     start, capital, basis = resolve_start(dates, live, freeze, args.start, args.capital)
     freeze_status = (f"active since {freeze.get('since')} (baseline v{freeze.get('baseline_version')})"
@@ -385,7 +419,7 @@ def main() -> int:
     def run(start_date, cap, live_base=None):
         res = {}
         for key, cfg in cfgs.items():
-            sim = simulate(tickers, index_series, dates, cfg, costs, start_date, cap)
+            sim = simulate(tickers, index_series, dates, cfg, costs, start_date, cap, regime_flags.get(key))
             res[key] = {"config": cfg, "start_date": sim["start_date"], "capital": cap,
                         "metrics": metrics(sim["curve"], index_series),
                         "vs_live": compare_live(sim["curve"], live, index_series, live_base),
@@ -409,6 +443,7 @@ def main() -> int:
             "체결가 = 당일 종가 + policy.trading_cost 슬리피지. 실제 종가 체결 가능성·호가 단위는 반영하지 않는다(낙관 편향 가능).",
             "reference 구간은 사후 계산이라 Stage 0 판정에 쓰지 않는다.",
             "spec_live 는 tracked_only 미적용(과거 candidates 복원 불가) — 라이브 선언 명세와 완전 동일하지 않다.",
+            "spec_breadth 는 측정 전용(정책 아님). 레짐은 리밸런스일에만 확인 — 등록 당시 엔진과 같아 방어 전환이 최대 42거래일 늦을 수 있다. 복귀 지연(V자 반등)은 미검증.",
         ],
     }
     # reference 구간은 곡선·체결 전문을 빼 파일 크기를 억제(요약만)

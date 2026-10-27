@@ -1,6 +1,6 @@
 # 선제 추론 체크리스트 (inference_checklist.md)
 
-> 자동 생성: build_inference_checklist.py · 2026-10-26T18:11:17+09:00
+> 자동 생성: build_inference_checklist.py · 2026-10-27T18:10:05+09:00
 > **추론(INFER) 직전 먼저 읽는다** — 과거 빗나간 요인을 이번 예측의 factors_considered/assumptions 에 반영하고 checklist_refs 로 증빙한다(자기보완 루프의 'lessons 먼저 읽기'와 대칭).
 > 항목은 lessons_rule_sunset(기본 5거래일) 대상 — 검증 안 된 선제 룰의 영구 적체 금지.
 
@@ -15,4 +15,4 @@
 - [10/21] **갭업 개장일 09시 예측은 개장 30분 외국인 수급 집계가 없으면 '종가 < 시가'에 50% 넘는 확률을 주지 않는다.** 해외 지수의 장중 경로는 한국 장중 경로의 근거로 쓰지 않는다. 예측 규칙 — 일몰 대상 아님.
 - [10/20] **deep_bear 국면에서 외국인 KRX 순매수 확인 없이 반도체 외 업종이 끈 반등 다음 날은, 밴드 하단을 '반등 시작 전 종가'(전량 반납선)까지 연다.** 대칭 밴드 금지. 예측 규칙 — 일몰 대상 아님.
 - [10/20] **09시 시점 반도체 대형주 2종이 모두 시가 대비 하락 중이고 외국인이 순매도면, 종가 밴드 하단은 '두 종목 현재 낙폭 × 1.3'을 지수 하단으로 둔다**(10/20 기준 -2%×1.3≈-2.6%가 아니라 장중 확대 여지 포함 -3.5%). 예측 규칙 — 일몰 대상 아님.
-- … (상한 40줄/4,000B 도달 — 빈도·최신성 하위 159건 생략. 전량은 state/inference_scorecard.json miss_factors_detail·state/lessons.md 참조)
+- … (상한 40줄/4,000B 도달 — 빈도·최신성 하위 80건 생략. 전량은 state/inference_scorecard.json miss_factors_detail·state/lessons_archive.md 참조)

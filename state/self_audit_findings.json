@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-25",
+  "as_of": "2026-10-29",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,8 +8,8 @@
       "detail": "손실 스톱 t+5 일실 합계 244910.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-10-25",
-      "weeks_seen": 16,
+      "last_seen": "2026-10-29",
+      "weeks_seen": 17,
       "status": "open",
       "disposition": {
         "action": "defer",
@@ -161,13 +161,13 @@
     },
     {
       "id": "benchmark-gap-widening",
-      "title": "vs KOSPI 격차 악화 -4.64%p → -7.01%p",
+      "title": "vs KOSPI 격차 악화 10.95%p → 8.73%p",
       "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
       "severity": "warn",
-      "first_seen": "2026-09-22",
-      "last_seen": "2026-09-22",
+      "first_seen": "2026-10-29",
+      "last_seen": "2026-10-29",
       "weeks_seen": 1,
-      "status": "resolved",
+      "status": "open",
       "disposition": null,
       "disposition_history": [
         {
@@ -176,8 +176,7 @@
           "date": "2026-08-03",
           "by": "sunday_policy_review"
         }
-      ],
-      "resolved_date": "2026-09-22"
+      ]
     },
     {
       "id": "patch-without-validation",
@@ -261,7 +260,7 @@
       "first_seen": "2026-08-14",
       "last_seen": "2026-10-25",
       "weeks_seen": 11,
-      "status": "open",
+      "status": "resolved",
       "disposition": {
         "action": "defer",
         "note": "재심(10-25): lessons.md 880,658B(예산 60KB의 14.7×)·entries 407·주간 유입 16건. 이번 리뷰 이관 0건 — archive_candidates 1건(2026-09-11 사전 경보)은 해당 섹션 자체에 ✅codify 마커가 없고 룰의 반영 위치를 이번 런에서 검증하지 못해 응축 보류, codify_candidates 92건은 grep 매치일 뿐이라 무인 런에서 일괄 이관은 오탐 위험(09-13 선례: 35건 중 2건 오탐). 수지 균형 의무 미충족 사유를 산출물 §6 에 명시. 구조 해법(응축 자동화 또는 사람 주도 일괄 이관)은 사용자 결정 필요. 다음 재확인 2026-11-01.",
@@ -302,7 +301,8 @@
           "by": "sunday_policy_review",
           "expired": "패치 처분 후에도 재발 — 보완 효과 없음, 재상정"
         }
-      ]
+      ],
+      "resolved_date": "2026-10-29"
     },
     {
       "id": "ledger-mismatch",
@@ -320,7 +320,7 @@
   ],
   "open": [
     "whipsaw-high",
-    "lessons-balance"
+    "benchmark-gap-widening"
   ],
   "overdue": []
 }

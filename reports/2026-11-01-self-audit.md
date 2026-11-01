@@ -22,7 +22,7 @@
 
 | id | 항목 | 경과 | 처분 상태 |
 |---|---|---|---|
-| `whipsaw-high` | 스톱 휩쏘율 63.6% — 노이즈 저점 매도 반복 | 17주째 | defer — 재심(10-25, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noi |
+| `whipsaw-high` | 스톱 휩쏘율 63.6% — 노이즈 저점 매도 반복 | 17주째 | defer — 재심(11-01, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noi |
 
 ## ✅ 이번 주 해소 확인 (보완 검증)
 

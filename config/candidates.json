@@ -1,6 +1,6 @@
 {
  "version": "1.3",
- "last_updated": "2026-10-18T19:10:00+09:00",
+ "last_updated": "2026-11-01T19:30:00+09:00",
  "purpose": "신규 진입 후보 종목 트래킹. scripts/fetch_market_data.py 가 매 routine마다 이 목록의 5거래일 추세를 자동 수집하여 state/market_snapshot.json 에 기록한다. 09시 prompt 는 추세 필터 통과 후보를 entry 검토 대상으로 우선 정렬한다. v1.1(2026-05-29): 강세장에서 담을 종목이 1~2개뿐이던 후보 빈곤 해소 — 섹터 분산 4종목 추가(SK하이닉스·현대차·한화에어로스페이스·HD현대일렉트릭). v1.2(2026-06-24): 사용자 요청으로 인터넷/AI플랫폼 2종목(NAVER·카카오) 승격 — 모니터링 목적. themes.json 에 인터넷/AI플랫폼 테마가 아직 없어 theme_exposure 는 비움(상대강도 랭킹·환각 방지 — 적절한 테마 정의 시 routine 이 보강). theme_exposure 의 source(URL)는 0900/sunday_strategy routine 이 뉴스·IR 근거로 채운다(환각 방지 — 미확인 시 null 유지).",
  "candidates": [
   {
@@ -13,9 +13,9 @@
     {
      "theme": "ai_memory_hbm",
      "exposure": 0.9,
-     "evidence": "[2026-09-06 갱신] 메모리 공급 타이트 + AI 캐파 완판. 서스퀘하나 DRAM 분기 +50%·NAND +60% 전망, UBS HBM 가격 상승률 연 67%→79% 상향, 마이크론 선단 메모리 2026년 말까지 완판. 9/4 미국장에서 고용 서프라이즈로 3대 지수가 밀린 날 마이크론 +4.09%·SK하이닉스 ADR +3.86%로 업종만 역행. 한국 8월 반도체 수출 466.5억달러(+209.0%) 역대 최대.",
-     "source": "https://blockonomi.com/memory-chip-giants-micron-mu-sandisk-and-sk-hynix-rally-on-supply-tightness-and-ai-demand",
-     "source_date": "2026-09-04"
+     "evidence": "[2026-11-01 갱신] 10월 반도체 수출 564.4억달러(+259.4%, 역대 2위·2개월 연속 500억달러 상회), 컴퓨터(AI 서버·서버 SSD) 58.5억달러(+497%). 단 10/29 확정실적 뒤 주주환원 세부안 부재로 -4.13%, 10/30 미 빅테크 AI 투자 회수 우려로 반도체 동반 하락 — 수출 수치는 업황 확인이지 주가 방향 확인이 아님.",
+     "source": "https://www.newspim.com/news/view/20261031000112",
+     "source_date": "2026-11-01"
     }
    ],
    "structural_bear_flags": [],
@@ -150,9 +150,9 @@
     {
      "theme": "ai_memory_hbm",
      "exposure": 0.95,
-     "evidence": "[2026-09-06 갱신] 메모리 공급 타이트 + AI 캐파 완판. 서스퀘하나 DRAM 분기 +50%·NAND +60% 전망, UBS HBM 가격 상승률 연 67%→79% 상향, 마이크론 선단 메모리 2026년 말까지 완판. 9/4 미국장에서 고용 서프라이즈로 3대 지수가 밀린 날 마이크론 +4.09%·SK하이닉스 ADR +3.86%로 업종만 역행. 한국 8월 반도체 수출 466.5억달러(+209.0%) 역대 최대.",
-     "source": "https://blockonomi.com/memory-chip-giants-micron-mu-sandisk-and-sk-hynix-rally-on-supply-tightness-and-ai-demand",
-     "source_date": "2026-09-04"
+     "evidence": "[2026-11-01 갱신] 10월 반도체 수출 564.4억달러(+259.4%, 역대 2위), 글로벌 빅테크 AI 인프라 투자 지속에 단가·물량 동반 증가(산업통상부). 3Q 영업이익 83.3조·자사주 20조 매입 재개(한국경제 11/1). 10/30 인텔·빅테크 실적發 AI 투자 회수 우려로 -6.73% — 실적 발표 전일 종가 1,341,000원 지지 여부가 thesis 판정선.",
+     "source": "https://www.newspim.com/news/view/20261031000112",
+     "source_date": "2026-11-01"
     }
    ],
    "structural_bear_flags": [],
@@ -262,9 +262,9 @@
     {
      "theme": "power_grid_ai",
      "exposure": 0.9,
-     "evidence": "빅테크 A사와 2027~2028 납품 조건 1조1,000억원 규모 데이터센터 전력·배전변압기 장기공급계약 체결, 2029~2030 물량은 그보다 큰 규모로 협의 중이며 B·C·D 사와도 대규모 장기공급계약 논의 중(LS증권). 미 앨라배마 제2공장 증설이 2027년 4월 완료되면 연간 전력변압기 생산능력 약 50% 확대. 8/30 재산출에서 power_grid_ai 몰입 3/2 충족·20일 초과수익 +18.25%p 로 테마 노출 0.85 → 0.9 상향. [2026-09-06 중복 등재 1건 제거] power_grid_ai 가 두 번 적혀 thematic 기여가 0.675×2=1.35 → 상한 1.0 으로 계산되고 있었다. 이 종목은 8/30 에 '실질 후보 1종'으로 지목됐다가 한 주 만에 -12.29% 로 5거래일 급락 필터에 걸린 종목이며, 지목 당시 점수의 일부가 이 중복에서 나왔다.",
-     "source": "https://www.mt.co.kr/stock/2026/07/29/2026072909143766775",
-     "source_date": "2026-07-29"
+     "evidence": "[2026-11-01 갱신] 10월 전기기기 수출 19.9억달러(+74%) 월간 역대 최대 — AI 데이터센터 수요(산업통상부).",
+     "source": "https://www.newspim.com/news/view/20261031000112",
+     "source_date": "2026-11-01"
     }
    ],
    "structural_bear_flags": [],
@@ -369,8 +369,9 @@
     {
      "theme": "power_grid_ai",
      "exposure": 0.8,
-     "evidence": "변압기·전력기기 — AI 데이터센터 전력수요·미국 노후 전력망 교체 사이클 수혜. 60일 모멘텀 강세로 momentum_signal 재랭킹 1위(2026-07-26) 재진입.",
-     "source": null
+     "evidence": "[2026-11-01 갱신] 10월 전기기기 수출 19.9억달러(+74%) 월간 역대 최대 — AI 데이터센터 수요(산업통상부).",
+     "source": "https://www.newspim.com/news/view/20261031000112",
+     "source_date": "2026-11-01"
     }
    ],
    "structural_bear_flags": [],
@@ -758,6 +759,11 @@
   "auto_drop_after_days_without_thesis": 14
  },
  "change_log": [
+  {
+   "date": "2026-11-01",
+   "by": "sunday-strategy",
+   "change": "W45 테마 근거 갱신 4건(삼성전자·SK하이닉스 ai_memory_hbm, HD현대일렉트릭·LS ELECTRIC 전력기기) — 10월 수출입 동향(뉴스핌 2026-11-01 09:21). universe_screen 승격 0건·rotate_out 18건(모집단 32 중 수집 11 — 판정 근거로 쓰지 않음). 후보 추가·삭제 없음. 엔진(10/30 18시 정본) 하한 30 통과 0종: HMM 9.27·삼성SDI 6.70·셀트리온 1.54."
+  },
   {
    "date": "2026-10-11",
    "by": "sunday-strategy",

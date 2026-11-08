@@ -196,6 +196,6 @@ git config user.email "hjlee8090@gmail.com"
 git commit -m "weekly: YYYY-MM-DD 주말 전략 리포트 + 다음주 weekly_plan 갱신"
 git push origin HEAD:main
 ```
-- **예약 실행 권한 규칙**: `git -c …`(인라인 설정), 괄호 묶음 `( … )`, 강제 푸시(`-f`)는 쓰지 않는다. 예약 실행에는 승인할 사람이 없어 이런 명령은 권한 대기로 멈추고 실행이 중단된다(2026-11-05~08 반복). 신원은 위처럼 `git config` 로 따로 설정한다 — auto_merge 가 커미터 이메일로 루틴 커밋을 가려내므로 생략하지 않는다. 커밋할 변경이 없으면 commit 실패는 무시하고, main 푸시가 거부되면 `git pull --rebase origin main` 후 다시 푸시하거나 세션 브랜치에 푸시한다(auto_merge 가 main 으로 닫아준다).
+- **예약 실행 권한 규칙**: 위 명령은 **한 줄씩 각각 별도의 Bash 호출로** 실행한다 — `&&`·`;`·`|`로 잇지 않는다. `git config`·`git commit`·`git push` 를 한 명령에 묶거나 `git -c …` 를 쓰면 사전 검사가 불가능하다고 판정돼 권한 대기로 멈추고, 예약 실행에는 승인할 사람이 없어 실행이 중단된다(2026-11-05~08 반복, 묶은 `git config && git commit` 도 11/8 18:16 재발). 괄호 묶음 `( … )`, 강제 푸시(`-f`)도 쓰지 않는다. 신원은 위처럼 `git config` 로 따로 설정한다 — auto_merge 가 커미터 이메일로 루틴 커밋을 가려내므로 생략하지 않는다. 커밋할 변경이 없으면 commit 실패는 무시하고, main 푸시가 거부되면 `git pull --rebase origin main` 후 다시 푸시하거나 세션 브랜치에 푸시한다(auto_merge 가 main 으로 닫아준다).
 
 커밋 메시지 프리픽스 `weekly:`는 카카오 알림에서 주말 전략 리포트로 인식한다.

@@ -412,10 +412,11 @@ KOSPI 갭과 보유 종목 시초가 움직임을 **원인 → 메커니즘 → 
 작업 종료 직전 반드시 수행:
 ```
 git add config/ state/ reports/
-git -c user.name="kospi-autoflow-bot" -c user.email="hjlee8090@gmail.com" \
-    commit -m "chore(09:00): YYYY-MM-DD 개장 점검 + 리포트 09시 섹션 작성" || true
-git push origin HEAD:main || git push origin HEAD:master
+git config user.name "kospi-autoflow-bot"
+git config user.email "hjlee8090@gmail.com"
+git commit -m "chore(09:00): YYYY-MM-DD 개장 점검 + 리포트 09시 섹션 작성"
+git push origin HEAD:main
 ```
-- 변경이 없으면 commit이 실패해도 무시(`|| true`)
+- **예약 실행 권한 규칙**: `git -c …`(인라인 설정), 괄호 묶음 `( … )`, 강제 푸시(`-f`)는 쓰지 않는다. 예약 실행에는 승인할 사람이 없어 이런 명령은 권한 대기로 멈추고 실행이 중단된다(2026-11-05~08 반복). 신원은 위처럼 `git config` 로 따로 설정한다 — auto_merge 가 커미터 이메일로 루틴 커밋을 가려내므로 생략하지 않는다. 커밋할 변경이 없으면 commit 실패는 무시하고, main 푸시가 거부되면 `git pull --rebase origin main` 후 다시 푸시하거나 세션 브랜치에 푸시한다(auto_merge 가 main 으로 닫아준다).
 - 푸시 실패 시 로그 남기고 사용자에게 보고
 - **커밋 메시지에 `09:00` 문자열이 반드시 포함되어야 카톡 알림이 시간대를 인식한다 (`scripts/send_kakao.py`의 `detect_slot`).**

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-01",
+  "as_of": "2026-11-08",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,13 +8,13 @@
       "detail": "손실 스톱 t+5 일실 합계 244910.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-11-01",
-      "weeks_seen": 17,
+      "last_seen": "2026-11-08",
+      "weeks_seen": 18,
       "status": "open",
       "disposition": {
         "action": "defer",
-        "note": "재심(11-01, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noise율 100%·net 보호 -161,800원 (10-25 와 수치 불변, 신규 breach 0건), verdict=기각·완화 후보. 오버레이 H 판정 불변(4설정 중 3개 가치 파괴). 룰별 채점: TRAILING_STOP 실현 +192,878원이나 t+5 일실 +232,186원(조기청산 비용), SELL_TRAIL_RESIDUAL -110,728원 — 트레일링 룰 자체가 문제라는 진단 유지. 정책 동결 active(v2.36==baseline)라 policy.json 수정 불가 — state/policy_freeze.json.backlog #2(when_gain_atr 상향 또는 breakeven_ratchet 기각) 그대로 유효, 신규 등록 불요. mode=shadow 유지(체결 무변화). 다음 재확인 2026-11-08.",
-        "date": "2026-11-01",
+        "note": "재심(11-08, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noise율 100%·net 보호 -161,800원(11-01 과 수치 불변, 신규 breach 0건), verdict=기각·완화 후보. 룰별 채점: TRAILING_STOP 실현 +192,878원/t+5 일실 +232,186원(조기청산 비용), SELL_TRAIL_RESIDUAL -110,728원 — 트레일링 룰 자체 문제 진단 유지. 정책 동결 active(v2.36==baseline)라 policy.json 수정 불가 — state/policy_freeze.json.backlog #2 그대로 유효(신규 등록 불요). mode=shadow 유지. 다음 재확인 2026-11-15.",
+        "date": "2026-11-08",
         "by": "sunday_policy_review"
       },
       "disposition_history": [

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-15",
+  "as_of": "2026-11-16",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,7 +8,7 @@
       "detail": "손실 스톱 t+5 일실 합계 244910.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-11-15",
+      "last_seen": "2026-11-16",
       "weeks_seen": 19,
       "status": "open",
       "disposition": {
@@ -179,7 +179,7 @@
       "first_seen": "2026-11-15",
       "last_seen": "2026-11-15",
       "weeks_seen": 1,
-      "status": "open",
+      "status": "resolved",
       "disposition": {
         "action": "observe",
         "note": "경로 판정(11-15): 격차 축소(계좌 우위 18.67%p→15.5%p)의 경로는 **미배치**다 — 주식비중 0.0%(tier deep_bear, 목표 [0,25] 하한 안 — 레짐 규정대로의 의도된 현금 보유)라 KOSPI 반등분을 받지 못했다. 휩쏘·추격 경로 해당 없음(감사 E 게이트 위반 0건·신규 왕복 0건·D 휩쏘율 불변). 계좌는 여전히 KOSPI 대비 +15.5%p 우위. 배치 밴드 자체 변경은 policy.json(동결 대상) 사안이라 패치 불가 — 레짐 tier 가 deep_bear 에서 올라가는데도 배치가 0%에 머무는지로 관측 지속. 다음 재확인 2026-11-22.",
@@ -193,7 +193,8 @@
           "date": "2026-08-03",
           "by": "sunday_policy_review"
         }
-      ]
+      ],
+      "resolved_date": "2026-11-16"
     },
     {
       "id": "patch-without-validation",
@@ -336,8 +337,7 @@
     }
   ],
   "open": [
-    "whipsaw-high",
-    "benchmark-gap-widening"
+    "whipsaw-high"
   ],
   "overdue": []
 }

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-08",
+  "as_of": "2026-11-15",
   "note": "sunday_policy_review 가 open finding 의 disposition 에 {action: patch|defer|observe, note, date} 를 기입한다. patch 처분 후 재발·처분 14일 초과 지속은 자동 만료·재상정. 무처분 2주 이상 = overdue → weekly_self_audit 워크플로 FAIL.",
   "findings": [
     {
@@ -8,13 +8,13 @@
       "detail": "손실 스톱 t+5 일실 합계 244910.0원. 오버레이 백테스트(H) 재실행·청산 룰 shadow 강등 검토.",
       "severity": "warn",
       "first_seen": "2026-07-07",
-      "last_seen": "2026-11-08",
-      "weeks_seen": 18,
+      "last_seen": "2026-11-15",
+      "weeks_seen": 19,
       "status": "open",
       "disposition": {
         "action": "defer",
-        "note": "재심(11-08, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noise율 100%·net 보호 -161,800원(11-01 과 수치 불변, 신규 breach 0건), verdict=기각·완화 후보. 룰별 채점: TRAILING_STOP 실현 +192,878원/t+5 일실 +232,186원(조기청산 비용), SELL_TRAIL_RESIDUAL -110,728원 — 트레일링 룰 자체 문제 진단 유지. 정책 동결 active(v2.36==baseline)라 policy.json 수정 불가 — state/policy_freeze.json.backlog #2 그대로 유효(신규 등록 불요). mode=shadow 유지. 다음 재확인 2026-11-15.",
-        "date": "2026-11-08",
+        "note": "재심(11-15, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noise율 100%·net 보호 -161,800원으로 11-08 과 수치 불변(신규 breach 0건), verdict=기각·완화 후보. 감사 D 휩쏘율 63.6%(11-08 동일, 악화 아님). 룰별: TRAILING_STOP 실현 +192,878원, SELL_TRAIL_RESIDUAL -110,728원, SELL_THESIS_INVALIDATION -91,876원. 정책 동결 active(v2.36==baseline) — policy.json 수정 불가, state/policy_freeze.json.backlog #2 그대로 유효(신규 등록 불요). mode=shadow 유지(체결 무변화). 19주째 — 동결 해제 판단은 사람 몫(§6). 다음 재확인 2026-11-22.",
+        "date": "2026-11-15",
         "by": "sunday_policy_review"
       },
       "disposition_history": [
@@ -84,6 +84,12 @@
           "action": "defer",
           "note": "재심(10-25, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noise율 100%·net 보호 -161,800원으로 09-13/09-20 과 수치 불변(신규 breach 0건), verdict=기각·완화 후보. 오버레이 H 판정 불변(4설정 중 3개 가치 파괴, 트레일링 룰 자체 문제 진단 유지). Stage 0 정책 동결 중(v2.36==baseline)이라 policy.json 수정 불가 — state/policy_freeze.json.backlog #2(when_gain_atr 2.0 상향 또는 breakeven_ratchet 기각) 그대로 유효, 신규 등록 불요. mode=shadow 유지(체결 무변화). 다음 재확인 2026-11-01.",
           "date": "2026-10-25",
+          "by": "sunday_policy_review"
+        },
+        {
+          "action": "defer",
+          "note": "재심(11-08, §1-8): score_ratchet_shadow 재실행 — breach 확정 5건·noise율 100%·net 보호 -161,800원(11-01 과 수치 불변, 신규 breach 0건), verdict=기각·완화 후보. 룰별 채점: TRAILING_STOP 실현 +192,878원/t+5 일실 +232,186원(조기청산 비용), SELL_TRAIL_RESIDUAL -110,728원 — 트레일링 룰 자체 문제 진단 유지. 정책 동결 active(v2.36==baseline)라 policy.json 수정 불가 — state/policy_freeze.json.backlog #2 그대로 유효(신규 등록 불요). mode=shadow 유지. 다음 재확인 2026-11-15.",
+          "date": "2026-11-08",
           "by": "sunday_policy_review"
         }
       ]
@@ -167,14 +173,19 @@
     },
     {
       "id": "benchmark-gap-widening",
-      "title": "vs KOSPI 격차 악화 10.95%p → 8.73%p",
+      "title": "vs KOSPI 격차 악화 18.67%p → 15.5%p",
       "detail": "미배치/휩쏘/추격 중 어느 경로인지 D·G 항목과 대조.",
       "severity": "warn",
-      "first_seen": "2026-10-29",
-      "last_seen": "2026-10-29",
+      "first_seen": "2026-11-15",
+      "last_seen": "2026-11-15",
       "weeks_seen": 1,
-      "status": "resolved",
-      "disposition": null,
+      "status": "open",
+      "disposition": {
+        "action": "observe",
+        "note": "경로 판정(11-15): 격차 축소(계좌 우위 18.67%p→15.5%p)의 경로는 **미배치**다 — 주식비중 0.0%(tier deep_bear, 목표 [0,25] 하한 안 — 레짐 규정대로의 의도된 현금 보유)라 KOSPI 반등분을 받지 못했다. 휩쏘·추격 경로 해당 없음(감사 E 게이트 위반 0건·신규 왕복 0건·D 휩쏘율 불변). 계좌는 여전히 KOSPI 대비 +15.5%p 우위. 배치 밴드 자체 변경은 policy.json(동결 대상) 사안이라 패치 불가 — 레짐 tier 가 deep_bear 에서 올라가는데도 배치가 0%에 머무는지로 관측 지속. 다음 재확인 2026-11-22.",
+        "date": "2026-11-15",
+        "by": "sunday_policy_review"
+      },
       "disposition_history": [
         {
           "action": "patch",
@@ -182,8 +193,7 @@
           "date": "2026-08-03",
           "by": "sunday_policy_review"
         }
-      ],
-      "resolved_date": "2026-11-01"
+      ]
     },
     {
       "id": "patch-without-validation",
@@ -326,7 +336,8 @@
     }
   ],
   "open": [
-    "whipsaw-high"
+    "whipsaw-high",
+    "benchmark-gap-widening"
   ],
   "overdue": []
 }

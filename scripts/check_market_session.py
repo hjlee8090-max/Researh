@@ -78,6 +78,9 @@ def session_bounds(target: date, calendar: dict) -> dict[str, time]:
     key = target.isoformat()
     for hd in calendar.get("half_days", []) or []:
         if isinstance(hd, dict) and hd.get("date") == key:
+            # 지연 개장(수능일 등 — KRX 공고) 은 open/preopen 도 덮어쓴다
+            open_t = _parse_hhmm(hd.get("open", ""), open_t)
+            preopen_t = _parse_hhmm(hd.get("preopen", ""), preopen_t)
             close_t = _parse_hhmm(hd.get("close", "12:30"), close_t)
             closing_t = _parse_hhmm(
                 hd.get("closing_auction", ""),

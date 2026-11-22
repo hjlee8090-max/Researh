@@ -96,6 +96,8 @@ LESSONS_TARGET_RATIO = 0.85
 LESSONS_FLOOR_DAYS = 1
 # 이관 항목 중 미해결 마커(반영 안 됨)·미만료 (expiry) 룰 줄만 남긴 스텁의 식별 태그.
 LESSONS_STUB_TAG = "이관 스텁"
+# 스텁 최종 처분 줄(§1-6 ①반영·②기각). ③보류는 판정 기한까지 스텁을 유지한다.
+STUB_FINAL_DISPOSITION_RE = re.compile(r"스텁 처분[^:：]*[:：]\s*\**\s*[①②]")
 
 # --- P0 커버리지 확장 (2026-08-13, docs/plan_removal_exclusion.md §5-A) ---
 PENDING_ORDERS = ROOT / "state" / "pending_orders.json"
@@ -465,6 +467,10 @@ def _lesson_stub(unit: dict, haystack: str, today: str, stamp_date: str) -> list
     ②만료일이 오늘 이후인 (expiry: …) 룰 줄(일몰 전 임시 룰은 아직 유효).
     """
     head, body = unit["lines"][0], unit["lines"][1:]
+    # 일요일 리뷰(§1-6)가 '①반영'·'②기각'으로 최종 처분한 스텁은 소멸시킨다 — 원문은 archive 에 있다.
+    # (2026-11-22: 처분 줄만으론 마커 판정이 바뀌지 않아 8/31·9/29·9/30 ①②처분 스텁이 3주째 잔존했다.)
+    if any(STUB_FINAL_DISPOSITION_RE.search(l) for l in body):
+        return None
     keep: list[str] = []
     for line in body:
         if LESSONS_STUB_TAG in line:

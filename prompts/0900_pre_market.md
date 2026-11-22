@@ -46,7 +46,7 @@
 ## 0. 컨텍스트 적재 (반드시 이 순서)
 1. `config/policy.json` — 정책 파라미터
 2. `state/lessons.md` — **과거 오차 사유. 추천·점검 전에 동일 실수를 피하기 위해 반드시 먼저 읽는다.**
-3. `config/weekly_plan.json` — **이번 주 계좌 목표, thesis, watch_items, invalidation_triggers**
+3. `config/weekly_plan.json` — **이번 주 계좌 목표, thesis, watch_items, invalidation_triggers** (`week_id` ≠ 이번 ISO 주차면 리포트 첫 블록에 "주간 계획 미갱신 — 승계 중" 1줄, 신규 배치일 생성 금지 — 11/14 교훈)
 4. **시간대별 리포트** — 파이프라인 연결의 핵심. **(파일이 시간대별로 분리되어 있다)**
    - **오늘 날짜 자정 리포트** `reports/YYYY-MM-DD-00.md` 가 존재한다면 → `## 🌙 00:00 글로벌 야간 점검` 섹션을 우선 흡수
      - 개장 갭 예상·종목별 글로벌 영향 매핑·09시 우선 점검 종목 등
@@ -100,7 +100,7 @@
 `state/market_snapshot.json.regime` (= `fetch_market_data.py` 가 KOSPI `^KS11` 의 200일선 대비 위치로 산출) 을 읽어 신규 진입 게이트에 적용한다. 리포트에는 나열하지 않고 `risk_off`/`unknown` 으로 오늘 행동이 바뀔 때만 "오늘의 액션" 사유에 한 줄 녹인다.
 - `risk_on` (지수 ≥ 200일선): 추세추종·신규 진입 정상 허용.
 - `risk_off` (지수 < 200일선): `policy.market_regime.risk_off_action` 적용 — 축소비중(reduced_entry_weight_pct)으로 진입, R/R·모멘텀 상위 종목 우선(건수 할당 없음). `risk_off_blocks_new_entry=true` 면 신규 진입 전면 차단.
-- `unknown` (지수 수집 실패): 게이트 보류(어드바이저리만), 리포트에 "레짐 미확정" 1줄 명시.
+- `unknown` (지수 수집 실패 — 단 `today_ohlc` 공백이면 네이버 `marketStatus` 로 지연 개장·휴장부터 확인, PREOPEN 이면 수집 실패 아님 — 11/19 수능일 교훈): 게이트 보류(어드바이저리만), 리포트에 "레짐 미확정" 1줄 명시.
 - **계좌 기반 회복 단계(0-3)와 시장 기반 레짐 중 더 보수적인 쪽**을 신규 진입 한도에 적용한다.
 
 ## 0-5. 목표 주식 비중 (regime tier 기반 동적 사이징 — 의무)
